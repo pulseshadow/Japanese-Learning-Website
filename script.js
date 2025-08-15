@@ -43,6 +43,30 @@ const wordPools = {
         { japanese: 'phone', english: 'phone' },
         { japanese: 'window', english: 'window' },
         { japanese: 'clock', english: 'clock' }
+    ],
+    5: [ // Introduction Round 3
+        { japanese: 'tree', english: 'tree' },
+        { japanese: 'flower', english: 'flower' },
+        { japanese: 'mountain', english: 'mountain' },
+        { japanese: 'river', english: 'river' },
+        { japanese: 'sun', english: 'sun' }
+    ],
+    6: [ // Practice Round 3 (rounds 1 + 3 + 5 combined)
+        { japanese: 'dog', english: 'dog' },
+        { japanese: 'cat', english: 'cat' },
+        { japanese: 'house', english: 'house' },
+        { japanese: 'car', english: 'car' },
+        { japanese: 'water', english: 'water' },
+        { japanese: 'book', english: 'book' },
+        { japanese: 'desk', english: 'desk' },
+        { japanese: 'phone', english: 'phone' },
+        { japanese: 'window', english: 'window' },
+        { japanese: 'clock', english: 'clock' },
+        { japanese: 'tree', english: 'tree' },
+        { japanese: 'flower', english: 'flower' },
+        { japanese: 'mountain', english: 'mountain' },
+        { japanese: 'river', english: 'river' },
+        { japanese: 'sun', english: 'sun' }
     ]
 };
 
@@ -202,13 +226,13 @@ function initializeRound() {
     const roundWords = getCurrentRoundWords();
     
     if (isIntroductionRound) {
-        roundTitle.textContent = `Introduction Round ${Math.ceil(currentRound / 2)}`;
+        roundTitle.textContent = 'Introduction Round';
         currentPhase = 'learning';
         // In learning phase, show each word once with answer
         currentQuestionIndex = 0;
         showLearningQuestion();
     } else {
-        roundTitle.textContent = `Practice Round ${Math.ceil(currentRound / 2)}`;
+        roundTitle.textContent = 'Practice Round';
         currentPhase = 'repeating';
         // In practice phase, initialize queue with all words
         initializeQuestionQueue();
