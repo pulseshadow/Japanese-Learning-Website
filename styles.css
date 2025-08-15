@@ -200,21 +200,20 @@ body {
     font-weight: 500;
 }
 
-#game-content {
+.game-content {
+    text-align: center;
     margin: 40px 0;
 }
 
 #correct-answer-display {
-    font-size: 1.1rem;
-    color: #000000;
-    font-weight: 600;
-    margin-bottom: 20px;
-    padding: 8px 16px;
     background: #ffffff;
+    color: #000000;
+    padding: 8px 16px;
     border-radius: 0;
-    border: 1px solid #e0e0e0;
     display: inline-block;
-    max-width: fit-content;
+    margin-bottom: 20px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
 }
 
 #correct-answer-display.hidden {
@@ -222,23 +221,10 @@ body {
 }
 
 .japanese-text {
-    font-size: 3rem;
-    font-weight: 700;
+    font-size: 2.5rem;
+    font-weight: 600;
+    margin: 30px 0;
     color: #ffffff;
-    margin: 30px 0;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', 'Meiryo', sans-serif;
-}
-
-.input-container {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    align-items: center;
-    margin: 30px 0;
 }
 
 #answer-input {
@@ -247,11 +233,12 @@ body {
     border: none;
     border-radius: 0;
     width: 300px;
-    transition: all 0.2s ease;
-    outline: none;
     background: #333333;
     color: #ffffff;
     height: 60px;
+    text-align: center;
+    margin: 0 auto;
+    display: block;
 }
 
 #answer-input::placeholder {

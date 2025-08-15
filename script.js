@@ -9,40 +9,40 @@ let allLearnedWords = []; // All words from previous introduction rounds
 let wordsWithPendingPoints = new Set(); // Track words that have pending points from incorrect answers
 let currentQuestionFailed = false; // Track if current question was answered incorrectly
 
-// Word pools for each round (placeholder words as requested)
+// Word pools for each round (actual Japanese words)
 const wordPools = {
     1: [ // Introduction Round 1
-        { japanese: 'dog', english: 'dog' },
-        { japanese: 'cat', english: 'cat' },
-        { japanese: 'house', english: 'house' },
-        { japanese: 'car', english: 'car' },
-        { japanese: 'water', english: 'water' }
+        { japanese: 'こんにちは', english: 'hi' },
+        { japanese: 'ください', english: 'please' },
+        { japanese: 'はい', english: 'yes' },
+        { japanese: 'いいえ', english: 'no' },
+        { japanese: 'わたし', english: 'i' }
     ],
     2: [ // Practice Round 1 (same as round 1)
-        { japanese: 'dog', english: 'dog' },
-        { japanese: 'cat', english: 'cat' },
-        { japanese: 'house', english: 'house' },
-        { japanese: 'car', english: 'car' },
-        { japanese: 'water', english: 'water' }
+        { japanese: 'こんにちは', english: 'hi' },
+        { japanese: 'ください', english: 'please' },
+        { japanese: 'はい', english: 'yes' },
+        { japanese: 'いいえ', english: 'no' },
+        { japanese: 'わたし', english: 'i' }
     ],
     3: [ // Introduction Round 2
-        { japanese: 'book', english: 'book' },
-        { japanese: 'desk', english: 'desk' },
-        { japanese: 'phone', english: 'phone' },
-        { japanese: 'window', english: 'window' },
-        { japanese: 'clock', english: 'clock' }
+        { japanese: 'これ', english: 'this' },
+        { japanese: 'それ', english: 'that' },
+        { japanese: 'ここ', english: 'here' },
+        { japanese: 'そこ', english: 'there' },
+        { japanese: 'どこ', english: 'where' }
     ],
     4: [ // Practice Round 2 (rounds 1 + 3 combined)
-        { japanese: 'dog', english: 'dog' },
-        { japanese: 'cat', english: 'cat' },
-        { japanese: 'house', english: 'house' },
-        { japanese: 'car', english: 'car' },
-        { japanese: 'water', english: 'water' },
-        { japanese: 'book', english: 'book' },
-        { japanese: 'desk', english: 'desk' },
-        { japanese: 'phone', english: 'phone' },
-        { japanese: 'window', english: 'window' },
-        { japanese: 'clock', english: 'clock' }
+        { japanese: 'こんにちは', english: 'hi' },
+        { japanese: 'ください', english: 'please' },
+        { japanese: 'はい', english: 'yes' },
+        { japanese: 'いいえ', english: 'no' },
+        { japanese: 'わたし', english: 'i' },
+        { japanese: 'これ', english: 'this' },
+        { japanese: 'それ', english: 'that' },
+        { japanese: 'ここ', english: 'here' },
+        { japanese: 'そこ', english: 'there' },
+        { japanese: 'どこ', english: 'where' }
     ],
     5: [ // Introduction Round 3
         { japanese: 'tree', english: 'tree' },
@@ -52,16 +52,16 @@ const wordPools = {
         { japanese: 'sun', english: 'sun' }
     ],
     6: [ // Practice Round 3 (rounds 1 + 3 + 5 combined)
-        { japanese: 'dog', english: 'dog' },
-        { japanese: 'cat', english: 'cat' },
-        { japanese: 'house', english: 'house' },
-        { japanese: 'car', english: 'car' },
-        { japanese: 'water', english: 'water' },
-        { japanese: 'book', english: 'book' },
-        { japanese: 'desk', english: 'desk' },
-        { japanese: 'phone', english: 'phone' },
-        { japanese: 'window', english: 'window' },
-        { japanese: 'clock', english: 'clock' },
+        { japanese: 'こんにちは', english: 'hi' },
+        { japanese: 'ください', english: 'please' },
+        { japanese: 'はい', english: 'yes' },
+        { japanese: 'いいえ', english: 'no' },
+        { japanese: 'わたし', english: 'i' },
+        { japanese: 'これ', english: 'this' },
+        { japanese: 'それ', english: 'that' },
+        { japanese: 'ここ', english: 'here' },
+        { japanese: 'そこ', english: 'there' },
+        { japanese: 'どこ', english: 'where' },
         { japanese: 'tree', english: 'tree' },
         { japanese: 'flower', english: 'flower' },
         { japanese: 'mountain', english: 'mountain' },
@@ -84,7 +84,7 @@ const currentQuestionSpan = document.getElementById('current-question');
 const totalQuestionsSpan = document.getElementById('total-questions');
 const japaneseWord = document.getElementById('japanese-word');
 const answerInput = document.getElementById('answer-input');
-const submitBtn = document.getElementById('submit-btn');
+
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
 
@@ -132,7 +132,7 @@ answerInput.addEventListener('keypress', (e) => {
     }
 });
 
-submitBtn.addEventListener('click', submitAnswer);
+
 nextRoundBtn.addEventListener('click', nextRound);
 
 // Collapsible section functionality
