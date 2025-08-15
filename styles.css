@@ -1,0 +1,358 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    min-height: 100vh;
+    color: #ffffff;
+}
+
+#app {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px;
+}
+
+.page {
+    display: none;
+    width: 100%;
+    max-width: 800px;
+}
+
+.page.active {
+    display: block;
+}
+
+.container {
+    background: #2a2a2a;
+    border-radius: 0;
+    padding: 40px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    border: 1px solid #404040;
+    margin-bottom: 40px;
+}
+
+/* Text Box Styles */
+.text-box {
+    margin-bottom: 30px;
+    background: #2a2a2a;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.text-box-header {
+    background: #1a1a1a;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.text-box-content {
+    padding: 20px;
+    text-align: left;
+    background: #2a2a2a;
+}
+
+.text-box-content.collapsed {
+    display: none;
+}
+
+.collapse-btn {
+    background: none;
+    border: none;
+    color: #00bfff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: transform 0.2s ease;
+}
+
+.collapse-btn:hover {
+    color: #0080ff;
+}
+
+.collapse-btn.rotated {
+    transform: rotate(180deg);
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    font-style: italic;
+}
+
+.subtitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 0;
+    font-style: italic;
+}
+
+.body-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #cccccc;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.practice-btn, .script-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #404040;
+    color: #cccccc;
+}
+
+.practice-btn.primary {
+    background: #233549;
+    color: #A4D8FF;
+    box-shadow: 0 4px 15px rgba(35, 53, 73, 0.2);
+}
+
+.practice-btn.primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(35, 53, 73, 0.3);
+}
+
+.practice-btn.disabled, .script-btn.disabled {
+    background: #333333;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.script-btn {
+    background: linear-gradient(135deg, #00bfff, #0080ff);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 191, 255, 0.2);
+}
+
+.script-btn:hover:not(.disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.3);
+}
+
+.back-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background: #404040;
+    color: #cccccc;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 20px;
+}
+
+.back-btn:hover {
+    background: #505050;
+}
+
+/* Game Page Styles */
+#game-header {
+    margin-bottom: 40px;
+}
+
+#round-title {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    color: #ffffff;
+    position: relative;
+    padding: 10px 0;
+}
+
+#round-title::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -20px;
+    right: -20px;
+    height: 100%;
+    background: #1a1a1a;
+    z-index: -1;
+}
+
+#progress-info {
+    font-size: 1.2rem;
+    color: #cccccc;
+    font-weight: 500;
+}
+
+#game-content {
+    margin: 40px 0;
+}
+
+#correct-answer-display {
+    font-size: 1.1rem;
+    color: #000000;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding: 8px 16px;
+    background: #ffffff;
+    border-radius: 0;
+    border: 1px solid #e0e0e0;
+    display: inline-block;
+    max-width: fit-content;
+}
+
+#correct-answer-display.hidden {
+    display: none;
+}
+
+.japanese-text {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 30px 0;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Hiragino Kaku Gothic Pro', 'Yu Gothic', 'Meiryo', sans-serif;
+}
+
+.input-container {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    margin: 30px 0;
+}
+
+#answer-input {
+    padding: 20px 25px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 0;
+    width: 300px;
+    transition: all 0.2s ease;
+    outline: none;
+    background: #333333;
+    color: #ffffff;
+    height: 60px;
+}
+
+#answer-input::placeholder {
+    color: #888888;
+}
+
+#answer-input:focus {
+    background: #404040;
+    box-shadow: 0 0 0 2px rgba(0, 191, 255, 0.1);
+}
+
+#answer-input.error {
+    background: #3a2a2a;
+    box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.3);
+}
+
+#submit-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #00bfff, #0080ff);
+    color: white;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 191, 255, 0.2);
+}
+
+#submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.3);
+}
+
+#game-controls {
+    margin-top: 40px;
+}
+
+.next-round-btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;
+}
+
+.next-round-btn:not(.disabled) {
+    background: linear-gradient(135deg, #00bfff, #0080ff);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 191, 255, 0.2);
+}
+
+.next-round-btn:not(.disabled):hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.3);
+}
+
+.next-round-btn.disabled {
+    background: #333333;
+    color: #666666;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .title {
+        font-size: 2rem;
+    }
+    
+    .subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .japanese-text {
+        font-size: 2rem;
+    }
+    
+    .input-container {
+        flex-direction: column;
+    }
+    
+    #answer-input {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .button-container {
+        gap: 10px;
+    }
+    
+    .practice-btn, .script-btn {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+}

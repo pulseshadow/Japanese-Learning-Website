@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Learning - Brute Force Mode</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Start Page -->
+        <div id="start-page" class="page active">
+            <!-- Title Section -->
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h1 class="title">Title</h1>
+                    <button class="collapse-btn" onclick="toggleSection('title-content')">▼</button>
+                </div>
+                <div id="title-content" class="text-box-content">
+                    <p class="body-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                    </p>
+                    <p class="body-text">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- About Section -->
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle">About</h2>
+                    <button class="collapse-btn" onclick="toggleSection('about-content')">▼</button>
+                </div>
+                <div id="about-content" class="text-box-content">
+                    <p class="body-text">
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                    </p>
+                    <p class="body-text">
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                    </p>
+                    <p class="body-text">
+                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Practice Section -->
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle">Practice</h2>
+                    <button class="collapse-btn" onclick="toggleSection('practice-content')">▼</button>
+                </div>
+                <div id="practice-content" class="text-box-content">
+                    <div class="button-container">
+                        <button id="brute-force-btn" class="practice-btn primary">Brute Force Mode</button>
+                        <button class="practice-btn disabled">Coming Soon</button>
+                        <button class="practice-btn disabled">Coming Soon</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Script Selection Page -->
+        <div id="script-page" class="page">
+            <div class="container">
+                <h2 class="subtitle">Choose Script</h2>
+                <div class="button-container">
+                    <button id="hiragana-btn" class="script-btn">Hiragana</button>
+                    <button id="katakana-btn" class="script-btn disabled">Katakana</button>
+                </div>
+                <button id="back-to-start" class="back-btn">← Back to Start</button>
+            </div>
+        </div>
+
+        <!-- Game Page -->
+        <div id="game-page" class="page">
+            <div class="container">
+                <div id="game-header">
+                    <h2 id="round-title">Introduction Round</h2>
+                    <div id="progress-info">
+                        <span id="current-question">1</span> / <span id="total-questions">5</span>
+                    </div>
+                </div>
+
+                <div id="game-content">
+                    <div id="correct-answer-display" class="hidden"></div>
+                    <div id="japanese-word" class="japanese-text"></div>
+                    <div class="input-container">
+                        <input type="text" id="answer-input" placeholder="Type your answer..." autocomplete="off">
+                        <button id="submit-btn">Submit</button>
+                    </div>
+                </div>
+
+                <div id="game-controls">
+                    <button id="next-round-btn" class="next-round-btn disabled">Next Round</button>
+                    <button id="back-to-script" class="back-btn">← Back to Script Selection</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
