@@ -90,3 +90,4 @@ A modern, responsive website for learning Japanese words through brute-force rep
 ## Getting Started
 
 Simply open `index.html` in any modern web browser to start learning Japanese words!
+

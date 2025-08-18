@@ -8,12 +8,44 @@
 </head>
 <body>
     <div id="app">
+        <!-- Settings and Language Controls -->
+        <div class="top-controls">
+            <div class="settings-container">
+                <button id="settings-btn" class="settings-btn" title="Settings">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                    </svg>
+                </button>
+                <div id="settings-panel" class="settings-panel hidden">
+                    <div class="settings-section">
+                        <h3 data-en="Theme" data-es="Tema" data-fr="Thème" data-ja="テーマ">Theme</h3>
+                        <div class="theme-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="theme-toggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-label" data-en="Light Mode" data-es="Modo Claro" data-fr="Mode Clair" data-ja="ライトモード">Light Mode</span>
+                        </div>
+                    </div>
+                    <div class="settings-section">
+                        <h3 data-en="Language" data-es="Idioma" data-fr="Langue" data-ja="言語">Language</h3>
+                        <div class="language-buttons">
+                            <button class="lang-btn active" data-lang="en">English</button>
+                            <button class="lang-btn" data-lang="es">Español</button>
+                            <button class="lang-btn" data-lang="fr">Français</button>
+                            <button class="lang-btn" data-lang="ja">日本語</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Start Page -->
         <div id="start-page" class="page active">
             <!-- Title Section -->
             <div class="text-box">
                 <div class="text-box-header">
-                    <h1 class="title">Title</h1>
+                    <h1 class="title" data-en="Title" data-es="Título" data-fr="Titre" data-ja="タイトル">Title</h1>
                     <button class="collapse-btn" onclick="toggleSection('title-content')">▼</button>
                 </div>
                 <div id="title-content" class="text-box-content">
@@ -29,7 +61,7 @@
             <!-- About Section -->
             <div class="text-box">
                 <div class="text-box-header">
-                    <h2 class="subtitle">About</h2>
+                    <h2 class="subtitle" data-en="About" data-es="Acerca de" data-fr="À propos" data-ja="について">About</h2>
                     <button class="collapse-btn" onclick="toggleSection('about-content')">▼</button>
                 </div>
                 <div id="about-content" class="text-box-content">
@@ -48,14 +80,14 @@
             <!-- Practice Section -->
             <div class="text-box">
                 <div class="text-box-header">
-                    <h2 class="subtitle">Practice</h2>
+                    <h2 class="subtitle" data-en="Practice" data-es="Práctica" data-fr="Pratique" data-ja="練習">Practice</h2>
                     <button class="collapse-btn" onclick="toggleSection('practice-content')">▼</button>
                 </div>
                 <div id="practice-content" class="text-box-content">
                     <div class="button-container">
-                        <button id="brute-force-btn" class="practice-btn primary">Brute Force Mode</button>
-                        <button class="practice-btn disabled">Coming Soon</button>
-                        <button class="practice-btn disabled">Coming Soon</button>
+                        <button id="brute-force-btn" class="practice-btn primary" data-en="Brute Force Mode" data-es="Modo Fuerza Bruta" data-fr="Mode Force Brute" data-ja="ブルートフォースモード">Brute Force Mode</button>
+                        <button id="custom-mode-btn" class="practice-btn" data-en="Custom Mode" data-es="Modo Personalizado" data-fr="Mode Personnalisé" data-ja="カスタムモード">Custom Mode</button>
+                        <button class="practice-btn disabled" data-en="Coming Soon" data-es="Próximamente" data-fr="Bientôt" data-ja="近日公開">Coming Soon</button>
                     </div>
                 </div>
             </div>
@@ -63,36 +95,134 @@
 
         <!-- Script Selection Page -->
         <div id="script-page" class="page">
-            <div class="container">
-                <h2 class="subtitle">Choose Script</h2>
-                <div class="button-container">
-                    <button id="hiragana-btn" class="script-btn">Hiragana</button>
-                    <button id="katakana-btn" class="script-btn disabled">Katakana</button>
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle" data-en="Choose Script" data-es="Elegir Escritura" data-fr="Choisir l'Écriture" data-ja="文字を選択">Choose Script</h2>
                 </div>
-                <button id="back-to-start" class="back-btn">← Back to Start</button>
+                <div class="text-box-content">
+                    <div class="button-container">
+                        <button id="hiragana-btn" class="script-btn" data-en="Hiragana" data-es="Hiragana" data-fr="Hiragana" data-ja="ひらがな">Hiragana</button>
+                        <button id="katakana-btn" class="script-btn disabled" data-en="Katakana" data-es="Katakana" data-fr="Katakana" data-ja="カタカナ">Katakana</button>
+                    </div>
+                    <button id="back-to-start" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                </div>
             </div>
         </div>
 
         <!-- Game Page -->
         <div id="game-page" class="page">
-            <div class="game-header">
-                <h2 id="round-title">Introduction Round</h2>
-                <div class="progress-info">
-                    <span id="current-question">1</span> / <span id="total-questions">5</span>
+            <div class="game-box">
+                <div class="game-box-header">
+                    <div class="header-top-row">
+                        <h2 id="round-title" data-en="Introduction Round" data-es="Ronda de Introducción" data-fr="Ronde d'Introduction" data-ja="導入ラウンド">Introduction Round</h2>
+                        <div class="round-selection-container">
+                            <select id="round-selector" class="round-selector">
+                                <option value="1" data-en="Introduction Round 1" data-es="Ronda de Introducción 1" data-fr="Ronde d'Introduction 1" data-ja="導入ラウンド1">Introduction Round 1</option>
+                                <option value="2" data-en="Practice Round 1" data-es="Ronda de Práctica 1" data-fr="Ronde de Pratique 1" data-ja="練習ラウンド1">Practice Round 1</option>
+                                <option value="3" data-en="Introduction Round 2" data-es="Ronda de Introducción 2" data-fr="Ronde d'Introduction 2" data-ja="導入ラウンド2">Introduction Round 2</option>
+                                <option value="4" data-en="Practice Round 2" data-es="Ronda de Práctica 2" data-fr="Ronde de Pratique 2" data-ja="練習ラウンド2">Practice Round 2</option>
+                                <option value="5" data-en="Introduction Round 3" data-es="Ronda de Introducción 3" data-fr="Ronde d'Introduction 3" data-ja="導入ラウンド3">Introduction Round 3</option>
+                                <option value="6" data-en="Practice Round 3" data-es="Ronda de Práctica 3" data-fr="Ronde de Pratique 3" data-ja="練習ラウンド3">Practice Round 3</option>
+                                <option value="7" data-en="Introduction Round 4" data-es="Ronda de Introducción 4" data-fr="Ronde d'Introduction 4" data-ja="導入ラウンド4">Introduction Round 4</option>
+                                <option value="8" data-en="Practice Round 4" data-es="Ronda de Práctica 4" data-fr="Ronde de Pratique 4" data-ja="練習ラウンド4">Practice Round 4</option>
+                                <option value="9" data-en="Introduction Round 5" data-es="Ronda de Introducción 5" data-fr="Ronde d'Introduction 5" data-ja="導入ラウンド5">Introduction Round 5</option>
+                                <option value="10" data-en="Practice Round 5" data-es="Ronda de Práctica 5" data-fr="Ronde de Pratique 5" data-ja="練習ラウンド5">Practice Round 5</option>
+                                <option value="11" data-en="Introduction Round 6" data-es="Ronda de Introducción 6" data-fr="Ronde d'Introduction 6" data-ja="導入ラウンド6">Introduction Round 6</option>
+                                <option value="12" data-en="Practice Round 6" data-es="Ronda de Práctica 6" data-fr="Ronde de Pratique 6" data-ja="練習ラウンド6">Practice Round 6</option>
+                                <option value="13" data-en="Introduction Round 7" data-es="Ronda de Introducción 7" data-fr="Ronde d'Introduction 7" data-ja="導入ラウンド7">Introduction Round 7</option>
+                                <option value="14" data-en="Practice Round 7" data-es="Ronda de Práctica 7" data-fr="Ronde de Pratique 7" data-ja="練習ラウンド7">Practice Round 7</option>
+                                <option value="15" data-en="Introduction Round 8" data-es="Ronda de Introducción 8" data-fr="Ronde d'Introduction 8" data-ja="導入ラウンド8">Introduction Round 8</option>
+                                <option value="16" data-en="Practice Round 8" data-es="Ronda de Práctica 8" data-fr="Ronde de Pratique 8" data-ja="練習ラウンド8">Practice Round 8</option>
+                                <option value="17" data-en="Introduction Round 9" data-es="Ronda de Introducción 9" data-fr="Ronde d'Introduction 9" data-ja="導入ラウンド9">Introduction Round 9</option>
+                                <option value="18" data-en="Practice Round 9" data-es="Ronda de Práctica 9" data-fr="Ronde de Pratique 9" data-ja="練習ラウンド9">Practice Round 9</option>
+                            </select>
+                            <div class="round-selector-help" data-en="(Skip to later rounds here!)" data-es="(¡Salta a rondas posteriores aquí!)" data-fr="(Passez aux tours suivants ici !)" data-ja="（後でラウンドにスキップ！）">(Skip to later rounds here!)</div>
+                        </div>
+                    </div>
+                    <div class="phase-label" id="phase-label" data-en="Words To Learn" data-es="Palabras Para Aprender" data-fr="Mots À Apprendre" data-ja="学習する単語">Words To Learn</div>
+                </div>
+                
+                <div class="game-box-content">
+                    <div class="game-content">
+                        <div id="correct-answer-display" class="hidden"></div>
+                        <div id="japanese-word" class="japanese-text"></div>
+                        <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off" data-en-placeholder="Type your answer here..." data-es-placeholder="Escribe tu respuesta aquí..." data-fr-placeholder="Tapez votre respuesta aquí..." data-ja-placeholder="ここに答えを入力してください...">
+                    </div>
+                    
+                    <div class="game-footer">
+                        <div class="progress-section">
+                            <div class="progress-info">
+                                <span id="current-question">1</span> / <span id="total-questions">5</span>
+                            </div>
+                            <div class="phase-progress" id="phase-progress"></div>
+                        </div>
+                        
+                        <div class="button-section">
+                            <button id="next-round-btn" class="next-round-btn disabled" data-en="Next Round" data-es="Siguiente Ronda" data-fr="Ronde Suivante" data-ja="次のラウンド">Next Round</button>
+                            <div class="round-progress" id="round-progress"></div>
+                        </div>
+                        
+                        <button id="back-to-script" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
+                    </div>
                 </div>
             </div>
-            
-            <div class="game-content">
-                <div id="correct-answer-display" class="hidden"></div>
-                <div id="japanese-word" class="japanese-text"></div>
-                <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off">
+        </div>
+
+        <!-- Custom Mode Page -->
+        <div id="custom-mode-page" class="page">
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle" data-en="Custom Mode" data-es="Modo Personalizado" data-fr="Mode Personnalisé" data-ja="カスタムモード">Custom Mode</h2>
+                </div>
+                <div class="text-box-content">
+                    <div id="custom-rounds-container">
+                        <div class="custom-round" data-round="1">
+                            <div class="custom-round-header" onclick="toggleCustomRound(1)">
+                                <h3 data-en="Introduction Round 1" data-es="Ronda de Introducción 1" data-fr="Ronde d'Introduction 1" data-ja="導入ラウンド1">Introduction Round 1</h3>
+                                <button class="collapse-btn">▼</button>
+                            </div>
+                            
+                            <div class="custom-round-content" id="round-content-1">
+                                <p data-en="Please select the words you'd like to include in this round." data-es="Por favor selecciona las palabras que quieres incluir en esta ronda." data-fr="Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronda." data-ja="このラウンドに含めたい単語を選択してください。">Please select the words you'd like to include in this round.</p>
+                                
+                                <div class="word-selection-grid" id="word-selection-1">
+                                    <!-- Word checkboxes will be populated by JavaScript -->
+                                </div>
+                                
+                                <div class="custom-word-section">
+                                    <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
+                                    <div class="custom-word-inputs hidden">
+                                        <div class="input-row">
+                                            <input type="text" class="japanese-word-input" placeholder="Japanese Word" data-en-placeholder="Japanese Word" data-es-placeholder="Palabra Japonesa" data-fr-placeholder="Mot Japonais" data-ja-placeholder="日本語の単語">
+                                            <input type="text" class="english-translation-input" placeholder="English Translation (Correct Answer)" data-en-placeholder="English Translation (Correct Answer)" data-es-placeholder="Traducción al Inglés (Respuesta Correcta)" data-fr-placeholder="Traduction Anglaise (Réponse Correcte)" data-ja-placeholder="英語訳（正解）">
+                                            <button class="add-word-btn" data-en="Add" data-es="Agregar" data-fr="Ajouter" data-ja="追加">Add</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="custom-mode-controls">
+                        <div class="round-controls">
+                            <button id="remove-round-btn" class="practice-btn small" data-en="Remove Round" data-es="Eliminar Ronda" data-fr="Supprimer une Ronde" data-ja="ラウンドを削除">Remove Round</button>
+                            <button id="add-round-btn" class="practice-btn small" data-en="Add Round" data-es="Agregar Ronda" data-fr="Ajouter une Ronde" data-ja="ラウンドを追加">Add Round</button>
+                        </div>
+                        
+                        <button id="start-custom-run-btn" class="practice-btn primary" data-en="Start Custom Run" data-es="Iniciar Ejecución Personalizada" data-fr="Démarrer la Course Personnalisée" data-ja="カスタム実行を開始">Start Custom Run</button>
+                        
+                        <div class="practice-rounds-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="disable-practice-rounds">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-label" data-en="No Practice Rounds (Not Recommended)" data-es="Sin Rondas de Práctica (No Recomendado)" data-fr="Pas de Rondes de Pratique (Non Recommandé)" data-ja="練習ラウンドなし（推奨されません）">No Practice Rounds (Not Recommended)</span>
+                        </div>
+                    </div>
+                    
+                    <button id="back-to-start-from-custom" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                </div>
             </div>
-            
-            <div class="game-footer">
-                <button id="next-round-btn" class="next-round-btn disabled">Next Round</button>
-            </div>
-            
-            <button id="back-to-script" class="back-btn">← Back to Script Selection</button>
         </div>
     </div>
 
