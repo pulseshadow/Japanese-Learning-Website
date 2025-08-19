@@ -36,6 +36,21 @@
                             <button class="lang-btn" data-lang="ja">日本語</button>
                         </div>
                     </div>
+                    
+                    <div class="settings-section">
+                        <h3 data-en="Cookie Consent" data-es="Consentimiento de Cookies" data-fr="Consentement aux Cookies" data-ja="クッキー同意">Cookie Consent</h3>
+                        <p data-en="Manage your cookie preferences for analytics and advertising." data-es="Gestiona tus preferencias de cookies para análisis y publicidad." data-fr="Gérez vos préférences de cookies pour l'analyse et la publicité." data-ja="分析と広告のためのクッキー設定を管理します。">
+                            Manage your cookie preferences for analytics and advertising.
+                        </p>
+                        <div class="cookie-consent-controls">
+                            <button id="accept-cookies-settings-btn" class="settings-btn" data-en="Accept Non-Essential Cookies" data-es="Aceptar Cookies No Esenciales" data-fr="Accepter les Cookies Non Essentiels" data-ja="非必須クッキーを受け入れる">Accept Non-Essential Cookies</button>
+                            <button id="revoke-cookies-settings-btn" class="settings-btn" data-en="Revoke Cookie Consent" data-es="Revocar Consentimiento de Cookies" data-fr="Révoquer le Consentement aux Cookies" data-ja="クッキー同意を取り消す">Revoke Cookie Consent</button>
+                        </div>
+                        <div class="cookie-status">
+                            <span data-en="Current Status: " data-es="Estado Actual: " data-fr="Statut Actuel: " data-ja="現在の状態: ">Current Status: </span>
+                            <span id="cookie-status-text" data-en="Loading..." data-es="Cargando..." data-fr="Chargement..." data-ja="読み込み中...">Loading...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -348,33 +363,169 @@
                     </div>
                 </div>
                 
-                <div class="cookie-options">
-                    <div class="cookie-option">
-                        <label class="cookie-checkbox">
-                            <input type="checkbox" id="analytics-cookies" checked disabled>
-                            <span class="checkmark"></span>
-                            <span class="cookie-label" data-en="Analytics Cookies (Required)" data-es="Cookies de Análisis (Requeridas)" data-fr="Cookies d'Analyse (Requis)" data-ja="分析クッキー（必須）">Analytics Cookies (Required)</span>
-                        </label>
-                        <p class="cookie-description" data-en="These cookies help us understand how visitors interact with our website." data-es="Estas cookies nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web." data-fr="Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site web." data-ja="これらのクッキーは、訪問者が私たちのウェブサイトとどのように相互作用するかを理解するのに役立ちます。">
-                            These cookies help us understand how visitors interact with our website.
-                        </p>
-                    </div>
+                <div class="cookie-explanation">
+                    <p data-en="These are some non-essential cookies for tracking analytics to help me improve my site and know how users are using it. They're also for ad personalization and targeting, which is- simply put- supposed to give you ads you'd like and are more likely to click on. Pick below whether or not you'd like to accept these cookies, they're optional. You can revoke your consent whenever you'd like in settings (top right corner of your screen.)" data-es="Estas son algunas cookies no esenciales para rastrear análisis que me ayudan a mejorar mi sitio y saber cómo los usuarios lo están usando. También son para personalización y orientación de anuncios, que, en pocas palabras, se supone que te dan anuncios que te gustarían y es más probable que hagas clic. Elige a continuación si quieres aceptar estas cookies o no, son opcionales. Puedes revocar tu consentimiento cuando quieras en la configuración (esquina superior derecha de tu pantalla)." data-fr="Ce sont des cookies non essentiels pour le suivi des analyses qui m'aident à améliorer mon site et à savoir comment les utilisateurs l'utilisent. Ils servent également à la personnalisation et au ciblage des publicités, qui, en termes simples, sont censés vous donner des publicités que vous aimeriez et que vous êtes plus susceptibles de cliquer. Choisissez ci-dessous si vous souhaitez accepter ces cookies ou non, ils sont optionnels. Vous pouvez révoquer votre consentement à tout moment dans les paramètres (coin supérieur droit de votre écran)." data-ja="これらは、サイトを改善し、ユーザーがどのように使用しているかを知るのに役立つ分析追跡のための非必須クッキーです。また、広告のパーソナライゼーションとターゲティングのためでもあり、簡単に言えば、あなたが好きで、クリックする可能性が高い広告を提供することになっています。これらのクッキーを受け入れるかどうかを下で選択してください、それらはオプションです。設定（画面の右上隅）でいつでも同意を取り消すことができます。">
+                        These are some non-essential cookies for tracking analytics to help me improve my site and know how users are using it. They're also for ad personalization and targeting, which is- simply put- supposed to give you ads you'd like and are more likely to click on. Pick below whether or not you'd like to accept these cookies, they're optional. You can revoke your consent whenever you'd like in settings (top right corner of your screen.)
+                    </p>
                     
-                    <div class="cookie-option">
-                        <label class="cookie-checkbox">
-                            <input type="checkbox" id="advertising-cookies">
-                            <span class="checkmark"></span>
-                            <span class="cookie-label" data-en="Advertising Cookies (Optional)" data-es="Cookies de Publicidad (Opcionales)" data-fr="Cookies Publicitaires (Optionnels)" data-ja="広告クッキー（オプション）">Advertising Cookies (Optional)</span>
-                        </label>
-                        <p class="cookie-description" data-en="These cookies are used to deliver personalized advertisements." data-es="Estas cookies se utilizan para entregar anuncios personalizados." data-fr="Ces cookies sont utilisés pour diffuser des publicités personnalisées." data-ja="これらのクッキーは、パーソナライズされた広告を配信するために使用されます。">
-                            These cookies are used to deliver personalized advertisements.
-                        </p>
-                    </div>
+                    <p data-en="These cookies aren't for storing data like your dark mode toggle or custom rounds, thats stored in your local storage, which you can delete at any time." data-es="Estas cookies no son para almacenar datos como tu alternador de modo oscuro o rondas personalizadas, eso se almacena en tu almacenamiento local, que puedes eliminar en cualquier momento." data-fr="Ces cookies ne servent pas à stocker des données comme votre bascule de mode sombre ou vos tours personnalisés, cela est stocké dans votre stockage local, que vous pouvez supprimer à tout moment." data-ja="これらのクッキーは、ダークモードの切り替えやカスタムラウンドなどのデータを保存するためのものではありません。それらはローカルストレージに保存されており、いつでも削除できます。">
+                        These cookies aren't for storing data like your dark mode toggle or custom rounds, thats stored in your local storage, which you can delete at any time.
+                    </p>
                 </div>
+                
+
             </div>
             <div class="cookie-actions">
                 <button id="reject-cookies-btn" class="cookie-btn reject-btn" data-en="Reject Cookies" data-es="Rechazar Cookies" data-fr="Rejeter les Cookies" data-ja="クッキーを拒否">Reject Cookies</button>
                 <button id="accept-cookies-btn" class="cookie-btn accept-btn" data-en="Accept All Cookies" data-es="Aceptar Todas las Cookies" data-fr="Accepter Tous les Cookies" data-ja="すべてのクッキーを受け入れる">Accept All Cookies</button>
+            </div>
+            
+            <div class="cookie-footer">
+                <p data-en="Here's the sites Privacy Policy and Terms Of Service, click either respective words to see their respective information." data-es="Aquí está la Política de Privacidad y los Términos de Servicio del sitio, haz clic en cualquiera de las palabras respectivas para ver su información respectiva." data-fr="Voici la Politique de Confidentialité et les Conditions de Service du site, cliquez sur l'un ou l'autre des mots respectifs pour voir leurs informations respectives." data-ja="サイトのプライバシーポリシーと利用規約はこちらです。それぞれの単語をクリックして、それぞれの情報を確認してください。">
+                    Here's the sites Privacy Policy and Terms Of Service, click either respective words to see their respective information.
+                </p>
+                <div class="cookie-links">
+                    <a href="#" class="privacy-link" data-en="Privacy Policy" data-es="Política de Privacidad" data-fr="Politique de Confidentialité" data-ja="プライバシーポリシー">Privacy Policy</a>
+                    <span data-en=" and " data-es=" y " data-fr=" et " data-ja=" と "> and </span>
+                    <a href="#" class="terms-link" data-en="Terms Of Service" data-es="Términos de Servicio" data-fr="Conditions de Service" data-ja="利用規約">Terms Of Service</a>
+                    <span data-en=" for " data-es=" para " data-fr=" pour " data-ja=" 用の "> for </span>
+                    <span class="site-name">"LearnJapaneseWords"</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Page -->
+    <div id="privacy-policy-page" class="policy-page hidden">
+        <div class="policy-container">
+            <div class="policy-header">
+                <h1 data-en="Privacy Policy" data-es="Política de Privacidad" data-fr="Politique de Confidentialité" data-ja="プライバシーポリシー">Privacy Policy</h1>
+                <h2 data-en="For "LearnJapaneseWords"" data-es="Para "LearnJapaneseWords"" data-fr="Pour "LearnJapaneseWords"" data-ja=""LearnJapaneseWords"用">For "LearnJapaneseWords"</h2>
+            </div>
+            <div class="policy-content">
+                <div class="policy-section">
+                    <p class="policy-date" data-en="Last updated: August 2025" data-es="Última actualización: Agosto 2025" data-fr="Dernière mise à jour : Août 2025" data-ja="最終更新：2025年8月">Last updated: August 2025</p>
+                    
+                    <p data-en="At Learn Japanese Words (https://learnjapanesewords.netlify.app), your privacy is important to us. This policy explains what information we collect, how we use it, and your rights." data-es="En Learn Japanese Words (https://learnjapanesewords.netlify.app), su privacidad es importante para nosotros. Esta política explica qué información recopilamos, cómo la usamos y sus derechos." data-fr="Che Learn Japanese Words (https://learnjapanesewords.netlify.app), votre vie privée est importante pour nous. Cette politique explique quelles informations nous collectons, comment nous les utilisons et vos droits." data-ja="Learn Japanese Words (https://learnjapanesewords.netlify.app)では、あなたのプライバシーが重要です。このポリシーは、私たちが収集する情報、その使用方法、およびあなたの権利について説明しています。">
+                        At Learn Japanese Words (https://learnjapanesewords.netlify.app), your privacy is important to us. This policy explains what information we collect, how we use it, and your rights.
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="1. Information We Collect" data-es="1. Información que Recopilamos" data-fr="1. Informations que Nous Collectons" data-ja="1. 収集する情報">1. Information We Collect</h3>
+                    
+                    <h4 data-en="a) Essential Data (Local Storage)" data-es="a) Datos Esenciales (Almacenamiento Local)" data-fr="a) Données Essentielles (Stockage Local)" data-ja="a) 必須データ（ローカルストレージ）">a) Essential Data (Local Storage)</h4>
+                    <ul>
+                        <li data-en="Dark mode preference" data-es="Preferencia de modo oscuro" data-fr="Préférence de mode sombre" data-ja="ダークモードの設定">Dark mode preference</li>
+                        <li data-en="Custom words you create" data-es="Palabras personalizadas que creas" data-fr="Mots personnalisés que vous créez" data-ja="作成したカスタム単語">Custom words you create</li>
+                        <li data-en="Quiz statistics (total questions answered correctly/incorrectly)" data-es="Estadísticas del cuestionario (total de preguntas respondidas correcta/incorrectamente)" data-fr="Statistiques du quiz (total des questions répondues correctement/incorrectement)" data-ja="クイズ統計（正解/不正解の総質問数）">Quiz statistics (total questions answered correctly/incorrectly)</li>
+                    </ul>
+                    <p data-en="These are stored locally in your browser and do not use cookies. They are necessary for the website to function as intended. This data persists indefinitely unless you delete it from your browser." data-es="Estos se almacenan localmente en su navegador y no usan cookies. Son necesarios para que el sitio web funcione como se pretende. Estos datos persisten indefinidamente a menos que los elimine de su navegador." data-fr="Ceux-ci sont stockés localement dans votre navigateur et n'utilisent pas de cookies. Ils sont nécessaires au bon fonctionnement du site web. Ces données persistent indéfiniment sauf si vous les supprimez de votre navigateur." data-ja="これらはブラウザにローカルに保存され、クッキーは使用しません。これらは、ウェブサイトが意図した通りに機能するために必要です。このデータは、ブラウザから削除しない限り無期限に保持されます。">
+                        These are stored locally in your browser and do not use cookies. They are necessary for the website to function as intended. This data persists indefinitely unless you delete it from your browser.
+                    </p>
+
+                    <h4 data-en="b) Non-Essential Data (Cookies)" data-es="b) Datos No Esenciales (Cookies)" data-fr="b) Données Non Essentielles (Cookies)" data-ja="b) 非必須データ（クッキー）">b) Non-Essential Data (Cookies)</h4>
+                    <ul>
+                        <li data-en="Google Analytics: tracks how users interact with the site (pages visited, time spent, etc.)" data-es="Google Analytics: rastrea cómo los usuarios interactúan con el sitio (páginas visitadas, tiempo dedicado, etc.)" data-fr="Google Analytics : suit comment les utilisateurs interagissent avec le site (pages visitées, temps passé, etc.)" data-ja="Google Analytics：ユーザーがサイトとどのように相互作用するかを追跡（訪問したページ、費やした時間など）">Google Analytics: tracks how users interact with the site (pages visited, time spent, etc.)</li>
+                        <li data-en="Google AdSense: tracks ad impressions and clicks to deliver personalized ads" data-es="Google AdSense: rastrea impresiones y clics de anuncios para entregar anuncios personalizados" data-fr="Google AdSense : suit les impressions et clics publicitaires pour diffuser des publicités personnalisées" data-ja="Google AdSense：パーソナライズされた広告を配信するために広告の表示回数とクリックを追跡">Google AdSense: tracks ad impressions and clicks to deliver personalized ads</li>
+                    </ul>
+                    <p data-en="These cookies are optional, used for analytics and advertising, and require your consent. Consent is stored in your browser for 1 year, and you can revoke it at any time via the settings." data-es="Estas cookies son opcionales, se usan para análisis y publicidad, y requieren su consentimiento. El consentimiento se almacena en su navegador durante 1 año, y puede revocarlo en cualquier momento a través de la configuración." data-fr="Ces cookies sont optionnels, utilisés pour l'analyse et la publicité, et nécessitent votre consentement. Le consentement est stocké dans votre navigateur pendant 1 an, et vous pouvez le révoquer à tout moment via les paramètres." data-ja="これらのクッキーはオプションで、分析と広告に使用され、あなたの同意が必要です。同意はブラウザに1年間保存され、設定でいつでも取り消すことができます。">
+                        These cookies are optional, used for analytics and advertising, and require your consent. Consent is stored in your browser for 1 year, and you can revoke it at any time via the settings.
+                    </p>
+
+                    <h4 data-en="c) Technical Data" data-es="c) Datos Técnicos" data-fr="c) Données Techniques" data-ja="c) 技術データ">c) Technical Data</h4>
+                    <p data-en="IP address, browser type, and other basic server logs collected automatically by Netlify hosting." data-es="Dirección IP, tipo de navegador y otros registros básicos del servidor recopilados automáticamente por el alojamiento de Netlify." data-fr="Adresse IP, type de navigateur et autres journaux de serveur de base collectés automatiquement par l'hébergement Netlify." data-ja="Netlifyホスティングによって自動的に収集されるIPアドレス、ブラウザタイプ、その他の基本的なサーバーログ。">
+                        IP address, browser type, and other basic server logs collected automatically by Netlify hosting.
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="2. How We Use Your Data" data-es="2. Cómo Usamos Sus Datos" data-fr="2. Comment Nous Utilisons Vos Données" data-ja="2. データの使用方法">2. How We Use Your Data</h3>
+                    <ul>
+                        <li data-en="To remember your preferences (dark mode, custom words, quiz stats)" data-es="Para recordar sus preferencias (modo oscuro, palabras personalizadas, estadísticas del cuestionario)" data-fr="Pour mémoriser vos préférences (mode sombre, mots personnalisés, statistiques du quiz)" data-ja="設定を記憶するため（ダークモード、カスタム単語、クイズ統計）">To remember your preferences (dark mode, custom words, quiz stats)</li>
+                        <li data-en="To improve the website via analytics" data-es="Para mejorar el sitio web a través de análisis" data-fr="Pour améliorer le site web via l'analyse" data-ja="分析を通じてウェブサイトを改善するため">To improve the website via analytics</li>
+                        <li data-en="To serve relevant ads if you consent" data-es="Para servir anuncios relevantes si usted consiente" data-fr="Pour diffuser des publicités pertinentes si vous consentez" data-ja="同意した場合に関連する広告を配信するため">To serve relevant ads if you consent</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="3. Sharing Your Data" data-es="3. Compartir Sus Datos" data-fr="3. Partage de Vos Données" data-ja="3. データの共有">3. Sharing Your Data</h3>
+                    <p data-en="We do not sell your personal information. Non-essential cookies may share data with:" data-es="No vendemos su información personal. Las cookies no esenciales pueden compartir datos con:" data-fr="Nous ne vendons pas vos informations personnelles. Les cookies non essentiels peuvent partager des données avec :" data-ja="個人情報を販売することはありません。非必須クッキーは以下のものとデータを共有する場合があります：">
+                        We do not sell your personal information. Non-essential cookies may share data with:
+                    </p>
+                    <ul>
+                        <li data-en="Google for Analytics and AdSense" data-es="Google para Analytics y AdSense" data-fr="Google pour Analytics et AdSense" data-ja="分析とAdSenseのためのGoogle">Google for Analytics and AdSense</li>
+                        <li data-en="Netlify as our hosting provider" data-es="Netlify como nuestro proveedor de alojamiento" data-fr="Netlify en tant que notre fournisseur d'hébergement" data-ja="ホスティングプロバイダーとしてのNetlify">Netlify as our hosting provider</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="4. Your Rights" data-es="4. Sus Derechos" data-fr="4. Vos Droits" data-ja="4. あなたの権利">4. Your Rights</h3>
+                    <ul>
+                        <li data-en="Access or delete your data: You can delete local storage items in your browser at any time." data-es="Acceder o eliminar sus datos: Puede eliminar elementos del almacenamiento local en su navegador en cualquier momento." data-fr="Accéder ou supprimer vos données : Vous pouvez supprimer les éléments du stockage local dans votre navigateur à tout moment." data-ja="データへのアクセスまたは削除：ブラウザのローカルストレージアイテムをいつでも削除できます。">Access or delete your data: You can delete local storage items in your browser at any time.</li>
+                        <li data-en="Revoke cookie consent: Change your choice in the settings (top right corner of the screen)." data-es="Revocar consentimiento de cookies: Cambie su elección en la configuración (esquina superior derecha de la pantalla)." data-fr="Révoquer le consentement aux cookies : Changez votre choix dans les paramètres (coin supérieur droit de l'écran)." data-ja="クッキー同意の取り消し：設定（画面の右上隅）で選択を変更してください。">Revoke cookie consent: Change your choice in the settings (top right corner of the screen).</li>
+                        <li data-en="Contact us at learnjapanesewords.site@gmail.com for any questions about your data." data-es="Contáctenos en learnjapanesewords.site@gmail.com para cualquier pregunta sobre sus datos." data-fr="Contactez-nous à learnjapanesewords.site@gmail.com pour toute question concernant vos données." data-ja="データに関するご質問は、learnjapanesewords.site@gmail.comまでお問い合わせください。">Contact us at learnjapanesewords.site@gmail.com for any questions about your data.</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="5. International Users" data-es="5. Usuarios Internacionales" data-fr="5. Utilisateurs Internationaux" data-ja="5. 国際ユーザー">5. International Users</h3>
+                    <p data-en="Data may be processed outside your country (e.g., by Google or Netlify servers)." data-es="Los datos pueden ser procesados fuera de su país (por ejemplo, por servidores de Google o Netlify)." data-fr="Les données peuvent être traitées en dehors de votre pays (par exemple, par les serveurs Google ou Netlify)." data-ja="データはあなたの国以外で処理される場合があります（例：GoogleやNetlifyのサーバー）。">
+                        Data may be processed outside your country (e.g., by Google or Netlify servers).
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="6. Cookies & Local Storage" data-es="6. Cookies y Almacenamiento Local" data-fr="6. Cookies et Stockage Local" data-ja="6. クッキーとローカルストレージ">6. Cookies & Local Storage</h3>
+                    <ul>
+                        <li data-en="Essential local storage: dark mode, custom words, quiz stats (no consent needed)" data-es="Almacenamiento local esencial: modo oscuro, palabras personalizadas, estadísticas del cuestionario (no se necesita consentimiento)" data-fr="Stockage local essentiel : mode sombre, mots personnalisés, statistiques du quiz (aucun consentement requis)" data-ja="必須ローカルストレージ：ダークモード、カスタム単語、クイズ統計（同意は不要）">Essential local storage: dark mode, custom words, quiz stats (no consent needed)</li>
+                        <li data-en="Non-essential cookies: analytics and ads (consent required, lasts 1 year)" data-es="Cookies no esenciales: análisis y anuncios (se requiere consentimiento, dura 1 año)" data-fr="Cookies non essentiels : analyse et publicités (consentement requis, dure 1 an)" data-ja="非必須クッキー：分析と広告（同意が必要、1年間有効）">Non-essential cookies: analytics and ads (consent required, lasts 1 year)</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="7. Retention" data-es="7. Retención" data-fr="7. Conservation" data-ja="7. 保持">7. Retention</h3>
+                    <ul>
+                        <li data-en="Local storage: persists indefinitely unless deleted by the user" data-es="Almacenamiento local: persiste indefinidamente a menos que sea eliminado por el usuario" data-fr="Stockage local : persiste indéfiniment sauf si supprimé par l'utilisateur" data-ja="ローカルストレージ：ユーザーが削除しない限り無期限に保持">Local storage: persists indefinitely unless deleted by the user</li>
+                        <li data-en="Cookie consent: stored for 1 year" data-es="Consentimiento de cookies: almacenado durante 1 año" data-fr="Consentement aux cookies : stocké pendant 1 an" data-ja="クッキー同意：1年間保存">Cookie consent: stored for 1 year</li>
+                        <li data-en="Analytics and ad data: handled by Google according to their policies" data-es="Datos de análisis y anuncios: manejados por Google según sus políticas" data-fr="Données d'analyse et publicitaires : gérées par Google selon leurs politiques" data-ja="分析と広告データ：Googleのポリシーに従って処理">Analytics and ad data: handled by Google according to their policies</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="8. Changes to This Policy" data-es="8. Cambios a Esta Política" data-fr="8. Modifications de Cette Politique" data-ja="8. このポリシーの変更">8. Changes to This Policy</h3>
+                    <p data-en="We may update this Privacy Policy periodically. The "Last updated" date will reflect the most recent version." data-es="Podemos actualizar esta Política de Privacidad periódicamente. La fecha de "Última actualización" reflejará la versión más reciente." data-fr="Nous pouvons mettre à jour cette Politique de Confidentialité périodiquement. La date de "Dernière mise à jour" reflétera la version la plus récente." data-ja="このプライバシーポリシーは定期的に更新される場合があります。「最終更新」の日付が最新バージョンを反映します。">
+                        We may update this Privacy Policy periodically. The "Last updated" date will reflect the most recent version.
+                    </p>
+                </div>
+
+                <div class="policy-section">
+                    <h3 data-en="9. Contact" data-es="9. Contacto" data-fr="9. Contact" data-ja="9. お問い合わせ">9. Contact</h3>
+                    <p data-en="For privacy questions or requests: learnjapanesewords.site@gmail.com" data-es="Para preguntas o solicitudes de privacidad: learnjapanesewords.site@gmail.com" data-fr="Pour les questions ou demandes de confidentialité : learnjapanesewords.site@gmail.com" data-ja="プライバシーに関するご質問やご要望：learnjapanesewords.site@gmail.com">
+                        For privacy questions or requests: learnjapanesewords.site@gmail.com
+                    </p>
+                </div>
+            </div>
+            <div class="policy-actions">
+                <button class="back-to-cookies-btn" data-en="← Back to Cookie Consent" data-es="← Volver al Consentimiento de Cookies" data-fr="← Retour au Consentement aux Cookies" data-ja="← クッキー同意に戻る">← Back to Cookie Consent</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Page -->
+    <div id="terms-of-service-page" class="policy-page hidden">
+        <div class="policy-container">
+            <div class="policy-header">
+                <h1 data-en="Terms Of Service" data-es="Términos de Servicio" data-fr="Conditions de Service" data-ja="利用規約">Terms Of Service</h1>
+                <h2 data-en="For "LearnJapaneseWords"" data-es="Para "LearnJapaneseWords"" data-fr="Pour "LearnJapaneseWords"" data-ja=""LearnJapaneseWords"用">For "LearnJapaneseWords"</h2>
+            </div>
+            <div class="policy-content">
+                <p data-en="This is a placeholder for the Terms of Service content. The actual terms of service will be added here." data-es="Este es un marcador de posición para el contenido de los Términos de Servicio. Los términos de servicio reales se agregarán aquí." data-fr="Ceci est un espace réservé pour le contenu des Conditions de Service. Les conditions de service réelles seront ajoutées ici." data-ja="これは利用規約の内容のプレースホルダーです。実際の利用規約はここに追加されます。">
+                    This is a placeholder for the Terms of Service content. The actual terms of service will be added here.
+                </p>
+            </div>
+            <div class="policy-actions">
+                <button class="back-to-cookies-btn" data-en="← Back to Cookie Consent" data-es="← Volver al Consentimiento de Cookies" data-fr="← Retour au Consentement aux Cookies" data-ja="← クッキー同意に戻る">← Back to Cookie Consent</button>
             </div>
         </div>
     </div>

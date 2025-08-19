@@ -67,6 +67,36 @@ body.dark-mode .settings-btn {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Cookie Consent Controls in Settings */
+.cookie-consent-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.cookie-status {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+body.dark-mode .cookie-status {
+    background: #2a2a2a;
+    color: #ffffff;
+}
+
+.cookie-status span:first-child {
+    font-weight: 600;
+    color: #E75D38;
+}
+
+body.dark-mode .cookie-status span:first-child {
+    color: #00bfff;
+}
+
 .settings-panel {
     position: absolute;
     top: 60px;
@@ -1522,7 +1552,7 @@ body.dark-mode .stat-value {
     background: #ffffff;
     border-radius: 12px;
     padding: 30px;
-    max-width: 500px;
+    max-width: 700px;
     width: 90%;
     max-height: 80vh;
     overflow-y: auto;
@@ -1608,18 +1638,21 @@ body.dark-mode .cookie-description {
 
 .cookie-actions {
     display: flex;
-    gap: 15px;
-    justify-content: flex-end;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
 }
 
 .cookie-btn {
-    padding: 12px 24px;
+    padding: 12px 30px;
     border: none;
     border-radius: 6px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
+    min-width: 120px;
+    text-align: center;
 }
 
 .reject-btn {
@@ -1630,6 +1663,7 @@ body.dark-mode .cookie-description {
 .reject-btn:hover {
     background: #5a6268;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .accept-btn {
@@ -1642,6 +1676,250 @@ body.dark-mode .accept-btn {
 }
 
 .accept-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Cookie Explanation and Footer */
+.cookie-explanation {
+    margin: 25px 0;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+body.dark-mode .cookie-explanation {
+    border-color: #444;
+    background: #1e1e1e;
+}
+
+.cookie-explanation p {
+    margin: 0 0 15px 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+body.dark-mode .cookie-explanation p {
+    color: #ffffff;
+}
+
+.cookie-explanation p:last-child {
+    margin-bottom: 0;
+}
+
+.cookie-footer {
+    margin-top: 25px;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+    text-align: center;
+}
+
+body.dark-mode .cookie-footer {
+    border-color: #444;
+    background: #1e1e1e;
+}
+
+.cookie-footer p {
+    margin: 0 0 15px 0;
+    line-height: 1.6;
+    color: #333;
+}
+
+body.dark-mode .cookie-footer p {
+    color: #ffffff;
+}
+
+.cookie-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.privacy-link, .terms-link {
+    color: #E75D38;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+body.dark-mode .privacy-link,
+body.dark-mode .terms-link {
+    color: #00bfff;
+}
+
+.privacy-link:hover, .terms-link:hover {
+    text-decoration: underline;
+}
+
+.site-name {
+    font-weight: 600;
+    color: #E75D38;
+}
+
+body.dark-mode .site-name {
+    color: #00bfff;
+}
+
+/* Policy Pages */
+.policy-page {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.policy-page.hidden {
+    display: none;
+}
+
+.policy-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+body.dark-mode .policy-container {
+    background: #1e1e1e;
+    color: #ffffff;
+}
+
+.policy-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.policy-header h1 {
+    font-size: 2.5rem;
+    margin: 0 0 10px 0;
+    color: #E75D38;
+}
+
+body.dark-mode .policy-header h1 {
+    color: #00bfff;
+}
+
+.policy-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #666;
+    font-weight: normal;
+}
+
+body.dark-mode .policy-header h2 {
+    color: #aaaaaa;
+}
+
+.policy-content {
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.policy-content p {
+    margin: 0 0 15px 0;
+    color: #333;
+}
+
+body.dark-mode .policy-content p {
+    color: #ffffff;
+}
+
+.policy-section {
+    margin-bottom: 30px;
+}
+
+.policy-section:last-child {
+    margin-bottom: 0;
+}
+
+.policy-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #E75D38;
+    border-bottom: 2px solid #E75D38;
+    padding-bottom: 8px;
+}
+
+body.dark-mode .policy-section h3 {
+    color: #00bfff;
+    border-bottom-color: #00bfff;
+}
+
+.policy-section h4 {
+    margin: 20px 0 10px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E75D38;
+}
+
+body.dark-mode .policy-section h4 {
+    color: #00bfff;
+}
+
+.policy-section ul {
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+.policy-section li {
+    margin: 8px 0;
+    line-height: 1.5;
+    color: #333;
+}
+
+body.dark-mode .policy-section li {
+    color: #ffffff;
+}
+
+.policy-date {
+    font-style: italic;
+    color: #666 !important;
+    margin-bottom: 20px !important;
+}
+
+body.dark-mode .policy-date {
+    color: #aaaaaa !important;
+}
+
+.policy-actions {
+    text-align: center;
+}
+
+.back-to-cookies-btn {
+    background: #E75D38;
+    color: #ffffff;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 200px;
+}
+
+body.dark-mode .back-to-cookies-btn {
+    background: #00bfff;
+}
+
+.back-to-cookies-btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }

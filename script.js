@@ -474,9 +474,20 @@ const highestRoundSpan = document.getElementById('highest-round');
 const cookieConsentOverlay = document.getElementById('cookie-consent-overlay');
 const rejectCookiesBtn = document.getElementById('reject-cookies-btn');
 const acceptCookiesBtn = document.getElementById('accept-cookies-btn');
-const advertisingCookiesCheckbox = document.getElementById('advertising-cookies');
 const analyticsScript = document.getElementById('analytics-script');
 const adsenseScript = document.getElementById('adsense-script');
+
+// Policy page elements
+const privacyPolicyPage = document.getElementById('privacy-policy-page');
+const termsOfServicePage = document.getElementById('terms-of-service-page');
+const privacyLink = document.querySelector('.privacy-link');
+const termsLink = document.querySelector('.terms-link');
+const backToCookiesBtns = document.querySelectorAll('.back-to-cookies-btn');
+
+// Settings panel cookie consent elements
+const acceptCookiesSettingsBtn = document.getElementById('accept-cookies-settings-btn');
+const revokeCookiesSettingsBtn = document.getElementById('revoke-cookies-settings-btn');
+const cookieStatusText = document.getElementById('cookie-status-text');
 
 // Language and theme elements in cookie popup
 const languageSelectorBtn = document.getElementById('language-selector-btn');
@@ -541,6 +552,15 @@ languageButtons.forEach(btn => btn.addEventListener('click', (e) => changeLangua
 // Cookie consent event listeners
 rejectCookiesBtn.addEventListener('click', rejectCookies);
 acceptCookiesBtn.addEventListener('click', acceptCookies);
+
+// Policy page navigation event listeners
+privacyLink.addEventListener('click', showPrivacyPolicy);
+termsLink.addEventListener('click', showTermsOfService);
+backToCookiesBtns.forEach(btn => btn.addEventListener('click', hidePolicyPage));
+
+// Settings panel cookie consent event listeners
+acceptCookiesSettingsBtn.addEventListener('click', acceptCookiesFromSettings);
+revokeCookiesSettingsBtn.addEventListener('click', revokeCookiesFromSettings);
 
 // Language and theme event listeners in cookie popup
 languageSelectorBtn.addEventListener('click', toggleLanguageOptions);
@@ -1498,6 +1518,11 @@ function updateAllText() {
     
     // Update back button text based on mode
     updateBackButtonText();
+    
+    // Update cookie status display if it exists
+    if (cookieStatusText) {
+        updateCookieStatusDisplay();
+    }
 }
 
 function updateBackButtonText() {
@@ -2630,9 +2655,6 @@ function hideCookieConsent() {
 }
 
 function rejectCookies() {
-    // Disable advertising cookies
-    advertisingCookiesCheckbox.checked = false;
-    
     // Disable adsense script
     adsenseScript.classList.add('disabled');
     
@@ -2657,22 +2679,11 @@ function rejectCookies() {
 }
 
 function acceptCookies() {
-    // Enable advertising cookies if checked
-    const advertisingEnabled = advertisingCookiesCheckbox.checked;
-    
-    // Enable/disable adsense script based on checkbox
-    if (advertisingEnabled) {
-        adsenseScript.classList.remove('disabled');
-        window.adsenseEnabled = true;
-        if (typeof window.enableAdSense === 'function') {
-            window.enableAdSense();
-        }
-    } else {
-        adsenseScript.classList.add('disabled');
-        window.adsenseEnabled = false;
-        if (typeof window.disableAdSense === 'function') {
-            window.disableAdSense();
-        }
+    // Enable adsense script (user accepted all cookies)
+    adsenseScript.classList.remove('disabled');
+    window.adsenseEnabled = true;
+    if (typeof window.enableAdSense === 'function') {
+        window.enableAdSense();
     }
     
     // Analytics is always enabled
@@ -2681,7 +2692,7 @@ function acceptCookies() {
     // Save consent preference
     const consentData = {
         analytics: true,
-        advertising: advertisingEnabled,
+        advertising: true, // User accepted all cookies
         timestamp: Date.now()
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
@@ -2689,7 +2700,7 @@ function acceptCookies() {
     // Hide the popup
     hideCookieConsent();
     
-    console.log('Cookies accepted - Analytics enabled, Advertising:', advertisingEnabled ? 'enabled' : 'disabled');
+    console.log('Cookies accepted - Analytics enabled, Advertising enabled');
 }
 
 function loadCookieConsent() {
@@ -2699,7 +2710,6 @@ function loadCookieConsent() {
         // Apply saved preferences
         if (consentData.advertising === false) {
             // User previously rejected advertising cookies
-            advertisingCookiesCheckbox.checked = false;
             adsenseScript.classList.add('disabled');
             window.adsenseEnabled = false;
             if (typeof window.disableAdSense === 'function') {
@@ -2707,7 +2717,6 @@ function loadCookieConsent() {
             }
         } else if (consentData.advertising === true) {
             // User previously accepted advertising cookies
-            advertisingCookiesCheckbox.checked = true;
             adsenseScript.classList.remove('disabled');
             window.adsenseEnabled = true;
             if (typeof window.enableAdSense === 'function') {
@@ -2718,12 +2727,116 @@ function loadCookieConsent() {
         // Analytics is always enabled
         analyticsScript.classList.remove('disabled');
         
+        // Update settings panel display if it exists
+        if (cookieStatusText) {
+            updateCookieStatusDisplay();
+        }
+        
         console.log('Cookie consent preferences loaded');
         return true;
     }
     
     // No consent data found - show popup
     return false;
+}
+
+// Policy page navigation functions
+function showPrivacyPolicy() {
+    privacyPolicyPage.classList.remove('hidden');
+    cookieConsentOverlay.classList.add('hidden');
+}
+
+function showTermsOfService() {
+    termsOfServicePage.classList.remove('hidden');
+    cookieConsentOverlay.classList.add('hidden');
+}
+
+function hidePolicyPage() {
+    privacyPolicyPage.classList.add('hidden');
+    termsOfServicePage.classList.add('hidden');
+    cookieConsentOverlay.classList.remove('hidden');
+}
+
+// Settings panel cookie consent management functions
+function acceptCookiesFromSettings() {
+    // Enable adsense script
+    adsenseScript.classList.remove('disabled');
+    window.adsenseEnabled = true;
+    if (typeof window.enableAdSense === 'function') {
+        window.enableAdSense();
+    }
+    
+    // Analytics is always enabled
+    analyticsScript.classList.remove('disabled');
+    
+    // Save consent preference
+    const consentData = {
+        analytics: true,
+        advertising: true,
+        timestamp: Date.now()
+    };
+    saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Update status display
+    updateCookieStatusDisplay();
+    
+    console.log('Cookies accepted from settings - Analytics enabled, Advertising enabled');
+}
+
+function revokeCookiesFromSettings() {
+    // Disable adsense script
+    adsenseScript.classList.add('disabled');
+    window.adsenseEnabled = false;
+    if (typeof window.disableAdSense === 'function') {
+        window.disableAdSense();
+    }
+    
+    // Analytics is always enabled
+    analyticsScript.classList.remove('disabled');
+    
+    // Save consent preference
+    const consentData = {
+        analytics: true,
+        advertising: false,
+        timestamp: Date.now()
+    };
+    saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Update status display
+    updateCookieStatusDisplay();
+    
+    console.log('Cookies revoked from settings - Analytics enabled, Advertising disabled');
+}
+
+function updateCookieStatusDisplay() {
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    
+    if (consentData && typeof consentData === 'object') {
+        if (consentData.advertising === true) {
+            cookieStatusText.textContent = cookieStatusText.getAttribute('data-en') || 'Non-essential cookies accepted';
+            cookieStatusText.setAttribute('data-en', 'Non-essential cookies accepted');
+            cookieStatusText.setAttribute('data-es', 'Cookies no esenciales aceptados');
+            cookieStatusText.setAttribute('data-fr', 'Cookies non essentiels acceptés');
+            cookieStatusText.setAttribute('data-ja', '非必須クッキーが受け入れられました');
+        } else {
+            cookieStatusText.setAttribute('data-en', 'Non-essential cookies rejected');
+            cookieStatusText.setAttribute('data-es', 'Cookies no esenciales rechazados');
+            cookieStatusText.setAttribute('data-fr', 'Cookies non essentiels rejetés');
+            cookieStatusText.setAttribute('data-ja', '非必須クッキーが拒否されました');
+        }
+    } else {
+        cookieStatusText.textContent = cookieStatusText.getAttribute('data-en') || 'No consent given';
+        cookieStatusText.setAttribute('data-en', 'No consent given');
+        cookieStatusText.setAttribute('data-es', 'No se ha dado consentimiento');
+        cookieStatusText.setAttribute('data-fr', 'Aucun consentement donné');
+        cookieStatusText.setAttribute('data-ja', '同意が与えられていません');
+    }
+    
+    // Update the displayed text based on current language
+    const text = cookieStatusText.getAttribute(`data-${currentLanguage}`);
+    if (text) {
+        cookieStatusText.textContent = text;
+    }
 }
 
 // Language and Theme Functions for Cookie Popup
