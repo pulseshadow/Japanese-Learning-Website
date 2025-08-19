@@ -1586,6 +1586,15 @@ body.dark-mode .cookie-content p {
     color: #cccccc;
 }
 
+.cookie-intro-text {
+    color: #E75D38 !important;
+    font-weight: 500;
+}
+
+body.dark-mode .cookie-intro-text {
+    color: #00bfff !important;
+}
+
 .cookie-options {
     margin-bottom: 30px;
 }
@@ -1725,12 +1734,14 @@ body.dark-mode .cookie-footer {
 .cookie-footer p {
     margin: 0 0 15px 0;
     line-height: 1.6;
-    color: #333;
+    color: #333 !important;
 }
 
 body.dark-mode .cookie-footer p {
-    color: #ffffff;
+    color: #ffffff !important;
 }
+
+
 
 .cookie-links {
     display: flex;
