@@ -422,13 +422,16 @@ const wordPools = {
 const startPage = document.getElementById('start-page');
 const scriptPage = document.getElementById('script-page');
 const gamePage = document.getElementById('game-page');
+const customScriptPage = document.getElementById('custom-script-page');
 const customModePage = document.getElementById('custom-mode-page');
 const bruteForceBtn = document.getElementById('brute-force-btn');
 const customModeBtn = document.getElementById('custom-mode-btn');
+const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
 const hiraganaBtn = document.getElementById('hiragana-btn');
 const katakanaBtn = document.getElementById('katakana-btn');
 const backToStartBtn = document.getElementById('back-to-start');
 const backToScriptBtn = document.getElementById('back-to-script');
+const backToStartFromCustomScriptBtn = document.getElementById('back-to-start-from-custom-script');
 const backToStartFromCustomBtn = document.getElementById('back-to-start-from-custom');
 const roundTitle = document.getElementById('round-title');
 const phaseLabel = document.getElementById('phase-label');
@@ -456,17 +459,38 @@ const disablePracticeRoundsToggle = document.getElementById('disable-practice-ro
 const customRoundsContainer = document.getElementById('custom-rounds-container');
 
 // Event listeners
-bruteForceBtn.addEventListener('click', () => showPage('script'));
-customModeBtn.addEventListener('click', () => showPage('custom-mode'));
+bruteForceBtn.addEventListener('click', () => {
+    showPage('script');
+});
+customModeBtn.addEventListener('click', () => showPage('custom-script'));
+customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
 katakanaBtn.addEventListener('click', () => alert('Katakana mode coming soon!'));
 backToStartBtn.addEventListener('click', () => showPage('start'));
 backToScriptBtn.addEventListener('click', () => showPage('script'));
-backToStartFromCustomBtn.addEventListener('click', () => showPage('start'));
+backToStartFromCustomScriptBtn.addEventListener('click', () => {
+    // Reset custom mode variables when leaving custom mode
+    window.customModeEnabled = false;
+    window.customWordPools = null;
+    showPage('start');
+});
+
+backToStartFromCustomBtn.addEventListener('click', () => {
+    // Reset custom mode variables when leaving custom mode
+    window.customModeEnabled = false;
+    window.customWordPools = null;
+    showPage('start');
+});
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
 addRoundBtn.addEventListener('click', addCustomRound);
 removeRoundBtn.addEventListener('click', removeCustomRound);
 startCustomRunBtn.addEventListener('click', startCustomRun);
+
+// Add event listener for practice rounds toggle
+disablePracticeRoundsToggle.addEventListener('change', () => {
+    window.customModeNoPracticeRounds = disablePracticeRoundsToggle.checked;
+    saveCustomRounds();
+});
 
 // Settings and language event listeners
 settingsBtn.addEventListener('click', toggleSettingsPanel);
@@ -488,6 +512,7 @@ function showPage(pageName) {
     startPage.style.display = 'none';
     scriptPage.style.display = 'none';
     gamePage.style.display = 'none';
+    customScriptPage.style.display = 'none';
     customModePage.style.display = 'none';
     
     // Show the selected page
@@ -500,6 +525,9 @@ function showPage(pageName) {
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
+    } else if (pageName === 'custom-script') {
+        customScriptPage.style.display = 'block';
+        customScriptPage.classList.add('active');
     } else if (pageName === 'custom-mode') {
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
@@ -510,10 +538,102 @@ function showPage(pageName) {
 // Round selection functionality
 function changeRound(roundNumber) {
     if (currentPage === 'game') {
+        // Don't update highest round reached when using round skip
         currentRound = roundNumber;
-        initializeRound();
-        updateUI();
+        
+        // Check if we're in custom mode
+        if (window.customWordPools) {
+            initializeCustomRound();
+        } else {
+            initializeRound();
+        }
+        updateProgress();
+        updatePhaseLabel();
+        
+        // Save progress after round change
+        saveProgress();
     }
+}
+
+function populateRoundSelector() {
+    // Clear existing options
+    roundSelector.innerHTML = '';
+    
+    // Check if we're in custom mode
+    if (window.customWordPools) {
+        // Populate with custom rounds
+        const customWordPools = window.customWordPools;
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        
+        if (noPracticeRounds) {
+            // Only introduction rounds
+            for (let i = 1; i <= customWordPools.length; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Introduction Round ${i}`;
+                option.setAttribute('data-en', `Introduction Round ${i}`);
+                option.setAttribute('data-es', `Ronda de Introducción ${i}`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${i}`);
+                option.setAttribute('data-ja', `導入ラウンド${i}`);
+                roundSelector.appendChild(option);
+            }
+        } else {
+            // Introduction and practice rounds
+            for (let i = 1; i <= customWordPools.length * 2; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                
+                if (i % 2 === 1) {
+                    // Introduction round
+                    const roundNumber = Math.ceil(i / 2);
+                    option.textContent = `Introduction Round ${roundNumber}`;
+                    option.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+                    option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+                    option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+                    option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+                } else {
+                    // Practice round
+                    const roundNumber = Math.floor(i / 2);
+                    option.textContent = `Practice Round ${roundNumber}`;
+                    option.setAttribute('data-en', `Practice Round ${roundNumber}`);
+                    option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
+                    option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
+                    option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+                }
+                
+                roundSelector.appendChild(option);
+            }
+        }
+    } else {
+        // Populate with preset rounds (brute force mode)
+        for (let i = 1; i <= 18; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            
+            if (i % 2 === 1) {
+                // Introduction round
+                const roundNumber = Math.ceil(i / 2);
+                option.textContent = `Introduction Round ${roundNumber}`;
+                option.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+                option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+            } else {
+                // Practice round
+                const roundNumber = Math.floor(i / 2);
+                option.textContent = `Practice Round ${roundNumber}`;
+                option.setAttribute('data-en', `Practice Round ${roundNumber}`);
+                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
+                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
+                option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+            }
+            
+            roundSelector.appendChild(option);
+        }
+    }
+    
+    // Update language for new options
+    updateAllText();
 }
 
 // Auto-submit on input change with letter-by-letter checking
@@ -523,7 +643,7 @@ answerInput.addEventListener('input', (e) => {
     
     if (!currentWord) return;
     
-    const correctAnswer = currentWord.english.toLowerCase();
+    const correctAnswer = getCorrectAnswer(currentWord.english).toLowerCase();
     
     // Check if the user answer is completely correct
     if (userAnswer === correctAnswer) {
@@ -596,21 +716,18 @@ function showErrorAndClearInput(correctAnswer) {
 function startGame() {
     currentPage = 'game';
     
-    // Check if custom mode is enabled
-    if (window.customModeEnabled) {
-        // Use custom word pools
-        window.customWordPools = window.customWordPools || [];
-        window.customModeNoPracticeRounds = window.customModeNoPracticeRounds || false;
-        
-        // Reset custom mode for next use
-        window.customModeEnabled = false;
-        window.customWordPools = null;
-        window.customModeNoPracticeRounds = null;
-        
-        // Start custom game
-        startCustomGame();
-    } else {
-        // Standard game mode
+    // Reset custom mode variables when starting normal brute force game
+    window.customModeEnabled = false;
+    window.customWordPools = null;
+    
+    // Populate round selector with preset rounds
+    populateRoundSelector();
+    
+    // Try to load saved progress for hiragana
+    const progressLoaded = loadProgress();
+    
+    if (!progressLoaded) {
+        // No saved progress, start fresh
         currentRound = 1;
         currentPhase = 'learning';
         currentQuestionIndex = 0;
@@ -620,17 +737,17 @@ function startGame() {
         wordsWithPendingPoints = new Set();
         currentQuestionFailed = false;
         eliminationWords = [];
-        
-        // Reset progress text color to white
-        const progressInfo = document.querySelector('.progress-info');
-        progressInfo.classList.remove('completed');
-        
-        // Disable next round button at start
-        nextRoundBtn.classList.add('disabled');
-        
-        showPage('game');
-        initializeRound();
     }
+    
+    // Reset progress text color to white
+    const progressInfo = document.querySelector('.progress-info');
+    progressInfo.classList.remove('completed');
+    
+    // Disable next round button at start
+    nextRoundBtn.classList.add('disabled');
+    
+    showPage('game');
+    initializeRound();
 }
 
 function initializeRound() {
@@ -797,18 +914,21 @@ function submitAnswer() {
     
     if (!currentWord) return;
     
+    // Get the correct answer (without brackets)
+    const correctAnswer = getCorrectAnswer(currentWord.english).toLowerCase();
+    
     // Check if we're in custom mode
     if (window.customWordPools) {
         // Custom mode
         if (currentPhase === 'learning') {
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
                 currentQuestionIndex++;
                 showCustomLearningQuestion();
             } else {
                 showError(currentWord.english);
             }
         } else if (currentPhase === 'elimination') {
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
                 currentQuestionIndex++;
                 showCustomEliminationQuestion();
             } else {
@@ -816,9 +936,11 @@ function submitAnswer() {
             }
         } else {
             // Repeating phase
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
+                updateStats(true, currentRound);
                 handleCustomCorrectAnswer();
             } else {
+                updateStats(false, currentRound);
                 handleCustomIncorrectAnswer(currentWord);
             }
         }
@@ -826,7 +948,7 @@ function submitAnswer() {
         // Standard mode
         if (currentPhase === 'learning') {
             // Learning phase - just check if answer is correct
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
                 currentQuestionIndex++;
                 showLearningQuestion();
             } else {
@@ -835,7 +957,7 @@ function submitAnswer() {
             }
         } else if (currentPhase === 'elimination') {
             // Elimination phase - check answer and move to next word
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
                 currentQuestionIndex++;
                 showEliminationQuestion();
             } else {
@@ -844,15 +966,20 @@ function submitAnswer() {
             }
         } else {
             // Repeating phase - full game logic
-            if (userAnswer === currentWord.english.toLowerCase()) {
+            if (userAnswer === correctAnswer) {
                 // Correct answer
+                updateStats(true, currentRound);
                 handleCorrectAnswer();
             } else {
                 // Incorrect answer
+                updateStats(false, currentRound);
                 handleIncorrectAnswer(currentWord);
             }
         }
     }
+    
+    // Save progress after each answer
+    saveProgress();
 }
 
 function handleCorrectAnswer() {
@@ -944,7 +1071,19 @@ function updateProgress() {
             totalQuestionsSpan.textContent = eliminationWords.length;
             phaseProgress.textContent = '';
         } else {
-            const allWords = getAllCustomWordsUpToRound(currentRound);
+            // Determine which words to use based on round type
+            const noPracticeRounds = window.customModeNoPracticeRounds || false;
+            const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+            
+            let allWords;
+            if (isIntroductionRound) {
+                // For introduction rounds, only use the current round's words
+                allWords = getCurrentCustomRoundWords();
+            } else {
+                // For practice rounds, use accumulated words from all previous introduction rounds
+                allWords = getAllCustomWordsUpToRound(currentRound);
+            }
+            
             const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = allWords.length * 3;
             // Cap the display at the target to prevent going over
@@ -1022,7 +1161,19 @@ function updateRoundProgress() {
             const remaining = eliminationWords.length - currentQuestionIndex;
             roundProgress.textContent = `${remaining} questions remaining`;
         } else {
-            const allWords = getAllCustomWordsUpToRound(currentRound);
+            // Determine which words to use based on round type
+            const noPracticeRounds = window.customModeNoPracticeRounds || false;
+            const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+            
+            let allWords;
+            if (isIntroductionRound) {
+                // For introduction rounds, only use the current round's words
+                allWords = getCurrentCustomRoundWords();
+            } else {
+                // For practice rounds, use accumulated words from all previous introduction rounds
+                allWords = getAllCustomWordsUpToRound(currentRound);
+            }
+            
             const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = allWords.length * 3;
             const remaining = Math.max(0, targetCorrect - totalCorrect);
@@ -1077,6 +1228,58 @@ function nextRound() {
         return;
     }
     
+    // Check if we're in custom mode
+    if (window.customWordPools) {
+        nextCustomRound();
+    } else {
+        nextStandardRound();
+    }
+}
+
+function nextCustomRound() {
+    currentRound++;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    correctAnswers = {};
+    questionQueue = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Reset progress text color to white
+    const progressInfo = document.querySelector('.progress-info');
+    progressInfo.classList.remove('completed');
+    
+    // Disable next round button at start of new round
+    nextRoundBtn.classList.add('disabled');
+    
+    // Check if this is the last round
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
+    const totalRounds = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
+    
+    if (currentRound >= totalRounds) {
+        // Hide the next round button on the final round
+        nextRoundBtn.style.visibility = 'hidden';
+        nextRoundBtn.classList.add('disabled');
+    } else {
+        // Disable next round button at start of new round (but keep it visible)
+        nextRoundBtn.classList.add('disabled');
+        nextRoundBtn.style.visibility = 'visible';
+    }
+    
+    initializeCustomRound();
+    
+    // Update highest round reached (only if not using round skip)
+    if (currentRound > userStats.highestRoundReached) {
+        userStats.highestRoundReached = currentRound;
+        saveStats();
+    }
+    
+    // Save progress
+    saveProgress();
+}
+
+function nextStandardRound() {
     currentRound++;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
@@ -1097,6 +1300,15 @@ function nextRound() {
     }
     
     initializeRound();
+    
+    // Update highest round reached (only if not using round skip)
+    if (currentRound > userStats.highestRoundReached) {
+        userStats.highestRoundReached = currentRound;
+        saveStats();
+    }
+    
+    // Save progress
+    saveProgress();
 }
 
 function shuffleArray(array) {
@@ -1107,13 +1319,41 @@ function shuffleArray(array) {
 }
 
 function capitalizeWords(text) {
-    return text.split(' ').map(word => 
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-    ).join(' ');
+    return text.split(' ').map(word => {
+        // Handle words in brackets
+        if (word.startsWith('(') && word.includes(')')) {
+            const bracketContent = word.substring(1, word.indexOf(')'));
+            const restOfWord = word.substring(word.indexOf(')') + 1);
+            return `(${bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1)})${restOfWord.charAt(0).toUpperCase() + restOfWord.slice(1)}`;
+        } else if (word.startsWith('(')) {
+            const bracketContent = word.substring(1, word.indexOf(')'));
+            const restOfWord = word.substring(word.indexOf(')') + 1);
+            return `(${bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1)})${restOfWord.charAt(0).toUpperCase() + restOfWord.slice(1)}`;
+        } else {
+            return word.charAt(0).toUpperCase() + word.slice(1);
+        }
+    }).join(' ');
+}
+
+// Helper function to get the correct answer (without brackets)
+function getCorrectAnswer(english) {
+    // Remove brackets and their content, then trim
+    return english.replace(/\([^)]*\)/g, '').trim();
 }
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    // Load all saved data
+    loadSettings();
+    loadStats();
+    loadCustomRounds();
+    loadProgress();
+    
+    // Initialize custom mode if there are saved custom rounds
+    if (window.customWordPools) {
+        initializeCustomMode();
+    }
+    
     showPage('start');
     initializeSettings();
     detectBrowserLanguage();
@@ -1137,21 +1377,19 @@ function toggleSection(sectionId) {
 
 // Settings and Language Functions
 function initializeSettings() {
-    // Load saved settings from localStorage
-    const savedTheme = localStorage.getItem('theme');
-    const savedLanguage = localStorage.getItem('language');
+    // Load all saved data
+    loadSettings();
+    loadStats();
+    loadCustomRounds();
+    loadProgress();
     
-    if (savedTheme === 'dark') {
-        isDarkMode = true;
-        document.body.classList.add('dark-mode');
-        themeToggle.checked = false;
+    // Initialize custom mode if there are saved custom rounds
+    if (window.customWordPools) {
+        initializeCustomMode();
     }
     
-    if (savedLanguage) {
-        currentLanguage = savedLanguage;
-        updateLanguageButtons();
-        updateAllText();
-    }
+    updateLanguageButtons();
+    updateAllText();
 }
 
 function toggleSettingsPanel() {
@@ -1162,16 +1400,16 @@ function toggleTheme() {
     isDarkMode = !isDarkMode;
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
     } else {
         document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
     }
+    saveSettings();
+    updateAllText();
 }
 
 function changeLanguage(lang) {
     currentLanguage = lang;
-    localStorage.setItem('language', lang);
+    saveSettings();
     updateLanguageButtons();
     updateAllText();
 }
@@ -1224,73 +1462,88 @@ function initializeCustomMode() {
     setupCustomWordButtons();
 }
 
-function populateWordSelectionGrids() {
-    // Get all word selection grids
-    const grids = document.querySelectorAll('.word-selection-grid');
+function populateWordSelectionGrid(roundNumber) {
+    const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+    if (!round) return;
     
-    grids.forEach((grid, gridIndex) => {
-        grid.innerHTML = '';
+    const grid = round.querySelector('.word-selection-grid');
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    // Get all words from the word pools, organized by introduction rounds
+    const allWords = getAllWordsByRound();
+    
+    allWords.forEach((wordGroup, roundIndex) => {
+        // Create collapsible section for each round
+        const sectionContainer = document.createElement('div');
+        sectionContainer.className = 'word-section-container';
         
-        // Get all words from the word pools, organized by introduction rounds
-        const allWords = getAllWordsByRound();
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'word-section-header';
+        sectionHeader.onclick = () => toggleWordSection(roundNumber - 1, roundIndex);
         
-        allWords.forEach((wordGroup, roundIndex) => {
-            // Create collapsible section for each round
-            const sectionContainer = document.createElement('div');
-            sectionContainer.className = 'word-section-container';
+        const headerText = document.createElement('h4');
+        headerText.textContent = `Round ${roundIndex + 1} Words`;
+        headerText.style.margin = '0';
+        headerText.style.color = '#ffffff';
+        headerText.style.fontSize = '0.9rem';
+        headerText.style.fontWeight = 'bold';
+        
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'collapse-btn small';
+        collapseBtn.textContent = '▼';
+        collapseBtn.style.background = 'none';
+        collapseBtn.style.border = 'none';
+        collapseBtn.style.cursor = 'pointer';
+        collapseBtn.style.fontSize = '0.8rem';
+        collapseBtn.style.color = '#ffffff';
+        
+        sectionHeader.appendChild(headerText);
+        sectionHeader.appendChild(collapseBtn);
+        sectionContainer.appendChild(sectionHeader);
+        
+        // Create word content container
+        const wordContent = document.createElement('div');
+        wordContent.className = 'word-section-content collapsed';
+        wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
+        
+        // Create word checkboxes for this round
+        wordGroup.forEach(word => {
+            const wordItem = document.createElement('div');
+            wordItem.className = 'word-checkbox-item';
             
-            const sectionHeader = document.createElement('div');
-            sectionHeader.className = 'word-section-header';
-            sectionHeader.onclick = () => toggleWordSection(gridIndex, roundIndex);
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.id = `word-${roundNumber - 1}-${word.japanese}`;
+            checkbox.dataset.japanese = word.japanese;
+            checkbox.dataset.english = word.english;
             
-            const headerText = document.createElement('h4');
-            headerText.textContent = `Round ${roundIndex + 1} Words`;
-            headerText.style.margin = '0';
-            headerText.style.color = '#ffffff';
-            headerText.style.fontSize = '0.9rem';
-            headerText.style.fontWeight = 'bold';
-            
-            const collapseBtn = document.createElement('button');
-            collapseBtn.className = 'collapse-btn small';
-            collapseBtn.textContent = '▼';
-            collapseBtn.style.background = 'none';
-            collapseBtn.style.border = 'none';
-            collapseBtn.style.cursor = 'pointer';
-            collapseBtn.style.fontSize = '0.8rem';
-            collapseBtn.style.color = '#ffffff';
-            
-            sectionHeader.appendChild(headerText);
-            sectionHeader.appendChild(collapseBtn);
-            sectionContainer.appendChild(sectionHeader);
-            
-            // Create word content container
-            const wordContent = document.createElement('div');
-            wordContent.className = 'word-section-content collapsed';
-            wordContent.id = `word-content-${gridIndex}-${roundIndex}`;
-            
-            // Create word checkboxes for this round
-            wordGroup.forEach(word => {
-                const wordItem = document.createElement('div');
-                wordItem.className = 'word-checkbox-item';
-                
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = `word-${gridIndex}-${word.japanese}`;
-                checkbox.dataset.japanese = word.japanese;
-                checkbox.dataset.english = word.english;
-                
-                const label = document.createElement('label');
-                label.htmlFor = `word-${gridIndex}-${word.japanese}`;
-                label.textContent = capitalizeWords(word.english);
-                
-                wordItem.appendChild(checkbox);
-                wordItem.appendChild(label);
-                wordContent.appendChild(wordItem);
+            // Add event listener to save custom rounds when checkbox changes
+            checkbox.addEventListener('change', () => {
+                saveCustomRounds();
             });
             
-            sectionContainer.appendChild(wordContent);
-            grid.appendChild(sectionContainer);
+            const label = document.createElement('label');
+            label.htmlFor = `word-${roundNumber - 1}-${word.japanese}`;
+            label.textContent = capitalizeWords(word.english);
+            
+            wordItem.appendChild(checkbox);
+            wordItem.appendChild(label);
+            wordContent.appendChild(wordItem);
         });
+        
+        sectionContainer.appendChild(wordContent);
+        grid.appendChild(sectionContainer);
+    });
+}
+
+function populateWordSelectionGrids() {
+    const rounds = document.querySelectorAll('.custom-round');
+    
+    rounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        populateWordSelectionGrid(roundNumber);
     });
 }
 
@@ -1307,34 +1560,87 @@ function getAllWordsByRound() {
     return wordsByRound;
 }
 
+function setupCustomWordButtonsForRound(roundNumber) {
+    const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+    if (!round) return;
+    
+    const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
+    if (addCustomWordBtn) {
+        // Remove existing event listeners
+        const newBtn = addCustomWordBtn.cloneNode(true);
+        addCustomWordBtn.parentNode.replaceChild(newBtn, addCustomWordBtn);
+        
+        newBtn.addEventListener('click', () => {
+            const inputs = newBtn.parentElement.querySelector('.custom-word-inputs');
+            inputs.classList.toggle('hidden');
+            
+            // Add initial input row if container is empty
+            const container = inputs.querySelector('.custom-word-inputs-container');
+            if (container.children.length === 0) {
+                addCustomWordInputRow(container);
+            }
+        });
+    }
+}
+
 function setupCustomWordButtons() {
     const addCustomWordBtns = document.querySelectorAll('.add-custom-word-btn');
-    const addWordBtns = document.querySelectorAll('.add-word-btn');
     
     addCustomWordBtns.forEach((btn, index) => {
         btn.addEventListener('click', () => {
             const inputs = btn.parentElement.querySelector('.custom-word-inputs');
             inputs.classList.toggle('hidden');
-        });
-    });
-    
-    addWordBtns.forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            const roundContainer = btn.closest('.custom-round');
-            const japaneseInput = roundContainer.querySelector('.japanese-word-input');
-            const englishInput = roundContainer.querySelector('.english-translation-input');
             
-            const japanese = japaneseInput.value.trim();
-            const english = englishInput.value.trim();
-            
-            if (japanese && english) {
-                addCustomWordToRound(roundContainer, japanese, english);
-                japaneseInput.value = '';
-                englishInput.value = '';
-                roundContainer.querySelector('.custom-word-inputs').classList.add('hidden');
+            // Add initial input row if container is empty
+            const container = inputs.querySelector('.custom-word-inputs-container');
+            if (container.children.length === 0) {
+                addCustomWordInputRow(container);
             }
         });
     });
+}
+
+function addCustomWordInputRow(container) {
+    const inputRow = document.createElement('div');
+    inputRow.className = 'input-row';
+    inputRow.style.marginBottom = '10px';
+    
+    const japaneseInput = document.createElement('input');
+    japaneseInput.type = 'text';
+    japaneseInput.className = 'japanese-word-input';
+    japaneseInput.placeholder = 'Japanese Word';
+    japaneseInput.style.marginRight = '10px';
+    
+    const englishInput = document.createElement('input');
+    englishInput.type = 'text';
+    englishInput.className = 'english-translation-input';
+    englishInput.placeholder = 'English Translation (Correct Answer)';
+    englishInput.style.marginRight = '10px';
+    
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-word-btn';
+    addBtn.textContent = 'Add';
+    
+    // Add event listener
+    addBtn.addEventListener('click', () => {
+        const japanese = japaneseInput.value.trim();
+        const english = englishInput.value.trim();
+        
+        if (japanese && english) {
+            const roundContainer = container.closest('.custom-round');
+            addCustomWordToRound(roundContainer, japanese, english);
+            japaneseInput.value = '';
+            englishInput.value = '';
+        } else {
+            alert('Please enter both Japanese word and English translation.');
+        }
+    });
+    
+    inputRow.appendChild(japaneseInput);
+    inputRow.appendChild(englishInput);
+    inputRow.appendChild(addBtn);
+    
+    container.appendChild(inputRow);
 }
 
 function addCustomWordToRound(roundContainer, japanese, english) {
@@ -1342,7 +1648,7 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     
     // Create new word item
     const wordItem = document.createElement('div');
-    wordItem.className = 'word-checkbox-item';
+    wordItem.className = 'word-checkbox-item custom-word-item';
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -1355,11 +1661,24 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     label.htmlFor = checkbox.id;
     label.textContent = capitalizeWords(english);
     
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-custom-word-btn';
+    removeBtn.textContent = 'Remove Word';
+    
+    // Add event listener to remove button
+    removeBtn.addEventListener('click', () => {
+        wordItem.remove();
+    });
+    
     wordItem.appendChild(checkbox);
     wordItem.appendChild(label);
+    wordItem.appendChild(removeBtn);
     
     // Add to the end of the grid
     grid.appendChild(wordItem);
+    
+    // Save custom rounds to local storage
+    saveCustomRounds();
 }
 
 function addCustomRound() {
@@ -1372,7 +1691,10 @@ function addCustomRound() {
     newRound.innerHTML = `
         <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
             <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}">Introduction Round ${roundNumber}</h3>
-            <button class="collapse-btn">▼</button>
+            <div class="round-header-controls">
+                <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
+                <button class="collapse-btn">▼</button>
+            </div>
         </div>
         
         <div class="custom-round-content" id="round-content-${roundNumber}">
@@ -1385,10 +1707,8 @@ function addCustomRound() {
         <div class="custom-word-section">
             <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
             <div class="custom-word-inputs hidden">
-                <div class="input-row">
-                    <input type="text" class="japanese-word-input" placeholder="Japanese Word" data-en-placeholder="Japanese Word" data-es-placeholder="Palabra Japonesa" data-fr-placeholder="Mot Japonais" data-ja-placeholder="日本語の単語">
-                    <input type="text" class="english-translation-input" placeholder="English Translation (Correct Answer)" data-en-placeholder="English Translation (Correct Answer)" data-es-placeholder="Traducción al Inglés (Respuesta Correcta)" data-fr-placeholder="Traduction Anglaise (Réponse Correcte)" data-ja-placeholder="英語訳（正解）">
-                    <button class="add-word-btn" data-en="Add" data-es="Agregar" data-fr="Ajouter" data-ja="追加">Add</button>
+                <div class="custom-word-inputs-container">
+                    <!-- Custom word input rows will be added here dynamically -->
                 </div>
             </div>
         </div>
@@ -1397,12 +1717,137 @@ function addCustomRound() {
     
     customRoundsContainer.appendChild(newRound);
     
-    // Re-populate word selection grids and setup buttons
-    populateWordSelectionGrids();
-    setupCustomWordButtons();
+    // Populate only the new round's word selection grid
+    populateWordSelectionGrid(roundNumber);
+    
+    // Setup buttons for the new round only
+    setupCustomWordButtonsForRound(roundNumber);
+    
+    // Update remove button visibility
+    updateRemoveButtonVisibility();
+    
+    // Update round selector with new rounds
+    populateRoundSelector();
+    
+    // Save custom rounds to local storage
+    saveCustomRounds();
     
     // Update language for new elements
     updateAllText();
+}
+
+function removeSpecificRound(roundNumber) {
+    const rounds = document.querySelectorAll('.custom-round');
+    
+    if (rounds.length > 1) {
+        // Find the round to remove
+        const roundToRemove = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+        if (roundToRemove) {
+            // Preserve state of remaining rounds before removal
+            const stateToPreserve = {};
+            const remainingRounds = document.querySelectorAll('.custom-round');
+            remainingRounds.forEach((round, index) => {
+                const currentRoundNumber = parseInt(round.dataset.round);
+                if (currentRoundNumber > roundNumber) {
+                    // This round will be renumbered, preserve its state
+                    const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
+                    const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
+                    const customWords = round.querySelectorAll('.custom-word-item');
+                    
+                    stateToPreserve[currentRoundNumber] = {
+                        checkedWords: Array.from(checkboxes).map(cb => cb.dataset.english),
+                        openSections: Array.from(openSections).map(section => section.id),
+                        customWords: Array.from(customWords).map(item => ({
+                            japanese: item.querySelector('.japanese-word').textContent,
+                            english: item.querySelector('.english-word').textContent
+                        }))
+                    };
+                }
+            });
+            
+            roundToRemove.remove();
+            
+            // Update round numbers for remaining rounds
+            const newRemainingRounds = document.querySelectorAll('.custom-round');
+            newRemainingRounds.forEach((round, index) => {
+                const newRoundNumber = index + 1;
+                const oldRoundNumber = parseInt(round.dataset.round) || (index + 1);
+                round.dataset.round = newRoundNumber;
+                
+                const header = round.querySelector('.custom-round-header h3');
+                const content = round.querySelector('.custom-round-content');
+                const headerDiv = round.querySelector('.custom-round-header');
+                const removeBtn = round.querySelector('.remove-round-btn');
+                
+                // Update IDs and onclick
+                content.id = `round-content-${newRoundNumber}`;
+                headerDiv.onclick = () => toggleCustomRound(newRoundNumber);
+                
+                // Update remove button onclick
+                if (removeBtn) {
+                    removeBtn.onclick = () => removeSpecificRound(newRoundNumber);
+                }
+                
+                // Update text content
+                header.textContent = `Introduction Round ${newRoundNumber}`;
+                header.setAttribute('data-en', `Introduction Round ${newRoundNumber}`);
+                header.setAttribute('data-es', `Ronda de Introducción ${newRoundNumber}`);
+                header.setAttribute('data-fr', `Ronde d'Introduction ${newRoundNumber}`);
+                header.setAttribute('data-ja', `導入ラウンド${newRoundNumber}`);
+                
+                // Restore state if this round was renumbered
+                if (oldRoundNumber > roundNumber && stateToPreserve[oldRoundNumber]) {
+                    const preservedState = stateToPreserve[oldRoundNumber];
+                    
+                    // Restore checked checkboxes
+                    preservedState.checkedWords.forEach(word => {
+                        const checkbox = round.querySelector(`input[data-english="${word}"]`);
+                        if (checkbox) checkbox.checked = true;
+                    });
+                    
+                    // Restore open sections
+                    preservedState.openSections.forEach(sectionId => {
+                        const newSectionId = sectionId.replace(`-${oldRoundNumber}-`, `-${newRoundNumber}-`);
+                        const section = round.querySelector(`#${newSectionId}`);
+                        if (section) section.classList.remove('collapsed');
+                    });
+                    
+                    // Restore custom words
+                    preservedState.customWords.forEach(customWord => {
+                        addCustomWordToRound(round, customWord.japanese, customWord.english);
+                    });
+                }
+            });
+            
+            // Update remove button visibility
+            updateRemoveButtonVisibility();
+            
+            // Update round selector with new rounds
+            populateRoundSelector();
+            
+            // Save custom rounds to local storage
+            saveCustomRounds();
+        }
+    } else {
+        alert('You must have at least one round.');
+    }
+}
+
+function updateRemoveButtonVisibility() {
+    const rounds = document.querySelectorAll('.custom-round');
+    
+    rounds.forEach((round, index) => {
+        const removeBtn = round.querySelector('.remove-round-btn');
+        if (removeBtn) {
+            // Only show remove button if it's not the first round (round 1)
+            // Round 1 should never have a remove button, even with multiple rounds
+            if (index === 0) {
+                removeBtn.style.display = 'none';
+            } else {
+                removeBtn.style.display = 'block';
+            }
+        }
+    });
 }
 
 function removeCustomRound() {
@@ -1495,20 +1940,29 @@ function startCustomRun() {
     window.customModeEnabled = true;
     window.customModeNoPracticeRounds = disablePracticeRoundsToggle.checked;
     
+    // Populate round selector with custom rounds
+    populateRoundSelector();
+    
     // Start the game with custom mode
-    showPage('script');
+    startCustomGame();
 }
 
 function startCustomGame() {
-    currentRound = 1;
-    currentPhase = 'learning';
-    currentQuestionIndex = 0;
-    correctAnswers = {};
-    questionQueue = [];
-    allLearnedWords = [];
-    wordsWithPendingPoints = new Set();
-    currentQuestionFailed = false;
-    eliminationWords = [];
+    // Try to load saved progress for custom mode
+    const progressLoaded = loadProgress();
+    
+    if (!progressLoaded) {
+        // No saved progress, start fresh
+        currentRound = 1;
+        currentPhase = 'learning';
+        currentQuestionIndex = 0;
+        correctAnswers = {};
+        questionQueue = [];
+        allLearnedWords = [];
+        wordsWithPendingPoints = new Set();
+        currentQuestionFailed = false;
+        eliminationWords = [];
+    }
     
     // Reset progress text color to white
     const progressInfo = document.querySelector('.progress-info');
@@ -1517,25 +1971,45 @@ function startCustomGame() {
     // Disable next round button at start
     nextRoundBtn.classList.add('disabled');
     
+    // Keep custom mode enabled for the duration of the game
+    // Only reset when explicitly leaving custom mode
+    
     showPage('game');
     initializeCustomRound();
 }
 
 function initializeCustomRound() {
     const customWordPools = window.customWordPools || [];
-    const isIntroductionRound = currentRound % 2 === 1;
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
+    
+    // Calculate the actual round number (accounting for skipped practice rounds)
+    let actualRoundNumber;
+    if (noPracticeRounds) {
+        // If practice rounds are disabled, only count introduction rounds
+        actualRoundNumber = currentRound;
+    } else {
+        // If practice rounds are enabled, use the full round number
+        actualRoundNumber = currentRound;
+    }
+    
+    const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
     
     // Disable next round button at start of each round
     nextRoundBtn.classList.add('disabled');
     
     if (isIntroductionRound) {
-        roundTitle.textContent = 'Introduction Round';
+        // Calculate the introduction round number
+        const introRoundNumber = noPracticeRounds ? currentRound : Math.ceil(currentRound / 2);
+        roundTitle.textContent = `Introduction Round ${introRoundNumber}`;
         currentPhase = 'learning';
         currentQuestionIndex = 0;
         showCustomLearningQuestion();
     } else {
-        roundTitle.textContent = 'Practice Round';
+        // Calculate the practice round number
+        const practiceRoundNumber = Math.floor(currentRound / 2);
+        roundTitle.textContent = `Practice Round ${practiceRoundNumber}`;
         currentPhase = 'elimination';
+        // For practice rounds, use accumulated words from all previous introduction rounds
         eliminationWords = getAllCustomWordsUpToRound(currentRound);
         shuffleArray(eliminationWords);
         currentQuestionIndex = 0;
@@ -1548,11 +2022,21 @@ function initializeCustomRound() {
 
 function getAllCustomWordsUpToRound(roundNumber) {
     const customWordPools = window.customWordPools || [];
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
     let allWords = [];
     
-    for (let i = 0; i < Math.ceil(roundNumber / 2); i++) {
-        if (customWordPools[i]) {
-            allWords = allWords.concat(customWordPools[i]);
+    if (noPracticeRounds) {
+        // If practice rounds are disabled, only include words from the current introduction round
+        const roundIndex = roundNumber - 1;
+        if (customWordPools[roundIndex]) {
+            allWords = allWords.concat(customWordPools[roundIndex]);
+        }
+    } else {
+        // If practice rounds are enabled, include words from all previous introduction rounds
+        for (let i = 0; i < Math.ceil(roundNumber / 2); i++) {
+            if (customWordPools[i]) {
+                allWords = allWords.concat(customWordPools[i]);
+            }
         }
     }
     
@@ -1561,12 +2045,24 @@ function getAllCustomWordsUpToRound(roundNumber) {
 
 function getCurrentCustomRoundWords() {
     const customWordPools = window.customWordPools || [];
-    const roundIndex = Math.floor((currentRound - 1) / 2);
-    return customWordPools[roundIndex] || [];
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
+    
+    if (noPracticeRounds) {
+        // If practice rounds are disabled, only use introduction rounds
+        const roundIndex = currentRound - 1;
+        console.log('Custom round words (no practice):', { currentRound, roundIndex, customWordPools, result: customWordPools[roundIndex] || [] });
+        return customWordPools[roundIndex] || [];
+    } else {
+        // If practice rounds are enabled, calculate based on introduction rounds
+        const roundIndex = Math.floor((currentRound - 1) / 2);
+        console.log('Custom round words (with practice):', { currentRound, roundIndex, customWordPools, result: customWordPools[roundIndex] || [] });
+        return customWordPools[roundIndex] || [];
+    }
 }
 
 function showCustomLearningQuestion() {
     const roundWords = getCurrentCustomRoundWords();
+    console.log('Show custom learning question:', { currentQuestionIndex, roundWords, word: roundWords[currentQuestionIndex] });
     
     if (currentQuestionIndex >= roundWords.length) {
         // Learning phase complete, move to elimination phase
@@ -1615,22 +2111,50 @@ function showCustomEliminationQuestion() {
 
 function showCustomRepeatingQuestion() {
     if (questionQueue.length === 0) {
-        // Round complete
-        if (currentRound < window.customWordPools.length * 2) {
-            // More rounds to go
-            currentRound++;
-            initializeCustomRound();
+        // Determine which words to use based on round type
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+        
+        let allWords;
+        if (isIntroductionRound) {
+            // For introduction rounds, only use the current round's words
+            allWords = getCurrentCustomRoundWords();
         } else {
-            // All rounds complete
-            alert('Custom run complete!');
-            showPage('start');
+            // For practice rounds, use accumulated words from all previous introduction rounds
+            allWords = getAllCustomWordsUpToRound(currentRound);
         }
+        
+        // Check if all words have 3 correct answers
+        const targetCorrect = allWords.length * 3;
+        let totalCorrect = 0;
+        
+        allWords.forEach(word => {
+            totalCorrect += correctAnswers[word.japanese] || 0;
+        });
+        
+        if (totalCorrect >= targetCorrect) {
+            // All words have 3 correct answers, enable next round button
+            // Don't automatically progress - let user click the button
+            nextRoundBtn.classList.remove('disabled');
+        }
+        
+        // Refill the queue and continue (regardless of whether target is reached)
+        questionQueue = [...allWords];
+        shuffleArray(questionQueue);
+    }
+    
+    // If queue is still empty after refilling, something went wrong
+    if (questionQueue.length === 0) {
+        console.error('Question queue is empty after refilling');
         return;
     }
     
     const word = questionQueue[0];
     japaneseWord.textContent = word.japanese;
     correctAnswerDisplay.classList.add('hidden');
+    
+    // Reset the failed flag for the new question
+    currentQuestionFailed = false;
     
     answerInput.value = '';
     answerInput.focus();
@@ -1640,7 +2164,18 @@ function showCustomRepeatingQuestion() {
 }
 
 function initializeCustomQuestionQueue() {
-    const allWords = getAllCustomWordsUpToRound(currentRound);
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
+    const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+    
+    let allWords;
+    if (isIntroductionRound) {
+        // For introduction rounds, only use the current round's words
+        allWords = getCurrentCustomRoundWords();
+    } else {
+        // For practice rounds, use accumulated words from all previous introduction rounds
+        allWords = getAllCustomWordsUpToRound(currentRound);
+    }
+    
     questionQueue = [...allWords];
     shuffleArray(questionQueue);
     
@@ -1701,7 +2236,19 @@ function handleCustomIncorrectAnswer(word) {
     
     // Ensure queue has minimum length
     while (questionQueue.length < 21) {
-        const allWords = getAllCustomWordsUpToRound(currentRound);
+        // Determine which words to use based on round type
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+        
+        let allWords;
+        if (isIntroductionRound) {
+            // For introduction rounds, only use the current round's words
+            allWords = getCurrentCustomRoundWords();
+        } else {
+            // For practice rounds, use accumulated words from all previous introduction rounds
+            allWords = getAllCustomWordsUpToRound(currentRound);
+        }
+        
         const randomWord = allWords[Math.floor(Math.random() * allWords.length)];
         questionQueue.push(randomWord);
     }
@@ -1711,7 +2258,19 @@ function handleCustomIncorrectAnswer(word) {
 }
 
 function updateCustomNextRoundButton() {
-    const allWords = getAllCustomWordsUpToRound(currentRound);
+    // Determine which words to use based on round type
+    const noPracticeRounds = window.customModeNoPracticeRounds || false;
+    const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+    
+    let allWords;
+    if (isIntroductionRound) {
+        // For introduction rounds, only use the current round's words
+        allWords = getCurrentCustomRoundWords();
+    } else {
+        // For practice rounds, use accumulated words from all previous introduction rounds
+        allWords = getAllCustomWordsUpToRound(currentRound);
+    }
+    
     const targetCorrect = allWords.length * 3;
     let totalCorrect = 0;
     
@@ -1721,9 +2280,158 @@ function updateCustomNextRoundButton() {
     
     if (totalCorrect >= targetCorrect) {
         nextRoundBtn.classList.remove('disabled');
-        nextRoundBtn.addEventListener('click', () => {
-            currentRound++;
-            initializeCustomRound();
-        });
     }
+}
+
+// Local Storage Keys
+const STORAGE_KEYS = {
+    SETTINGS: 'japaneseLearningSettings',
+    CUSTOM_ROUNDS: 'japaneseLearningCustomRounds',
+    PROGRESS: 'japaneseLearningProgress',
+    STATS: 'japaneseLearningStats'
+};
+
+// User Statistics
+let userStats = {
+    totalCorrectAnswers: 0,
+    totalIncorrectAnswers: 0,
+    highestRoundReached: 0,
+    gamesPlayed: 0,
+    totalPlayTime: 0,
+    lastPlayed: null
+};
+
+// Progress tracking
+let currentProgress = {
+    hiragana: { round: 1, phase: 'learning', script: 'hiragana' },
+    katakana: { round: 1, phase: 'learning', script: 'katakana' }
+};
+
+// Local Storage Functions
+function saveToLocalStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+    } catch (error) {
+        console.error('Error saving to localStorage:', error);
+    }
+}
+
+function loadFromLocalStorage(key, defaultValue = null) {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+        console.error('Error loading from localStorage:', error);
+        return defaultValue;
+    }
+}
+
+function saveSettings() {
+    const settings = {
+        language: currentLanguage,
+        darkMode: isDarkMode
+    };
+    saveToLocalStorage(STORAGE_KEYS.SETTINGS, settings);
+}
+
+function loadSettings() {
+    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false });
+    currentLanguage = settings.language;
+    isDarkMode = settings.darkMode;
+    
+    // Apply settings
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    }
+    updateAllText();
+}
+
+function saveCustomRounds() {
+    if (window.customWordPools) {
+        const customData = {
+            wordPools: window.customWordPools,
+            noPracticeRounds: window.customModeNoPracticeRounds || false
+        };
+        saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
+    }
+}
+
+function loadCustomRounds() {
+    const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+    if (customData) {
+        window.customWordPools = customData.wordPools;
+        window.customModeNoPracticeRounds = customData.noPracticeRounds;
+        return true;
+    }
+    return false;
+}
+
+function saveProgress() {
+    const progress = {
+        currentRound,
+        currentPhase,
+        currentQuestionIndex,
+        correctAnswers,
+        allLearnedWords,
+        wordsWithPendingPoints: Array.from(wordsWithPendingPoints),
+        eliminationWords,
+        currentProgress
+    };
+    saveToLocalStorage(STORAGE_KEYS.PROGRESS, progress);
+}
+
+function loadProgress() {
+    const progress = loadFromLocalStorage(STORAGE_KEYS.PROGRESS, null);
+    if (progress) {
+        currentRound = progress.currentRound || 1;
+        currentPhase = progress.currentPhase || 'learning';
+        currentQuestionIndex = progress.currentQuestionIndex || 0;
+        correctAnswers = progress.correctAnswers || {};
+        allLearnedWords = progress.allLearnedWords || [];
+        wordsWithPendingPoints = new Set(progress.wordsWithPendingPoints || []);
+        eliminationWords = progress.eliminationWords || [];
+        currentProgress = progress.currentProgress || currentProgress;
+        return true;
+    }
+    return false;
+}
+
+function saveStats() {
+    saveToLocalStorage(STORAGE_KEYS.STATS, userStats);
+}
+
+function loadStats() {
+    const stats = loadFromLocalStorage(STORAGE_KEYS.STATS, userStats);
+    userStats = { ...userStats, ...stats };
+}
+
+function updateStats(correct = false, roundReached = null) {
+    if (correct) {
+        userStats.totalCorrectAnswers++;
+    } else {
+        userStats.totalIncorrectAnswers++;
+    }
+    
+    if (roundReached && roundReached > userStats.highestRoundReached) {
+        userStats.highestRoundReached = roundReached;
+    }
+    
+    userStats.lastPlayed = new Date().toISOString();
+    saveStats();
+}
+
+function clearAllData() {
+    localStorage.clear();
+    userStats = {
+        totalCorrectAnswers: 0,
+        totalIncorrectAnswers: 0,
+        highestRoundReached: 0,
+        gamesPlayed: 0,
+        totalPlayTime: 0,
+        lastPlayed: null
+    };
+    currentProgress = {
+        hiragana: { round: 1, phase: 'learning', script: 'hiragana' },
+        katakana: { round: 1, phase: 'learning', script: 'katakana' }
+    };
 }

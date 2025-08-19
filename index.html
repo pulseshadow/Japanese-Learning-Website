@@ -168,8 +168,25 @@
             </div>
         </div>
 
-        <!-- Custom Mode Page -->
-        <div id="custom-mode-page" class="page">
+                    <!-- Custom Script Selection Page -->
+            <div id="custom-script-page" class="page">
+                <div class="text-box">
+                    <div class="text-box-header">
+                        <h2 class="subtitle" data-en="Select Script" data-es="Seleccionar Escritura" data-fr="Sélectionner l'Écriture" data-ja="文字を選択">Select Script</h2>
+                    </div>
+                    <div class="text-box-content">
+                        <p class="body-text" data-en="Choose which script you'd like to practice with in custom mode." data-es="Elige qué escritura quieres practicar en modo personalizado." data-fr="Choisissez quelle écriture vous souhaitez pratiquer en mode personnalisé." data-ja="カスタムモードで練習したい文字を選択してください。">Choose which script you'd like to practice with in custom mode.</p>
+                        <div class="button-container">
+                            <button id="custom-hiragana-btn" class="script-btn primary" data-en="Hiragana" data-es="Hiragana" data-fr="Hiragana" data-ja="ひらがな">Hiragana</button>
+                            <button class="script-btn disabled" data-en="Katakana (Coming Soon)" data-es="Katakana (Próximamente)" data-fr="Katakana (Bientôt)" data-ja="カタカナ（近日公開）">Katakana (Coming Soon)</button>
+                        </div>
+                        <button id="back-to-start-from-custom-script" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Mode Page -->
+            <div id="custom-mode-page" class="page">
             <div class="text-box">
                 <div class="text-box-header">
                     <h2 class="subtitle" data-en="Custom Mode" data-es="Modo Personalizado" data-fr="Mode Personnalisé" data-ja="カスタムモード">Custom Mode</h2>
@@ -179,7 +196,10 @@
                         <div class="custom-round" data-round="1">
                             <div class="custom-round-header" onclick="toggleCustomRound(1)">
                                 <h3 data-en="Introduction Round 1" data-es="Ronda de Introducción 1" data-fr="Ronde d'Introduction 1" data-ja="導入ラウンド1">Introduction Round 1</h3>
-                                <button class="collapse-btn">▼</button>
+                                <div class="round-header-controls">
+                                    <button class="remove-round-btn" onclick="removeSpecificRound(1)" style="display: none;">Remove Round</button>
+                                    <button class="collapse-btn">▼</button>
+                                </div>
                             </div>
                             
                             <div class="custom-round-content" id="round-content-1">
@@ -189,16 +209,14 @@
                                     <!-- Word checkboxes will be populated by JavaScript -->
                                 </div>
                                 
-                                <div class="custom-word-section">
-                                    <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
-                                    <div class="custom-word-inputs hidden">
-                                        <div class="input-row">
-                                            <input type="text" class="japanese-word-input" placeholder="Japanese Word" data-en-placeholder="Japanese Word" data-es-placeholder="Palabra Japonesa" data-fr-placeholder="Mot Japonais" data-ja-placeholder="日本語の単語">
-                                            <input type="text" class="english-translation-input" placeholder="English Translation (Correct Answer)" data-en-placeholder="English Translation (Correct Answer)" data-es-placeholder="Traducción al Inglés (Respuesta Correcta)" data-fr-placeholder="Traduction Anglaise (Réponse Correcte)" data-ja-placeholder="英語訳（正解）">
-                                            <button class="add-word-btn" data-en="Add" data-es="Agregar" data-fr="Ajouter" data-ja="追加">Add</button>
+                                                                    <div class="custom-word-section">
+                                        <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
+                                        <div class="custom-word-inputs hidden">
+                                            <div class="custom-word-inputs-container">
+                                                <!-- Custom word input rows will be added here dynamically -->
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
                             </div>
                         </div>
                     </div>
