@@ -91,6 +91,18 @@
                     </div>
                 </div>
             </div>
+
+            <!-- User Stats Section -->
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle" data-en="User Profile" data-es="Perfil del Usuario" data-fr="Profil de l'Utilisateur" data-ja="ユーザープロフィール">User Profile</h2>
+                </div>
+                <div class="text-box-content">
+                    <div class="button-container">
+                        <button id="user-stats-btn" class="practice-btn" data-en="View Statistics" data-es="Ver Estadísticas" data-fr="Voir les Statistiques" data-ja="統計を見る">View Statistics</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Script Selection Page -->
@@ -168,8 +180,55 @@
             </div>
         </div>
 
-                    <!-- Custom Script Selection Page -->
-            <div id="custom-script-page" class="page">
+                            <!-- User Stats Page -->
+        <div id="stats-page" class="page">
+            <div class="text-box">
+                <div class="text-box-header">
+                    <h2 class="subtitle" data-en="User Statistics" data-es="Estadísticas del Usuario" data-fr="Statistiques de l'Utilisateur" data-ja="ユーザー統計">User Statistics</h2>
+                </div>
+                <div class="text-box-content">
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-label" data-en="Total Correct Answers:" data-es="Respuestas Correctas Totales:" data-fr="Réponses Correctes Totales:" data-ja="正解総数:">Total Correct Answers:</span>
+                            <span class="stat-value" id="total-correct">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" data-en="Total Incorrect Answers:" data-es="Respuestas Incorrectas Totales:" data-fr="Réponses Incorrectes Totales:" data-ja="不正解総数:">Total Incorrect Answers:</span>
+                            <span class="stat-value" id="total-incorrect">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" data-en="Accuracy Rate:" data-es="Tasa de Precisión:" data-fr="Taux de Précision:" data-ja="正解率:">Accuracy Rate:</span>
+                            <span class="stat-value" id="accuracy-rate">0%</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" data-en="Highest Round Reached:" data-es="Ronda Más Alta Alcanzada:" data-fr="Tour le Plus Élevé Atteint:" data-ja="到達最高ラウンド:">Highest Round Reached:</span>
+                            <span class="stat-value" id="highest-round">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label" data-en="Games Played:" data-es="Juegos Jugados:" data-fr="Parties Jouées:" data-ja="プレイしたゲーム:">Games Played:</span>
+                            <span class="stat-value" id="games-played">0</span>
+                        </div>
+
+                    </div>
+                    
+                    <div class="button-container">
+                        <button id="back-to-start-from-stats" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Storage Warning -->
+            <div class="storage-warning-section">
+                <div class="storage-warning">
+                    <span class="warning-text" data-en="WARNING: Your data is stored in local storage. To clear it, use your browser's developer tools or settings." data-es="ADVERTENCIA: Sus datos se almacenan en el almacenamiento local. Para borrarlos, use las herramientas de desarrollador o configuraciones de su navegador." data-fr="ATTENTION : Vos données sont stockées dans le stockage local. Pour les effacer, utilisez les outils de développement ou les paramètres de votre navigateur." data-ja="警告：データはローカルストレージに保存されています。クリアするには、ブラウザの開発者ツールまたは設定を使用してください。">WARNING: Your data is stored in local storage. To clear it, use your browser's developer tools or settings.</span>
+                </div>
+            </div>
+            
+
+        </div>
+
+        <!-- Custom Script Selection Page -->
+        <div id="custom-script-page" class="page">
                 <div class="text-box">
                     <div class="text-box-header">
                         <h2 class="subtitle" data-en="Select Script" data-es="Seleccionar Escritura" data-fr="Sélectionner l'Écriture" data-ja="文字を選択">Select Script</h2>
@@ -239,6 +298,13 @@
                     </div>
                     
                     <button id="back-to-start-from-custom" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                </div>
+            </div>
+            
+            <!-- Storage Warning (Outside Box) -->
+            <div class="storage-warning-section">
+                <div class="storage-warning">
+                    <span class="warning-text" data-en="WARNING: Your data is stored in local storage. To clear it, use your browser's developer tools or settings." data-es="ADVERTENCIA: Sus datos se almacenan en el almacenamiento local. Para borrarlos, use las herramientas de desarrollador o configuraciones de su navegador." data-fr="ATTENTION : Vos données sont stockées dans le stockage local. Pour les effacer, utilisez les outils de développement ou les paramètres de votre navigateur." data-ja="警告：データはローカルストレージに保存されています。クリアするには、ブラウザの開発者ツールまたは設定を使用してください。">WARNING: Your data is stored in local storage. To clear it, use your browser's developer tools or settings.</span>
                 </div>
             </div>
         </div>

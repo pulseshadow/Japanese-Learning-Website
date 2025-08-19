@@ -458,11 +458,27 @@ const startCustomRunBtn = document.getElementById('start-custom-run-btn');
 const disablePracticeRoundsToggle = document.getElementById('disable-practice-rounds');
 const customRoundsContainer = document.getElementById('custom-rounds-container');
 
+// Stats page DOM elements
+const statsPage = document.getElementById('stats-page');
+const userStatsBtn = document.getElementById('user-stats-btn');
+// clearStatsBtn removed - no longer needed
+const backToStartFromStatsBtn = document.getElementById('back-to-start-from-stats');
+const totalCorrectSpan = document.getElementById('total-correct');
+const totalIncorrectSpan = document.getElementById('total-incorrect');
+const accuracyRateSpan = document.getElementById('accuracy-rate');
+const highestRoundSpan = document.getElementById('highest-round');
+const gamesPlayedSpan = document.getElementById('games-played');
+// lastPlayedSpan removed - no longer displaying last played stat
+
 // Event listeners
 bruteForceBtn.addEventListener('click', () => {
     showPage('script');
 });
 customModeBtn.addEventListener('click', () => showPage('custom-script'));
+userStatsBtn.addEventListener('click', () => {
+    showPage('stats');
+    updateStatsDisplay();
+});
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
 katakanaBtn.addEventListener('click', () => alert('Katakana mode coming soon!'));
@@ -481,6 +497,10 @@ backToStartFromCustomBtn.addEventListener('click', () => {
     window.customWordPools = null;
     showPage('start');
 });
+
+// Stats page event listeners - clearStatsBtn removed
+
+backToStartFromStatsBtn.addEventListener('click', () => showPage('start'));
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
 addRoundBtn.addEventListener('click', addCustomRound);
 removeRoundBtn.addEventListener('click', removeCustomRound);
@@ -514,6 +534,7 @@ function showPage(pageName) {
     gamePage.style.display = 'none';
     customScriptPage.style.display = 'none';
     customModePage.style.display = 'none';
+    statsPage.style.display = 'none';
     
     // Show the selected page
     if (pageName === 'start') {
@@ -532,6 +553,9 @@ function showPage(pageName) {
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
         initializeCustomMode();
+    } else if (pageName === 'stats') {
+        statsPage.style.display = 'block';
+        statsPage.classList.add('active');
     }
 }
 
@@ -550,8 +574,7 @@ function changeRound(roundNumber) {
         updateProgress();
         updatePhaseLabel();
         
-        // Save progress after round change
-        saveProgress();
+        // Progress tracking removed - no longer persisting round changes
     }
 }
 
@@ -723,21 +746,16 @@ function startGame() {
     // Populate round selector with preset rounds
     populateRoundSelector();
     
-    // Try to load saved progress for hiragana
-    const progressLoaded = loadProgress();
-    
-    if (!progressLoaded) {
-        // No saved progress, start fresh
-        currentRound = 1;
-        currentPhase = 'learning';
-        currentQuestionIndex = 0;
-        correctAnswers = {};
-        questionQueue = [];
-        allLearnedWords = [];
-        wordsWithPendingPoints = new Set();
-        currentQuestionFailed = false;
-        eliminationWords = [];
-    }
+    // Always start fresh - users can use round selector to jump to any round
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
     
     // Reset progress text color to white
     const progressInfo = document.querySelector('.progress-info');
@@ -978,8 +996,7 @@ function submitAnswer() {
         }
     }
     
-    // Save progress after each answer
-    saveProgress();
+    // Progress tracking removed - no longer persisting answer progress
 }
 
 function handleCorrectAnswer() {
@@ -1275,8 +1292,7 @@ function nextCustomRound() {
         saveStats();
     }
     
-    // Save progress
-    saveProgress();
+    // Progress tracking removed - no longer persisting round progression
 }
 
 function nextStandardRound() {
@@ -1307,8 +1323,7 @@ function nextStandardRound() {
         saveStats();
     }
     
-    // Save progress
-    saveProgress();
+    // Progress tracking removed - no longer persisting round progression
 }
 
 function shuffleArray(array) {
@@ -1343,17 +1358,6 @@ function getCorrectAnswer(english) {
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
-    // Load all saved data
-    loadSettings();
-    loadStats();
-    loadCustomRounds();
-    loadProgress();
-    
-    // Initialize custom mode if there are saved custom rounds
-    if (window.customWordPools) {
-        initializeCustomMode();
-    }
-    
     showPage('start');
     initializeSettings();
     detectBrowserLanguage();
@@ -1377,11 +1381,12 @@ function toggleSection(sectionId) {
 
 // Settings and Language Functions
 function initializeSettings() {
-    // Load all saved data
-    loadSettings();
-    loadStats();
-    loadCustomRounds();
-    loadProgress();
+    // Validate and load all saved data
+    const dataValid = validateAndFixData();
+    
+    if (!dataValid) {
+        console.warn('Using default settings due to data validation failure');
+    }
     
     // Initialize custom mode if there are saved custom rounds
     if (window.customWordPools) {
@@ -1948,21 +1953,16 @@ function startCustomRun() {
 }
 
 function startCustomGame() {
-    // Try to load saved progress for custom mode
-    const progressLoaded = loadProgress();
-    
-    if (!progressLoaded) {
-        // No saved progress, start fresh
-        currentRound = 1;
-        currentPhase = 'learning';
-        currentQuestionIndex = 0;
-        correctAnswers = {};
-        questionQueue = [];
-        allLearnedWords = [];
-        wordsWithPendingPoints = new Set();
-        currentQuestionFailed = false;
-        eliminationWords = [];
-    }
+    // Always start fresh - users can use round selector to jump to any round
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
     
     // Reset progress text color to white
     const progressInfo = document.querySelector('.progress-info');
@@ -2287,7 +2287,6 @@ function updateCustomNextRoundButton() {
 const STORAGE_KEYS = {
     SETTINGS: 'japaneseLearningSettings',
     CUSTOM_ROUNDS: 'japaneseLearningCustomRounds',
-    PROGRESS: 'japaneseLearningProgress',
     STATS: 'japaneseLearningStats'
 };
 
@@ -2297,29 +2296,54 @@ let userStats = {
     totalIncorrectAnswers: 0,
     highestRoundReached: 0,
     gamesPlayed: 0,
-    totalPlayTime: 0,
-    lastPlayed: null
+    totalPlayTime: 0
 };
 
-// Progress tracking
-let currentProgress = {
-    hiragana: { round: 1, phase: 'learning', script: 'hiragana' },
-    katakana: { round: 1, phase: 'learning', script: 'katakana' }
-};
+// Progress tracking removed - no longer persisting round progression between sessions
+
+// Check if localStorage is available
+function isLocalStorageAvailable() {
+    try {
+        const test = '__localStorage_test__';
+        localStorage.setItem(test, 'test');
+        localStorage.removeItem(test);
+        return true;
+    } catch (e) {
+        console.warn('localStorage is not available:', e);
+        return false;
+    }
+}
 
 // Local Storage Functions
 function saveToLocalStorage(key, data) {
+    if (!isLocalStorageAvailable()) {
+        console.warn('Cannot save to localStorage: not available');
+        return false;
+    }
+    
     try {
         localStorage.setItem(key, JSON.stringify(data));
+        return true;
     } catch (error) {
         console.error('Error saving to localStorage:', error);
+        return false;
     }
 }
 
 function loadFromLocalStorage(key, defaultValue = null) {
+    if (!isLocalStorageAvailable()) {
+        console.warn('Cannot load from localStorage: not available');
+        return defaultValue;
+    }
+    
     try {
         const item = localStorage.getItem(key);
-        return item ? JSON.parse(item) : defaultValue;
+        if (!item) {
+            return defaultValue;
+        }
+        
+        const parsed = JSON.parse(item);
+        return parsed !== null ? parsed : defaultValue;
     } catch (error) {
         console.error('Error loading from localStorage:', error);
         return defaultValue;
@@ -2336,12 +2360,28 @@ function saveSettings() {
 
 function loadSettings() {
     const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false });
-    currentLanguage = settings.language;
-    isDarkMode = settings.darkMode;
+    
+    // Validate and apply language setting
+    if (settings && typeof settings.language === 'string' && ['en', 'es', 'fr', 'ja'].includes(settings.language)) {
+        currentLanguage = settings.language;
+    } else {
+        currentLanguage = 'en';
+        console.warn('Invalid language setting, defaulting to English');
+    }
+    
+    // Validate and apply dark mode setting
+    if (settings && typeof settings.darkMode === 'boolean') {
+        isDarkMode = settings.darkMode;
+    } else {
+        isDarkMode = false;
+        console.warn('Invalid dark mode setting, defaulting to light mode');
+    }
     
     // Apply settings
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
     }
     updateAllText();
 }
@@ -2358,43 +2398,43 @@ function saveCustomRounds() {
 
 function loadCustomRounds() {
     const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-    if (customData) {
-        window.customWordPools = customData.wordPools;
-        window.customModeNoPracticeRounds = customData.noPracticeRounds;
-        return true;
+    if (customData && typeof customData === 'object') {
+        // Validate word pools structure
+        if (customData.wordPools && typeof customData.wordPools === 'object') {
+            let isValid = true;
+            for (const [round, words] of Object.entries(customData.wordPools)) {
+                if (!Array.isArray(words)) {
+                    isValid = false;
+                    break;
+                }
+                for (const word of words) {
+                    if (!word || typeof word.japanese !== 'string' || typeof word.english !== 'string') {
+                        isValid = false;
+                        break;
+                    }
+                }
+                if (!isValid) break;
+            }
+            
+            if (isValid) {
+                window.customWordPools = customData.wordPools;
+                window.customModeNoPracticeRounds = Boolean(customData.noPracticeRounds);
+                return true;
+            } else {
+                console.warn('Invalid custom rounds data structure, ignoring');
+            }
+        } else {
+            console.warn('Invalid custom rounds data, ignoring');
+        }
     }
     return false;
 }
 
-function saveProgress() {
-    const progress = {
-        currentRound,
-        currentPhase,
-        currentQuestionIndex,
-        correctAnswers,
-        allLearnedWords,
-        wordsWithPendingPoints: Array.from(wordsWithPendingPoints),
-        eliminationWords,
-        currentProgress
-    };
-    saveToLocalStorage(STORAGE_KEYS.PROGRESS, progress);
-}
+// saveProgress function removed - no longer saving round progression
+// Progress is still tracked within a game session but not persisted between sessions
 
-function loadProgress() {
-    const progress = loadFromLocalStorage(STORAGE_KEYS.PROGRESS, null);
-    if (progress) {
-        currentRound = progress.currentRound || 1;
-        currentPhase = progress.currentPhase || 'learning';
-        currentQuestionIndex = progress.currentQuestionIndex || 0;
-        correctAnswers = progress.correctAnswers || {};
-        allLearnedWords = progress.allLearnedWords || [];
-        wordsWithPendingPoints = new Set(progress.wordsWithPendingPoints || []);
-        eliminationWords = progress.eliminationWords || [];
-        currentProgress = progress.currentProgress || currentProgress;
-        return true;
-    }
-    return false;
-}
+// loadProgress function removed - no longer auto-restoring round progress
+// Users can use the round selector dropdown to jump to any round they want
 
 function saveStats() {
     saveToLocalStorage(STORAGE_KEYS.STATS, userStats);
@@ -2402,7 +2442,25 @@ function saveStats() {
 
 function loadStats() {
     const stats = loadFromLocalStorage(STORAGE_KEYS.STATS, userStats);
-    userStats = { ...userStats, ...stats };
+    if (stats && typeof stats === 'object') {
+        // Validate each stat property
+        if (typeof stats.totalCorrectAnswers === 'number' && stats.totalCorrectAnswers >= 0) {
+            userStats.totalCorrectAnswers = stats.totalCorrectAnswers;
+        }
+        if (typeof stats.totalIncorrectAnswers === 'number' && stats.totalIncorrectAnswers >= 0) {
+            userStats.totalIncorrectAnswers = stats.totalIncorrectAnswers;
+        }
+        if (typeof stats.highestRoundReached === 'number' && stats.highestRoundReached >= 0) {
+            userStats.highestRoundReached = stats.highestRoundReached;
+        }
+        if (typeof stats.gamesPlayed === 'number' && stats.gamesPlayed >= 0) {
+            userStats.gamesPlayed = stats.gamesPlayed;
+        }
+        if (typeof stats.totalPlayTime === 'number' && stats.totalPlayTime >= 0) {
+            userStats.totalPlayTime = stats.totalPlayTime;
+        }
+        // lastPlayed stat removed - no longer tracking
+    }
 }
 
 function updateStats(correct = false, roundReached = null) {
@@ -2416,22 +2474,135 @@ function updateStats(correct = false, roundReached = null) {
         userStats.highestRoundReached = roundReached;
     }
     
-    userStats.lastPlayed = new Date().toISOString();
     saveStats();
 }
 
 function clearAllData() {
-    localStorage.clear();
+    if (isLocalStorageAvailable()) {
+        // Clear only our app's data, not all localStorage
+        Object.values(STORAGE_KEYS).forEach(key => {
+            localStorage.removeItem(key);
+        });
+    }
+    
+    // Reset all variables to defaults
     userStats = {
         totalCorrectAnswers: 0,
         totalIncorrectAnswers: 0,
         highestRoundReached: 0,
         gamesPlayed: 0,
-        totalPlayTime: 0,
-        lastPlayed: null
+        totalPlayTime: 0
     };
-    currentProgress = {
-        hiragana: { round: 1, phase: 'learning', script: 'hiragana' },
-        katakana: { round: 1, phase: 'learning', script: 'katakana' }
-    };
+    // currentProgress variable removed - no longer tracking round progression
+    
+    // Reset custom mode variables
+    window.customWordPools = null;
+    window.customModeEnabled = false;
+    window.customModeNoPracticeRounds = false;
+    
+    console.log('All data cleared and reset to defaults');
+}
+
+// Check for data corruption and auto-fix if needed
+function validateAndFixData() {
+    try {
+        // Test if we can access all the necessary data
+        loadSettings();
+        loadStats();
+        loadCustomRounds();
+        // Note: loadProgress() removed - no longer auto-restoring round progress
+        
+        console.log('Data validation successful');
+        return true;
+    } catch (error) {
+        console.error('Data corruption detected, clearing corrupted data:', error);
+        clearAllData();
+        
+        // Try loading defaults again
+        try {
+            loadSettings();
+            loadStats();
+            console.log('Data reset successful');
+            return true;
+        } catch (secondError) {
+            console.error('Critical error: Unable to initialize data:', secondError);
+            return false;
+        }
+    }
+}
+
+// Debug function to test localStorage functionality
+function testLocalStorage() {
+    console.log('=== localStorage Test ===');
+    
+    // Test basic availability
+    console.log('localStorage available:', isLocalStorageAvailable());
+    
+    // Test saving and loading settings
+    console.log('Testing settings...');
+    const originalLang = currentLanguage;
+    const originalDark = isDarkMode;
+    
+    currentLanguage = 'es';
+    isDarkMode = true;
+    saveSettings();
+    
+    currentLanguage = 'en';
+    isDarkMode = false;
+    loadSettings();
+    
+    console.log('Language restored:', currentLanguage === 'es' ? '✅' : '❌', currentLanguage);
+    console.log('Dark mode restored:', isDarkMode === true ? '✅' : '❌', isDarkMode);
+    
+    // Restore original values
+    currentLanguage = originalLang;
+    isDarkMode = originalDark;
+    saveSettings();
+    
+    // Test stats
+    console.log('Testing stats...');
+    const originalStats = { ...userStats };
+    userStats.totalCorrectAnswers = 42;
+    saveStats();
+    userStats.totalCorrectAnswers = 0;
+    loadStats();
+    console.log('Stats restored:', userStats.totalCorrectAnswers === 42 ? '✅' : '❌', userStats.totalCorrectAnswers);
+    
+    // Restore original stats
+    userStats = originalStats;
+    saveStats();
+    
+    // Show current storage size
+    let totalSize = 0;
+    Object.values(STORAGE_KEYS).forEach(key => {
+        const item = localStorage.getItem(key);
+        if (item) {
+            totalSize += item.length;
+            console.log(`${key}: ${(item.length / 1024).toFixed(2)} KB`);
+        }
+    });
+    console.log(`Total storage used: ${(totalSize / 1024).toFixed(2)} KB`);
+    
+    console.log('=== localStorage Test Complete ===');
+}
+
+// Make test function available globally for debugging
+if (typeof window !== 'undefined') {
+    window.testLocalStorage = testLocalStorage;
+}
+
+// Update stats display function
+function updateStatsDisplay() {
+    // Calculate accuracy rate
+    const totalAnswers = userStats.totalCorrectAnswers + userStats.totalIncorrectAnswers;
+    const accuracyRate = totalAnswers > 0 ? Math.round((userStats.totalCorrectAnswers / totalAnswers) * 100) : 0;
+    
+    // Update display elements
+    totalCorrectSpan.textContent = userStats.totalCorrectAnswers;
+    totalIncorrectSpan.textContent = userStats.totalIncorrectAnswers;
+    accuracyRateSpan.textContent = `${accuracyRate}%`;
+    highestRoundSpan.textContent = userStats.highestRoundReached;
+    gamesPlayedSpan.textContent = userStats.gamesPlayed;
+    
+    // Last played stat removed - no longer displaying
 }
