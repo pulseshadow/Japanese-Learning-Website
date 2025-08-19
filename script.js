@@ -467,8 +467,22 @@ const totalCorrectSpan = document.getElementById('total-correct');
 const totalIncorrectSpan = document.getElementById('total-incorrect');
 const accuracyRateSpan = document.getElementById('accuracy-rate');
 const highestRoundSpan = document.getElementById('highest-round');
-const gamesPlayedSpan = document.getElementById('games-played');
+// gamesPlayedSpan removed - no longer displaying games played
 // lastPlayedSpan removed - no longer displaying last played stat
+
+// Cookie consent elements
+const cookieConsentOverlay = document.getElementById('cookie-consent-overlay');
+const rejectCookiesBtn = document.getElementById('reject-cookies-btn');
+const acceptCookiesBtn = document.getElementById('accept-cookies-btn');
+const advertisingCookiesCheckbox = document.getElementById('advertising-cookies');
+const analyticsScript = document.getElementById('analytics-script');
+const adsenseScript = document.getElementById('adsense-script');
+
+// Language and theme elements in cookie popup
+const languageSelectorBtn = document.getElementById('language-selector-btn');
+const languageOptions = document.getElementById('language-options');
+const langOptionBtns = document.querySelectorAll('.lang-option');
+const cookieThemeToggle = document.getElementById('cookie-theme-toggle');
 
 // Event listeners
 bruteForceBtn.addEventListener('click', () => {
@@ -483,19 +497,26 @@ customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
 katakanaBtn.addEventListener('click', () => alert('Katakana mode coming soon!'));
 backToStartBtn.addEventListener('click', () => showPage('start'));
-backToScriptBtn.addEventListener('click', () => showPage('script'));
+backToScriptBtn.addEventListener('click', () => {
+    // If in custom mode, go back to word selection, otherwise go to script selection
+    if (window.customModeEnabled) {
+        showPage('custom-mode');
+    } else {
+        showPage('script');
+    }
+});
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
     window.customModeEnabled = false;
     window.customWordPools = null;
-    showPage('start');
+    showPage('script');
 });
 
 backToStartFromCustomBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
     window.customModeEnabled = false;
     window.customWordPools = null;
-    showPage('start');
+    showPage('custom-script');
 });
 
 // Stats page event listeners - clearStatsBtn removed
@@ -516,6 +537,15 @@ disablePracticeRoundsToggle.addEventListener('change', () => {
 settingsBtn.addEventListener('click', toggleSettingsPanel);
 themeToggle.addEventListener('change', toggleTheme);
 languageButtons.forEach(btn => btn.addEventListener('click', (e) => changeLanguage(e.target.dataset.lang)));
+
+// Cookie consent event listeners
+rejectCookiesBtn.addEventListener('click', rejectCookies);
+acceptCookiesBtn.addEventListener('click', acceptCookies);
+
+// Language and theme event listeners in cookie popup
+languageSelectorBtn.addEventListener('click', toggleLanguageOptions);
+langOptionBtns.forEach(btn => btn.addEventListener('click', (e) => selectLanguage(e.target.dataset.lang)));
+cookieThemeToggle.addEventListener('change', handleCookieThemeToggle);
 
 // Close settings panel when clicking outside
 document.addEventListener('click', (e) => {
@@ -677,15 +707,15 @@ answerInput.addEventListener('input', (e) => {
         return;
     }
     
-    // Check if the user answer is wrong (letter-by-letter check)
-    if (userAnswer.length > 0) {
-        // Check if the current input is wrong compared to the correct answer
-        if (checkIfAnswerIsWrong(userAnswer, correctAnswer)) {
-            // Wrong answer detected - show error and clear input
-            showErrorAndClearInput(currentWord.english);
-            return;
+        // Check if the user answer is wrong (letter-by-letter check)
+        if (userAnswer.length > 0) {
+            // Check if the current input is wrong compared to the correct answer
+            if (checkIfAnswerIsWrong(userAnswer, correctAnswer)) {
+                // Wrong answer detected - show error and clear input
+                showErrorAndClearInput(currentWord.english);
+                return;
+            }
         }
-    }
 });
 
 answerInput.addEventListener('keypress', (e) => {
@@ -727,6 +757,9 @@ function showErrorAndClearInput(correctAnswer) {
     // Mark current question as failed
     currentQuestionFailed = true;
     
+    // Update statistics for incorrect answer when question is marked as failed
+    updateStats(false, currentRound);
+    
     setTimeout(() => {
         answerInput.classList.remove('error');
         answerInput.focus();
@@ -745,6 +778,9 @@ function startGame() {
     
     // Populate round selector with preset rounds
     populateRoundSelector();
+    
+    // Update back button text for brute force mode
+    updateBackButtonText();
     
     // Always start fresh - users can use round selector to jump to any round
     currentRound = 1;
@@ -1038,6 +1074,9 @@ function handleCorrectAnswer() {
 function handleIncorrectAnswer(word) {
     // Show error
     showError(word.english);
+    
+    // Update statistics for incorrect answer
+    updateStats(false, currentRound);
     
     // Add word back to queue at positions 5 and 10 ahead
     const queueLength = questionQueue.length;
@@ -1361,6 +1400,15 @@ document.addEventListener('DOMContentLoaded', () => {
     showPage('start');
     initializeSettings();
     detectBrowserLanguage();
+    
+    // Check if cookie consent popup should be shown
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    if (!consentData) {
+        // First time visitor - show cookie consent popup
+        setTimeout(() => {
+            showCookieConsent();
+        }, 1000); // Small delay to let the page load first
+    }
 });
 
 // Toggle section visibility
@@ -1417,6 +1465,7 @@ function changeLanguage(lang) {
     saveSettings();
     updateLanguageButtons();
     updateAllText();
+    console.log('Language changed to:', lang, 'and saved');
 }
 
 function updateLanguageButtons() {
@@ -1446,6 +1495,27 @@ function updateAllText() {
             input.placeholder = placeholder;
         }
     });
+    
+    // Update back button text based on mode
+    updateBackButtonText();
+}
+
+function updateBackButtonText() {
+    if (window.customModeEnabled) {
+        // Custom mode - show "Back to Word Selection"
+        backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
+        backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
+        backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection de Mots');
+        backToScriptBtn.setAttribute('data-ja', '← 単語選択に戻る');
+        backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+    } else {
+        // Brute force mode - show "Back to Script Selection"
+        backToScriptBtn.setAttribute('data-en', '← Back to Script Selection');
+        backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura');
+        backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture');
+        backToScriptBtn.setAttribute('data-ja', '← 文字選択に戻る');
+        backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+    }
 }
 
 function detectBrowserLanguage() {
@@ -1465,6 +1535,9 @@ function detectBrowserLanguage() {
 function initializeCustomMode() {
     populateWordSelectionGrids();
     setupCustomWordButtons();
+    
+    // Explicitly set up the custom word button for Round 1 (initial round)
+    setupCustomWordButtonsForRound(1);
 }
 
 function populateWordSelectionGrid(roundNumber) {
@@ -1570,6 +1643,7 @@ function setupCustomWordButtonsForRound(roundNumber) {
     if (!round) return;
     
     const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
+    
     if (addCustomWordBtn) {
         // Remove existing event listeners
         const newBtn = addCustomWordBtn.cloneNode(true);
@@ -1948,6 +2022,9 @@ function startCustomRun() {
     // Populate round selector with custom rounds
     populateRoundSelector();
     
+    // Update back button text for custom mode
+    updateBackButtonText();
+    
     // Start the game with custom mode
     startCustomGame();
 }
@@ -2190,6 +2267,9 @@ function handleCustomCorrectAnswer() {
     const currentWord = questionQueue.shift();
     const wordKey = currentWord.japanese;
     
+    // Update statistics for correct answer
+    updateStats(true, currentRound);
+    
     // Check if this word has a pending point from a previous incorrect answer
     if (wordsWithPendingPoints.has(wordKey)) {
         // Award the pending point
@@ -2216,6 +2296,9 @@ function handleCustomCorrectAnswer() {
 function handleCustomIncorrectAnswer(word) {
     // Show error
     showError(word.english);
+    
+    // Update statistics for incorrect answer
+    updateStats(false, currentRound);
     
     // Add word back to queue at positions 5 and 10 ahead
     const queueLength = questionQueue.length;
@@ -2287,7 +2370,8 @@ function updateCustomNextRoundButton() {
 const STORAGE_KEYS = {
     SETTINGS: 'japaneseLearningSettings',
     CUSTOM_ROUNDS: 'japaneseLearningCustomRounds',
-    STATS: 'japaneseLearningStats'
+    STATS: 'japaneseLearningStats',
+    COOKIE_CONSENT: 'japaneseLearningCookieConsent'
 };
 
 // User Statistics
@@ -2295,7 +2379,7 @@ let userStats = {
     totalCorrectAnswers: 0,
     totalIncorrectAnswers: 0,
     highestRoundReached: 0,
-    gamesPlayed: 0,
+            // gamesPlayed removed
     totalPlayTime: 0
 };
 
@@ -2453,9 +2537,7 @@ function loadStats() {
         if (typeof stats.highestRoundReached === 'number' && stats.highestRoundReached >= 0) {
             userStats.highestRoundReached = stats.highestRoundReached;
         }
-        if (typeof stats.gamesPlayed === 'number' && stats.gamesPlayed >= 0) {
-            userStats.gamesPlayed = stats.gamesPlayed;
-        }
+        // gamesPlayed stat removed - no longer tracking
         if (typeof stats.totalPlayTime === 'number' && stats.totalPlayTime >= 0) {
             userStats.totalPlayTime = stats.totalPlayTime;
         }
@@ -2470,7 +2552,8 @@ function updateStats(correct = false, roundReached = null) {
         userStats.totalIncorrectAnswers++;
     }
     
-    if (roundReached && roundReached > userStats.highestRoundReached) {
+    // Only update highest round reached for brute force mode (not custom mode)
+    if (roundReached && !window.customModeEnabled && roundReached > userStats.highestRoundReached) {
         userStats.highestRoundReached = roundReached;
     }
     
@@ -2490,7 +2573,6 @@ function clearAllData() {
         totalCorrectAnswers: 0,
         totalIncorrectAnswers: 0,
         highestRoundReached: 0,
-        gamesPlayed: 0,
         totalPlayTime: 0
     };
     // currentProgress variable removed - no longer tracking round progression
@@ -2512,6 +2594,9 @@ function validateAndFixData() {
         loadCustomRounds();
         // Note: loadProgress() removed - no longer auto-restoring round progress
         
+        // Load cookie consent preferences
+        const consentLoaded = loadCookieConsent();
+        
         console.log('Data validation successful');
         return true;
     } catch (error) {
@@ -2529,6 +2614,161 @@ function validateAndFixData() {
             return false;
         }
     }
+}
+
+// Cookie Consent Functions
+function showCookieConsent() {
+    // Sync theme toggle with current theme state
+    cookieThemeToggle.checked = isDarkMode;
+    
+    // Show the popup
+    cookieConsentOverlay.classList.remove('hidden');
+}
+
+function hideCookieConsent() {
+    cookieConsentOverlay.classList.add('hidden');
+}
+
+function rejectCookies() {
+    // Disable advertising cookies
+    advertisingCookiesCheckbox.checked = false;
+    
+    // Disable adsense script
+    adsenseScript.classList.add('disabled');
+    
+    // Set global flag and disable AdSense
+    window.adsenseEnabled = false;
+    if (typeof window.disableAdSense === 'function') {
+        window.disableAdSense();
+    }
+    
+    // Save consent preference
+    const consentData = {
+        analytics: true, // Always required
+        advertising: false,
+        timestamp: Date.now()
+    };
+    saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Hide the popup
+    hideCookieConsent();
+    
+    console.log('Cookies rejected - Analytics enabled, Advertising disabled');
+}
+
+function acceptCookies() {
+    // Enable advertising cookies if checked
+    const advertisingEnabled = advertisingCookiesCheckbox.checked;
+    
+    // Enable/disable adsense script based on checkbox
+    if (advertisingEnabled) {
+        adsenseScript.classList.remove('disabled');
+        window.adsenseEnabled = true;
+        if (typeof window.enableAdSense === 'function') {
+            window.enableAdSense();
+        }
+    } else {
+        adsenseScript.classList.add('disabled');
+        window.adsenseEnabled = false;
+        if (typeof window.disableAdSense === 'function') {
+            window.disableAdSense();
+        }
+    }
+    
+    // Analytics is always enabled
+    analyticsScript.classList.remove('disabled');
+    
+    // Save consent preference
+    const consentData = {
+        analytics: true,
+        advertising: advertisingEnabled,
+        timestamp: Date.now()
+    };
+    saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Hide the popup
+    hideCookieConsent();
+    
+    console.log('Cookies accepted - Analytics enabled, Advertising:', advertisingEnabled ? 'enabled' : 'disabled');
+}
+
+function loadCookieConsent() {
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    
+    if (consentData && typeof consentData === 'object') {
+        // Apply saved preferences
+        if (consentData.advertising === false) {
+            // User previously rejected advertising cookies
+            advertisingCookiesCheckbox.checked = false;
+            adsenseScript.classList.add('disabled');
+            window.adsenseEnabled = false;
+            if (typeof window.disableAdSense === 'function') {
+                window.disableAdSense();
+            }
+        } else if (consentData.advertising === true) {
+            // User previously accepted advertising cookies
+            advertisingCookiesCheckbox.checked = true;
+            adsenseScript.classList.remove('disabled');
+            window.adsenseEnabled = true;
+            if (typeof window.enableAdSense === 'function') {
+                window.enableAdSense();
+            }
+        }
+        
+        // Analytics is always enabled
+        analyticsScript.classList.remove('disabled');
+        
+        console.log('Cookie consent preferences loaded');
+        return true;
+    }
+    
+    // No consent data found - show popup
+    return false;
+}
+
+// Language and Theme Functions for Cookie Popup
+function toggleLanguageOptions() {
+    languageOptions.classList.toggle('hidden');
+}
+
+function selectLanguage(lang) {
+    // Change the language
+    currentLanguage = lang;
+    
+    // Update the language button text
+    languageSelectorBtn.textContent = languageSelectorBtn.getAttribute(`data-${lang}`);
+    
+    // Update all text on the page
+    updateAllText();
+    
+    // Hide the language options
+    languageOptions.classList.add('hidden');
+    
+    // Save the language preference
+    saveSettings();
+    
+    console.log('Language changed to:', lang);
+}
+
+function handleCookieThemeToggle() {
+    const isDark = cookieThemeToggle.checked;
+    
+    // Apply theme
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+        isDarkMode = true;
+    } else {
+        document.body.classList.remove('dark-mode');
+        isDarkMode = false;
+    }
+    
+    // Save theme preference
+    saveSettings();
+    
+    // Update all text to reflect theme changes
+    updateAllText();
+    
+    console.log('Theme changed to:', isDark ? 'dark' : 'light');
 }
 
 // Debug function to test localStorage functionality
@@ -2602,7 +2842,6 @@ function updateStatsDisplay() {
     totalIncorrectSpan.textContent = userStats.totalIncorrectAnswers;
     accuracyRateSpan.textContent = `${accuracyRate}%`;
     highestRoundSpan.textContent = userStats.highestRoundReached;
-    gamesPlayedSpan.textContent = userStats.gamesPlayed;
     
-    // Last played stat removed - no longer displaying
+    // Games played and last played stats removed - no longer displaying
 }

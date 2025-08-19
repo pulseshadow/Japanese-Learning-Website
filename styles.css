@@ -1371,7 +1371,7 @@ body.dark-mode .button-section {
 }
 
 .next-round-btn {
-    background: linear-gradient(135deg, #E75D38, #d64a2a);
+    background: #E75D38;
     color: #ffffff;
     border: none;
     padding: 15px 30px;
@@ -1384,7 +1384,7 @@ body.dark-mode .button-section {
 }
 
 body.dark-mode .next-round-btn {
-    background: linear-gradient(135deg, #00bfff, #0080ff);
+    background: #00bfff;
     color: #ffffff;
 }
 
@@ -1498,6 +1498,324 @@ body.dark-mode .stat-value {
 }
 
 /* Clear Data Button removed - users can manage local storage through their browser */
+
+/* Cookie Consent Popup Styles */
+.cookie-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10000;
+    backdrop-filter: blur(5px);
+}
+
+.cookie-overlay.hidden {
+    display: none;
+}
+
+.cookie-popup {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    position: relative;
+}
+
+body.dark-mode .cookie-popup {
+    background: #25262B;
+    color: #ffffff;
+}
+
+.cookie-header h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+}
+
+body.dark-mode .cookie-header h3 {
+    color: #ffffff;
+}
+
+.cookie-content p {
+    margin: 0 0 25px 0;
+    line-height: 1.6;
+    color: #666;
+}
+
+body.dark-mode .cookie-content p {
+    color: #cccccc;
+}
+
+.cookie-options {
+    margin-bottom: 30px;
+}
+
+.cookie-option {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+body.dark-mode .cookie-option {
+    border-color: #444;
+    background: #1e1e1e;
+}
+
+.cookie-checkbox {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.cookie-checkbox input[type="checkbox"] {
+    margin-right: 10px;
+    width: 18px;
+    height: 18px;
+}
+
+.cookie-label {
+    font-weight: 600;
+    color: #333;
+}
+
+body.dark-mode .cookie-label {
+    color: #ffffff;
+}
+
+.cookie-description {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #777;
+    line-height: 1.4;
+}
+
+body.dark-mode .cookie-description {
+    color: #aaaaaa;
+}
+
+.cookie-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.cookie-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reject-btn {
+    background: #6c757d;
+    color: #ffffff;
+}
+
+.reject-btn:hover {
+    background: #5a6268;
+    transform: translateY(-1px);
+}
+
+.accept-btn {
+    background: #E75D38;
+    color: #ffffff;
+}
+
+body.dark-mode .accept-btn {
+    background: #00bfff;
+}
+
+.accept-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Analytics Script Control */
+.analytics-script.disabled {
+    display: none;
+}
+
+.adsense-script.disabled {
+    display: none;
+}
+
+/* Language and Theme Section Styles */
+.language-theme-section {
+    margin: 25px 0;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #f9f9f9;
+}
+
+body.dark-mode .language-theme-section {
+    border-color: #444;
+    background: #1e1e1e;
+}
+
+.language-info {
+    margin: 0 0 15px 0;
+    font-weight: 600;
+    color: #E75D38;
+    line-height: 1.5;
+}
+
+body.dark-mode .language-info {
+    color: #00bfff;
+}
+
+.language-selector-btn {
+    background: #E75D38;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 20px;
+}
+
+body.dark-mode .language-selector-btn {
+    background: #00bfff;
+}
+
+.language-selector-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.language-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.language-options.hidden {
+    display: none;
+}
+
+.lang-option {
+    background: #ffffff;
+    color: #333;
+    border: 1px solid #e0e0e0;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+body.dark-mode .lang-option {
+    background: #25262B;
+    color: #ffffff;
+    border-color: #444;
+}
+
+.lang-option:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+}
+
+body.dark-mode .lang-option:hover {
+    background: #1e1e1e;
+}
+
+.theme-info {
+    margin: 15px 0;
+    font-weight: 600;
+    color: #E75D38;
+    line-height: 1.5;
+}
+
+body.dark-mode .theme-info {
+    color: #00bfff;
+}
+
+.theme-toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.theme-toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.theme-toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 24px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.theme-toggle-switch input:checked + .theme-slider {
+    background-color: #E75D38;
+}
+
+body.dark-mode .theme-toggle-switch input:checked + .theme-slider {
+    background-color: #00bfff;
+}
+
+.theme-toggle-switch input:checked + .theme-slider:before {
+    transform: translateX(26px);
+}
+
+.theme-label {
+    font-weight: 500;
+    color: #333;
+}
+
+body.dark-mode .theme-label {
+    color: #ffffff;
+}
 
 
 

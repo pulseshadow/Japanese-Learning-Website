@@ -204,10 +204,7 @@
                             <span class="stat-label" data-en="Highest Round Reached:" data-es="Ronda Más Alta Alcanzada:" data-fr="Tour le Plus Élevé Atteint:" data-ja="到達最高ラウンド:">Highest Round Reached:</span>
                             <span class="stat-value" id="highest-round">0</span>
                         </div>
-                        <div class="stat-item">
-                            <span class="stat-label" data-en="Games Played:" data-es="Juegos Jugados:" data-fr="Parties Jouées:" data-ja="プレイしたゲーム:">Games Played:</span>
-                            <span class="stat-value" id="games-played">0</span>
-                        </div>
+
 
                     </div>
                     
@@ -239,7 +236,7 @@
                             <button id="custom-hiragana-btn" class="script-btn primary" data-en="Hiragana" data-es="Hiragana" data-fr="Hiragana" data-ja="ひらがな">Hiragana</button>
                             <button class="script-btn disabled" data-en="Katakana (Coming Soon)" data-es="Katakana (Próximamente)" data-fr="Katakana (Bientôt)" data-ja="カタカナ（近日公開）">Katakana (Coming Soon)</button>
                         </div>
-                        <button id="back-to-start-from-custom-script" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                        <button id="back-to-start-from-custom-script" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
                     </div>
                 </div>
             </div>
@@ -297,7 +294,7 @@
                         </div>
                     </div>
                     
-                    <button id="back-to-start-from-custom" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
+                                            <button id="back-to-start-from-custom" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
                 </div>
             </div>
             
@@ -309,6 +306,131 @@
             </div>
         </div>
     </div>
+
+    <!-- Cookie Consent Popup -->
+    <div id="cookie-consent-overlay" class="cookie-overlay hidden">
+        <div id="cookie-consent-popup" class="cookie-popup">
+            <div class="cookie-header">
+                <h3 data-en="Cookie Consent" data-es="Consentimiento de Cookies" data-fr="Consentement aux Cookies" data-ja="クッキー同意">Cookie Consent</h3>
+            </div>
+            <div class="cookie-content">
+                <p data-en="This website uses cookies to enhance your experience and provide analytics. By accepting, you consent to our use of cookies for analytics and advertising purposes. You can reject cookies if you prefer not to have your data collected." data-es="Este sitio web utiliza cookies para mejorar su experiencia y proporcionar análisis. Al aceptar, usted consiente en nuestro uso de cookies para análisis y publicidad. Puede rechazar las cookies si prefiere no tener sus datos recopilados." data-fr="Ce site web utilise des cookies pour améliorer votre expérience et fournir des analyses. En acceptant, vous consentez à notre utilisation de cookies à des fins d'analyse et de publicité. Vous pouvez refuser les cookies si vous préférez ne pas avoir vos données collectées." data-ja="このウェブサイトは、あなたの体験を向上させ、分析を提供するためにクッキーを使用します。同意することで、分析と広告目的でのクッキーの使用に同意したことになります。データ収集を望まない場合は、クッキーを拒否できます。">
+                    This website uses cookies to enhance your experience and provide analytics. By accepting, you consent to our use of cookies for analytics and advertising purposes. You can reject cookies if you prefer not to have your data collected.
+                </p>
+                
+                <!-- Language and Theme Options -->
+                <div class="language-theme-section">
+                    <p class="language-info" data-en="If you would like to switch this website's language, please press the button below." data-es="Si desea cambiar el idioma de este sitio web, presione el botón de abajo." data-fr="Si vous souhaitez changer la langue de ce site web, veuillez appuyer sur le bouton ci-dessous." data-ja="このウェブサイトの言語を変更したい場合は、下のボタンを押してください。">
+                        If you would like to switch this website's language, please press the button below.
+                    </p>
+                    
+                    <button id="language-selector-btn" class="language-selector-btn" data-en="🌐 Language" data-es="🌐 Idioma" data-fr="🌐 Langue" data-ja="🌐 言語">
+                        🌐 Language
+                    </button>
+                    
+                    <div id="language-options" class="language-options hidden">
+                        <button class="lang-option" data-lang="en" data-en="🇺🇸 English" data-es="🇺🇸 Inglés" data-fr="🇺🇸 Anglais" data-ja="🇺🇸 英語">🇺🇸 English</button>
+                        <button class="lang-option" data-lang="es" data-en="🇪🇸 Español" data-es="🇪🇸 Español" data-fr="🇪🇸 Espagnol" data-ja="🇪🇸 スペイン語">🇪🇸 Español</button>
+                        <button class="lang-option" data-lang="fr" data-en="🇫🇷 Français" data-es="🇫🇷 Francés" data-fr="🇫🇷 Français" data-ja="🇫🇷 フランス語">🇫🇷 Français</button>
+                        <button class="lang-option" data-lang="ja" data-en="🇯🇵 日本語" data-es="🇯🇵 Japonés" data-fr="🇯🇵 Japonais" data-ja="🇯🇵 日本語">🇯🇵 日本語</button>
+                    </div>
+                    
+                    <p class="theme-info" data-en="English is the most accurate and supported, but I did my best with some other languages as well. Also, if you want to switch it to dark mode, toggle the switch below." data-es="El inglés es el más preciso y compatible, pero hice lo mejor que pude con otros idiomas también. Además, si quieres cambiarlo al modo oscuro, activa el interruptor de abajo." data-fr="L'anglais est le plus précis et le mieux pris en charge, mais j'ai fait de mon mieux avec d'autres langues également. De plus, si vous voulez passer en mode sombre, basculez l'interrupteur ci-dessous." data-ja="英語が最も正確でサポートされていますが、他の言語でも最善を尽くしました。また、ダークモードに切り替えたい場合は、下のスイッチを切り替えてください。">
+                        English is the most accurate and supported, but I did my best with some other languages as well. Also, if you want to switch it to dark mode, toggle the switch below.
+                    </p>
+                    
+                    <div class="theme-toggle-container">
+                        <label class="theme-toggle-switch">
+                            <input type="checkbox" id="cookie-theme-toggle">
+                            <span class="theme-slider"></span>
+                        </label>
+                        <span class="theme-label" data-en="Dark Mode" data-es="Modo Oscuro" data-fr="Mode Sombre" data-ja="ダークモード">Dark Mode</span>
+                    </div>
+                </div>
+                
+                <div class="cookie-options">
+                    <div class="cookie-option">
+                        <label class="cookie-checkbox">
+                            <input type="checkbox" id="analytics-cookies" checked disabled>
+                            <span class="checkmark"></span>
+                            <span class="cookie-label" data-en="Analytics Cookies (Required)" data-es="Cookies de Análisis (Requeridas)" data-fr="Cookies d'Analyse (Requis)" data-ja="分析クッキー（必須）">Analytics Cookies (Required)</span>
+                        </label>
+                        <p class="cookie-description" data-en="These cookies help us understand how visitors interact with our website." data-es="Estas cookies nos ayudan a entender cómo los visitantes interactúan con nuestro sitio web." data-fr="Ces cookies nous aident à comprendre comment les visiteurs interagissent avec notre site web." data-ja="これらのクッキーは、訪問者が私たちのウェブサイトとどのように相互作用するかを理解するのに役立ちます。">
+                            These cookies help us understand how visitors interact with our website.
+                        </p>
+                    </div>
+                    
+                    <div class="cookie-option">
+                        <label class="cookie-checkbox">
+                            <input type="checkbox" id="advertising-cookies">
+                            <span class="checkmark"></span>
+                            <span class="cookie-label" data-en="Advertising Cookies (Optional)" data-es="Cookies de Publicidad (Opcionales)" data-fr="Cookies Publicitaires (Optionnels)" data-ja="広告クッキー（オプション）">Advertising Cookies (Optional)</span>
+                        </label>
+                        <p class="cookie-description" data-en="These cookies are used to deliver personalized advertisements." data-es="Estas cookies se utilizan para entregar anuncios personalizados." data-fr="Ces cookies sont utilisés pour diffuser des publicités personnalisées." data-ja="これらのクッキーは、パーソナライズされた広告を配信するために使用されます。">
+                            These cookies are used to deliver personalized advertisements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="cookie-actions">
+                <button id="reject-cookies-btn" class="cookie-btn reject-btn" data-en="Reject Cookies" data-es="Rechazar Cookies" data-fr="Rejeter les Cookies" data-ja="クッキーを拒否">Reject Cookies</button>
+                <button id="accept-cookies-btn" class="cookie-btn accept-btn" data-en="Accept All Cookies" data-es="Aceptar Todas las Cookies" data-fr="Accepter Tous les Cookies" data-ja="すべてのクッキーを受け入れる">Accept All Cookies</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Placeholder Analytics Scripts -->
+    <script id="analytics-script" class="analytics-script">
+        // Placeholder for Google Analytics
+        console.log('Analytics script loaded');
+        window.analyticsEnabled = true;
+    </script>
+    
+    <script id="adsense-script" class="adsense-script">
+        // Google AdSense Script
+        (function() {
+            // Initialize adsenseEnabled if not set
+            if (typeof window.adsenseEnabled === 'undefined') {
+                window.adsenseEnabled = true; // Default to enabled until user makes choice
+            }
+            
+            // Only load AdSense if advertising cookies are accepted
+            if (window.adsenseEnabled !== false) {
+                const script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+                script.crossOrigin = 'anonymous';
+                script.id = 'google-adsense-script';
+                document.head.appendChild(script);
+                console.log('Google AdSense loaded');
+            } else {
+                console.log('AdSense disabled - advertising cookies rejected');
+            }
+        })();
+        
+        // Function to disable AdSense if user rejects cookies later
+        window.disableAdSense = function() {
+            const existingScript = document.getElementById('google-adsense-script');
+            if (existingScript) {
+                existingScript.remove();
+                console.log('Google AdSense script removed');
+            }
+            window.adsenseEnabled = false;
+        };
+        
+        // Function to enable AdSense if user accepts cookies later
+        window.enableAdSense = function() {
+            if (window.adsenseEnabled !== false) {
+                const script = document.createElement('script');
+                script.async = true;
+                script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+                script.crossOrigin = 'anonymous';
+                script.id = 'google-adsense-script';
+                document.head.appendChild(script);
+                console.log('Google AdSense re-enabled');
+            }
+        };
+    </script>
 
     <script src="script.js"></script>
 </body>
