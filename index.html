@@ -74,14 +74,23 @@
                     <h1 class="title" data-en="Title" data-es="Título" data-fr="Titre" data-ja="タイトル">Title</h1>
                     <button class="collapse-btn" onclick="toggleSection('title-content')">▼</button>
                 </div>
-                <div id="title-content" class="text-box-content">
-                    <p class="body-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                    </p>
-                    <p class="body-text">
-                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.
-                    </p>
-                </div>
+                                  <div id="title-content" class="text-box-content">
+                     <p class="body-text language-warning">
+                         If you are using this website in a language other than english, the translations will most likely be inaccurate. I suggest using "Custom Mode", then "Add Custom Word" to create your own questions for a better experience.
+                     </p>
+                     <p class="body-text language-warning">
+                         Through this, one might theoretically use this website to learn words from any language, by simply inserting the desired foreign language into "Japanese Word". and one's native tongue into "English Translation". Please research the direct translation carefully before adding it.
+                     </p>
+                     <p class="body-text">
+                         This website aims to teach you the meaning of Japanese words through brute force learning (Repetition). 
+                     </p>
+                     <p class="body-text">
+                         One can learn every word on this website in under three hours of brute force learning
+                     </p>
+                     <p class="body-text">
+                         However to remember them, one should try returning to the website from time to time until they stick
+                     </p>
+                 </div>
             </div>
             
             <!-- About Section -->
@@ -92,13 +101,28 @@
                 </div>
                 <div id="about-content" class="text-box-content">
                     <p class="body-text">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+                        This website is heavily inspired by <a href="https://vedxyz.github.io/kana/" target="_blank">Kana</a>, and i owe the concept and most of the ideas to them, their website is also much more polished and well made than mine.
                     </p>
                     <p class="body-text">
-                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
+                        Speaking of <a href="https://vedxyz.github.io/kana/" target="_blank">Kana</a> if you do not yet know Hiragana, please learn it at that website, it is (largely) required to use this site, and Hiragana takes very little time to learn with that site (3 hours). 
                     </p>
                     <p class="body-text">
-                        Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.
+                        Do not press "Next Round" until you become comfortable with every word shown in the current round. you don't need to master them yet, as they'll always show up in practice rounds later along with every other word you've learnt, but you should know them fairly well. 
+                    </p>
+                    <p class="body-text">
+                        Speaking the words and phrases aloud as you type them helps a lot with memorization, as does playing the sound for them (the sounds can be set to play automatically in settings, or you can press the button).
+                    </p>
+                    <p class="body-text">
+                        In case you have any questions, suggestions, feedback, or otherwise any wish to contact me, i'll add the support email here: <a href="mailto:learnjapanesewords.site@gmail.com">learnjapanesewords.site@gmail.com</a>
+                    </p>
+                    <p class="body-text">
+                        Apologies if i take a while to respond.
+                    </p>
+                    <p class="body-text">
+                        I ask that you don't use AdBlock on this website, I put the ads to the side and they won't pop up or interrupt your learning, I would appreciate this unless it seriously inconveniences you.
+                    </p>
+                    <p class="body-text">
+                        Without (much) further ado, enjoy! Hopefully you find this website helpful and stick with it until you learn every word!
                     </p>
                 </div>
             </div>
@@ -187,23 +211,22 @@
                             <div id="japanese-word" class="japanese-text"></div>
                         </div>
                         <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off" data-en-placeholder="Type your answer here..." data-es-placeholder="Escribe tu respuesta aquí..." data-fr-placeholder="Tapez votre respuesta aquí..." data-ja-placeholder="ここに答えを入力してください...">
+                        <div class="progress-info">
+                            <span id="current-question">1</span> / <span id="total-questions">5</span>
+                        </div>
+                        <button id="sound-btn" class="sound-btn" title="Play pronunciation" data-en="🔊 Play Sound" data-es="🔊 Reproducir Sonido" data-fr="🔊 Jouer le Son" data-ja="🔊 音を再生">🔊 Play Sound</button>
                     </div>
                     
                     <div class="game-footer">
                         <div class="progress-section">
-                            <div class="progress-info">
-                                <span id="current-question">1</span> / <span id="total-questions">5</span>
-                            </div>
                             <div class="phase-progress" id="phase-progress"></div>
                         </div>
                         
                         <div class="button-section">
-                            <button id="sound-btn" class="sound-btn" title="Play pronunciation" data-en="🔊 Play Sound" data-es="🔊 Reproducir Sonido" data-fr="🔊 Jouer le Son" data-ja="🔊 音を再生">🔊 Play Sound</button>
                             <button id="next-round-btn" class="next-round-btn disabled" data-en="Next Round" data-es="Siguiente Ronda" data-fr="Ronde Suivante" data-ja="次のラウンド">Next Round</button>
                             <div class="round-progress" id="round-progress"></div>
+                            <button id="back-to-script" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
                         </div>
-                        
-                        <button id="back-to-script" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
                     </div>
                 </div>
             </div>
@@ -265,7 +288,7 @@
                             <button id="custom-hiragana-btn" class="script-btn primary" data-en="Hiragana" data-es="Hiragana" data-fr="Hiragana" data-ja="ひらがな">Hiragana</button>
                             <button class="script-btn disabled" data-en="Katakana (Coming Soon)" data-es="Katakana (Próximamente)" data-fr="Katakana (Bientôt)" data-ja="カタカナ（近日公開）">Katakana (Coming Soon)</button>
                         </div>
-                        <button id="back-to-start-from-custom-script" class="back-btn" data-en="← Back to Script Selection" data-es="← Volver a Selección de Escritura" data-fr="← Retour à la Sélection d'Écriture" data-ja="← 文字選択に戻る">← Back to Script Selection</button>
+                        <button id="back-to-start-from-custom-script" class="back-btn" data-en="← Back to Start" data-es="← Volver al Inicio" data-fr="← Retour au Début" data-ja="← 開始に戻る">← Back to Start</button>
                     </div>
                 </div>
             </div>
@@ -353,15 +376,16 @@
                         If you would like to switch this website's language, please press the button below.
                     </p>
                     
-                    <button id="language-selector-btn" class="language-selector-btn" data-en="🌐 Language" data-es="🌐 Idioma" data-fr="🌐 Langue" data-ja="🌐 言語">
-                        🌐 Language
+                    <button id="language-selector-btn" class="language-selector-btn" data-en="🌍 Language" data-es="🌍 Idioma" data-fr="🌍 Langue" data-ja="🌍 言語">
+                        🌍 Language
                     </button>
+                    <span class="language-names" data-en="(Idioma, Langue, 言語)" data-es="(Idioma, Langue, 言語)" data-fr="(Idioma, Langue, 言語)" data-ja="(Idioma, Langue, 言語)">(Idioma, Langue, 言語)</span>
                     
                     <div id="language-options" class="language-options hidden">
-                        <button class="lang-option" data-lang="en" data-en="🇺🇸 English" data-es="🇺🇸 Inglés" data-fr="🇺🇸 Anglais" data-ja="🇺🇸 英語">🇺🇸 English</button>
-                        <button class="lang-option" data-lang="es" data-en="🇪🇸 Español" data-es="🇪🇸 Español" data-fr="🇪🇸 Espagnol" data-ja="🇪🇸 スペイン語">🇪🇸 Español</button>
-                        <button class="lang-option" data-lang="fr" data-en="🇫🇷 Français" data-es="🇫🇷 Francés" data-fr="🇫🇷 Français" data-ja="🇫🇷 フランス語">🇫🇷 Français</button>
-                        <button class="lang-option" data-lang="ja" data-en="🇯🇵 日本語" data-es="🇯🇵 Japonés" data-fr="🇯🇵 Japonais" data-ja="🇯🇵 日本語">🇯🇵 日本語</button>
+                        <button class="lang-option" data-lang="en">🇺🇸 English</button>
+                        <button class="lang-option" data-lang="es">🇪🇸 Español</button>
+                        <button class="lang-option" data-lang="fr">🇫🇷 Français</button>
+                        <button class="lang-option" data-lang="ja">🇯🇵 日本語</button>
                     </div>
                     
                     <p class="theme-info" data-en="English is the most accurate and supported, but I did my best with some other languages as well." data-es="El inglés es el más preciso y compatible, pero hice lo mejor que pude con otros idiomas también." data-fr="L'anglais est le plus précis et le mieux pris en charge, mais j'ai fait de mon mieux avec d'autres langues également." data-ja="英語が最も正確でサポートされていますが、他の言語でも最善を尽くしました。">

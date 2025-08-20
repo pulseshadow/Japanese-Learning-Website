@@ -523,7 +523,7 @@ backToStartFromCustomScriptBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
     window.customModeEnabled = false;
     window.customWordPools = null;
-    showPage('script');
+    showPage('start');
 });
 
 backToStartFromCustomBtn.addEventListener('click', () => {
