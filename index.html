@@ -183,15 +183,13 @@
                 <div class="game-box-content">
                     <div class="game-content">
                         <div id="correct-answer-display" class="hidden"></div>
-                        <div id="japanese-word" class="japanese-text"></div>
+                        <div class="word-display-container">
+                            <div id="japanese-word" class="japanese-text"></div>
+                        </div>
                         <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off" data-en-placeholder="Type your answer here..." data-es-placeholder="Escribe tu respuesta aquí..." data-fr-placeholder="Tapez votre respuesta aquí..." data-ja-placeholder="ここに答えを入力してください...">
                     </div>
                     
                     <div class="game-footer">
-                        <div class="button-section">
-                            <button id="sound-btn" class="sound-btn" title="Play pronunciation" data-en="🔊 Play Sound" data-es="🔊 Reproducir Sonido" data-fr="🔊 Jouer le Son" data-ja="🔊 音を再生">🔊 Play Sound</button>
-                        </div>
-                        
                         <div class="progress-section">
                             <div class="progress-info">
                                 <span id="current-question">1</span> / <span id="total-questions">5</span>
@@ -200,6 +198,7 @@
                         </div>
                         
                         <div class="button-section">
+                            <button id="sound-btn" class="sound-btn" title="Play pronunciation" data-en="🔊 Play Sound" data-es="🔊 Reproducir Sonido" data-fr="🔊 Jouer le Son" data-ja="🔊 音を再生">🔊 Play Sound</button>
                             <button id="next-round-btn" class="next-round-btn disabled" data-en="Next Round" data-es="Siguiente Ronda" data-fr="Ronde Suivante" data-ja="次のラウンド">Next Round</button>
                             <div class="round-progress" id="round-progress"></div>
                         </div>
