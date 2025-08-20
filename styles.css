@@ -75,6 +75,14 @@ body.dark-mode .settings-btn {
     margin: 15px 0;
 }
 
+.cookie-consent-controls .settings-btn {
+    border-radius: 6px;
+    width: auto;
+    height: auto;
+    padding: 10px 20px;
+    min-width: 200px;
+}
+
 .cookie-status {
     margin-top: 15px;
     padding: 10px;

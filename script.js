@@ -1473,7 +1473,13 @@ function initializeSettings() {
 }
 
 function toggleSettingsPanel() {
+    const isHidden = settingsPanel.classList.contains('hidden');
     settingsPanel.classList.toggle('hidden');
+    
+    // If opening the panel, update the cookie status display
+    if (isHidden && cookieStatusText) {
+        updateCookieStatusDisplay();
+    }
 }
 
 function toggleTheme() {
@@ -2655,6 +2661,11 @@ function loadSettings() {
     // Apply UI settings
     if (autoPlayToggle) {
         autoPlayToggle.checked = autoPlaySound;
+    }
+    
+    // Update cookie status display
+    if (cookieStatusText) {
+        updateCookieStatusDisplay();
     }
     
     updateAllText();
