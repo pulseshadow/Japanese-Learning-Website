@@ -1431,13 +1431,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load cookie consent preferences and set initial script states
     const consentLoaded = loadCookieConsent();
     
-    // Check if cookie consent popup should be shown
-    if (!consentLoaded) {
-        // First time visitor - show cookie consent popup
-        setTimeout(() => {
-            showCookieConsent();
-        }, 1000); // Small delay to let the page load first
-    }
+    // TEMPORARY: Always show cookie consent popup for testing
+    // TODO: Revert to original logic: if (!consentLoaded) { ... }
+    setTimeout(() => {
+        showCookieConsent();
+    }, 1000); // Small delay to let the page load first
 });
 
 // Toggle section visibility

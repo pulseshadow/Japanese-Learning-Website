@@ -1999,6 +1999,16 @@ body.dark-mode .back-to-cookies-btn {
     display: none;
 }
 
+/* Ensure script content is never displayed on page */
+script {
+    display: none !important;
+}
+
+.analytics-script,
+.adsense-script {
+    display: none !important;
+}
+
 /* Language and Theme Section Styles */
 .language-theme-section {
     margin: 25px 0;
