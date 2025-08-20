@@ -38,6 +38,17 @@
                     </div>
                     
                     <div class="settings-section">
+                        <h3 data-en="Audio" data-es="Audio" data-fr="Audio" data-ja="オーディオ">Audio</h3>
+                        <div class="theme-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="auto-play-toggle">
+                                <span class="slider"></span>
+                            </label>
+                            <span class="toggle-label" data-en="Auto-play word pronunciation" data-es="Reproducir automáticamente la pronunciación" data-fr="Lecture automatique de la pronunciation" data-ja="単語の発音を自動再生">Auto-play word pronunciation</span>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
                         <h3 data-en="Cookie Consent" data-es="Consentimiento de Cookies" data-fr="Consentement aux Cookies" data-ja="クッキー同意">Cookie Consent</h3>
                         <p data-en="Manage your cookie preferences for analytics and advertising." data-es="Gestiona tus preferencias de cookies para análisis y publicidad." data-fr="Gérez vos préférences de cookies pour l'analyse et la publicité." data-ja="分析と広告のためのクッキー設定を管理します。">
                             Manage your cookie preferences for analytics and advertising.
@@ -172,7 +183,10 @@
                 <div class="game-box-content">
                     <div class="game-content">
                         <div id="correct-answer-display" class="hidden"></div>
-                        <div id="japanese-word" class="japanese-text"></div>
+                        <div class="word-display-container">
+                            <div id="japanese-word" class="japanese-text"></div>
+                            <button id="sound-btn" class="sound-btn" title="Play pronunciation">🔊</button>
+                        </div>
                         <input type="text" id="answer-input" placeholder="Type your answer here..." autocomplete="off" data-en-placeholder="Type your answer here..." data-es-placeholder="Escribe tu respuesta aquí..." data-fr-placeholder="Tapez votre respuesta aquí..." data-ja-placeholder="ここに答えを入力してください...">
                     </div>
                     

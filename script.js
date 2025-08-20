@@ -13,6 +13,7 @@ let eliminationWords = []; // Words for elimination phase (no repetition)
 // Settings and language variables
 let currentLanguage = 'en';
 let isDarkMode = false;
+let autoPlaySound = false;
 
 // Word pools for each round (actual Japanese words)
 const wordPools = {
@@ -440,6 +441,8 @@ const totalQuestionsSpan = document.getElementById('total-questions');
 const phaseProgress = document.getElementById('phase-progress');
 const roundProgress = document.getElementById('round-progress');
 const japaneseWord = document.getElementById('japanese-word');
+const soundBtn = document.getElementById('sound-btn');
+const autoPlayToggle = document.getElementById('auto-play-toggle');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
@@ -907,7 +910,7 @@ function showLearningQuestion() {
     }
     
     const word = roundWords[currentQuestionIndex];
-    japaneseWord.textContent = word.japanese;
+    displayWordWithSound(word);
     correctAnswerDisplay.textContent = capitalizeWords(word.english);
     correctAnswerDisplay.classList.remove('hidden');
     
@@ -929,7 +932,7 @@ function showEliminationQuestion() {
     }
     
     const word = eliminationWords[currentQuestionIndex];
-    japaneseWord.textContent = word.japanese;
+    displayWordWithSound(word);
     correctAnswerDisplay.classList.add('hidden');
     
     answerInput.value = '';
@@ -1421,6 +1424,10 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     detectBrowserLanguage();
     
+    // Initialize sound system
+    setupSoundButton();
+    setupAutoPlayToggle();
+    
     // Check if cookie consent popup should be shown
     const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
     if (!consentData) {
@@ -1554,6 +1561,149 @@ function detectBrowserLanguage() {
         updateLanguageButtons();
         updateAllText();
     }
+}
+
+// Sound Functions
+function createBeepSound(frequency = 800, duration = 200) {
+    // Create a simple beep using Web Audio API
+    try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = frequency;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+        
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + duration / 1000);
+        
+        return true;
+    } catch (error) {
+        console.warn('Audio not supported:', error);
+        return false;
+    }
+}
+
+function getWordAudioFrequency(word) {
+    // Generate a unique frequency based on the word to create different beeps
+    let hash = 0;
+    for (let i = 0; i < word.length; i++) {
+        const char = word.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32-bit integer
+    }
+    // Map hash to frequency range (400-1200 Hz)
+    return 400 + Math.abs(hash % 800);
+}
+
+function playWordSound(word) {
+    // Check if sound is enabled and word is not custom
+    if (!word) return;
+    
+    const isCustomWord = isCurrentWordCustom();
+    
+    // Disable sound button for custom words in custom mode
+    if (window.customModeEnabled && isCustomWord) {
+        if (soundBtn) {
+            soundBtn.disabled = true;
+            soundBtn.style.opacity = '0.5';
+            soundBtn.title = 'Audio not available for custom words';
+        }
+        return;
+    } else {
+        // Enable sound button for preset words
+        if (soundBtn) {
+            soundBtn.disabled = false;
+            soundBtn.style.opacity = '1';
+            soundBtn.title = 'Play pronunciation';
+        }
+    }
+    
+    // Play placeholder beep sound
+    const frequency = getWordAudioFrequency(word);
+    createBeepSound(frequency, 300);
+}
+
+function isCurrentWordCustom() {
+    // Check if the current word is a custom word in custom mode
+    if (!window.customModeEnabled || !currentWord) return false;
+    
+    try {
+        // Check if this word exists in the custom word pools and is marked as custom
+        const customRounds = window.customWordPools;
+        if (!customRounds) return false;
+        
+        // Check all rounds for this word
+        for (const roundNum in customRounds) {
+            const roundWords = customRounds[roundNum];
+            if (Array.isArray(roundWords)) {
+                const wordData = roundWords.find(w => 
+                    w.japanese === currentWord.japanese && w.isCustom === true
+                );
+                if (wordData) return true;
+            }
+        }
+        return false;
+    } catch (error) {
+        console.warn('Error checking custom word:', error);
+        return false;
+    }
+}
+
+function setupSoundButton() {
+    if (soundBtn) {
+        soundBtn.addEventListener('click', () => {
+            if (currentWord && !soundBtn.disabled) {
+                playWordSound(currentWord.japanese);
+            }
+        });
+    }
+}
+
+function setupAutoPlayToggle() {
+    if (autoPlayToggle) {
+        autoPlayToggle.addEventListener('change', () => {
+            autoPlaySound = autoPlayToggle.checked;
+            saveSettings();
+        });
+    }
+}
+
+function displayWordWithSound(word) {
+    // Update the display
+    japaneseWord.textContent = word.japanese;
+    currentWord = word;
+    
+    // Handle sound button state and auto-play
+    setTimeout(() => {
+        // Check if word is custom and update sound button state
+        const isCustomWord = isCurrentWordCustom();
+        
+        if (window.customModeEnabled && isCustomWord) {
+            if (soundBtn) {
+                soundBtn.disabled = true;
+                soundBtn.style.opacity = '0.5';
+                soundBtn.title = 'Audio not available for custom words';
+            }
+        } else {
+            if (soundBtn) {
+                soundBtn.disabled = false;
+                soundBtn.style.opacity = '1';
+                soundBtn.title = 'Play pronunciation';
+            }
+            
+            // Auto-play if enabled
+            if (autoPlaySound) {
+                playWordSound(word.japanese);
+            }
+        }
+    }, 100); // Small delay to ensure DOM is updated
 }
 
 // Custom Mode Functions
@@ -2178,7 +2328,7 @@ function showCustomLearningQuestion() {
     }
     
     const word = roundWords[currentQuestionIndex];
-    japaneseWord.textContent = word.japanese;
+    displayWordWithSound(word);
     correctAnswerDisplay.textContent = capitalizeWords(word.english);
     correctAnswerDisplay.classList.remove('hidden');
     
@@ -2201,7 +2351,7 @@ function showCustomEliminationQuestion() {
     }
     
     const word = eliminationWords[currentQuestionIndex];
-    japaneseWord.textContent = word.japanese;
+    displayWordWithSound(word);
     correctAnswerDisplay.classList.add('hidden');
     
     answerInput.value = '';
@@ -2252,7 +2402,7 @@ function showCustomRepeatingQuestion() {
     }
     
     const word = questionQueue[0];
-    japaneseWord.textContent = word.japanese;
+    displayWordWithSound(word);
     correctAnswerDisplay.classList.add('hidden');
     
     // Reset the failed flag for the new question
@@ -2462,13 +2612,14 @@ function loadFromLocalStorage(key, defaultValue = null) {
 function saveSettings() {
     const settings = {
         language: currentLanguage,
-        darkMode: isDarkMode
+        darkMode: isDarkMode,
+        autoPlaySound: autoPlaySound
     };
     saveToLocalStorage(STORAGE_KEYS.SETTINGS, settings);
 }
 
 function loadSettings() {
-    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false });
+    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: false });
     
     // Validate and apply language setting
     if (settings && typeof settings.language === 'string' && ['en', 'es', 'fr', 'ja'].includes(settings.language)) {
@@ -2486,12 +2637,26 @@ function loadSettings() {
         console.warn('Invalid dark mode setting, defaulting to light mode');
     }
     
+    // Validate and apply auto-play sound setting
+    if (settings && typeof settings.autoPlaySound === 'boolean') {
+        autoPlaySound = settings.autoPlaySound;
+    } else {
+        autoPlaySound = false;
+        console.warn('Invalid auto-play sound setting, defaulting to disabled');
+    }
+    
     // Apply settings
     if (isDarkMode) {
         document.body.classList.add('dark-mode');
     } else {
         document.body.classList.remove('dark-mode');
     }
+    
+    // Apply UI settings
+    if (autoPlayToggle) {
+        autoPlayToggle.checked = autoPlaySound;
+    }
+    
     updateAllText();
 }
 
