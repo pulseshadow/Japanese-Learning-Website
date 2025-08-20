@@ -658,26 +658,28 @@
     <!-- Google Analytics Script -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2CFV890C7W"></script>
     <script id="analytics-script" class="analytics-script">
-        // Google Analytics (gtag.js)
+        // Google Analytics (gtag.js) - Initialized but not executed until consent given
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-2CFV890C7W');
         
-        console.log('Google Analytics loaded');
-        window.analyticsEnabled = true;
+        // Don't execute analytics until user consents
+        // gtag('js', new Date());
+        // gtag('config', 'G-2CFV890C7W');
+        
+        console.log('Google Analytics script loaded (waiting for consent)');
+        window.analyticsEnabled = false; // Default to disabled
     </script>
     
     <script id="adsense-script" class="adsense-script">
         // Google AdSense Script
         (function() {
-            // Initialize adsenseEnabled if not set
-            if (typeof window.adsenseEnabled === 'undefined') {
-                window.adsenseEnabled = true; // Default to enabled until user makes choice
-            }
-            
-            // Only load AdSense if advertising cookies are accepted
-            if (window.adsenseEnabled !== false) {
+                    // Initialize adsenseEnabled if not set
+        if (typeof window.adsenseEnabled === 'undefined') {
+            window.adsenseEnabled = false; // Default to disabled until user consents
+        }
+        
+        // Only load AdSense if advertising cookies are accepted
+        if (window.adsenseEnabled === true) {
                 const script = document.createElement('script');
                 script.async = true;
                 script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
@@ -735,14 +737,13 @@
                 analyticsScript.style.display = 'block';
                 analyticsScript.classList.remove('disabled');
             }
-            // Reinitialize analytics if not already done
+            // Initialize analytics if not already done
             if (!window.analyticsEnabled) {
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
+                // Initialize gtag with current date and config
                 gtag('js', new Date());
                 gtag('config', 'G-2CFV890C7W');
                 window.analyticsEnabled = true;
-                console.log('Google Analytics re-enabled');
+                console.log('Google Analytics enabled and initialized');
             }
         };
     </script>

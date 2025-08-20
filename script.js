@@ -1428,9 +1428,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setupSoundButton();
     setupAutoPlayToggle();
     
+    // Load cookie consent preferences and set initial script states
+    const consentLoaded = loadCookieConsent();
+    
     // Check if cookie consent popup should be shown
-    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
-    if (!consentData) {
+    if (!consentLoaded) {
         // First time visitor - show cookie consent popup
         setTimeout(() => {
             showCookieConsent();
@@ -2916,9 +2918,13 @@ function loadCookieConsent() {
             if (typeof window.disableAnalytics === 'function') {
                 window.disableAnalytics();
             }
-        } else {
+        } else if (consentData.analytics === true) {
             // User previously accepted analytics cookies
             analyticsScript.classList.remove('disabled');
+            if (typeof window.disableAnalytics === 'function') {
+                window.disableAnalytics();
+            }
+            // Enable analytics
             if (typeof window.enableAnalytics === 'function') {
                 window.enableAnalytics();
             }
@@ -2933,7 +2939,13 @@ function loadCookieConsent() {
         return true;
     }
     
-    // No consent data found - show popup
+    // No consent data found - ensure scripts are disabled by default
+    adsenseScript.classList.add('disabled');
+    analyticsScript.classList.add('disabled');
+    window.adsenseEnabled = false;
+    window.analyticsEnabled = false;
+    
+    console.log('No consent data found - scripts disabled by default');
     return false;
 }
 
