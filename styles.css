@@ -2008,12 +2008,12 @@ body.dark-mode .language-theme-section {
 .language-info {
     margin: 0 0 15px 0;
     font-weight: 600;
-    color: #E75D38;
+    color: #E75D38 !important;
     line-height: 1.5;
 }
 
 body.dark-mode .language-info {
-    color: #00bfff;
+    color: #00bfff !important;
 }
 
 .language-selector-btn {
@@ -2080,12 +2080,12 @@ body.dark-mode .lang-option:hover {
 .theme-info {
     margin: 15px 0;
     font-weight: 600;
-    color: #E75D38;
+    color: #E75D38 !important;
     line-height: 1.5;
 }
 
 body.dark-mode .theme-info {
-    color: #00bfff;
+    color: #00bfff !important;
 }
 
 .theme-toggle-container {
