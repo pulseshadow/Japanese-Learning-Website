@@ -1587,12 +1587,25 @@ body.dark-mode .cookie-content p {
 }
 
 .cookie-intro-text {
-    color: #E75D38 !important;
-    font-weight: 500;
+    color: inherit;
+    font-weight: normal;
 }
 
 body.dark-mode .cookie-intro-text {
-    color: #00bfff !important;
+    color: inherit;
+    font-weight: normal;
+}
+
+.language-info,
+.theme-info {
+    color: #E75D38;
+    font-weight: 600;
+}
+
+body.dark-mode .language-info,
+body.dark-mode .theme-info {
+    color: #00bfff;
+    font-weight: 600;
 }
 
 .cookie-options {

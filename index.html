@@ -24,7 +24,7 @@
                                 <input type="checkbox" id="theme-toggle">
                                 <span class="slider"></span>
                             </label>
-                            <span class="toggle-label" data-en="Light Mode" data-es="Modo Claro" data-fr="Mode Clair" data-ja="ライトモード">Light Mode</span>
+                            <span class="toggle-label" data-en="Toggle Light/Dark Mode" data-es="Alternar Modo Claro/Oscuro" data-fr="Basculer Mode Clair/Sombre" data-ja="ライト/ダークモードを切り替え">Toggle Light/Dark Mode</span>
                         </div>
                     </div>
                     <div class="settings-section">
@@ -363,7 +363,7 @@
                             <input type="checkbox" id="cookie-theme-toggle">
                             <span class="theme-slider"></span>
                         </label>
-                        <span class="theme-label" data-en="Dark Mode" data-es="Modo Oscuro" data-fr="Mode Sombre" data-ja="ダークモード">Dark Mode</span>
+                        <span class="theme-label" data-en="Toggle Light/Dark Mode" data-es="Alternar Modo Claro/Oscuro" data-fr="Basculer Mode Clair/Sombre" data-ja="ライト/ダークモードを切り替え">Toggle Light/Dark Mode</span>
                     </div>
                 </div>
                 
@@ -403,8 +403,8 @@
     <div id="privacy-policy-page" class="policy-page hidden">
         <div class="policy-container">
             <div class="policy-header">
-                <h1 data-en="Privacy Policy" data-es="Política de Privacidad" data-fr="Politique de Confidentialité" data-ja="プライバシーポリシー">Privacy Policy</h1>
-                <h2 data-en="For "LearnJapaneseWords"" data-es="Para "LearnJapaneseWords"" data-fr="Pour "LearnJapaneseWords"" data-ja=""LearnJapaneseWords"用">For "LearnJapaneseWords"</h2>
+                <h1 data-en="LearnJapaneseWords" data-es="LearnJapaneseWords" data-fr="LearnJapaneseWords" data-ja="LearnJapaneseWords">LearnJapaneseWords</h1>
+                <h2 data-en="Privacy Policy" data-es="Política de Privacidad" data-fr="Politique de Confidentialité" data-ja="プライバシーポリシー">Privacy Policy</h2>
             </div>
             <div class="policy-content">
                 <div class="policy-section">
@@ -520,8 +520,8 @@
     <div id="terms-of-service-page" class="policy-page hidden">
         <div class="policy-container">
             <div class="policy-header">
-                <h1 data-en="Terms Of Service" data-es="Términos de Servicio" data-fr="Conditions de Service" data-ja="利用規約">Terms Of Service</h1>
-                <h2 data-en="For "LearnJapaneseWords"" data-es="Para "LearnJapaneseWords"" data-fr="Pour "LearnJapaneseWords"" data-ja=""LearnJapaneseWords"用">For "LearnJapaneseWords"</h2>
+                <h1 data-en="LearnJapaneseWords" data-es="LearnJapaneseWords" data-fr="LearnJapaneseWords" data-ja="LearnJapaneseWords">LearnJapaneseWords</h1>
+                <h2 data-en="Terms Of Service" data-es="Términos de Servicio" data-fr="Conditions de Service" data-ja="利用規約">Terms Of Service</h2>
             </div>
             <div class="policy-content">
                 <div class="policy-section">
@@ -641,10 +641,16 @@
         </div>
     </div>
 
-    <!-- Placeholder Analytics Scripts -->
+    <!-- Google Analytics Script -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-2CFV890C7W"></script>
     <script id="analytics-script" class="analytics-script">
-        // Placeholder for Google Analytics
-        console.log('Analytics script loaded');
+        // Google Analytics (gtag.js)
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-2CFV890C7W');
+        
+        console.log('Google Analytics loaded');
         window.analyticsEnabled = true;
     </script>
     
@@ -690,6 +696,39 @@
                 script.id = 'google-adsense-script';
                 document.head.appendChild(script);
                 console.log('Google AdSense re-enabled');
+            }
+        };
+        
+        // Function to disable Google Analytics if user rejects cookies
+        window.disableAnalytics = function() {
+            const analyticsScript = document.getElementById('analytics-script');
+            if (analyticsScript) {
+                analyticsScript.style.display = 'none';
+                analyticsScript.classList.add('disabled');
+            }
+            // Clear dataLayer to stop tracking
+            if (window.dataLayer) {
+                window.dataLayer = [];
+            }
+            window.analyticsEnabled = false;
+            console.log('Google Analytics disabled');
+        };
+        
+        // Function to enable Google Analytics if user accepts cookies later
+        window.enableAnalytics = function() {
+            const analyticsScript = document.getElementById('analytics-script');
+            if (analyticsScript) {
+                analyticsScript.style.display = 'block';
+                analyticsScript.classList.remove('disabled');
+            }
+            // Reinitialize analytics if not already done
+            if (!window.analyticsEnabled) {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-2CFV890C7W');
+                window.analyticsEnabled = true;
+                console.log('Google Analytics re-enabled');
             }
         };
     </script>

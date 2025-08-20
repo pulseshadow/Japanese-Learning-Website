@@ -2664,9 +2664,15 @@ function rejectCookies() {
         window.disableAdSense();
     }
     
+    // Disable analytics script
+    analyticsScript.classList.add('disabled');
+    if (typeof window.disableAnalytics === 'function') {
+        window.disableAnalytics();
+    }
+    
     // Save consent preference
     const consentData = {
-        analytics: true, // Always required
+        analytics: false, // User rejected analytics
         advertising: false,
         timestamp: Date.now()
     };
@@ -2675,7 +2681,7 @@ function rejectCookies() {
     // Hide the popup
     hideCookieConsent();
     
-    console.log('Cookies rejected - Analytics enabled, Advertising disabled');
+    console.log('Cookies rejected - Analytics disabled, Advertising disabled');
 }
 
 function acceptCookies() {
@@ -2686,8 +2692,11 @@ function acceptCookies() {
         window.enableAdSense();
     }
     
-    // Analytics is always enabled
+    // Enable analytics script
     analyticsScript.classList.remove('disabled');
+    if (typeof window.enableAnalytics === 'function') {
+        window.enableAnalytics();
+    }
     
     // Save consent preference
     const consentData = {
@@ -2724,8 +2733,20 @@ function loadCookieConsent() {
             }
         }
         
-        // Analytics is always enabled
-        analyticsScript.classList.remove('disabled');
+        // Handle analytics based on saved preference
+        if (consentData.analytics === false) {
+            // User previously rejected analytics cookies
+            analyticsScript.classList.add('disabled');
+            if (typeof window.disableAnalytics === 'function') {
+                window.disableAnalytics();
+            }
+        } else {
+            // User previously accepted analytics cookies
+            analyticsScript.classList.remove('disabled');
+            if (typeof window.enableAnalytics === 'function') {
+                window.enableAnalytics();
+            }
+        }
         
         // Update settings panel display if it exists
         if (cookieStatusText) {
@@ -2766,8 +2787,11 @@ function acceptCookiesFromSettings() {
         window.enableAdSense();
     }
     
-    // Analytics is always enabled
+    // Enable analytics script
     analyticsScript.classList.remove('disabled');
+    if (typeof window.enableAnalytics === 'function') {
+        window.enableAnalytics();
+    }
     
     // Save consent preference
     const consentData = {
@@ -2791,12 +2815,15 @@ function revokeCookiesFromSettings() {
         window.disableAdSense();
     }
     
-    // Analytics is always enabled
-    analyticsScript.classList.remove('disabled');
+    // Disable analytics script
+    analyticsScript.classList.add('disabled');
+    if (typeof window.disableAnalytics === 'function') {
+        window.disableAnalytics();
+    }
     
     // Save consent preference
     const consentData = {
-        analytics: true,
+        analytics: false,
         advertising: false,
         timestamp: Date.now()
     };
@@ -2805,27 +2832,30 @@ function revokeCookiesFromSettings() {
     // Update status display
     updateCookieStatusDisplay();
     
-    console.log('Cookies revoked from settings - Analytics enabled, Advertising disabled');
+    console.log('Cookies revoked from settings - Analytics disabled, Advertising disabled');
 }
 
 function updateCookieStatusDisplay() {
     const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
     
     if (consentData && typeof consentData === 'object') {
-        if (consentData.advertising === true) {
-            cookieStatusText.textContent = cookieStatusText.getAttribute('data-en') || 'Non-essential cookies accepted';
-            cookieStatusText.setAttribute('data-en', 'Non-essential cookies accepted');
-            cookieStatusText.setAttribute('data-es', 'Cookies no esenciales aceptados');
-            cookieStatusText.setAttribute('data-fr', 'Cookies non essentiels acceptés');
-            cookieStatusText.setAttribute('data-ja', '非必須クッキーが受け入れられました');
-        } else {
-            cookieStatusText.setAttribute('data-en', 'Non-essential cookies rejected');
-            cookieStatusText.setAttribute('data-es', 'Cookies no esenciales rechazados');
-            cookieStatusText.setAttribute('data-fr', 'Cookies non essentiels rejetés');
-            cookieStatusText.setAttribute('data-ja', '非必須クッキーが拒否されました');
+        if (consentData.analytics === true && consentData.advertising === true) {
+            cookieStatusText.setAttribute('data-en', 'Analytics and advertising cookies accepted');
+            cookieStatusText.setAttribute('data-es', 'Cookies de análisis y publicidad aceptados');
+            cookieStatusText.setAttribute('data-fr', 'Cookies d\'analyse et publicitaires acceptés');
+            cookieStatusText.setAttribute('data-ja', '分析と広告のクッキーが受け入れられました');
+        } else if (consentData.analytics === true && consentData.advertising === false) {
+            cookieStatusText.setAttribute('data-en', 'Analytics cookies accepted, advertising rejected');
+            cookieStatusText.setAttribute('data-es', 'Cookies de análisis aceptados, publicidad rechazada');
+            cookieStatusText.setAttribute('data-fr', 'Cookies d\'analyse acceptés, publicité rejetée');
+            cookieStatusText.setAttribute('data-ja', '分析クッキーが受け入れられ、広告が拒否されました');
+        } else if (consentData.analytics === false && consentData.advertising === false) {
+            cookieStatusText.setAttribute('data-en', 'All non-essential cookies rejected');
+            cookieStatusText.setAttribute('data-es', 'Todas las cookies no esenciales rechazadas');
+            cookieStatusText.setAttribute('data-fr', 'Tous les cookies non essentiels rejetés');
+            cookieStatusText.setAttribute('data-ja', 'すべての非必須クッキーが拒否されました');
         }
     } else {
-        cookieStatusText.textContent = cookieStatusText.getAttribute('data-en') || 'No consent given';
         cookieStatusText.setAttribute('data-en', 'No consent given');
         cookieStatusText.setAttribute('data-es', 'No se ha dado consentimiento');
         cookieStatusText.setAttribute('data-fr', 'Aucun consentement donné');
