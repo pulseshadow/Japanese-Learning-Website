@@ -3514,7 +3514,15 @@ function updateAllText() {
     elements.forEach(element => {
         const text = element.getAttribute(`data-${currentLanguage}`);
         if (text) {
-            element.textContent = text;
+            // Check if element contains HTML links that need to be preserved
+            const hasLinks = element.querySelector('a') !== null;
+            if (hasLinks) {
+                // Preserve HTML structure by replacing text while keeping links
+                updateTextWithPreservedLinks(element, text);
+            } else {
+                // No links to preserve, use simple textContent
+                element.textContent = text;
+            }
         }
     });
     
@@ -3544,6 +3552,49 @@ function updateAllText() {
     if (document.querySelector('.word-selection-grid')) {
         updateWordSelectionGrids();
     }
+}
+
+// Function to update text while preserving HTML links
+function updateTextWithPreservedLinks(element, newText) {
+    // Store the original links
+    const links = Array.from(element.querySelectorAll('a'));
+    const linkData = links.map(link => ({
+        href: link.getAttribute('href'),
+        target: link.getAttribute('target'),
+        text: link.textContent
+    }));
+    
+    // Update the text content
+    element.textContent = newText;
+    
+    // Restore the links by finding the link text and replacing it with the original <a> tag
+    linkData.forEach(linkInfo => {
+        const textContent = element.textContent;
+        const linkIndex = textContent.indexOf(linkInfo.text);
+        
+        if (linkIndex !== -1) {
+            // Create the link element
+            const linkElement = document.createElement('a');
+            linkElement.href = linkInfo.href;
+            if (linkInfo.target) {
+                linkElement.target = linkInfo.target;
+            }
+            linkElement.textContent = linkInfo.text;
+            
+            // Split the text and insert the link
+            const beforeText = textContent.substring(0, linkIndex);
+            const afterText = textContent.substring(linkIndex + linkInfo.text.length);
+            
+            element.textContent = '';
+            if (beforeText) {
+                element.appendChild(document.createTextNode(beforeText));
+            }
+            element.appendChild(linkElement);
+            if (afterText) {
+                element.appendChild(document.createTextNode(afterText));
+            }
+        }
+    });
 }
 
 // Function to update answer validation when language changes
