@@ -4903,6 +4903,9 @@ function rejectCookies() {
         window.disableAdSense();
     }
     
+    // Hide ad containers
+    hideAdContainers();
+    
     // Disable analytics script
     analyticsScript.classList.add('disabled');
     if (typeof window.disableAnalytics === 'function') {
@@ -4930,6 +4933,9 @@ function acceptCookies() {
     if (typeof window.enableAdSense === 'function') {
         window.enableAdSense();
     }
+    
+    // Show ad containers
+    showAdContainers();
     
     // Enable analytics script
     analyticsScript.classList.remove('disabled');
@@ -4970,6 +4976,11 @@ function loadCookieConsent() {
             if (typeof window.enableAdSense === 'function') {
                 window.enableAdSense();
             }
+            // Show ad containers
+            showAdContainers();
+        } else {
+            // Hide ad containers by default
+            hideAdContainers();
         }
         
         // Handle analytics based on saved preference
@@ -5006,6 +5017,9 @@ function loadCookieConsent() {
     window.adsenseEnabled = false;
     window.analyticsEnabled = false;
     
+    // Hide ad containers by default
+    hideAdContainers();
+    
     console.log('No consent data found - scripts disabled by default');
     return false;
 }
@@ -5036,6 +5050,9 @@ function acceptCookiesFromSettings() {
         window.enableAdSense();
     }
     
+    // Show ad containers
+    showAdContainers();
+    
     // Enable analytics script
     analyticsScript.classList.remove('disabled');
     if (typeof window.enableAnalytics === 'function') {
@@ -5063,6 +5080,9 @@ function revokeCookiesFromSettings() {
     if (typeof window.disableAdSense === 'function') {
         window.disableAdSense();
     }
+    
+    // Hide ad containers
+    hideAdContainers();
     
     // Disable analytics script
     analyticsScript.classList.add('disabled');
@@ -5236,4 +5256,21 @@ function updateStatsDisplay() {
     highestRoundSpan.textContent = userStats.highestRoundReached;
     
     // Games played and last played stats removed - no longer displaying
+}
+
+// Ad container management functions
+function showAdContainers() {
+    const adContainers = document.querySelectorAll('.ad-container');
+    adContainers.forEach(container => {
+        container.classList.remove('hidden');
+    });
+    console.log('Ad containers shown');
+}
+
+function hideAdContainers() {
+    const adContainers = document.querySelectorAll('.ad-container');
+    adContainers.forEach(container => {
+        container.classList.add('hidden');
+    });
+    console.log('Ad containers hidden');
 }
