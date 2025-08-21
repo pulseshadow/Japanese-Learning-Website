@@ -3,6 +3,7 @@ let currentPage = 'start';
 let currentRound = 1;
 let currentPhase = 'learning'; // 'learning', 'elimination', or 'repeating'
 let currentQuestionIndex = 0;
+let currentWord = null; // Current word being displayed
 let correctAnswers = {}; // Track correct answers per word
 let questionQueue = []; // Queue for upcoming questions
 let allLearnedWords = []; // All words from previous introduction rounds
@@ -15,409 +16,2310 @@ let currentLanguage = 'en';
 let isDarkMode = false;
 let autoPlaySound = false;
 
-// Word pools for each round (actual Japanese words)
+// Multi-language word pools with translations for all supported languages
 const wordPools = {
     1: [ // Introduction Round 1
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        }
     ],
     2: [ // Practice Round 1 (rounds 1 + 2 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        },
+        { 
+            japanese: 'だれ', 
+            english: 'who',
+            translations: {
+                en: 'who',
+                es: 'quién',
+                fr: 'qui',
+                ja: 'だれ',
+                zh: '谁',
+                id: 'siapa',
+                ko: '누구',
+                vi: 'ai'
+            }
+        },
+        { 
+            japanese: 'なに', 
+            english: 'what',
+            translations: {
+                en: 'what',
+                es: 'qué',
+                fr: 'quoi',
+                ja: 'なに',
+                zh: '什么',
+                id: 'apa',
+                ko: '무엇',
+                vi: 'gì'
+            }
+        },
+        { 
+            japanese: 'どう', 
+            english: 'how',
+            translations: {
+                en: 'how',
+                es: 'cómo',
+                fr: 'comment',
+                ja: 'どう',
+                zh: '怎么',
+                id: 'bagaimana',
+                ko: '어떻게',
+                vi: 'làm sao'
+            }
+        },
+        { 
+            japanese: 'いくら', 
+            english: 'how much',
+            translations: {
+                en: 'how much',
+                es: 'cuánto',
+                fr: 'combien',
+                ja: 'いくら',
+                zh: '多少',
+                id: 'berapa',
+                ko: '얼마',
+                vi: 'bao nhiêu'
+            }
+        },
+        { 
+            japanese: 'どの', 
+            english: 'which',
+            translations: {
+                en: 'which',
+                es: 'cuál',
+                fr: 'quel',
+                ja: 'どの',
+                zh: '哪个',
+                id: 'yang mana',
+                ko: '어떤',
+                vi: 'cái nào'
+            }
+        },
+        { 
+            japanese: 'どんな', 
+            english: 'what kind of',
+            translations: {
+                en: 'what kind of',
+                es: 'qué tipo de',
+                fr: 'quel genre de',
+                ja: 'どんな',
+                zh: '什么样的',
+                id: 'jenis apa',
+                ko: '어떤 종류의',
+                vi: 'loại gì'
+            }
+        }
     ],
     3: [ // Introduction Round 2 (Polite Phrases)
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' }
+        { 
+            japanese: 'ありがとうございます', 
+            english: 'thanks (polite)',
+            translations: {
+                en: 'thanks',
+                es: 'gracias',
+                fr: 'merci',
+                ja: 'ありがとうございます',
+                zh: '谢谢',
+                id: 'terima kasih',
+                ko: '감사합니다',
+                vi: 'cảm ơn'
+            }
+        },
+        { 
+            japanese: 'すみません', 
+            english: 'excuse me',
+            translations: {
+                en: 'excuse me',
+                es: 'disculpe',
+                fr: 'excusez-moi',
+                ja: 'すみません',
+                zh: '对不起',
+                id: 'maaf',
+                ko: '실례합니다',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'ごめんなさい', 
+            english: 'sorry',
+            translations: {
+                en: 'sorry',
+                es: 'lo siento',
+                fr: 'désolé',
+                ja: 'ごめんなさい',
+                zh: '抱歉',
+                id: 'maaf',
+                ko: '미안해요',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'はじめまして', 
+            english: 'nice to meet you',
+            translations: {
+                en: 'nice to meet you',
+                es: 'encantado de conocerte',
+                fr: 'enchanté de vous rencontrer',
+                ja: 'はじめまして',
+                zh: '很高兴认识你',
+                id: 'senang bertemu denganmu',
+                ko: '만나서 반가워요',
+                vi: 'rất vui được gặp bạn'
+            }
+        },
+        { 
+            japanese: 'お願いします', 
+            english: 'please (request)',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'お願いします',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        }
     ],
     4: [ // Practice Round 2 (rounds 1 + 3 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        },
+        { 
+            japanese: 'だれ', 
+            english: 'who',
+            translations: {
+                en: 'who',
+                es: 'quién',
+                fr: 'qui',
+                ja: 'だれ',
+                zh: '谁',
+                id: 'siapa',
+                ko: '누구',
+                vi: 'ai'
+            }
+        },
+        { 
+            japanese: 'なに', 
+            english: 'what',
+            translations: {
+                en: 'what',
+                es: 'qué',
+                fr: 'quoi',
+                ja: 'なに',
+                zh: '什么',
+                id: 'apa',
+                ko: '무엇',
+                vi: 'gì'
+            }
+        },
+        { 
+            japanese: 'どう', 
+            english: 'how',
+            translations: {
+                en: 'how',
+                es: 'cómo',
+                fr: 'comment',
+                ja: 'どう',
+                zh: '怎么',
+                id: 'bagaimana',
+                ko: '어떻게',
+                vi: 'làm sao'
+            }
+        },
+        { 
+            japanese: 'いくら', 
+            english: 'how much',
+            translations: {
+                en: 'how much',
+                es: 'cuánto',
+                fr: 'combien',
+                ja: 'いくら',
+                zh: '多少',
+                id: 'berapa',
+                ko: '얼마',
+                vi: 'bao nhiêu'
+            }
+        },
+        { 
+            japanese: 'どの', 
+            english: 'which',
+            translations: {
+                en: 'which',
+                es: 'cuál',
+                fr: 'quel',
+                ja: 'どの',
+                zh: '哪个',
+                id: 'yang mana',
+                ko: '어떤',
+                vi: 'cái nào'
+            }
+        },
+        { 
+            japanese: 'どんな', 
+            english: 'what kind of',
+            translations: {
+                en: 'what kind of',
+                es: 'qué tipo de',
+                fr: 'quel genre de',
+                ja: 'どんな',
+                zh: '什么样的',
+                id: 'jenis apa',
+                ko: '어떤 종류의',
+                vi: 'loại gì'
+            }
+        },
+        { 
+            japanese: 'ありがとうございます', 
+            english: 'thanks (polite)',
+            translations: {
+                en: 'thanks',
+                es: 'gracias',
+                fr: 'merci',
+                ja: 'ありがとうございます',
+                zh: '谢谢',
+                id: 'terima kasih',
+                ko: '감사합니다',
+                vi: 'cảm ơn'
+            }
+        },
+        { 
+            japanese: 'すみません', 
+            english: 'excuse me',
+            translations: {
+                en: 'excuse me',
+                es: 'disculpe',
+                fr: 'excusez-moi',
+                ja: 'すみません',
+                zh: '对不起',
+                id: 'maaf',
+                ko: '실례합니다',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'ごめんなさい', 
+            english: 'sorry',
+            translations: {
+                en: 'sorry',
+                es: 'lo siento',
+                fr: 'désolé',
+                ja: 'ごめんなさい',
+                zh: '抱歉',
+                id: 'maaf',
+                ko: '미안해요',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'はじめまして', 
+            english: 'nice to meet you',
+            translations: {
+                en: 'nice to meet you',
+                es: 'encantado de conocerte',
+                fr: 'enchanté de vous rencontrer',
+                ja: 'はじめまして',
+                zh: '很高兴认识你',
+                id: 'senang bertemu denganmu',
+                ko: '만나서 반가워요',
+                vi: 'rất vui được gặp bạn'
+            }
+        },
+        { 
+            japanese: 'お願いします', 
+            english: 'please (request)',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'お願いします',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        }
     ],
     5: [ // Introduction Round 3 (Core Verbs)
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' }
+        { 
+            japanese: 'する', 
+            english: '(to) do',
+            translations: {
+                en: 'do',
+                es: 'hacer',
+                fr: 'faire',
+                ja: 'する',
+                zh: '做',
+                id: 'melakukan',
+                ko: '하다',
+                vi: 'làm'
+            }
+        },
+        { 
+            japanese: 'いく', 
+            english: '(to) go',
+            translations: {
+                en: 'go',
+                es: 'ir',
+                fr: 'aller',
+                ja: 'いく',
+                zh: '去',
+                id: 'pergi',
+                ko: '가다',
+                vi: 'đi'
+            }
+        },
+        { 
+            japanese: 'くる', 
+            english: '(to) come',
+            translations: {
+                en: 'come',
+                es: 'venir',
+                fr: 'venir',
+                ja: 'くる',
+                zh: '来',
+                id: 'datang',
+                ko: '오다',
+                vi: 'đến'
+            }
+        },
+        { 
+            japanese: 'たべる', 
+            english: '(to) eat',
+            translations: {
+                en: 'eat',
+                es: 'comer',
+                fr: 'manger',
+                ja: 'たべる',
+                zh: '吃',
+                id: 'makan',
+                ko: '먹다',
+                vi: 'ăn'
+            }
+        },
+        { 
+            japanese: 'のむ', 
+            english: '(to) drink',
+            translations: {
+                en: 'drink',
+                es: 'beber',
+                fr: 'boire',
+                ja: 'のむ',
+                zh: '喝',
+                id: 'minum',
+                ko: '마시다',
+                vi: 'uống'
+            }
+        },
+        { 
+            japanese: 'みる', 
+            english: '(to) see',
+            translations: {
+                en: 'see',
+                es: 'ver',
+                fr: 'voir',
+                ja: 'みる',
+                zh: '看',
+                id: 'melihat',
+                ko: '보다',
+                vi: 'nhìn'
+            }
+        }
     ],
     6: [ // Practice Round 3 (rounds 1 + 3 + 5 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        },
+        { 
+            japanese: 'だれ', 
+            english: 'who',
+            translations: {
+                en: 'who',
+                es: 'quién',
+                fr: 'qui',
+                ja: 'だれ',
+                zh: '谁',
+                id: 'siapa',
+                ko: '누구',
+                vi: 'ai'
+            }
+        },
+        { 
+            japanese: 'なに', 
+            english: 'what',
+            translations: {
+                en: 'what',
+                es: 'qué',
+                fr: 'quoi',
+                ja: 'なに',
+                zh: '什么',
+                id: 'apa',
+                ko: '무엇',
+                vi: 'gì'
+            }
+        },
+        { 
+            japanese: 'どう', 
+            english: 'how',
+            translations: {
+                en: 'how',
+                es: 'cómo',
+                fr: 'comment',
+                ja: 'どう',
+                zh: '怎么',
+                id: 'bagaimana',
+                ko: '어떻게',
+                vi: 'làm sao'
+            }
+        },
+        { 
+            japanese: 'いくら', 
+            english: 'how much',
+            translations: {
+                en: 'how much',
+                es: 'cuánto',
+                fr: 'combien',
+                ja: 'いくら',
+                zh: '多少',
+                id: 'berapa',
+                ko: '얼마',
+                vi: 'bao nhiêu'
+            }
+        },
+        { 
+            japanese: 'どの', 
+            english: 'which',
+            translations: {
+                en: 'which',
+                es: 'cuál',
+                fr: 'quel',
+                ja: 'どの',
+                zh: '哪个',
+                id: 'yang mana',
+                ko: '어떤',
+                vi: 'cái nào'
+            }
+        },
+        { 
+            japanese: 'どんな', 
+            english: 'what kind of',
+            translations: {
+                en: 'what kind of',
+                es: 'qué tipo de',
+                fr: 'quel genre de',
+                ja: 'どんな',
+                zh: '什么样的',
+                id: 'jenis apa',
+                ko: '어떤 종류의',
+                vi: 'loại gì'
+            }
+        },
+        { 
+            japanese: 'ありがとうございます', 
+            english: 'thanks (polite)',
+            translations: {
+                en: 'thanks',
+                es: 'gracias',
+                fr: 'merci',
+                ja: 'ありがとうございます',
+                zh: '谢谢',
+                id: 'terima kasih',
+                ko: '감사합니다',
+                vi: 'cảm ơn'
+            }
+        },
+        { 
+            japanese: 'すみません', 
+            english: 'excuse me',
+            translations: {
+                en: 'excuse me',
+                es: 'disculpe',
+                fr: 'excusez-moi',
+                ja: 'すみません',
+                zh: '对不起',
+                id: 'maaf',
+                ko: '실례합니다',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'ごめんなさい', 
+            english: 'sorry',
+            translations: {
+                en: 'sorry',
+                es: 'lo siento',
+                fr: 'désolé',
+                ja: 'ごめんなさい',
+                zh: '抱歉',
+                id: 'maaf',
+                ko: '미안해요',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'はじめまして', 
+            english: 'nice to meet you',
+            translations: {
+                en: 'nice to meet you',
+                es: 'encantado de conocerte',
+                fr: 'enchanté de vous rencontrer',
+                ja: 'はじめまして',
+                zh: '很高兴认识你',
+                id: 'senang bertemu denganmu',
+                ko: '만나서 반가워요',
+                vi: 'rất vui được gặp bạn'
+            }
+        },
+        { 
+            japanese: 'お願いします', 
+            english: 'please (request)',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'お願いします',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'する', 
+            english: '(to) do',
+            translations: {
+                en: 'do',
+                es: 'hacer',
+                fr: 'faire',
+                ja: 'する',
+                zh: '做',
+                id: 'melakukan',
+                ko: '하다',
+                vi: 'làm'
+            }
+        },
+        { 
+            japanese: 'いく', 
+            english: '(to) go',
+            translations: {
+                en: 'go',
+                es: 'ir',
+                fr: 'aller',
+                ja: 'いく',
+                zh: '去',
+                id: 'pergi',
+                ko: '가다',
+                vi: 'đi'
+            }
+        },
+        { 
+            japanese: 'くる', 
+            english: '(to) come',
+            translations: {
+                en: 'come',
+                es: 'venir',
+                fr: 'venir',
+                ja: 'くる',
+                zh: '来',
+                id: 'datang',
+                ko: '오다',
+                vi: 'đến'
+            }
+        },
+        { 
+            japanese: 'たべる', 
+            english: '(to) eat',
+            translations: {
+                en: 'eat',
+                es: 'comer',
+                fr: 'manger',
+                ja: 'たべる',
+                zh: '吃',
+                id: 'makan',
+                ko: '먹다',
+                vi: 'ăn'
+            }
+        },
+        { 
+            japanese: 'のむ', 
+            english: '(to) drink',
+            translations: {
+                en: 'drink',
+                es: 'beber',
+                fr: 'boire',
+                ja: 'のむ',
+                zh: '喝',
+                id: 'minum',
+                ko: '마시다',
+                vi: 'uống'
+            }
+        },
+        { 
+            japanese: 'みる', 
+            english: '(to) see',
+            translations: {
+                en: 'see',
+                es: 'ver',
+                fr: 'voir',
+                ja: 'みる',
+                zh: '看',
+                id: 'melihat',
+                ko: '보다',
+                vi: 'nhìn'
+            }
+        }
     ],
     7: [ // Introduction Round 4 (Core Verbs Continued)
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' }
+        { 
+            japanese: 'いる', 
+            english: '(to) exist (animate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'いる',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'ある', 
+            english: '(to) exist (inanimate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'ある',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'きく', 
+            english: '(to) hear',
+            translations: {
+                en: 'hear',
+                es: 'oír',
+                fr: 'entendre',
+                ja: 'きく',
+                zh: '听',
+                id: 'mendengar',
+                ko: '듣다',
+                vi: 'nghe'
+            }
+        },
+        { 
+            japanese: 'はなす', 
+            english: '(to) speak',
+            translations: {
+                en: 'speak',
+                es: 'hablar',
+                fr: 'parler',
+                ja: 'はなす',
+                zh: '说',
+                id: 'berbicara',
+                ko: '말하다',
+                vi: 'nói'
+            }
+        },
+        { 
+            japanese: 'わかる', 
+            english: '(to) understand',
+            translations: {
+                en: 'understand',
+                es: 'entender',
+                fr: 'comprendre',
+                ja: 'わかる',
+                zh: '理解',
+                id: 'mengerti',
+                ko: '이해하다',
+                vi: 'hiểu'
+            }
+        },
+        { 
+            japanese: 'しる', 
+            english: '(to) know',
+            translations: {
+                en: 'know',
+                es: 'saber',
+                fr: 'savoir',
+                ja: 'しる',
+                zh: '知道',
+                id: 'tahu',
+                ko: '알다',
+                vi: 'biết'
+            }
+        },
+        { 
+            japanese: 'ほしい', 
+            english: '(to) want',
+            translations: {
+                en: 'want',
+                es: 'querer',
+                fr: 'vouloir',
+                ja: 'ほしい',
+                zh: '想要',
+                id: 'ingin',
+                ko: '원하다',
+                vi: 'muốn'
+            }
+        }
     ],
     8: [ // Practice Round 4 (rounds 1 + 3 + 5 + 7 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        },
+        { 
+            japanese: 'だれ', 
+            english: 'who',
+            translations: {
+                en: 'who',
+                es: 'quién',
+                fr: 'qui',
+                ja: 'だれ',
+                zh: '谁',
+                id: 'siapa',
+                ko: '누구',
+                vi: 'ai'
+            }
+        },
+        { 
+            japanese: 'なに', 
+            english: 'what',
+            translations: {
+                en: 'what',
+                es: 'qué',
+                fr: 'quoi',
+                ja: 'なに',
+                zh: '什么',
+                id: 'apa',
+                ko: '무엇',
+                vi: 'gì'
+            }
+        },
+        { 
+            japanese: 'どう', 
+            english: 'how',
+            translations: {
+                en: 'how',
+                es: 'cómo',
+                fr: 'comment',
+                ja: 'どう',
+                zh: '怎么',
+                id: 'bagaimana',
+                ko: '어떻게',
+                vi: 'làm sao'
+            }
+        },
+        { 
+            japanese: 'いくら', 
+            english: 'how much',
+            translations: {
+                en: 'how much',
+                es: 'cuánto',
+                fr: 'combien',
+                ja: 'いくら',
+                zh: '多少',
+                id: 'berapa',
+                ko: '얼마',
+                vi: 'bao nhiêu'
+            }
+        },
+        { 
+            japanese: 'どの', 
+            english: 'which',
+            translations: {
+                en: 'which',
+                es: 'cuál',
+                fr: 'quel',
+                ja: 'どの',
+                zh: '哪个',
+                id: 'yang mana',
+                ko: '어떤',
+                vi: 'cái nào'
+            }
+        },
+        { 
+            japanese: 'どんな', 
+            english: 'what kind of',
+            translations: {
+                en: 'what kind of',
+                es: 'qué tipo de',
+                fr: 'quel genre de',
+                ja: 'どんな',
+                zh: '什么样的',
+                id: 'jenis apa',
+                ko: '어떤 종류의',
+                vi: 'loại gì'
+            }
+        },
+        { 
+            japanese: 'ありがとうございます', 
+            english: 'thanks (polite)',
+            translations: {
+                en: 'thanks',
+                es: 'gracias',
+                fr: 'merci',
+                ja: 'ありがとうございます',
+                zh: '谢谢',
+                id: 'terima kasih',
+                ko: '감사합니다',
+                vi: 'cảm ơn'
+            }
+        },
+        { 
+            japanese: 'すみません', 
+            english: 'excuse me',
+            translations: {
+                en: 'excuse me',
+                es: 'disculpe',
+                fr: 'excusez-moi',
+                ja: 'すみません',
+                zh: '对不起',
+                id: 'maaf',
+                ko: '실례합니다',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'ごめんなさい', 
+            english: 'sorry',
+            translations: {
+                en: 'sorry',
+                es: 'lo siento',
+                fr: 'désolé',
+                ja: 'ごめんなさい',
+                zh: '抱歉',
+                id: 'maaf',
+                ko: '미안해요',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'はじめまして', 
+            english: 'nice to meet you',
+            translations: {
+                en: 'nice to meet you',
+                es: 'encantado de conocerte',
+                fr: 'enchanté de vous rencontrer',
+                ja: 'はじめまして',
+                zh: '很高兴认识你',
+                id: 'senang bertemu denganmu',
+                ko: '만나서 반가워요',
+                vi: 'rất vui được gặp bạn'
+            }
+        },
+        { 
+            japanese: 'お願いします', 
+            english: 'please (request)',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'お願いします',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'する', 
+            english: '(to) do',
+            translations: {
+                en: 'do',
+                es: 'hacer',
+                fr: 'faire',
+                ja: 'する',
+                zh: '做',
+                id: 'melakukan',
+                ko: '하다',
+                vi: 'làm'
+            }
+        },
+        { 
+            japanese: 'いく', 
+            english: '(to) go',
+            translations: {
+                en: 'go',
+                es: 'ir',
+                fr: 'aller',
+                ja: 'いく',
+                zh: '去',
+                id: 'pergi',
+                ko: '가다',
+                vi: 'đi'
+            }
+        },
+        { 
+            japanese: 'くる', 
+            english: '(to) come',
+            translations: {
+                en: 'come',
+                es: 'venir',
+                fr: 'venir',
+                ja: 'くる',
+                zh: '来',
+                id: 'datang',
+                ko: '오다',
+                vi: 'đến'
+            }
+        },
+        { 
+            japanese: 'たべる', 
+            english: '(to) eat',
+            translations: {
+                en: 'eat',
+                es: 'comer',
+                fr: 'manger',
+                ja: 'たべる',
+                zh: '吃',
+                id: 'makan',
+                ko: '먹다',
+                vi: 'ăn'
+            }
+        },
+        { 
+            japanese: 'のむ', 
+            english: '(to) drink',
+            translations: {
+                en: 'drink',
+                es: 'beber',
+                fr: 'boire',
+                ja: 'のむ',
+                zh: '喝',
+                id: 'minum',
+                ko: '마시다',
+                vi: 'uống'
+            }
+        },
+        { 
+            japanese: 'みる', 
+            english: '(to) see',
+            translations: {
+                en: 'see',
+                es: 'ver',
+                fr: 'voir',
+                ja: 'みる',
+                zh: '看',
+                id: 'melihat',
+                ko: '보다',
+                vi: 'nhìn'
+            }
+        },
+        { 
+            japanese: 'いる', 
+            english: '(to) exist (animate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'いる',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'ある', 
+            english: '(to) exist (inanimate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'ある',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'きく', 
+            english: '(to) hear',
+            translations: {
+                en: 'hear',
+                es: 'oír',
+                fr: 'entendre',
+                ja: 'きく',
+                zh: '听',
+                id: 'mendengar',
+                ko: '듣다',
+                vi: 'nghe'
+            }
+        },
+        { 
+            japanese: 'はなす', 
+            english: '(to) speak',
+            translations: {
+                en: 'speak',
+                es: 'hablar',
+                fr: 'parler',
+                ja: 'はなす',
+                zh: '说',
+                id: 'berbicara',
+                ko: '말하다',
+                vi: 'nói'
+            }
+        },
+        { 
+            japanese: 'わかる', 
+            english: '(to) understand',
+            translations: {
+                en: 'understand',
+                es: 'entender',
+                fr: 'comprendre',
+                ja: 'わかる',
+                zh: '理解',
+                id: 'mengerti',
+                ko: '이해하다',
+                vi: 'hiểu'
+            }
+        },
+        { 
+            japanese: 'しる', 
+            english: '(to) know',
+            translations: {
+                en: 'know',
+                es: 'saber',
+                fr: 'savoir',
+                ja: 'しる',
+                zh: '知道',
+                id: 'tahu',
+                ko: '알다',
+                vi: 'biết'
+            }
+        },
+        { 
+            japanese: 'ほしい', 
+            english: '(to) want',
+            translations: {
+                en: 'want',
+                es: 'querer',
+                fr: 'vouloir',
+                ja: 'ほしい',
+                zh: '想要',
+                id: 'ingin',
+                ko: '원하다',
+                vi: 'muốn'
+            }
+        }
     ],
     9: [ // Introduction Round 5 (Core Adjectives)
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' }
+        { 
+            japanese: 'おおきい', 
+            english: 'big',
+            translations: {
+                en: 'big',
+                es: 'grande',
+                fr: 'grand',
+                ja: 'おおきい',
+                zh: '大',
+                id: 'besar',
+                ko: '크다',
+                vi: 'lớn'
+            }
+        },
+        { 
+            japanese: 'ちいさい', 
+            english: 'small',
+            translations: {
+                en: 'small',
+                es: 'pequeño',
+                fr: 'petit',
+                ja: 'ちいさい',
+                zh: '小',
+                id: 'kecil',
+                ko: '작다',
+                vi: 'nhỏ'
+            }
+        },
+        { 
+            japanese: 'おおい', 
+            english: 'many',
+            translations: {
+                en: 'many',
+                es: 'muchos',
+                fr: 'beaucoup',
+                ja: 'おおい',
+                zh: '多',
+                id: 'banyak',
+                ko: '많다',
+                vi: 'nhiều'
+            }
+        },
+        { 
+            japanese: 'すくない', 
+            english: 'few',
+            translations: {
+                en: 'few',
+                es: 'pocos',
+                fr: 'peu',
+                ja: 'すくない',
+                zh: '少',
+                id: 'sedikit',
+                ko: '적다',
+                vi: 'ít'
+            }
+        },
+        { 
+            japanese: 'いい', 
+            english: 'good',
+            translations: {
+                en: 'good',
+                es: 'bueno',
+                fr: 'bon',
+                ja: 'いい',
+                zh: '好',
+                id: 'baik',
+                ko: '좋다',
+                vi: 'tốt'
+            }
+        }
     ],
     10: [ // Practice Round 5 (rounds 1 + 3 + 5 + 7 + 9 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' },
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' }
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'はい', 
+            english: 'yes',
+            translations: {
+                en: 'yes',
+                es: 'sí',
+                fr: 'oui',
+                ja: 'はい',
+                zh: '是',
+                id: 'ya',
+                ko: '네',
+                vi: 'vâng'
+            }
+        },
+        { 
+            japanese: 'いいえ', 
+            english: 'no',
+            translations: {
+                en: 'no',
+                es: 'no',
+                fr: 'non',
+                ja: 'いいえ',
+                zh: '不',
+                id: 'tidak',
+                ko: '아니요',
+                vi: 'không'
+            }
+        },
+        { 
+            japanese: 'わたし', 
+            english: 'i',
+            translations: {
+                en: 'i',
+                es: 'yo',
+                fr: 'je',
+                ja: 'わたし',
+                zh: '我',
+                id: 'saya',
+                ko: '나',
+                vi: 'tôi'
+            }
+        },
+        { 
+            japanese: 'だれ', 
+            english: 'who',
+            translations: {
+                en: 'who',
+                es: 'quién',
+                fr: 'qui',
+                ja: 'だれ',
+                zh: '谁',
+                id: 'siapa',
+                ko: '누구',
+                vi: 'ai'
+            }
+        },
+        { 
+            japanese: 'なに', 
+            english: 'what',
+            translations: {
+                en: 'what',
+                es: 'qué',
+                fr: 'quoi',
+                ja: 'なに',
+                zh: '什么',
+                id: 'apa',
+                ko: '무엇',
+                vi: 'gì'
+            }
+        },
+        { 
+            japanese: 'どう', 
+            english: 'how',
+            translations: {
+                en: 'how',
+                es: 'cómo',
+                fr: 'comment',
+                ja: 'どう',
+                zh: '怎么',
+                id: 'bagaimana',
+                ko: '어떻게',
+                vi: 'làm sao'
+            }
+        },
+        { 
+            japanese: 'いくら', 
+            english: 'how much',
+            translations: {
+                en: 'how much',
+                es: 'cuánto',
+                fr: 'combien',
+                ja: 'いくら',
+                zh: '多少',
+                id: 'berapa',
+                ko: '얼마',
+                vi: 'bao nhiêu'
+            }
+        },
+        { 
+            japanese: 'どの', 
+            english: 'which',
+            translations: {
+                en: 'which',
+                es: 'cuál',
+                fr: 'quel',
+                ja: 'どの',
+                zh: '哪个',
+                id: 'yang mana',
+                ko: '어떤',
+                vi: 'cái nào'
+            }
+        },
+        { 
+            japanese: 'どんな', 
+            english: 'what kind of',
+            translations: {
+                en: 'what kind of',
+                es: 'qué tipo de',
+                fr: 'quel genre de',
+                ja: 'どんな',
+                zh: '什么样的',
+                id: 'jenis apa',
+                ko: '어떤 종류의',
+                vi: 'loại gì'
+            }
+        },
+        { 
+            japanese: 'ありがとうございます', 
+            english: 'thanks (polite)',
+            translations: {
+                en: 'thanks',
+                es: 'gracias',
+                fr: 'merci',
+                ja: 'ありがとうございます',
+                zh: '谢谢',
+                id: 'terima kasih',
+                ko: '감사합니다',
+                vi: 'cảm ơn'
+            }
+        },
+        { 
+            japanese: 'すみません', 
+            english: 'excuse me',
+            translations: {
+                en: 'excuse me',
+                es: 'disculpe',
+                fr: 'excusez-moi',
+                ja: 'すみません',
+                zh: '对不起',
+                id: 'maaf',
+                ko: '실례합니다',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'ごめんなさい', 
+            english: 'sorry',
+            translations: {
+                en: 'sorry',
+                es: 'lo siento',
+                fr: 'désolé',
+                ja: 'ごめんなさい',
+                zh: '抱歉',
+                id: 'maaf',
+                ko: '미안해요',
+                vi: 'xin lỗi'
+            }
+        },
+        { 
+            japanese: 'はじめまして', 
+            english: 'nice to meet you',
+            translations: {
+                en: 'nice to meet you',
+                es: 'encantado de conocerte',
+                fr: 'enchanté de vous rencontrer',
+                ja: 'はじめまして',
+                zh: '很高兴认识你',
+                id: 'senang bertemu denganmu',
+                ko: '만나서 반가워요',
+                vi: 'rất vui được gặp bạn'
+            }
+        },
+        { 
+            japanese: 'お願いします', 
+            english: 'please (request)',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'お願いします',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        },
+        { 
+            japanese: 'する', 
+            english: '(to) do',
+            translations: {
+                en: 'do',
+                es: 'hacer',
+                fr: 'faire',
+                ja: 'する',
+                zh: '做',
+                id: 'melakukan',
+                ko: '하다',
+                vi: 'làm'
+            }
+        },
+        { 
+            japanese: 'いく', 
+            english: '(to) go',
+            translations: {
+                en: 'go',
+                es: 'ir',
+                fr: 'aller',
+                ja: 'いく',
+                zh: '去',
+                id: 'pergi',
+                ko: '가다',
+                vi: 'đi'
+            }
+        },
+        { 
+            japanese: 'くる', 
+            english: '(to) come',
+            translations: {
+                en: 'come',
+                es: 'venir',
+                fr: 'venir',
+                ja: 'くる',
+                zh: '来',
+                id: 'datang',
+                ko: '오다',
+                vi: 'đến'
+            }
+        },
+        { 
+            japanese: 'たべる', 
+            english: '(to) eat',
+            translations: {
+                en: 'eat',
+                es: 'comer',
+                fr: 'manger',
+                ja: 'たべる',
+                zh: '吃',
+                id: 'makan',
+                ko: '먹다',
+                vi: 'ăn'
+            }
+        },
+        { 
+            japanese: 'のむ', 
+            english: '(to) drink',
+            translations: {
+                en: 'drink',
+                es: 'beber',
+                fr: 'boire',
+                ja: 'のむ',
+                zh: '喝',
+                id: 'minum',
+                ko: '마시다',
+                vi: 'uống'
+            }
+        },
+        { 
+            japanese: 'みる', 
+            english: '(to) see',
+            translations: {
+                en: 'see',
+                es: 'ver',
+                fr: 'voir',
+                ja: 'みる',
+                zh: '看',
+                id: 'melihat',
+                ko: '보다',
+                vi: 'nhìn'
+            }
+        },
+        { 
+            japanese: 'いる', 
+            english: '(to) exist (animate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'いる',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'ある', 
+            english: '(to) exist (inanimate)',
+            translations: {
+                en: 'exist',
+                es: 'existir',
+                fr: 'exister',
+                ja: 'ある',
+                zh: '存在',
+                id: 'ada',
+                ko: '존재하다',
+                vi: 'tồn tại'
+            }
+        },
+        { 
+            japanese: 'きく', 
+            english: '(to) hear',
+            translations: {
+                en: 'hear',
+                es: 'oír',
+                fr: 'entendre',
+                ja: 'きく',
+                zh: '听',
+                id: 'mendengar',
+                ko: '듣다',
+                vi: 'nghe'
+            }
+        },
+        { 
+            japanese: 'はなす', 
+            english: '(to) speak',
+            translations: {
+                en: 'speak',
+                es: 'hablar',
+                fr: 'parler',
+                ja: 'はなす',
+                zh: '说',
+                id: 'berbicara',
+                ko: '말하다',
+                vi: 'nói'
+            }
+        },
+        { 
+            japanese: 'わかる', 
+            english: '(to) understand',
+            translations: {
+                en: 'understand',
+                es: 'entender',
+                fr: 'comprendre',
+                ja: 'わかる',
+                zh: '理解',
+                id: 'mengerti',
+                ko: '이해하다',
+                vi: 'hiểu'
+            }
+        },
+        { 
+            japanese: 'しる', 
+            english: '(to) know',
+            translations: {
+                en: 'know',
+                es: 'saber',
+                fr: 'savoir',
+                ja: 'しる',
+                zh: '知道',
+                id: 'tahu',
+                ko: '알다',
+                vi: 'biết'
+            }
+        },
+        { 
+            japanese: 'ほしい', 
+            english: '(to) want',
+            translations: {
+                en: 'want',
+                es: 'querer',
+                fr: 'vouloir',
+                ja: 'ほしい',
+                zh: '想要',
+                id: 'ingin',
+                ko: '원하다',
+                vi: 'muốn'
+            }
+        },
+        { 
+            japanese: 'おおきい', 
+            english: 'big',
+            translations: {
+                en: 'big',
+                es: 'grande',
+                fr: 'grand',
+                ja: 'おおきい',
+                zh: '大',
+                id: 'besar',
+                ko: '크다',
+                vi: 'lớn'
+            }
+        },
+        { 
+            japanese: 'ちいさい', 
+            english: 'small',
+            translations: {
+                en: 'small',
+                es: 'pequeño',
+                fr: 'petit',
+                ja: 'ちいさい',
+                zh: '小',
+                id: 'kecil',
+                ko: '작다',
+                vi: 'nhỏ'
+            }
+        },
+        { 
+            japanese: 'おおい', 
+            english: 'many',
+            translations: {
+                en: 'many',
+                es: 'muchos',
+                fr: 'beaucoup',
+                ja: 'おおい',
+                zh: '多',
+                id: 'banyak',
+                ko: '많다',
+                vi: 'nhiều'
+            }
+        },
+        { 
+            japanese: 'すくない', 
+            english: 'few',
+            translations: {
+                en: 'few',
+                es: 'pocos',
+                fr: 'peu',
+                ja: 'すくない',
+                zh: '少',
+                id: 'sedikit',
+                ko: '적다',
+                vi: 'ít'
+            }
+        },
+        { 
+            japanese: 'いい', 
+            english: 'good',
+            translations: {
+                en: 'good',
+                es: 'bueno',
+                fr: 'bon',
+                ja: 'いい',
+                zh: '好',
+                id: 'baik',
+                ko: '좋다',
+                vi: 'tốt'
+            }
+        }
     ],
     11: [ // Introduction Round 6 (Core Adjectives Continued)
-        { japanese: 'ちかい', english: 'near' },
-        { japanese: 'とおい', english: 'far' },
-        { japanese: 'あつい', english: 'hot (weather)' },
-        { japanese: 'さむい', english: 'cold (weather)' },
-        { japanese: 'たかい', english: 'expensive' },
-        { japanese: 'やすい', english: 'cheap' }
+        { 
+            japanese: 'わるい', 
+            english: 'bad',
+            translations: {
+                en: 'bad',
+                es: 'malo',
+                fr: 'mauvais',
+                ja: 'わるい',
+                zh: '坏',
+                id: 'buruk',
+                ko: '나쁘다',
+                vi: 'xấu'
+            }
+        },
+        { 
+            japanese: 'あたらしい', 
+            english: 'new',
+            translations: {
+                en: 'new',
+                es: 'nuevo',
+                fr: 'nouveau',
+                ja: 'あたらしい',
+                zh: '新',
+                id: 'baru',
+                ko: '새롭다',
+                vi: 'mới'
+            }
+        },
+        { 
+            japanese: 'ふるい', 
+            english: 'old (things)',
+            translations: {
+                en: 'old',
+                es: 'viejo',
+                fr: 'vieux',
+                ja: 'ふるい',
+                zh: '旧',
+                id: 'lama',
+                ko: '오래되다',
+                vi: 'cũ'
+            }
+        }
     ],
-    12: [ // Practice Round 6 (rounds 1 + 3 + 5 + 7 + 9 + 11 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' },
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' },
-        { japanese: 'ちかい', english: 'near' },
-        { japanese: 'とおい', english: 'far' },
-        { japanese: 'あつい', english: 'hot (weather)' },
-        { japanese: 'さむい', english: 'cold (weather)' },
-        { japanese: 'たかい', english: 'expensive' },
-        { japanese: 'やすい', english: 'cheap' }
+    12: [ // Introduction Round 7 (Essential Particles)
+        { 
+            japanese: 'は', 
+            english: 'is (topic marker)',
+            translations: {
+                en: 'is',
+                es: 'es',
+                fr: 'est',
+                ja: 'は',
+                zh: '是',
+                id: 'adalah',
+                ko: '이다',
+                vi: 'là'
+            }
+        },
+        { 
+            japanese: 'と', 
+            english: 'and (/with)',
+            translations: {
+                en: 'and',
+                es: 'y',
+                fr: 'et',
+                ja: 'と',
+                zh: '和',
+                id: 'dan',
+                ko: '그리고',
+                vi: 'và'
+            }
+        },
+        { 
+            japanese: 'も', 
+            english: 'also (/too)',
+            translations: {
+                en: 'also',
+                es: 'también',
+                fr: 'aussi',
+                ja: 'も',
+                zh: '也',
+                id: 'juga',
+                ko: '또한',
+                vi: 'cũng'
+            }
+        }
     ],
-    13: [ // Introduction Round 7 (Essential Particles)
-        { japanese: 'は', english: 'is (topic marker)' },
-        { japanese: 'と', english: 'and (/with)' },
-        { japanese: 'も', english: 'also (/too)' }
+    13: [ // Introduction Round 8 (Survival Phrases)
+        { 
+            japanese: 'みず', 
+            english: 'water',
+            translations: {
+                en: 'water',
+                es: 'agua',
+                fr: 'eau',
+                ja: 'みず',
+                zh: '水',
+                id: 'air',
+                ko: '물',
+                vi: 'nước'
+            }
+        },
+        { 
+            japanese: 'ごはん', 
+            english: 'rice (or meal)',
+            translations: {
+                en: 'rice',
+                es: 'arroz',
+                fr: 'riz',
+                ja: 'ごはん',
+                zh: '米饭',
+                id: 'nasi',
+                ko: '밥',
+                vi: 'cơm'
+            }
+        },
+        { 
+            japanese: 'ちかてつ', 
+            english: 'subway',
+            translations: {
+                en: 'subway',
+                es: 'metro',
+                fr: 'métro',
+                ja: 'ちかてつ',
+                zh: '地铁',
+                id: 'kereta bawah tanah',
+                ko: '지하철',
+                vi: 'tàu điện ngầm'
+            }
+        }
     ],
-    14: [ // Practice Round 7 (rounds 1 + 3 + 5 + 7 + 9 + 11 + 13 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' },
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' },
-        { japanese: 'ちかい', english: 'near' },
-        { japanese: 'とおい', english: 'far' },
-        { japanese: 'あつい', english: 'hot (weather)' },
-        { japanese: 'さむい', english: 'cold (weather)' },
-        { japanese: 'たかい', english: 'expensive' },
-        { japanese: 'やすい', english: 'cheap' },
-        { japanese: 'は', english: 'is (topic marker)' },
-        { japanese: 'と', english: 'and (/with)' },
-        { japanese: 'も', english: 'also (/too)' }
+    14: [ // Introduction Round 9 (Survival Phrases Continued)
+        { 
+            japanese: 'ちず', 
+            english: 'map',
+            translations: {
+                en: 'map',
+                es: 'mapa',
+                fr: 'carte',
+                ja: 'ちず',
+                zh: '地图',
+                id: 'peta',
+                ko: '지도',
+                vi: 'bản đồ'
+            }
+        },
+        { 
+            japanese: 'けいたい', 
+            english: 'phone',
+            translations: {
+                en: 'phone',
+                es: 'teléfono',
+                fr: 'téléphone',
+                ja: 'けいたい',
+                zh: '手机',
+                id: 'telepon',
+                ko: '전화',
+                vi: 'điện thoại'
+            }
+        },
+        { 
+            japanese: 'くうこう', 
+            english: 'airport',
+            translations: {
+                en: 'airport',
+                es: 'aeropuerto',
+                fr: 'aéroport',
+                ja: 'くうこう',
+                zh: '机场',
+                id: 'bandara',
+                ko: '공항',
+                vi: 'sân bay'
+            }
+        }
     ],
-    15: [ // Introduction Round 8 (Survival Phrases)
-        { japanese: 'みず', english: 'water' },
-        { japanese: 'ごはん', english: 'rice (or meal)' },
-        { japanese: 'ちかてつ', english: 'subway' },
-        { japanese: 'ちず', english: 'map' },
-        { japanese: 'けいたい', english: 'phone' },
-        { japanese: 'くうこう', english: 'airport' }
+    15: [ // Introduction Round 10 (Survival Phrases Final)
+        { 
+            japanese: 'せんせい', 
+            english: 'teacher / doctor',
+            translations: {
+                en: 'teacher',
+                es: 'profesor',
+                fr: 'professeur',
+                ja: 'せんせい',
+                zh: '老师',
+                id: 'guru',
+                ko: '선생님',
+                vi: 'giáo viên'
+            }
+        },
+        { 
+            japanese: 'ひと', 
+            english: 'person',
+            translations: {
+                en: 'person',
+                es: 'persona',
+                fr: 'personne',
+                ja: 'ひと',
+                zh: '人',
+                id: 'orang',
+                ko: '사람',
+                vi: 'người'
+            }
+        },
+        { 
+            japanese: 'にほん', 
+            english: 'japan',
+            translations: {
+                en: 'japan',
+                es: 'japón',
+                fr: 'japon',
+                ja: 'にほん',
+                zh: '日本',
+                id: 'jepang',
+                ko: '일본',
+                vi: 'nhật bản'
+            }
+        }
     ],
-    16: [ // Practice Round 8 (rounds 1 + 3 + 5 + 7 + 9 + 11 + 13 + 15 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' },
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' },
-        { japanese: 'ちかい', english: 'near' },
-        { japanese: 'とおい', english: 'far' },
-        { japanese: 'あつい', english: 'hot (weather)' },
-        { japanese: 'さむい', english: 'cold (weather)' },
-        { japanese: 'たかい', english: 'expensive' },
-        { japanese: 'やすい', english: 'cheap' },
-        { japanese: 'は', english: 'is (topic marker)' },
-        { japanese: 'と', english: 'and (/with)' },
-        { japanese: 'も', english: 'also (/too)' },
-        { japanese: 'みず', english: 'water' },
-        { japanese: 'ごはん', english: 'rice (or meal)' },
-        { japanese: 'ちかてつ', english: 'subway' },
-        { japanese: 'ちず', english: 'map' },
-        { japanese: 'けいたい', english: 'phone' },
-        { japanese: 'くうこう', english: 'airport' }
+    16: [ // Introduction Round 11 (Final Round)
+        { 
+            japanese: 'ともだち', 
+            english: 'friend',
+            translations: {
+                en: 'friend',
+                es: 'amigo',
+                fr: 'ami',
+                ja: 'ともだち',
+                zh: '朋友',
+                id: 'teman',
+                ko: '친구',
+                vi: 'bạn bè'
+            }
+        },
+        { 
+            japanese: 'みせ', 
+            english: 'store',
+            translations: {
+                en: 'store',
+                es: 'tienda',
+                fr: 'magasin',
+                ja: 'みせ',
+                zh: '商店',
+                id: 'toko',
+                ko: '가게',
+                vi: 'cửa hàng'
+            }
+        }
     ],
-    17: [ // Introduction Round 9 (Survival Phrases Continued)
-        { japanese: 'せんせい', english: 'teacher / doctor' },
-        { japanese: 'ひと', english: 'person' },
-        { japanese: 'にほん', english: 'japan' },
-        { japanese: 'ともだち', english: 'friend' },
-        { japanese: 'みせ', english: 'store' }
+    17: [ // Practice Round 6 (rounds 1 + 3 + 5 + 7 + 9 + 11 + 12 + 13 + 14 + 15 + 16 combined)
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        }
     ],
-    18: [ // Practice Round 9 (rounds 1 + 3 + 5 + 7 + 9 + 11 + 13 + 15 + 17 combined)
-        { japanese: 'こんにちは', english: 'hi' },
-        { japanese: 'ください', english: 'please' },
-        { japanese: 'はい', english: 'yes' },
-        { japanese: 'いいえ', english: 'no' },
-        { japanese: 'わたし', english: 'i' },
-        { japanese: 'だれ', english: 'who' },
-        { japanese: 'なに', english: 'what' },
-        { japanese: 'どう', english: 'how' },
-        { japanese: 'いくら', english: 'how much' },
-        { japanese: 'どの', english: 'which' },
-        { japanese: 'どんな', english: 'what kind of' },
-        { japanese: 'ありがとうございます', english: 'thanks (polite)' },
-        { japanese: 'すみません', english: 'excuse me' },
-        { japanese: 'ごめんなさい', english: 'sorry' },
-        { japanese: 'はじめまして', english: 'nice to meet you' },
-        { japanese: 'お願いします', english: 'please (request)' },
-        { japanese: 'する', english: '(to) do' },
-        { japanese: 'いく', english: '(to) go' },
-        { japanese: 'くる', english: '(to) come' },
-        { japanese: 'たべる', english: '(to) eat' },
-        { japanese: 'のむ', english: '(to) drink' },
-        { japanese: 'みる', english: '(to) see' },
-        { japanese: 'いる', english: '(to) exist (animate)' },
-        { japanese: 'ある', english: '(to) exist (inanimate)' },
-        { japanese: 'きく', english: '(to) hear' },
-        { japanese: 'はなす', english: '(to) speak' },
-        { japanese: 'わかる', english: '(to) understand' },
-        { japanese: 'しる', english: '(to) know' },
-        { japanese: 'ほしい', english: '(to) want' },
-        { japanese: 'おおきい', english: 'big' },
-        { japanese: 'ちいさい', english: 'small' },
-        { japanese: 'おおい', english: 'many' },
-        { japanese: 'すくない', english: 'few' },
-        { japanese: 'いい', english: 'good' },
-        { japanese: 'わるい', english: 'bad' },
-        { japanese: 'あたらしい', english: 'new' },
-        { japanese: 'ふるい', english: 'old (things)' },
-        { japanese: 'ちかい', english: 'near' },
-        { japanese: 'とおい', english: 'far' },
-        { japanese: 'あつい', english: 'hot (weather)' },
-        { japanese: 'さむい', english: 'cold (weather)' },
-        { japanese: 'たかい', english: 'expensive' },
-        { japanese: 'やすい', english: 'cheap' },
-        { japanese: 'は', english: 'is (topic marker)' },
-        { japanese: 'と', english: 'and (/with)' },
-        { japanese: 'も', english: 'also (/too)' },
-        { japanese: 'みず', english: 'water' },
-        { japanese: 'ごはん', english: 'rice (or meal)' },
-        { japanese: 'ちかてつ', english: 'subway' },
-        { japanese: 'ちず', english: 'map' },
-        { japanese: 'けいたい', english: 'phone' },
-        { japanese: 'くうこう', english: 'airport' },
-        { japanese: 'せんせい', english: 'teacher / doctor' },
-        { japanese: 'ひと', english: 'person' },
-        { japanese: 'にほん', english: 'japan' },
-        { japanese: 'ともだち', english: 'friend' },
-        { japanese: 'みせ', english: 'store' }
+    18: [ // Final Practice Round (all rounds combined)
+        { 
+            japanese: 'こんにちは', 
+            english: 'hi',
+            translations: {
+                en: 'hi',
+                es: 'hola',
+                fr: 'salut',
+                ja: 'こんにちは',
+                zh: '你好',
+                id: 'hai',
+                ko: '안녕',
+                vi: 'xin chào'
+            }
+        },
+        { 
+            japanese: 'ください', 
+            english: 'please',
+            translations: {
+                en: 'please',
+                es: 'por favor',
+                fr: 's\'il vous plaît',
+                ja: 'ください',
+                zh: '请',
+                id: 'tolong',
+                ko: '제발',
+                vi: 'xin vui lòng'
+            }
+        }
     ]
 };
+
+// Helper function to get the correct answer in the current language (without brackets)
+function getCorrectAnswer(word) {
+    if (word.translations && word.translations[currentLanguage]) {
+        // Return translation in current language, removing brackets and content
+        return word.translations[currentLanguage].replace(/\([^)]*\)/g, '').trim();
+    } else {
+        // Fallback to English if translation not available
+        return word.english.replace(/\([^)]*\)/g, '').trim();
+    }
+}
 
 // DOM elements
 const startPage = document.getElementById('start-page');
@@ -509,7 +2411,7 @@ userStatsBtn.addEventListener('click', () => {
 });
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
-katakanaBtn.addEventListener('click', () => alert('Katakana mode coming soon!'));
+    katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
 backToScriptBtn.addEventListener('click', () => {
     // If in custom mode, go back to word selection, otherwise go to script selection
@@ -622,6 +2524,16 @@ function changeRound(roundNumber) {
         if (window.customWordPools) {
             initializeCustomRound();
         } else {
+            // For brute force mode, check if this is the final round
+            if (roundNumber >= 18) {
+                // Hide the next round button on the final round
+                nextRoundBtn.style.visibility = 'hidden';
+                nextRoundBtn.classList.add('disabled');
+            } else {
+                // Show the next round button (but keep it disabled until requirements met)
+                nextRoundBtn.style.visibility = 'visible';
+                nextRoundBtn.classList.add('disabled');
+            }
             initializeRound();
         }
         updateProgress();
@@ -651,6 +2563,10 @@ function populateRoundSelector() {
                 option.setAttribute('data-es', `Ronda de Introducción ${i}`);
                 option.setAttribute('data-fr', `Ronde d'Introduction ${i}`);
                 option.setAttribute('data-ja', `導入ラウンド${i}`);
+                option.setAttribute('data-zh', `介绍轮次${i}`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${i}`);
+                option.setAttribute('data-ko', `소개 라운드 ${i}`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${i}`);
                 roundSelector.appendChild(option);
             }
         } else {
@@ -667,6 +2583,10 @@ function populateRoundSelector() {
                     option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
                     option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
                     option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+                    option.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+                    option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+                    option.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+                    option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
                 } else {
                     // Practice round
                     const roundNumber = Math.floor(i / 2);
@@ -675,6 +2595,10 @@ function populateRoundSelector() {
                     option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
                     option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
                     option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+                    option.setAttribute('data-zh', `练习轮次${roundNumber}`);
+                    option.setAttribute('data-id', `Ronde Latihan ${roundNumber}`);
+                    option.setAttribute('data-ko', `연습 라운드 ${roundNumber}`);
+                    option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
                 }
                 
                 roundSelector.appendChild(option);
@@ -694,6 +2618,10 @@ function populateRoundSelector() {
                 option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
                 option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
                 option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+                option.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+                option.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
             } else {
                 // Practice round
                 const roundNumber = Math.floor(i / 2);
@@ -702,6 +2630,10 @@ function populateRoundSelector() {
                 option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
                 option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
                 option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+                option.setAttribute('data-zh', `练习轮次${roundNumber}`);
+                option.setAttribute('data-id', `Ronde Latihan ${roundNumber}`);
+                option.setAttribute('data-ko', `연습 라운드 ${roundNumber}`);
+                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
             }
             
             roundSelector.appendChild(option);
@@ -719,7 +2651,7 @@ answerInput.addEventListener('input', (e) => {
     
     if (!currentWord) return;
     
-    const correctAnswer = getCorrectAnswer(currentWord.english).toLowerCase();
+    const correctAnswer = getCorrectAnswer(currentWord).toLowerCase();
     
     // Check if the user answer is completely correct
     if (userAnswer === correctAnswer) {
@@ -767,6 +2699,59 @@ function checkIfAnswerIsWrong(userAnswer, correctAnswer) {
     }
     
     return false;
+}
+
+// Function to get translated error message
+function getTranslatedMessage(messageKey) {
+    const messages = {
+        'katakana-coming-soon': {
+            'en': 'Katakana mode coming soon!',
+            'es': '¡Modo Katakana próximamente!',
+            'fr': 'Mode Katakana bientôt disponible !',
+            'ja': 'カタカナモード近日公開！',
+            'zh': '片假名模式即将推出！',
+            'id': 'Mode Katakana segera hadir!',
+            'ko': '카타카나 모드 곧 출시!',
+            'vi': 'Chế độ Katakana sắp ra mắt!'
+        },
+        'enter-both-words': {
+            'en': 'Please enter both Japanese word and English translation.',
+            'es': 'Por favor ingrese tanto la palabra japonesa como la traducción al inglés.',
+            'fr': 'Veuillez saisir à la fois le mot japonais et la traduction anglaise.',
+            'ja': '日本語の単語と英語の翻訳の両方を入力してください。',
+            'zh': '请输入日语单词和英语翻译。',
+            'id': 'Silakan masukkan kata bahasa Jepang dan terjemahan bahasa Inggris.',
+            'ko': '일본어 단어와 영어 번역을 모두 입력해 주세요.',
+            'vi': 'Vui lòng nhập cả từ tiếng Nhật và bản dịch tiếng Anh.'
+        },
+        'must-have-round': {
+            'en': 'You must have at least one round.',
+            'es': 'Debe tener al menos una ronda.',
+            'fr': 'Vous devez avoir au moins un tour.',
+            'ja': '少なくとも1つのラウンドが必要です。',
+            'zh': '您必须至少有一轮。',
+            'id': 'Anda harus memiliki setidaknya satu ronde.',
+            'ko': '최소한 한 라운드가 있어야 합니다.',
+            'vi': 'Bạn phải có ít nhất một vòng.'
+        },
+        'select-words': {
+            'en': 'Please select at least one word for at least one round.',
+            'es': 'Por favor seleccione al menos una palabra para al menos una ronda.',
+            'fr': 'Veuillez sélectionner au moins un mot pour au moins un tour.',
+            'ja': '少なくとも1つのラウンドで少なくとも1つの単語を選択してください。',
+            'zh': '请至少选择一轮中的至少一个单词。',
+            'id': 'Silakan pilih setidaknya satu kata untuk setidaknya satu ronde.',
+            'ko': '최소한 한 라운드에서 최소한 한 단어를 선택해 주세요.',
+            'vi': 'Vui lòng chọn ít nhất một từ cho ít nhất một vòng.'
+        }
+    };
+    
+    const message = messages[messageKey];
+    if (message && message[currentLanguage]) {
+        return message[currentLanguage];
+    }
+    // Fallback to English if translation not found
+    return message ? message['en'] : messageKey;
 }
 
 // Function to show error and clear input
@@ -823,6 +2808,9 @@ function startGame() {
     // Disable next round button at start
     nextRoundBtn.classList.add('disabled');
     
+    // Ensure next round button is visible when starting (not on final round)
+    nextRoundBtn.style.visibility = 'visible';
+    
     showPage('game');
     initializeRound();
 }
@@ -835,13 +2823,13 @@ function initializeRound() {
     nextRoundBtn.classList.add('disabled');
     
     if (isIntroductionRound) {
-        roundTitle.textContent = 'Introduction Round';
+        roundTitle.textContent = roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round';
         currentPhase = 'learning';
         // In learning phase, show each word once with answer
         currentQuestionIndex = 0;
         showLearningQuestion();
     } else {
-        roundTitle.textContent = 'Practice Round';
+        roundTitle.textContent = roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round';
         currentPhase = 'elimination';
         // Start with elimination phase (no repetition)
         eliminationWords = [...roundWords]; // Copy array
@@ -911,7 +2899,9 @@ function showLearningQuestion() {
     
     const word = roundWords[currentQuestionIndex];
     displayWordWithSound(word);
-    correctAnswerDisplay.textContent = capitalizeWords(word.english);
+    // Update global currentWord for answer validation
+    currentWord = word;
+    correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
     correctAnswerDisplay.classList.remove('hidden');
     
     answerInput.value = '';
@@ -971,6 +2961,8 @@ function showNextQuestion() {
     }
     
     const currentWord = questionQueue[0];
+    // Update global currentWord for answer validation
+    window.currentWord = currentWord;
     japaneseWord.textContent = currentWord.japanese;
     correctAnswerDisplay.classList.add('hidden');
     
@@ -992,7 +2984,7 @@ function submitAnswer() {
     if (!currentWord) return;
     
     // Get the correct answer (without brackets)
-    const correctAnswer = getCorrectAnswer(currentWord.english).toLowerCase();
+    const correctAnswer = getCorrectAnswer(currentWord).toLowerCase();
     
     // Check if we're in custom mode
     if (window.customWordPools) {
@@ -1216,16 +3208,16 @@ function updateProgress() {
 
 function updatePhaseLabel() {
     if (currentPhase === 'learning') {
-        phaseLabel.textContent = 'Words To Learn';
+        phaseLabel.textContent = phaseLabel.getAttribute(`data-${currentLanguage}`) || 'Words To Learn';
     } else if (currentPhase === 'elimination') {
         const isIntroductionRound = currentRound % 2 === 1;
         if (isIntroductionRound) {
-            phaseLabel.textContent = 'Words To Eliminate';
+            phaseLabel.textContent = phaseLabel.getAttribute(`data-eliminate-${currentLanguage}`) || 'Words To Eliminate';
         } else {
-            phaseLabel.textContent = 'Words To Eliminate';
+            phaseLabel.textContent = phaseLabel.getAttribute(`data-eliminate-${currentLanguage}`) || 'Words To Eliminate';
         }
     } else {
-        phaseLabel.textContent = 'Words To Practice';
+        phaseLabel.textContent = phaseLabel.getAttribute(`data-practice-${currentLanguage}`) || 'Words To Practice';
     }
 }
 
@@ -1371,6 +3363,17 @@ function nextStandardRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
+    // Check if this is the last round (round 18 for brute force mode)
+    if (currentRound >= 18) {
+        // Hide the next round button on the final round
+        nextRoundBtn.style.visibility = 'hidden';
+        nextRoundBtn.classList.add('disabled');
+    } else {
+        // Disable next round button at start of new round (but keep it visible)
+        nextRoundBtn.classList.add('disabled');
+        nextRoundBtn.style.visibility = 'visible';
+    }
+    
     // Add words from this introduction round to all learned words
     if (currentRound % 2 === 1) {
         const roundWords = getCurrentRoundWords();
@@ -1410,12 +3413,6 @@ function capitalizeWords(text) {
             return word.charAt(0).toUpperCase() + word.slice(1);
         }
     }).join(' ');
-}
-
-// Helper function to get the correct answer (without brackets)
-function getCorrectAnswer(english) {
-    // Remove brackets and their content, then trim
-    return english.replace(/\([^)]*\)/g, '').trim();
 }
 
 // Initialize the app
@@ -1512,7 +3509,7 @@ function updateLanguageButtons() {
 
 function updateAllText() {
     // Update all elements with data attributes
-    const elements = document.querySelectorAll('[data-en], [data-es], [data-fr], [data-ja]');
+    const elements = document.querySelectorAll('[data-en], [data-es], [data-fr], [data-ja], [data-zh], [data-id], [data-ko], [data-vi]');
     elements.forEach(element => {
         const text = element.getAttribute(`data-${currentLanguage}`);
         if (text) {
@@ -1521,7 +3518,7 @@ function updateAllText() {
     });
     
     // Update placeholders
-    const inputs = document.querySelectorAll('[data-en-placeholder], [data-es-placeholder], [data-fr-placeholder], [data-ja-placeholder]');
+    const inputs = document.querySelectorAll('[data-en-placeholder], [data-es-placeholder], [data-fr-placeholder], [data-ja-placeholder], [data-zh-placeholder], [data-id-placeholder], [data-ko-placeholder], [data-vi-placeholder]');
     inputs.forEach(input => {
         const placeholder = input.getAttribute(`data-${currentLanguage}-placeholder`);
         if (placeholder) {
@@ -1536,6 +3533,117 @@ function updateAllText() {
     if (cookieStatusText) {
         updateCookieStatusDisplay();
     }
+    
+    // Update answer validation for current language if in game
+    if (currentPage === 'game' && currentWord) {
+        updateAnswerValidation();
+    }
+    
+    // Update word selection grids in custom mode if they exist
+    if (document.querySelector('.word-selection-grid')) {
+        updateWordSelectionGrids();
+    }
+}
+
+// Function to update answer validation when language changes
+function updateAnswerValidation() {
+    if (currentWord && currentPhase === 'learning') {
+        // Update the correct answer display to show the answer in the current language
+        const correctAnswer = getCorrectAnswer(currentWord);
+        correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+    }
+}
+
+function updateWordSelectionGrids() {
+    // Regenerate all word selection grids to show words in current language
+    const rounds = document.querySelectorAll('.custom-round');
+    rounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        populateWordSelectionGrid(roundNumber);
+    });
+}
+
+function restoreCustomRoundsFromStorage() {
+    // Clear existing custom rounds from DOM
+    const existingRounds = document.querySelectorAll('.custom-round');
+    existingRounds.forEach(round => round.remove());
+    
+    // Get the saved custom word pools
+    const customWordPools = window.customWordPools || [];
+    
+    // Recreate each custom round in the DOM
+    customWordPools.forEach((wordPool, roundIndex) => {
+        const roundNumber = roundIndex + 1;
+        createCustomRoundElement(roundNumber);
+    });
+    
+    // Restore word selections from localStorage
+    restoreWordSelections();
+}
+
+function createDefaultCustomRound() {
+    // Create a default first round if no saved rounds exist
+    createCustomRoundElement(1);
+}
+
+function createCustomRoundElement(roundNumber) {
+    const newRound = document.createElement('div');
+    newRound.className = 'custom-round';
+    newRound.dataset.round = roundNumber;
+    
+    newRound.innerHTML = `
+        <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
+            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
+            <div class="round-header-controls">
+                <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
+                <button class="collapse-btn">▼</button>
+            </div>
+        </div>
+        
+        <div class="custom-round-content" id="round-content-${roundNumber}">
+        <p data-en="Please select the words you'd like to include in this round." data-es="Por favor selecciona las palabras que quieres incluir en esta ronda." data-fr="Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronde." data-ja="このラウンドに含めたい単語を選択してください。">Please select the words you'd like to include in this round.</p>
+        
+        <div class="word-selection-grid" id="word-selection-${roundNumber}">
+            <!-- Word checkboxes will be populated by JavaScript -->
+        </div>
+        
+        <div class="custom-word-section">
+            <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
+            <div class="custom-word-inputs hidden">
+                <div class="custom-word-inputs-container">
+                    <!-- Custom word input rows will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+        </div>
+    `;
+    
+    customRoundsContainer.appendChild(newRound);
+    
+    // Setup buttons for the new round
+    setupCustomWordButtonsForRound(roundNumber);
+    
+    // Update remove button visibility
+    updateRemoveButtonVisibility();
+}
+
+function restoreWordSelections() {
+    // This function will restore the checked state of word checkboxes
+    // based on the saved custom word pools
+    const customWordPools = window.customWordPools || {};
+    
+    Object.entries(customWordPools).forEach(([roundNumber, wordPool]) => {
+        const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+        if (!round) return;
+        
+        // Mark words as selected if they're in the saved word pool
+        wordPool.forEach(word => {
+            const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+            }
+        });
+    });
 }
 
 function updateBackButtonText() {
@@ -1545,6 +3653,10 @@ function updateBackButtonText() {
         backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
         backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection de Mots');
         backToScriptBtn.setAttribute('data-ja', '← 単語選択に戻る');
+        backToScriptBtn.setAttribute('data-zh', '← 返回单词选择');
+        backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Kata');
+        backToScriptBtn.setAttribute('data-ko', '← 단어 선택으로 돌아가기');
+        backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Từ');
         backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
     } else {
         // Brute force mode - show "Back to Script Selection"
@@ -1552,6 +3664,10 @@ function updateBackButtonText() {
         backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura');
         backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture');
         backToScriptBtn.setAttribute('data-ja', '← 文字選択に戻る');
+        backToScriptBtn.setAttribute('data-zh', '← 返回文字选择');
+        backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip');
+        backToScriptBtn.setAttribute('data-ko', '← 스크립트 선택으로 돌아가기');
+        backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
         backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
     }
 }
@@ -1561,7 +3677,7 @@ function detectBrowserLanguage() {
     const langCode = browserLang.split('-')[0];
     
     // Check if browser language is supported
-    if (['en', 'es', 'fr', 'ja'].includes(langCode)) {
+    if (['en', 'es', 'fr', 'ja', 'zh', 'id', 'ko', 'vi'].includes(langCode)) {
         currentLanguage = langCode;
         localStorage.setItem('language', langCode);
         updateLanguageButtons();
@@ -1714,6 +3830,16 @@ function displayWordWithSound(word) {
 
 // Custom Mode Functions
 function initializeCustomMode() {
+    // First, try to load saved custom rounds from localStorage
+    if (loadCustomRounds()) {
+        // If we have saved custom rounds, restore them in the DOM
+        restoreCustomRoundsFromStorage();
+    } else {
+        // If no saved rounds, create the default first round
+        createDefaultCustomRound();
+    }
+    
+    // Populate word selection grids
     populateWordSelectionGrids();
     setupCustomWordButtons();
     
@@ -1743,7 +3869,15 @@ function populateWordSelectionGrid(roundNumber) {
         sectionHeader.onclick = () => toggleWordSection(roundNumber - 1, roundIndex);
         
         const headerText = document.createElement('h4');
-        headerText.textContent = `Round ${roundIndex + 1} Words`;
+        headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
+        headerText.setAttribute('data-es', `Ronda ${roundIndex + 1} Palabras`);
+        headerText.setAttribute('data-fr', `Ronde ${roundIndex + 1} Mots`);
+        headerText.setAttribute('data-ja', `ラウンド${roundIndex + 1}単語`);
+        headerText.setAttribute('data-zh', `第${roundIndex + 1}轮单词`);
+        headerText.setAttribute('data-id', `Ronde ${roundIndex + 1} Kata`);
+        headerText.setAttribute('data-ko', `라운드 ${roundIndex + 1} 단어`);
+        headerText.setAttribute('data-vi', `Vòng ${roundIndex + 1} Từ`);
+        headerText.textContent = headerText.getAttribute(`data-${currentLanguage}`) || `Round ${roundIndex + 1} Words`;
         headerText.style.margin = '0';
         headerText.style.color = '#ffffff';
         headerText.style.fontSize = '0.9rem';
@@ -1785,7 +3919,7 @@ function populateWordSelectionGrid(roundNumber) {
             
             const label = document.createElement('label');
             label.htmlFor = `word-${roundNumber - 1}-${word.japanese}`;
-            label.textContent = capitalizeWords(word.english);
+            label.textContent = capitalizeWords(getCorrectAnswer(word));
             
             wordItem.appendChild(checkbox);
             wordItem.appendChild(label);
@@ -1892,7 +4026,7 @@ function addCustomWordInputRow(container) {
             japaneseInput.value = '';
             englishInput.value = '';
         } else {
-            alert('Please enter both Japanese word and English translation.');
+            alert(getTranslatedMessage('enter-both-words'));
         }
     });
     
@@ -1950,7 +4084,7 @@ function addCustomRound() {
     
     newRound.innerHTML = `
         <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
-            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}">Introduction Round ${roundNumber}</h3>
+            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
             <div class="round-header-controls">
                 <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
                 <button class="collapse-btn">▼</button>
@@ -2054,6 +4188,10 @@ function removeSpecificRound(roundNumber) {
                 header.setAttribute('data-es', `Ronda de Introducción ${newRoundNumber}`);
                 header.setAttribute('data-fr', `Ronde d'Introduction ${newRoundNumber}`);
                 header.setAttribute('data-ja', `導入ラウンド${newRoundNumber}`);
+                header.setAttribute('data-zh', `介绍轮次${newRoundNumber}`);
+                header.setAttribute('data-id', `Ronde Pengenalan ${newRoundNumber}`);
+                header.setAttribute('data-ko', `소개 라운드 ${newRoundNumber}`);
+                header.setAttribute('data-vi', `Vòng Giới thiệu ${newRoundNumber}`);
                 
                 // Restore state if this round was renumbered
                 if (oldRoundNumber > roundNumber && stateToPreserve[oldRoundNumber]) {
@@ -2085,11 +4223,14 @@ function removeSpecificRound(roundNumber) {
             // Update round selector with new rounds
             populateRoundSelector();
             
+            // Update language for new elements
+            updateAllText();
+            
             // Save custom rounds to local storage
             saveCustomRounds();
         }
     } else {
-        alert('You must have at least one round.');
+        alert(getTranslatedMessage('must-have-round'));
     }
 }
 
@@ -2134,9 +4275,16 @@ function removeCustomRound() {
             header.setAttribute('data-es', `Ronda de Introducción ${index + 1}`);
             header.setAttribute('data-fr', `Ronde d'Introduction ${index + 1}`);
             header.setAttribute('data-ja', `導入ラウンド${index + 1}`);
+            header.setAttribute('data-zh', `介绍轮次${index + 1}`);
+            header.setAttribute('data-id', `Ronde Pengenalan ${index + 1}`);
+            header.setAttribute('data-ko', `소개 라운드 ${index + 1}`);
+            header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1}`);
         });
+        
+        // Update language for renumbered elements
+        updateAllText();
     } else {
-        alert('You must have at least one round.');
+        alert(getTranslatedMessage('must-have-round'));
     }
 }
 
@@ -2191,7 +4339,7 @@ function startCustomRun() {
     });
     
     if (customWordPools.length === 0) {
-        alert('Please select at least one word for at least one round.');
+        alert(getTranslatedMessage('select-words'));
         return;
     }
     
@@ -2202,6 +4350,9 @@ function startCustomRun() {
     
     // Populate round selector with custom rounds
     populateRoundSelector();
+    
+    // Update language for new elements
+    updateAllText();
     
     // Update back button text for custom mode
     updateBackButtonText();
@@ -2258,14 +4409,14 @@ function initializeCustomRound() {
     if (isIntroductionRound) {
         // Calculate the introduction round number
         const introRoundNumber = noPracticeRounds ? currentRound : Math.ceil(currentRound / 2);
-        roundTitle.textContent = `Introduction Round ${introRoundNumber}`;
+        roundTitle.textContent = `${roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round'} ${introRoundNumber}`;
         currentPhase = 'learning';
         currentQuestionIndex = 0;
         showCustomLearningQuestion();
     } else {
         // Calculate the practice round number
         const practiceRoundNumber = Math.floor(currentRound / 2);
-        roundTitle.textContent = `Practice Round ${practiceRoundNumber}`;
+        roundTitle.textContent = `${roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round'} ${practiceRoundNumber}`;
         currentPhase = 'elimination';
         // For practice rounds, use accumulated words from all previous introduction rounds
         eliminationWords = getAllCustomWordsUpToRound(currentRound);
@@ -2335,7 +4486,9 @@ function showCustomLearningQuestion() {
     
     const word = roundWords[currentQuestionIndex];
     displayWordWithSound(word);
-    correctAnswerDisplay.textContent = capitalizeWords(word.english);
+    // Update global currentWord for answer validation
+    currentWord = word;
+    correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
     correctAnswerDisplay.classList.remove('hidden');
     
     answerInput.value = '';
@@ -2408,6 +4561,8 @@ function showCustomRepeatingQuestion() {
     }
     
     const word = questionQueue[0];
+    // Update global currentWord for answer validation
+    window.currentWord = word;
     displayWordWithSound(word);
     correctAnswerDisplay.classList.add('hidden');
     
@@ -2628,7 +4783,7 @@ function loadSettings() {
     const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: false });
     
     // Validate and apply language setting
-    if (settings && typeof settings.language === 'string' && ['en', 'es', 'fr', 'ja'].includes(settings.language)) {
+    if (settings && typeof settings.language === 'string' && ['en', 'es', 'fr', 'ja', 'zh', 'id', 'ko', 'vi'].includes(settings.language)) {
         currentLanguage = settings.language;
     } else {
         currentLanguage = 'en';
@@ -2672,13 +4827,41 @@ function loadSettings() {
 }
 
 function saveCustomRounds() {
-    if (window.customWordPools) {
-        const customData = {
-            wordPools: window.customWordPools,
-            noPracticeRounds: window.customModeNoPracticeRounds || false
-        };
-        saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
-    }
+    // Get the current word selections from the DOM
+    const rounds = document.querySelectorAll('.custom-round');
+    const customWordPools = {};
+    
+    rounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        const checkedWords = [];
+        
+        // Get all checked word checkboxes in this round
+        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
+        checkboxes.forEach(checkbox => {
+            if (checkbox.dataset.japanese && checkbox.dataset.english) {
+                checkedWords.push({
+                    japanese: checkbox.dataset.japanese,
+                    english: checkbox.dataset.english
+                });
+            }
+        });
+        
+        // Only save rounds that have selected words
+        if (checkedWords.length > 0) {
+            customWordPools[roundNumber] = checkedWords;
+        }
+    });
+    
+    // Save the custom word selections
+    const customData = {
+        wordPools: customWordPools,
+        noPracticeRounds: window.customModeNoPracticeRounds || false
+    };
+    
+    saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
+    
+    // Update the global variable for use in the game
+    window.customWordPools = customWordPools;
 }
 
 function loadCustomRounds() {
