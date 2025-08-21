@@ -3428,11 +3428,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load cookie consent preferences and set initial script states
     const consentLoaded = loadCookieConsent();
     
-    // TEMPORARY: Always show cookie consent popup for testing
-    // TODO: Revert to original logic: if (!consentLoaded) { ... }
-    setTimeout(() => {
-        showCookieConsent();
-    }, 1000); // Small delay to let the page load first
+    // Show cookie consent popup only if user hasn't made a choice yet
+    if (!consentLoaded) {
+        setTimeout(() => {
+            showCookieConsent();
+        }, 1000); // Small delay to let the page load first
+    }
 });
 
 // Toggle section visibility
@@ -3560,89 +3561,6 @@ function updateWordSelectionGrids() {
     rounds.forEach((round, index) => {
         const roundNumber = index + 1;
         populateWordSelectionGrid(roundNumber);
-    });
-}
-
-function restoreCustomRoundsFromStorage() {
-    // Clear existing custom rounds from DOM
-    const existingRounds = document.querySelectorAll('.custom-round');
-    existingRounds.forEach(round => round.remove());
-    
-    // Get the saved custom word pools
-    const customWordPools = window.customWordPools || [];
-    
-    // Recreate each custom round in the DOM
-    customWordPools.forEach((wordPool, roundIndex) => {
-        const roundNumber = roundIndex + 1;
-        createCustomRoundElement(roundNumber);
-    });
-    
-    // Restore word selections from localStorage
-    restoreWordSelections();
-}
-
-function createDefaultCustomRound() {
-    // Create a default first round if no saved rounds exist
-    createCustomRoundElement(1);
-}
-
-function createCustomRoundElement(roundNumber) {
-    const newRound = document.createElement('div');
-    newRound.className = 'custom-round';
-    newRound.dataset.round = roundNumber;
-    
-    newRound.innerHTML = `
-        <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
-            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
-            <div class="round-header-controls">
-                <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
-                <button class="collapse-btn">▼</button>
-            </div>
-        </div>
-        
-        <div class="custom-round-content" id="round-content-${roundNumber}">
-        <p data-en="Please select the words you'd like to include in this round." data-es="Por favor selecciona las palabras que quieres incluir en esta ronda." data-fr="Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronde." data-ja="このラウンドに含めたい単語を選択してください。">Please select the words you'd like to include in this round.</p>
-        
-        <div class="word-selection-grid" id="word-selection-${roundNumber}">
-            <!-- Word checkboxes will be populated by JavaScript -->
-        </div>
-        
-        <div class="custom-word-section">
-            <button class="add-custom-word-btn" data-en="Add Custom Word To Round" data-es="Agregar Palabra Personalizada a la Ronda" data-fr="Ajouter un Mot Personnalisé à la Ronde" data-ja="ラウンドにカスタム単語を追加">Add Custom Word To Round</button>
-            <div class="custom-word-inputs hidden">
-                <div class="custom-word-inputs-container">
-                    <!-- Custom word input rows will be added here dynamically -->
-                </div>
-            </div>
-        </div>
-        </div>
-    `;
-    
-    customRoundsContainer.appendChild(newRound);
-    
-    // Setup buttons for the new round
-    setupCustomWordButtonsForRound(roundNumber);
-    
-    // Update remove button visibility
-    updateRemoveButtonVisibility();
-}
-
-function restoreWordSelections() {
-    // This function will restore the checked state of word checkboxes
-    // based on the saved custom word pools
-    const customWordPools = window.customWordPools || {};
-    
-    Object.entries(customWordPools).forEach(([roundNumber, wordPool]) => {
-        const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-        if (!round) return;
-        
-        // Mark words as selected if they're in the saved word pool
-        wordPool.forEach(word => {
-            const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"]`);
-            if (checkbox) {
-                checkbox.checked = true;
-            }
-        });
     });
 }
 
@@ -3830,16 +3748,6 @@ function displayWordWithSound(word) {
 
 // Custom Mode Functions
 function initializeCustomMode() {
-    // First, try to load saved custom rounds from localStorage
-    if (loadCustomRounds()) {
-        // If we have saved custom rounds, restore them in the DOM
-        restoreCustomRoundsFromStorage();
-    } else {
-        // If no saved rounds, create the default first round
-        createDefaultCustomRound();
-    }
-    
-    // Populate word selection grids
     populateWordSelectionGrids();
     setupCustomWordButtons();
     
@@ -4827,41 +4735,13 @@ function loadSettings() {
 }
 
 function saveCustomRounds() {
-    // Get the current word selections from the DOM
-    const rounds = document.querySelectorAll('.custom-round');
-    const customWordPools = {};
-    
-    rounds.forEach((round, index) => {
-        const roundNumber = index + 1;
-        const checkedWords = [];
-        
-        // Get all checked word checkboxes in this round
-        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
-        checkboxes.forEach(checkbox => {
-            if (checkbox.dataset.japanese && checkbox.dataset.english) {
-                checkedWords.push({
-                    japanese: checkbox.dataset.japanese,
-                    english: checkbox.dataset.english
-                });
-            }
-        });
-        
-        // Only save rounds that have selected words
-        if (checkedWords.length > 0) {
-            customWordPools[roundNumber] = checkedWords;
-        }
-    });
-    
-    // Save the custom word selections
-    const customData = {
-        wordPools: customWordPools,
-        noPracticeRounds: window.customModeNoPracticeRounds || false
-    };
-    
-    saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
-    
-    // Update the global variable for use in the game
-    window.customWordPools = customWordPools;
+    if (window.customWordPools) {
+        const customData = {
+            wordPools: window.customWordPools,
+            noPracticeRounds: window.customModeNoPracticeRounds || false
+        };
+        saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
+    }
 }
 
 function loadCustomRounds() {
