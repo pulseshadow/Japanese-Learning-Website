@@ -2087,6 +2087,15 @@ body.dark-mode .language-names {
     color: #00bfff;
 }
 
+/* Add line break after language names on mobile */
+@media (max-width: 768px) {
+    .language-names {
+        display: block;
+        margin-left: 0;
+        margin-top: 5px;
+    }
+}
+
 .language-warning {
     color: #E75D38;
     font-weight: 600;
