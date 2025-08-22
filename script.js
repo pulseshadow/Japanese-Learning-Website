@@ -2327,6 +2327,7 @@ const scriptPage = document.getElementById('script-page');
 const gamePage = document.getElementById('game-page');
 const customScriptPage = document.getElementById('custom-script-page');
 const customModePage = document.getElementById('custom-mode-page');
+const wordEntrySelectionPage = document.getElementById('word-entry-selection-page');
 const bruteForceBtn = document.getElementById('brute-force-btn');
 const customModeBtn = document.getElementById('custom-mode-btn');
 const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
@@ -2336,6 +2337,9 @@ const backToStartBtn = document.getElementById('back-to-start');
 const backToScriptBtn = document.getElementById('back-to-script');
 const backToStartFromCustomScriptBtn = document.getElementById('back-to-start-from-custom-script');
 const backToStartFromCustomBtn = document.getElementById('back-to-start-from-custom');
+const backToStartFromWordEntryBtn = document.getElementById('back-to-start-from-word-entry');
+const enterJapaneseWordsBtn = document.getElementById('enter-japanese-words-btn');
+const enterEnglishWordsBtn = document.getElementById('enter-english-words-btn');
 const roundTitle = document.getElementById('round-title');
 const phaseLabel = document.getElementById('phase-label');
 const currentQuestionSpan = document.getElementById('current-question');
@@ -2402,9 +2406,15 @@ const cookieThemeToggle = document.getElementById('cookie-theme-toggle');
 
 // Event listeners
 bruteForceBtn.addEventListener('click', () => {
-    showPage('script');
+    console.log('Brute Force Mode clicked');
+    window.selectedMode = 'brute-force';
+    showPage('word-entry-selection');
 });
-customModeBtn.addEventListener('click', () => showPage('custom-script'));
+customModeBtn.addEventListener('click', () => {
+    console.log('Custom Mode clicked');
+    window.selectedMode = 'custom';
+    showPage('word-entry-selection');
+});
 userStatsBtn.addEventListener('click', () => {
     showPage('stats');
     updateStatsDisplay();
@@ -2433,6 +2443,31 @@ backToStartFromCustomBtn.addEventListener('click', () => {
     window.customModeEnabled = false;
     window.customWordPools = null;
     showPage('custom-script');
+});
+
+// Word entry selection page event listeners
+backToStartFromWordEntryBtn.addEventListener('click', () => {
+    showPage('start');
+});
+
+enterJapaneseWordsBtn.addEventListener('click', () => {
+    // Currently disabled - will be implemented in future update
+    console.log('Japanese word entry not yet implemented');
+});
+
+enterEnglishWordsBtn.addEventListener('click', () => {
+    console.log('Enter English Words clicked, selected mode:', window.selectedMode);
+    // Check which mode was selected and navigate accordingly
+    if (window.selectedMode === 'brute-force') {
+        console.log('Navigating to script page for brute force mode');
+        showPage('script');
+    } else if (window.selectedMode === 'custom') {
+        console.log('Navigating to custom script page for custom mode');
+        showPage('custom-script');
+    } else {
+        console.warn('No mode selected, defaulting to brute force');
+        showPage('script');
+    }
 });
 
 // Stats page event listeners - clearStatsBtn removed
@@ -2491,6 +2526,12 @@ function showPage(pageName) {
     customModePage.style.display = 'none';
     statsPage.style.display = 'none';
     
+    // Get the new word entry selection page
+    const wordEntrySelectionPage = document.getElementById('word-entry-selection-page');
+    if (wordEntrySelectionPage) {
+        wordEntrySelectionPage.style.display = 'none';
+    }
+    
     // Show the selected page
     if (pageName === 'start') {
         startPage.style.display = 'block';
@@ -2501,6 +2542,10 @@ function showPage(pageName) {
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
+    } else if (pageName === 'word-entry-selection') {
+        wordEntrySelectionPage.style.display = 'block';
+        wordEntrySelectionPage.classList.add('active');
+        console.log('Showing word entry selection page, selected mode:', window.selectedMode);
     } else if (pageName === 'custom-script') {
         customScriptPage.style.display = 'block';
         customScriptPage.classList.add('active');
