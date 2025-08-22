@@ -3867,6 +3867,14 @@ function initializeCustomMode() {
         
         // Explicitly set up the custom word button for Round 1 (initial round)
         setupCustomWordButtonsForRound(1);
+    } else {
+        // If data was loaded, we still need to populate grids and setup buttons
+        // but the state restoration will happen after grids are populated
+        populateWordSelectionGrids();
+        setupCustomWordButtons();
+        
+        // Now restore the saved state after grids are populated
+        restoreCustomRoundsState();
     }
 }
 
@@ -4981,15 +4989,17 @@ function loadCustomRounds() {
     }
     
     if (customData && typeof customData === 'object' && customData.rounds) {
-        console.log('Loading custom rounds:', customData);
+        console.log('Loading custom rounds data:', customData);
+        
+        // Store the data in memory for later restoration
+        window.savedCustomRoundsData = customData;
         
         // Clear existing custom rounds
         const existingRounds = document.querySelectorAll('.custom-round');
         existingRounds.forEach(round => round.remove());
         
-        // Restore custom rounds
+        // Create the round containers (without populating grids yet)
         customData.rounds.forEach(roundData => {
-            // Create the round
             const roundNumber = roundData.roundNumber;
             const newRound = document.createElement('div');
             newRound.className = 'custom-round';
@@ -5023,43 +5033,6 @@ function loadCustomRounds() {
             `;
             
             customRoundsContainer.appendChild(newRound);
-            
-            // Populate the word selection grid
-            populateWordSelectionGrid(roundNumber);
-            
-            // Restore checked words
-            roundData.checkedWords.forEach(word => {
-                const checkbox = newRound.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
-                if (checkbox) {
-                    checkbox.checked = true;
-                }
-            });
-            
-            // Restore custom words
-            roundData.customWords.forEach(customWord => {
-                addCustomWordToRound(newRound, customWord.japanese, customWord.english);
-                // Set the checkbox state for custom words
-                const customCheckbox = newRound.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
-                if (customCheckbox) {
-                    customCheckbox.checked = customWord.checked;
-                }
-            });
-            
-            // Restore open sections
-            roundData.openSections.forEach(sectionId => {
-                const section = newRound.querySelector(`#${sectionId}`);
-                if (section) {
-                    section.classList.remove('collapsed');
-                    const button = section.previousElementSibling.querySelector('.collapse-btn');
-                    if (button) {
-                        button.textContent = '▲';
-                        button.classList.add('rotated');
-                    }
-                }
-            });
-            
-            // Setup buttons for the round
-            setupCustomWordButtonsForRound(roundNumber);
         });
         
         // Update remove button visibility
@@ -5079,6 +5052,97 @@ function loadCustomRounds() {
         return true;
     }
     return false;
+}
+
+function restoreCustomRoundsState() {
+    if (!window.savedCustomRoundsData || !window.savedCustomRoundsData.rounds) {
+        console.log('No saved custom rounds data to restore');
+        return;
+    }
+    
+    console.log('Restoring custom rounds state:', window.savedCustomRoundsData);
+    
+    // Restore the state for each round
+    window.savedCustomRoundsData.rounds.forEach(roundData => {
+        const roundNumber = roundData.roundNumber;
+        const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+        if (!round) return;
+        
+        // Restore checked words
+        roundData.checkedWords.forEach(word => {
+            const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
+            if (checkbox) {
+                checkbox.checked = true;
+                console.log(`Restored checkbox for: ${word.japanese} - ${word.english}`);
+            } else {
+                console.log(`Could not find checkbox for: ${word.japanese} - ${word.english}`);
+            }
+        });
+        
+        // Restore custom words
+        roundData.customWords.forEach(customWord => {
+            addCustomWordToRound(round, customWord.japanese, customWord.english);
+            // Set the checkbox state for custom words
+            const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
+            if (customCheckbox) {
+                customCheckbox.checked = customWord.checked;
+            }
+        });
+        
+        // Restore open sections
+        roundData.openSections.forEach(sectionId => {
+            const section = round.querySelector(`#${sectionId}`);
+            if (section) {
+                section.classList.remove('collapsed');
+                const button = section.previousElementSibling.querySelector('.collapse-btn');
+                if (button) {
+                    button.textContent = '▲';
+                    button.classList.add('rotated');
+                }
+            }
+        });
+    });
+    
+    // Update all select all states after restoration
+    updateSelectAllState();
+    
+    // Clear the saved data from memory
+    delete window.savedCustomRoundsData;
+}
+
+function updateSelectAllState() {
+    // Find all select all checkboxes and update their states
+    const selectAllCheckboxes = document.querySelectorAll('.select-all-checkbox');
+    
+    selectAllCheckboxes.forEach(selectAllCheckbox => {
+        const sectionId = selectAllCheckbox.id.replace('select-all-', '');
+        const [roundIndex, sectionIndex] = sectionId.split('-').map(Number);
+        
+        // Find the word content section for this select all checkbox
+        const wordContent = document.querySelector(`#word-content-${roundIndex}-${sectionIndex}`);
+        if (!wordContent) return;
+        
+        // Get all word checkboxes in this section (excluding the select all checkbox)
+        const wordCheckboxes = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+        
+        if (wordCheckboxes.length === 0) return;
+        
+        // Count checked and unchecked checkboxes
+        const checkedCount = Array.from(wordCheckboxes).filter(cb => cb.checked).length;
+        const totalCount = wordCheckboxes.length;
+        
+        // Update select all checkbox state
+        if (checkedCount === 0) {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = false;
+        } else if (checkedCount === totalCount) {
+            selectAllCheckbox.checked = true;
+            selectAllCheckbox.indeterminate = false;
+        } else {
+            selectAllCheckbox.checked = false;
+            selectAllCheckbox.indeterminate = true;
+        }
+    });
 }
 
 // saveProgress function removed - no longer saving round progression
