@@ -2335,6 +2335,7 @@ const customScriptPage = document.getElementById('custom-script-page');
 const customModePage = document.getElementById('custom-mode-page');
 const wordEntrySelectionPage = document.getElementById('word-entry-selection-page');
 const japaneseScriptPage = document.getElementById('japanese-script-page');
+const japaneseCustomModePage = document.getElementById('japanese-custom-mode-page');
 const bruteForceBtn = document.getElementById('brute-force-btn');
 const customModeBtn = document.getElementById('custom-mode-btn');
 const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
@@ -2350,6 +2351,11 @@ const enterEnglishWordsBtn = document.getElementById('enter-english-words-btn');
 const backToWordEntryBtn = document.getElementById('back-to-word-entry');
 const japaneseHiraganaBtn = document.getElementById('japanese-hiragana-btn');
 const japaneseKatakanaBtn = document.getElementById('japanese-katakana-btn');
+const backToWordEntryFromJapaneseCustomBtn = document.getElementById('back-to-word-entry-from-japanese-custom');
+const japaneseAddRoundBtn = document.getElementById('japanese-add-round-btn');
+const japaneseRemoveRoundBtn = document.getElementById('japanese-remove-round-btn');
+const japaneseStartCustomRunBtn = document.getElementById('japanese-start-custom-run-btn');
+const japaneseDisablePracticeRoundsToggle = document.getElementById('japanese-disable-practice-rounds');
 const roundTitle = document.getElementById('round-title');
 const phaseLabel = document.getElementById('phase-label');
 const currentQuestionSpan = document.getElementById('current-question');
@@ -2473,8 +2479,8 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         console.log('Navigating to Japanese script page for mirrored brute force mode');
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
-        console.log('Japanese word entry not yet implemented for custom mode');
-        // TODO: Implement mirrored custom mode
+        console.log('Navigating to Japanese custom mode for mirrored custom mode');
+        showPage('japanese-custom-mode');
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
         showPage('japanese-script');
@@ -2510,6 +2516,31 @@ japaneseHiraganaBtn.addEventListener('click', () => {
 japaneseKatakanaBtn.addEventListener('click', () => {
     console.log('Katakana not yet implemented for mirrored mode');
     // TODO: Implement Katakana support for mirrored mode
+});
+
+// Japanese custom mode page event listeners
+backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
+    showPage('word-entry-selection');
+});
+
+japaneseAddRoundBtn.addEventListener('click', () => {
+    console.log('Adding round to Japanese custom mode');
+    addJapaneseCustomRound();
+});
+
+japaneseRemoveRoundBtn.addEventListener('click', () => {
+    console.log('Removing round from Japanese custom mode');
+    removeJapaneseCustomRound();
+});
+
+japaneseStartCustomRunBtn.addEventListener('click', () => {
+    console.log('Starting Japanese custom run');
+    startJapaneseCustomRun();
+});
+
+japaneseDisablePracticeRoundsToggle.addEventListener('change', () => {
+    window.japaneseCustomModeNoPracticeRounds = japaneseDisablePracticeRoundsToggle.checked;
+    saveJapaneseCustomRounds();
 });
 
 // Mirrored game mode functions
@@ -2716,6 +2747,12 @@ function showPage(pageName) {
         japaneseScriptPage.style.display = 'none';
     }
     
+    // Get the new Japanese custom mode page
+    const japaneseCustomModePage = document.getElementById('japanese-custom-mode-page');
+    if (japaneseCustomModePage) {
+        japaneseCustomModePage.style.display = 'none';
+    }
+    
     // Show the selected page
     if (pageName === 'start') {
         startPage.style.display = 'block';
@@ -2727,10 +2764,14 @@ function showPage(pageName) {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
     } else if (pageName === 'start') {
-        // Reset mirrored mode when returning to start
+        // Reset mirrored mode and Japanese custom mode when returning to start
         if (window.mirroredMode) {
             window.mirroredMode = false;
             console.log('Mirrored mode reset');
+        }
+        if (window.japaneseCustomModeEnabled) {
+            window.japaneseCustomModeEnabled = false;
+            console.log('Japanese custom mode reset');
         }
         startPage.style.display = 'block';
         startPage.classList.add('active');
@@ -2749,6 +2790,10 @@ function showPage(pageName) {
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
         initializeCustomMode();
+    } else if (pageName === 'japanese-custom-mode') {
+        japaneseCustomModePage.style.display = 'block';
+        japaneseCustomModePage.classList.add('active');
+        initializeJapaneseCustomMode();
     } else if (pageName === 'stats') {
         statsPage.style.display = 'block';
         statsPage.classList.add('active');
@@ -2763,17 +2808,34 @@ function changeRound(roundNumber) {
         
         // Check if we're in mirrored mode
         if (window.mirroredMode) {
-            // For mirrored mode, check if this is the final round
-            if (roundNumber >= 18) {
-                // Hide the next round button on the final round
-                nextRoundBtn.style.visibility = 'hidden';
-                nextRoundBtn.classList.add('disabled');
+            if (window.japaneseCustomModeEnabled) {
+                // For Japanese custom mode, check if this is the final round
+                const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+                const totalRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+                
+                if (roundNumber >= totalRounds) {
+                    // Hide the next round button on the final round
+                    nextRoundBtn.style.visibility = 'hidden';
+                    nextRoundBtn.classList.add('disabled');
+                } else {
+                    // Show the next round button (but keep it disabled until requirements met)
+                    nextRoundBtn.style.visibility = 'visible';
+                    nextRoundBtn.classList.add('disabled');
+                }
+                initializeJapaneseCustomRound();
             } else {
-                // Show the next round button (but keep it disabled until requirements met)
-                nextRoundBtn.style.visibility = 'visible';
-                nextRoundBtn.classList.add('disabled');
+                // For mirrored brute force mode, check if this is the final round
+                if (roundNumber >= 18) {
+                    // Hide the next round button on the final round
+                    nextRoundBtn.style.visibility = 'hidden';
+                    nextRoundBtn.classList.add('disabled');
+                } else {
+                    // Show the next round button (but keep it disabled until requirements met)
+                    nextRoundBtn.style.visibility = 'visible';
+                    nextRoundBtn.classList.add('disabled');
+                }
+                initializeMirroredRound();
             }
-            initializeMirroredRound();
         } else if (window.customWordPools) {
             initializeCustomRound();
         } else {
@@ -3298,28 +3360,57 @@ function submitAnswer() {
         // Mirrored mode - expect Japanese characters as answer
         const correctAnswer = currentWord.japanese.toLowerCase();
         
-        if (currentPhase === 'learning') {
-            if (userAnswer === correctAnswer) {
-                currentQuestionIndex++;
-                showMirroredLearningQuestion();
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode
+            if (currentPhase === 'learning') {
+                if (userAnswer === correctAnswer) {
+                    currentQuestionIndex++;
+                    showJapaneseCustomLearningQuestion();
+                } else {
+                    showError(currentWord.japanese);
+                }
+            } else if (currentPhase === 'elimination') {
+                if (userAnswer === correctAnswer) {
+                    eliminationWords.shift();
+                    showJapaneseCustomEliminationQuestion();
+                } else {
+                    showError(currentWord.japanese);
+                }
             } else {
-                showError(currentWord.japanese);
-            }
-        } else if (currentPhase === 'elimination') {
-            if (userAnswer === correctAnswer) {
-                eliminationWords.shift();
-                showMirroredEliminationQuestion();
-            } else {
-                showError(currentWord.japanese);
+                // Repeating phase
+                if (userAnswer === correctAnswer) {
+                    updateStats(true, currentRound);
+                    handleJapaneseCustomCorrectAnswer();
+                } else {
+                    updateStats(false, currentRound);
+                    handleJapaneseCustomIncorrectAnswer(currentWord);
+                }
             }
         } else {
-            // Repeating phase
-            if (userAnswer === correctAnswer) {
-                updateStats(true, currentRound);
-                handleMirroredCorrectAnswer();
+            // Mirrored brute force mode
+            if (currentPhase === 'learning') {
+                if (userAnswer === correctAnswer) {
+                    currentQuestionIndex++;
+                    showMirroredLearningQuestion();
+                } else {
+                    showError(currentWord.japanese);
+                }
+            } else if (currentPhase === 'elimination') {
+                if (userAnswer === correctAnswer) {
+                    eliminationWords.shift();
+                    showMirroredEliminationQuestion();
+                } else {
+                    showError(currentWord.japanese);
+                }
             } else {
-                updateStats(false, currentRound);
-                handleMirroredIncorrectAnswer(currentWord);
+                // Repeating phase
+                if (userAnswer === correctAnswer) {
+                    updateStats(true, currentRound);
+                    handleMirroredCorrectAnswer();
+                } else {
+                    updateStats(false, currentRound);
+                    handleMirroredIncorrectAnswer(currentWord);
+                }
             }
         }
         return;
@@ -3462,6 +3553,76 @@ function handleMirroredIncorrectAnswer(word) {
     showMirroredRepeatingQuestion();
 }
 
+function handleJapaneseCustomCorrectAnswer() {
+    const currentWord = questionQueue.shift(); // Remove from queue
+    const wordKey = currentWord.japanese;
+    
+    console.log('handleJapaneseCustomCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    
+    // Check if this word has a pending point from a previous incorrect answer
+    if (wordsWithPendingPoints.has(wordKey)) {
+        // Award the pending point
+        if (!correctAnswers[wordKey]) {
+            correctAnswers[wordKey] = 0;
+        }
+        correctAnswers[wordKey]++;
+        wordsWithPendingPoints.delete(wordKey);
+        console.log(`Awarded pending point for ${wordKey}. Total: ${correctAnswers[wordKey]}`);
+    } else if (!currentQuestionFailed) {
+        // Normal correct answer - award point immediately (only if question wasn't failed)
+        if (!correctAnswers[wordKey]) {
+            correctAnswers[wordKey] = 0;
+        }
+        correctAnswers[wordKey]++;
+        console.log(`Awarded immediate point for ${wordKey}. Total: ${correctAnswers[wordKey]}`);
+    } else {
+        // Question was failed, no point awarded
+        console.log(`No point awarded for ${wordKey} - question was previously failed`);
+    }
+    
+    // Check if all words have 3 correct answers
+    updateNextRoundButton();
+    
+    // Show next question
+    showJapaneseCustomRepeatingQuestion();
+}
+
+function handleJapaneseCustomIncorrectAnswer(word) {
+    // Show error
+    showError(word.japanese);
+    
+    // Update statistics for incorrect answer
+    updateStats(false, currentRound);
+    
+    // Add word back to queue at positions 5 and 10 ahead
+    const queueLength = questionQueue.length;
+    
+    // Remove existing instances of this word from queue
+    questionQueue = questionQueue.filter(w => w.japanese !== word.japanese);
+    
+    // Add word at position 5 and 10
+    const insertPositions = [5, 10];
+    insertPositions.forEach(pos => {
+        if (pos <= queueLength) {
+            questionQueue.splice(pos, 0, word);
+        }
+    });
+    
+    // Mark this word as having a pending point
+    wordsWithPendingPoints.add(word.japanese);
+    console.log(`Added pending point for ${word.japanese}. Will be awarded on second correct answer.`);
+    
+    // Ensure queue has minimum length
+    while (questionQueue.length < 21) {
+        const roundWords = getCurrentJapaneseCustomRoundWords();
+        const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+        questionQueue.push(randomWord);
+    }
+    
+    // Show next question
+    showJapaneseCustomRepeatingQuestion();
+}
+
 function handleCorrectAnswer() {
     const currentWord = questionQueue.shift(); // Remove from queue
     const wordKey = currentWord.japanese;
@@ -3551,31 +3712,63 @@ function showError(correctAnswer) {
 function updateProgress() {
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
-        if (currentPhase === 'learning') {
-            const roundWords = getCurrentRoundWords();
-            currentQuestionSpan.textContent = currentQuestionIndex + 1;
-            totalQuestionsSpan.textContent = roundWords.length;
-            phaseProgress.textContent = '';
-        } else if (currentPhase === 'elimination') {
-            currentQuestionSpan.textContent = currentQuestionIndex + 1;
-            totalQuestionsSpan.textContent = eliminationWords.length;
-            phaseProgress.textContent = '';
-        } else {
-            const roundWords = getCurrentRoundWords();
-            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
-            const targetCorrect = roundWords.length * 3;
-            // Cap the display at the target to prevent going over
-            const displayCorrect = Math.min(totalCorrect, targetCorrect);
-            currentQuestionSpan.textContent = displayCorrect;
-            totalQuestionsSpan.textContent = targetCorrect;
-            phaseProgress.textContent = '';
-            
-            // Add blue color when target is reached
-            const progressInfo = document.querySelector('.progress-info');
-            if (totalCorrect >= targetCorrect) {
-                progressInfo.classList.add('completed');
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode
+            if (currentPhase === 'learning') {
+                const roundWords = getCurrentJapaneseCustomRoundWords();
+                currentQuestionSpan.textContent = currentQuestionIndex + 1;
+                totalQuestionsSpan.textContent = roundWords.length;
+                phaseProgress.textContent = '';
+            } else if (currentPhase === 'elimination') {
+                currentQuestionSpan.textContent = currentQuestionIndex + 1;
+                totalQuestionsSpan.textContent = eliminationWords.length;
+                phaseProgress.textContent = '';
             } else {
-                progressInfo.classList.remove('completed');
+                const roundWords = getCurrentJapaneseCustomRoundWords();
+                const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+                const targetCorrect = roundWords.length * 3;
+                // Cap the display at the target to prevent going over
+                const displayCorrect = Math.min(totalCorrect, targetCorrect);
+                currentQuestionSpan.textContent = displayCorrect;
+                totalQuestionsSpan.textContent = targetCorrect;
+                phaseProgress.textContent = '';
+                
+                // Add blue color when target is reached
+                const progressInfo = document.querySelector('.progress-info');
+                if (totalCorrect >= targetCorrect) {
+                    progressInfo.classList.add('completed');
+                } else {
+                    progressInfo.classList.remove('completed');
+                }
+            }
+        } else {
+            // Mirrored brute force mode
+            if (currentPhase === 'learning') {
+                const roundWords = getCurrentRoundWords();
+                currentQuestionSpan.textContent = currentQuestionIndex + 1;
+                totalQuestionsSpan.textContent = roundWords.length;
+                phaseProgress.textContent = '';
+            } else if (currentPhase === 'elimination') {
+                currentQuestionSpan.textContent = currentQuestionIndex + 1;
+                totalQuestionsSpan.textContent = eliminationWords.length;
+                phaseProgress.textContent = '';
+            } else {
+                const roundWords = getCurrentRoundWords();
+                const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+                const targetCorrect = roundWords.length * 3;
+                // Cap the display at the target to prevent going over
+                const displayCorrect = Math.min(totalCorrect, targetCorrect);
+                currentQuestionSpan.textContent = displayCorrect;
+                totalQuestionsSpan.textContent = targetCorrect;
+                phaseProgress.textContent = '';
+                
+                // Add blue color when target is reached
+                const progressInfo = document.querySelector('.progress-info');
+                if (totalCorrect >= targetCorrect) {
+                    progressInfo.classList.add('completed');
+                } else {
+                    progressInfo.classList.remove('completed');
+                }
             }
         }
         return;
@@ -3660,12 +3853,24 @@ function updateProgress() {
 function updatePhaseLabel() {
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
-        if (currentPhase === 'learning') {
-            phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
-        } else if (currentPhase === 'elimination') {
-            phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode
+            if (currentPhase === 'learning') {
+                phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
+            } else if (currentPhase === 'elimination') {
+                phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+            } else {
+                phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+            }
         } else {
-            phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+            // Mirrored brute force mode
+            if (currentPhase === 'learning') {
+                phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
+            } else if (currentPhase === 'elimination') {
+                phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+            } else {
+                phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+            }
         }
         return;
     }
@@ -3687,19 +3892,38 @@ function updatePhaseLabel() {
 function updateRoundProgress() {
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
-        if (currentPhase === 'learning') {
-            const roundWords = getCurrentRoundWords();
-            const remaining = roundWords.length - currentQuestionIndex;
-            roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
-        } else if (currentPhase === 'elimination') {
-            const remaining = eliminationWords.length;
-            roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode
+            if (currentPhase === 'learning') {
+                const roundWords = getCurrentJapaneseCustomRoundWords();
+                const remaining = roundWords.length - currentQuestionIndex;
+                roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+            } else if (currentPhase === 'elimination') {
+                const remaining = eliminationWords.length;
+                roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+            } else {
+                const roundWords = getCurrentJapaneseCustomRoundWords();
+                const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+                const targetCorrect = roundWords.length * 3;
+                const remaining = Math.max(0, targetCorrect - totalCorrect);
+                roundProgress.textContent = `${remaining} correct Japanese answers needed`;
+            }
         } else {
-            const roundWords = getCurrentRoundWords();
-            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
-            const targetCorrect = roundWords.length * 3;
-            const remaining = Math.max(0, targetCorrect - totalCorrect);
-            roundProgress.textContent = `${remaining} correct Japanese answers needed`;
+            // Mirrored brute force mode
+            if (currentPhase === 'learning') {
+                const roundWords = getCurrentRoundWords();
+                const remaining = roundWords.length - currentQuestionIndex;
+                roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+            } else if (currentPhase === 'elimination') {
+                const remaining = eliminationWords.length;
+                roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+            } else {
+                const roundWords = getCurrentRoundWords();
+                const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+                const targetCorrect = roundWords.length * 3;
+                const remaining = Math.max(0, targetCorrect - totalCorrect);
+                roundProgress.textContent = `${remaining} correct Japanese answers needed`;
+            }
         }
         return;
     }
@@ -3759,15 +3983,30 @@ function updateNextRoundButton() {
     
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
-        const roundWords = getCurrentRoundWords();
-        const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
-        const targetCorrect = roundWords.length * 3;
-        
-        // Enable button when target is reached
-        if (totalCorrect >= targetCorrect) {
-            nextRoundBtn.classList.remove('disabled');
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode
+            const roundWords = getCurrentJapaneseCustomRoundWords();
+            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const targetCorrect = roundWords.length * 3;
+            
+            // Enable button when target is reached
+            if (totalCorrect >= targetCorrect) {
+                nextRoundBtn.classList.remove('disabled');
+            } else {
+                nextRoundBtn.classList.add('disabled');
+            }
         } else {
-            nextRoundBtn.classList.add('disabled');
+            // Mirrored brute force mode
+            const roundWords = getCurrentRoundWords();
+            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const targetCorrect = roundWords.length * 3;
+            
+            // Enable button when target is reached
+            if (totalCorrect >= targetCorrect) {
+                nextRoundBtn.classList.remove('disabled');
+            } else {
+                nextRoundBtn.classList.add('disabled');
+            }
         }
         return;
     }
@@ -3798,7 +4037,11 @@ function nextRound() {
     
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
-        nextMirroredRound();
+        if (window.japaneseCustomModeEnabled) {
+            nextJapaneseCustomRound();
+        } else {
+            nextMirroredRound();
+        }
         return;
     }
     
@@ -3934,6 +4177,1042 @@ function nextMirroredRound() {
     }
     
     // Progress tracking removed - no longer persisting round progression
+}
+
+function nextJapaneseCustomRound() {
+    currentRound++;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    correctAnswers = {};
+    questionQueue = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Reset progress text color to white
+    const progressInfo = document.querySelector('.progress-info');
+    progressInfo.classList.remove('completed');
+    
+    // Check if this is the last round
+    const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+    const totalRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+    
+    if (currentRound >= totalRounds) {
+        // Hide the next round button on the final round
+        nextRoundBtn.style.visibility = 'hidden';
+        nextRoundBtn.classList.add('disabled');
+    } else {
+        // Disable next round button at start of new round (but keep it visible)
+        nextRoundBtn.classList.add('disabled');
+        nextRoundBtn.style.visibility = 'visible';
+    }
+    
+    initializeJapaneseCustomRound();
+    
+    // Update highest round reached (only if not using round skip)
+    if (currentRound > userStats.highestRoundReached) {
+        userStats.highestRoundReached = currentRound;
+        saveStats();
+    }
+    
+    // Progress tracking removed - no longer persisting round progression
+}
+
+// Japanese Custom Mode Functions
+function initializeJapaneseCustomMode() {
+    console.log('Initializing Japanese custom mode');
+    
+    // Try to load saved Japanese custom rounds first
+    const loaded = loadJapaneseCustomRounds();
+    
+    if (!loaded) {
+        // If no saved data, initialize with default structure
+        populateJapaneseWordSelectionGrids();
+        setupJapaneseCustomWordButtons();
+        
+        // Explicitly set up the custom word button for Round 1 (initial round)
+        setupJapaneseCustomWordButtonsForRound(1);
+    } else {
+        // If data was loaded, we still need to populate grids and setup buttons
+        // but the state restoration will happen after grids are populated
+        populateJapaneseWordSelectionGrids();
+        setupJapaneseCustomWordButtons();
+        
+        // Now restore the saved state after grids are populated
+        restoreJapaneseCustomRoundsState();
+    }
+}
+
+function populateJapaneseWordSelectionGrids() {
+    console.log('Populating Japanese word selection grids');
+    
+    // Clear existing grids
+    const container = document.getElementById('japanese-custom-rounds-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    // Get the number of rounds from saved data or default to 1
+    const savedData = loadJapaneseCustomRounds();
+    const numRounds = savedData ? savedData.rounds.length : 1;
+    
+    for (let i = 1; i <= numRounds; i++) {
+        addJapaneseCustomRound(i);
+    }
+}
+
+function addJapaneseCustomRound(roundNumber = null) {
+    console.log('Adding Japanese custom round:', roundNumber);
+    
+    const container = document.getElementById('japanese-custom-rounds-container');
+    if (!container) return;
+    
+    // Determine round number
+    if (roundNumber === null) {
+        const existingRounds = container.querySelectorAll('.custom-round');
+        roundNumber = existingRounds.length + 1;
+    }
+    
+    // Create round container
+    const roundDiv = document.createElement('div');
+    roundDiv.className = 'custom-round';
+    roundDiv.setAttribute('data-round', roundNumber);
+    
+    // Create round header
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'custom-round-header';
+    headerDiv.onclick = () => toggleJapaneseCustomRound(roundNumber);
+    
+    const titleH3 = document.createElement('h3');
+    titleH3.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
+    titleH3.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
+    titleH3.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
+    titleH3.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
+    titleH3.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
+    titleH3.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
+    titleH3.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
+    titleH3.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+    titleH3.textContent = titleH3.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber} (English→Japanese)`;
+    
+    const controlsDiv = document.createElement('div');
+    controlsDiv.className = 'round-header-controls';
+    
+    const removeBtn = document.createElement('button');
+    removeBtn.className = 'remove-round-btn';
+    removeBtn.setAttribute('data-en', 'Remove Round');
+    removeBtn.setAttribute('data-es', 'Eliminar Ronda');
+    removeBtn.setAttribute('data-fr', 'Supprimer une Ronde');
+    removeBtn.setAttribute('data-ja', 'ラウンドを削除');
+    removeBtn.setAttribute('data-zh', '删除轮次');
+    removeBtn.setAttribute('data-id', 'Hapus Ronde');
+    removeBtn.setAttribute('data-ko', '라운드 제거');
+    removeBtn.setAttribute('data-vi', 'Xóa Vòng');
+    removeBtn.textContent = removeBtn.getAttribute(`data-${currentLanguage}`) || 'Remove Round';
+    removeBtn.onclick = (e) => {
+        e.stopPropagation();
+        removeJapaneseSpecificRound(roundNumber);
+    };
+    
+    const collapseBtn = document.createElement('button');
+    collapseBtn.className = 'collapse-btn';
+    collapseBtn.textContent = '▼';
+    
+    controlsDiv.appendChild(removeBtn);
+    controlsDiv.appendChild(collapseBtn);
+    
+    headerDiv.appendChild(titleH3);
+    headerDiv.appendChild(controlsDiv);
+    
+    // Create round content
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'custom-round-content';
+    contentDiv.id = `japanese-round-content-${roundNumber}`;
+    
+    const descriptionP = document.createElement('p');
+    descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.');
+    descriptionP.setAttribute('data-es', 'Por favor selecciona las palabras que quieres incluir en esta ronda. En este modo, verás palabras en inglés como preguntas y necesitarás escribir caracteres japoneses como respuestas.');
+    descriptionP.setAttribute('data-fr', 'Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronda. Dans ce mode, vous verrez des mots anglais comme questions et devrez taper des caractères japonais comme réponses.');
+    descriptionP.setAttribute('data-ja', 'このラウンドに含めたい単語を選択してください。このモードでは、英語の単語が質問として表示され、日本語の文字を答えとして入力する必要があります。');
+    descriptionP.setAttribute('data-zh', '请选择您想在此轮次中包含的单词。在此模式下，您将看到英语单词作为问题，需要输入日语字符作为答案。');
+    descriptionP.setAttribute('data-id', 'Silakan pilih kata-kata yang ingin Anda sertakan dalam ronde ini. Dalam mode ini, Anda akan melihat kata-kata dalam bahasa Inggris sebagai pertanyaan dan perlu mengetik karakter Jepang sebagai jawaban.');
+    descriptionP.setAttribute('data-ko', '이 라운드에 포함하고 싶은 단어들을 선택하세요. 이 모드에서는 영어 단어가 질문으로 표시되고 일본어 문자를 답으로 입력해야 합니다.');
+    descriptionP.setAttribute('data-vi', 'Vui lòng chọn những từ bạn muốn bao gồm trong vòng này. Trong chế độ này, bạn sẽ thấy từ tiếng Anh làm câu hỏi và cần nhập ký tự tiếng Nhật làm câu trả lời.');
+    descriptionP.textContent = descriptionP.getAttribute(`data-${currentLanguage}`) || 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.';
+    
+    const wordGrid = document.createElement('div');
+    wordGrid.className = 'word-selection-grid';
+    wordGrid.id = `japanese-word-selection-${roundNumber}`;
+    
+    const customWordSection = document.createElement('div');
+    customWordSection.className = 'custom-word-section';
+    
+    const addCustomWordBtn = document.createElement('button');
+    addCustomWordBtn.className = 'add-custom-word-btn';
+    addCustomWordBtn.setAttribute('data-en', 'Add Custom Word To Round');
+    addCustomWordBtn.setAttribute('data-es', 'Agregar Palabra Personalizada a la Ronda');
+    addCustomWordBtn.setAttribute('data-fr', 'Ajouter un Mot Personnalisé à la Ronde');
+    addCustomWordBtn.setAttribute('data-ja', 'ラウンドにカスタム単語を追加');
+    addCustomWordBtn.setAttribute('data-zh', '向轮次添加自定义单词');
+    addCustomWordBtn.setAttribute('data-id', 'Tambah Kata Kustom ke Ronde');
+    addCustomWordBtn.setAttribute('data-ko', '라운드에 사용자 정의 단어 추가');
+    addCustomWordBtn.setAttribute('data-vi', 'Thêm Từ Tùy chỉnh vào Vòng');
+    addCustomWordBtn.textContent = addCustomWordBtn.getAttribute(`data-${currentLanguage}`) || 'Add Custom Word To Round';
+    addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(roundNumber);
+    
+    const customWordInputs = document.createElement('div');
+    customWordInputs.className = 'custom-word-inputs hidden';
+    
+    const customWordInputsContainer = document.createElement('div');
+    customWordInputsContainer.className = 'custom-word-inputs-container';
+    
+    customWordInputs.appendChild(customWordInputsContainer);
+    customWordSection.appendChild(addCustomWordBtn);
+    customWordSection.appendChild(customWordInputs);
+    
+    contentDiv.appendChild(descriptionP);
+    contentDiv.appendChild(wordGrid);
+    contentDiv.appendChild(customWordSection);
+    
+    // Assemble the round
+    roundDiv.appendChild(headerDiv);
+    roundDiv.appendChild(contentDiv);
+    
+    // Add to container
+    container.appendChild(roundDiv);
+    
+    // Populate the word grid
+    populateJapaneseWordSelectionGrid(roundNumber);
+    
+    // Set up custom word buttons for this round
+    setupJapaneseCustomWordButtonsForRound(roundNumber);
+    
+    // Save the new structure
+    saveJapaneseCustomRounds();
+    
+    console.log(`Japanese custom round ${roundNumber} added successfully`);
+}
+
+function populateJapaneseWordSelectionGrid(roundNumber) {
+    console.log('Populating Japanese word selection grid for round:', roundNumber);
+    
+    const grid = document.getElementById(`japanese-word-selection-${roundNumber}`);
+    if (!grid) return;
+    
+    grid.innerHTML = '';
+    
+    // Get all words from the word pools, organized by introduction rounds
+    const allWords = getAllWordsByRound();
+    
+    allWords.forEach((wordGroup, roundIndex) => {
+        // Create collapsible section for each round
+        const sectionContainer = document.createElement('div');
+        sectionContainer.className = 'word-section-container';
+        
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'word-section-header';
+        sectionHeader.onclick = () => toggleJapaneseWordSection(roundNumber, roundIndex);
+        
+        const headerText = document.createElement('h4');
+        headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
+        headerText.setAttribute('data-es', `Ronda ${roundIndex + 1} Palabras`);
+        headerText.setAttribute('data-fr', `Ronde ${roundIndex + 1} Mots`);
+        headerText.setAttribute('data-ja', `ラウンド${roundIndex + 1}単語`);
+        headerText.setAttribute('data-zh', `第${roundIndex + 1}轮单词`);
+        headerText.setAttribute('data-id', `Ronde ${roundIndex + 1} Kata`);
+        headerText.setAttribute('data-ko', `라운드 ${roundIndex + 1} 단어`);
+        headerText.setAttribute('data-vi', `Vòng ${roundIndex + 1} Từ`);
+        headerText.textContent = headerText.getAttribute(`data-${currentLanguage}`) || `Round ${roundIndex + 1} Words`;
+        headerText.style.margin = '0';
+        headerText.style.color = '#ffffff';
+        headerText.style.fontSize = '0.9rem';
+        headerText.style.fontWeight = 'bold';
+        
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'collapse-btn small';
+        collapseBtn.textContent = '▼';
+        collapseBtn.style.background = 'none';
+        collapseBtn.style.border = 'none';
+        collapseBtn.style.color = '#ffffff';
+        collapseBtn.style.cursor = 'pointer';
+        collapseBtn.style.fontSize = '0.8rem';
+        collapseBtn.style.padding = '0';
+        collapseBtn.style.marginLeft = 'auto';
+        
+        sectionHeader.appendChild(headerText);
+        sectionHeader.appendChild(collapseBtn);
+        
+        // Create word selection grid for this section
+        const wordGrid = document.createElement('div');
+        wordGrid.className = 'word-grid';
+        wordGrid.id = `japanese-word-grid-${roundNumber}-${roundIndex}`;
+        
+        // Add "Select All" checkbox for this section
+        const selectAllContainer = document.createElement('div');
+        selectAllContainer.className = 'select-all-container';
+        
+        const selectAllCheckbox = document.createElement('input');
+        selectAllCheckbox.type = 'checkbox';
+        selectAllCheckbox.className = 'select-all-checkbox';
+        selectAllCheckbox.id = `japanese-select-all-${roundNumber}-${roundIndex}`;
+        
+        const selectAllLabel = document.createElement('label');
+        selectAllLabel.setAttribute('for', `japanese-select-all-${roundNumber}-${roundIndex}`);
+        selectAllLabel.setAttribute('data-en', 'Select All');
+        selectAllLabel.setAttribute('data-es', 'Seleccionar Todo');
+        selectAllLabel.setAttribute('data-fr', 'Tout Sélectionner');
+        selectAllLabel.setAttribute('data-ja', 'すべて選択');
+        selectAllLabel.setAttribute('data-zh', '全选');
+        selectAllLabel.setAttribute('data-id', 'Pilih Semua');
+        selectAllLabel.setAttribute('data-ko', '모두 선택');
+        selectAllLabel.setAttribute('data-vi', 'Chọn Tất cả');
+        selectAllLabel.textContent = selectAllLabel.getAttribute(`data-${currentLanguage}`) || 'Select All';
+        
+        selectAllContainer.appendChild(selectAllCheckbox);
+        selectAllContainer.appendChild(selectAllLabel);
+        selectAllContainer.className = 'select-all-item';
+        
+        // Add separator line
+        selectAllContainer.style.borderBottom = '2px solid #ddd';
+        selectAllContainer.style.marginBottom = '15px';
+        selectAllContainer.style.paddingBottom = '10px';
+        
+        wordGrid.appendChild(selectAllContainer);
+        
+        // Add words to the grid
+        wordGroup.forEach(word => {
+            const wordContainer = document.createElement('div');
+            wordContainer.className = 'word-item';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'word-checkbox';
+            checkbox.id = `japanese-word-${roundNumber}-${roundIndex}-${word.japanese}`;
+            checkbox.dataset.word = word.japanese;
+            checkbox.dataset.round = roundNumber;
+            checkbox.dataset.section = roundIndex;
+            
+            const label = document.createElement('label');
+            label.setAttribute('for', `japanese-word-${roundNumber}-${roundIndex}-${word.japanese}`);
+            // In Japanese custom mode, show English word as label
+            label.textContent = word.english;
+            
+            wordContainer.appendChild(checkbox);
+            wordContainer.appendChild(label);
+            wordGrid.appendChild(wordContainer);
+            
+            // Add event listener for checkbox
+            checkbox.addEventListener('change', () => {
+                updateJapaneseSelectAllState(roundNumber, roundIndex);
+                saveJapaneseCustomRounds();
+            });
+        });
+        
+        // Set up "Select All" functionality
+        selectAllCheckbox.addEventListener('change', () => {
+            const wordCheckboxes = wordGrid.querySelectorAll('.word-checkbox');
+            wordCheckboxes.forEach(cb => {
+                cb.checked = selectAllCheckbox.checked;
+            });
+            saveJapaneseCustomRounds();
+        });
+        
+        // Add click handler for the select all container
+        selectAllContainer.addEventListener('click', (e) => {
+            if (e.target !== selectAllCheckbox) {
+                selectAllCheckbox.checked = !selectAllCheckbox.checked;
+                selectAllCheckbox.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        sectionContainer.appendChild(sectionHeader);
+        sectionContainer.appendChild(wordGrid);
+        
+        // Initially collapse all sections
+        wordGrid.style.display = 'none';
+        sectionContainer.classList.add('collapsed');
+        collapseBtn.classList.add('rotated');
+        
+        grid.appendChild(sectionContainer);
+    });
+    
+    console.log(`Japanese word selection grid populated for round ${roundNumber}`);
+}
+
+function toggleJapaneseWordSection(roundNumber, sectionIndex) {
+    const grid = document.getElementById(`japanese-word-grid-${roundNumber}-${sectionIndex}`);
+    const section = grid.parentElement;
+    const button = section.querySelector('.collapse-btn');
+    
+    if (section.classList.contains('collapsed')) {
+        section.classList.remove('collapsed');
+        grid.style.display = 'block';
+        button.textContent = '▼';
+        button.classList.remove('rotated');
+    } else {
+        section.classList.add('collapsed');
+        grid.style.display = 'none';
+        button.textContent = '▲';
+        button.classList.add('rotated');
+    }
+}
+
+function updateJapaneseSelectAllState(roundNumber, sectionIndex) {
+    const grid = document.getElementById(`japanese-word-grid-${roundNumber}-${sectionIndex}`);
+    if (!grid) return;
+    
+    const selectAllCheckbox = grid.querySelector('.select-all-checkbox');
+    const wordCheckboxes = grid.querySelectorAll('.word-checkbox');
+    
+    const checkedCount = Array.from(wordCheckboxes).filter(cb => cb.checked).length;
+    const totalCount = wordCheckboxes.length;
+    
+    if (checkedCount === 0) {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = false;
+    } else if (checkedCount === totalCount) {
+        selectAllCheckbox.checked = true;
+        selectAllCheckbox.indeterminate = false;
+    } else {
+        selectAllCheckbox.checked = false;
+        selectAllCheckbox.indeterminate = true;
+    }
+}
+
+function setupJapaneseCustomWordButtons() {
+    console.log('Setting up Japanese custom word buttons');
+    
+    // This function sets up the global custom word functionality
+    // Individual round setup is handled by setupJapaneseCustomWordButtonsForRound
+}
+
+function setupJapaneseCustomWordButtonsForRound(roundNumber) {
+    console.log(`Setting up Japanese custom word buttons for round ${roundNumber}`);
+    
+    // Custom word functionality is already set up in addJapaneseCustomRound
+    // This function can be used for additional setup if needed
+}
+
+function toggleJapaneseCustomRound(roundNumber) {
+    const content = document.getElementById(`japanese-round-content-${roundNumber}`);
+    const header = content.parentElement.querySelector('.custom-round-header');
+    const button = header.querySelector('.collapse-btn');
+    
+    if (content.style.display === 'none' || !content.style.display) {
+        content.style.display = 'block';
+        button.textContent = '▼';
+        header.classList.remove('collapsed');
+    } else {
+        content.style.display = 'none';
+        button.textContent = '▲';
+        header.classList.add('collapsed');
+    }
+}
+
+function removeJapaneseCustomRound() {
+    const container = document.getElementById('japanese-custom-rounds-container');
+    const rounds = container.querySelectorAll('.custom-round');
+    
+    if (rounds.length > 1) {
+        const lastRound = rounds[rounds.length - 1];
+        lastRound.remove();
+        
+        // Renumber remaining rounds
+        const remainingRounds = container.querySelectorAll('.custom-round');
+        remainingRounds.forEach((round, index) => {
+            const roundNumber = index + 1;
+            round.setAttribute('data-round', roundNumber);
+            
+            // Update IDs and references
+            const content = round.querySelector('.custom-round-content');
+            const wordGrid = round.querySelector('.word-selection-grid');
+            const title = round.querySelector('h3');
+            
+            content.id = `japanese-round-content-${roundNumber}`;
+            wordGrid.id = `japanese-word-selection-${roundNumber}`;
+            
+            // Update title
+            title.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
+            title.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
+            title.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
+            title.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
+            title.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
+            title.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
+            title.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
+            title.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber} (English→Japanese)`;
+            
+            // Update onclick handlers
+            const header = round.querySelector('.custom-round-header');
+            header.onclick = () => toggleJapaneseCustomRound(roundNumber);
+            
+            // Update remove button onclick
+            const removeBtn = round.querySelector('.remove-round-btn');
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                removeJapaneseSpecificRound(roundNumber);
+            };
+            
+            // Update custom word button onclick
+            const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
+            addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(roundNumber);
+            
+            // Update word grid IDs and references
+            const roundWordGrid = round.querySelector('.word-selection-grid');
+            roundWordGrid.id = `japanese-word-selection-${roundNumber}`;
+            
+            // Update section onclick handlers
+            const sections = roundWordGrid.querySelectorAll('.word-section-container');
+            sections.forEach((section, sectionIndex) => {
+                const sectionGrid = section.querySelector('.word-grid');
+                sectionGrid.id = `japanese-word-grid-${roundNumber}-${sectionIndex}`;
+                
+                const sectionHeader = section.querySelector('.word-section-header');
+                sectionHeader.onclick = () => toggleJapaneseWordSection(roundNumber, sectionIndex);
+                
+                // Update select all checkbox IDs
+                const selectAllCheckbox = section.querySelector('.select-all-checkbox');
+                selectAllCheckbox.id = `japanese-select-all-${roundNumber}-${sectionIndex}`;
+                
+                const selectAllLabel = section.querySelector('label');
+                selectAllLabel.setAttribute('for', `japanese-select-all-${roundNumber}-${sectionIndex}`);
+                
+                // Update word checkbox IDs and references
+                const wordCheckboxes = section.querySelectorAll('.word-checkbox');
+                wordCheckboxes.forEach((checkbox, wordIndex) => {
+                    const word = checkbox.dataset.word;
+                    checkbox.id = `japanese-word-${roundNumber}-${sectionIndex}-${word}`;
+                    checkbox.dataset.round = roundNumber;
+                    checkbox.dataset.section = sectionIndex;
+                });
+            });
+        });
+        
+        saveJapaneseCustomRounds();
+        console.log('Japanese custom round removed and remaining rounds renumbered');
+    } else {
+        console.log('Cannot remove the last round');
+    }
+}
+
+function removeJapaneseSpecificRound(roundNumber) {
+    console.log('Removing Japanese specific round:', roundNumber);
+    
+    const container = document.getElementById('japanese-custom-rounds-container');
+    const roundToRemove = container.querySelector(`[data-round="${roundNumber}"]`);
+    
+    if (roundToRemove) {
+        roundToRemove.remove();
+        
+        // Renumber remaining rounds
+        const remainingRounds = container.querySelectorAll('.custom-round');
+        remainingRounds.forEach((round, index) => {
+            const newRoundNumber = index + 1;
+            round.setAttribute('data-round', newRoundNumber);
+            
+            // Update IDs and references (same logic as removeJapaneseCustomRound)
+            const content = round.querySelector('.custom-round-content');
+            const wordGrid = round.querySelector('.word-selection-grid');
+            const title = round.querySelector('h3');
+            
+            content.id = `japanese-round-content-${newRoundNumber}`;
+            wordGrid.id = `japanese-word-selection-${newRoundNumber}`;
+            
+            // Update title
+            title.setAttribute('data-en', `Introduction Round ${newRoundNumber} (English→Japanese)`);
+            title.setAttribute('data-es', `Ronda de Introducción ${newRoundNumber} (Inglés→Japonés)`);
+            title.setAttribute('data-fr', `Ronde d'Introduction ${newRoundNumber} (Anglais→Japonais)`);
+            title.setAttribute('data-ja', `導入ラウンド${newRoundNumber} (英語→日本語)`);
+            title.setAttribute('data-zh', `介绍轮次${newRoundNumber} (英语→日语)`);
+            title.setAttribute('data-id', `Ronde Pengenalan ${newRoundNumber} (Inggris→Jepang)`);
+            title.setAttribute('data-ko', `소개 라운드 ${newRoundNumber} (영어→일본어)`);
+            title.setAttribute('data-vi', `Vòng Giới thiệu ${newRoundNumber} (Tiếng Anh→Tiếng Nhật)`);
+            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${newRoundNumber} (English→Japanese)`;
+            
+            // Update onclick handlers
+            const header = round.querySelector('.custom-round-header');
+            header.onclick = () => toggleJapaneseCustomRound(newRoundNumber);
+            
+            // Update remove button onclick
+            const removeBtn = round.querySelector('.remove-round-btn');
+            removeBtn.onclick = (e) => {
+                e.stopPropagation();
+                removeJapaneseSpecificRound(newRoundNumber);
+            };
+            
+            // Update custom word button onclick
+            const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
+            addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(newRoundNumber);
+            
+            // Update word grid IDs and references
+            const roundWordGrid = round.querySelector('.word-selection-grid');
+            roundWordGrid.id = `japanese-word-selection-${newRoundNumber}`;
+            
+            // Update section onclick handlers
+            const sections = roundWordGrid.querySelectorAll('.word-section-container');
+            sections.forEach((section, sectionIndex) => {
+                const sectionGrid = section.querySelector('.word-grid');
+                sectionGrid.id = `japanese-word-grid-${newRoundNumber}-${sectionIndex}`;
+                
+                const sectionHeader = section.querySelector('.word-section-header');
+                sectionHeader.onclick = () => toggleJapaneseWordSection(newRoundNumber, sectionIndex);
+                
+                // Update select all checkbox IDs
+                const selectAllCheckbox = section.querySelector('.select-all-checkbox');
+                selectAllCheckbox.id = `japanese-select-all-${newRoundNumber}-${sectionIndex}`;
+                
+                const selectAllLabel = section.querySelector('label');
+                selectAllLabel.setAttribute('for', `japanese-select-all-${newRoundNumber}-${sectionIndex}`);
+                
+                // Update word checkbox IDs and references
+                const wordCheckboxes = section.querySelectorAll('.word-checkbox');
+                wordCheckboxes.forEach((checkbox, wordIndex) => {
+                    const word = checkbox.dataset.word;
+                    checkbox.id = `japanese-word-${newRoundNumber}-${sectionIndex}-${word}`;
+                    checkbox.dataset.round = newRoundNumber;
+                    checkbox.dataset.section = sectionIndex;
+                });
+            });
+        });
+        
+        saveJapaneseCustomRounds();
+        console.log(`Japanese specific round ${roundNumber} removed and remaining rounds renumbered`);
+    }
+}
+
+function addJapaneseCustomWordToRound(roundNumber) {
+    console.log('Adding Japanese custom word to round:', roundNumber);
+    
+    const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`);
+    if (!round) return;
+    
+    const customWordInputs = round.querySelector('.custom-word-inputs');
+    const container = customWordInputs.querySelector('.custom-word-inputs-container');
+    
+    // Create custom word input row
+    const inputRow = document.createElement('div');
+    inputRow.className = 'custom-word-input-row';
+    
+    const japaneseInput = document.createElement('input');
+    japaneseInput.type = 'text';
+    japaneseInput.placeholder = 'Japanese characters';
+    japaneseInput.className = 'custom-word-input japanese-input';
+    
+    const englishInput = document.createElement('input');
+    englishInput.type = 'text';
+    englishInput.placeholder = 'English word';
+    englishInput.className = 'custom-word-input english-input';
+    
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = '×';
+    removeBtn.className = 'remove-custom-word-btn';
+    removeBtn.onclick = () => {
+        inputRow.remove();
+        saveJapaneseCustomRounds();
+    };
+    
+    inputRow.appendChild(japaneseInput);
+    inputRow.appendChild(englishInput);
+    inputRow.appendChild(removeBtn);
+    
+    container.appendChild(inputRow);
+    
+    // Show the inputs
+    customWordInputs.classList.remove('hidden');
+    
+    // Save the new structure
+    saveJapaneseCustomRounds();
+    
+    console.log(`Japanese custom word input added to round ${roundNumber}`);
+}
+
+function saveJapaneseCustomRounds() {
+    console.log('Saving Japanese custom rounds');
+    
+    try {
+        const container = document.getElementById('japanese-custom-rounds-container');
+        if (!container) {
+            console.warn('Japanese custom rounds container not found');
+            return;
+        }
+        
+        const rounds = container.querySelectorAll('.custom-round');
+        const customData = {
+            rounds: [],
+            noPracticeRounds: window.japaneseCustomModeNoPracticeRounds || false,
+            timestamp: Date.now()
+        };
+        
+        rounds.forEach((round, roundIndex) => {
+            const roundNumber = roundIndex + 1;
+            const roundData = {
+                roundNumber: roundNumber,
+                checkedWords: [],
+                customWords: [],
+                openSections: []
+            };
+            
+            // Get checked words
+            const wordCheckboxes = round.querySelectorAll('.word-checkbox:checked');
+            wordCheckboxes.forEach(checkbox => {
+                roundData.checkedWords.push({
+                    word: checkbox.dataset.word,
+                    section: parseInt(checkbox.dataset.section)
+                });
+            });
+            
+            // Get custom words
+            const customWordRows = round.querySelectorAll('.custom-word-input-row');
+            customWordRows.forEach(row => {
+                const japaneseInput = row.querySelector('.japanese-input');
+                const englishInput = row.querySelector('.english-input');
+                
+                if (japaneseInput.value.trim() && englishInput.value.trim()) {
+                    roundData.customWords.push({
+                        japanese: japaneseInput.value.trim(),
+                        english: englishInput.value.trim()
+                    });
+                }
+            });
+            
+            // Get open sections
+            const sections = round.querySelectorAll('.word-section-container');
+            sections.forEach((section, sectionIndex) => {
+                if (!section.classList.contains('collapsed')) {
+                    roundData.openSections.push(sectionIndex);
+                }
+            });
+            
+            customData.rounds.push(roundData);
+        });
+        
+        // Save to localStorage
+        const storageKey = 'japaneseCustomRounds';
+        localStorage.setItem(storageKey, JSON.stringify(customData));
+        
+        console.log('Japanese custom rounds saved successfully:', customData);
+        
+        // Also save the word pools for game play
+        const wordPools = [];
+        customData.rounds.forEach(roundData => {
+            const roundWords = [];
+            
+            // Add checked words from word pools
+            roundData.checkedWords.forEach(checkedWord => {
+                const wordGroup = getAllWordsByRound()[checkedWord.section];
+                const word = wordGroup.find(w => w.japanese === checkedWord.word);
+                if (word) {
+                    roundWords.push(word);
+                }
+            });
+            
+            // Add custom words
+            roundData.customWords.forEach(customWord => {
+                roundWords.push(customWord);
+            });
+            
+            wordPools.push(roundWords);
+        });
+        
+        window.japaneseCustomWordPools = wordPools;
+        console.log('Japanese custom word pools created:', wordPools);
+        
+    } catch (error) {
+        console.error('Error saving Japanese custom rounds:', error);
+    }
+}
+
+function loadJapaneseCustomRounds() {
+    console.log('Loading Japanese custom rounds');
+    
+    try {
+        const storageKey = 'japaneseCustomRounds';
+        const savedData = localStorage.getItem(storageKey);
+        
+        if (!savedData) {
+            console.log('No saved Japanese custom rounds found');
+            return false;
+        }
+        
+        const customData = JSON.parse(savedData);
+        
+        // Validate data structure
+        if (!customData.rounds || !Array.isArray(customData.rounds)) {
+            console.warn('Invalid Japanese custom rounds data structure');
+            return false;
+        }
+        
+        // Check data age (older than 30 days)
+        const dataAge = Date.now() - customData.timestamp;
+        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+        if (dataAge > maxAge) {
+            console.warn('Japanese custom rounds data is too old, clearing');
+            localStorage.removeItem(storageKey);
+            return false;
+        }
+        
+        // Load settings
+        if (typeof customData.noPracticeRounds === 'boolean') {
+            window.japaneseCustomModeNoPracticeRounds = customData.noPracticeRounds;
+            if (japaneseDisablePracticeRoundsToggle) {
+                japaneseDisablePracticeRoundsToggle.checked = customData.noPracticeRounds;
+            }
+        }
+        
+        // Load word pools for game play
+        const wordPools = [];
+        customData.rounds.forEach(roundData => {
+            const roundWords = [];
+            
+            // Add checked words from word pools
+            roundData.checkedWords.forEach(checkedWord => {
+                const wordGroup = getAllWordsByRound()[checkedWord.section];
+                const word = wordGroup.find(w => w.japanese === checkedWord.word);
+                if (word) {
+                    roundWords.push(word);
+                }
+            });
+            
+            // Add custom words
+            roundData.customWords.forEach(customWord => {
+                roundWords.push(customWord);
+            });
+            
+            wordPools.push(roundWords);
+        });
+        
+        window.japaneseCustomWordPools = wordPools;
+        console.log('Japanese custom word pools loaded:', wordPools);
+        
+        return true;
+        
+    } catch (error) {
+        console.error('Error loading Japanese custom rounds:', error);
+        return false;
+    }
+}
+
+function restoreJapaneseCustomRoundsState() {
+    console.log('Restoring Japanese custom rounds state');
+    
+    try {
+        const storageKey = 'japaneseCustomRounds';
+        const savedData = localStorage.getItem(storageKey);
+        
+        if (!savedData) {
+            console.log('No saved Japanese custom rounds state to restore');
+            return;
+        }
+        
+        const customData = JSON.parse(savedData);
+        
+        customData.rounds.forEach(roundData => {
+            const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
+            if (!round) return;
+            
+            // Restore checked words
+            roundData.checkedWords.forEach(checkedWord => {
+                const checkbox = round.querySelector(`#japanese-word-${roundData.roundNumber}-${checkedWord.section}-${checkedWord.word}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    updateJapaneseSelectAllState(roundData.roundNumber, checkedWord.section);
+                }
+            });
+            
+            // Restore custom words
+            roundData.customWords.forEach(customWord => {
+                addJapaneseCustomWordToRound(roundData.roundNumber);
+                
+                // Set the values
+                const customWordRows = round.querySelectorAll('.custom-word-input-row');
+                const lastRow = customWordRows[customWordRows.length - 1];
+                if (lastRow) {
+                    const japaneseInput = lastRow.querySelector('.japanese-input');
+                    const englishInput = lastRow.querySelector('.english-input');
+                    
+                    if (japaneseInput && englishInput) {
+                        japaneseInput.value = customWord.japanese;
+                        englishInput.value = customWord.english;
+                    }
+                }
+            });
+            
+            // Restore open sections
+            roundData.openSections.forEach(sectionIndex => {
+                const section = round.querySelector(`.word-section-container:nth-child(${sectionIndex + 1})`);
+                if (section) {
+                    const grid = section.querySelector('.word-grid');
+                    const button = section.querySelector('.collapse-btn');
+                    
+                    if (grid && button) {
+                        grid.style.display = 'block';
+                        section.classList.remove('collapsed');
+                        button.textContent = '▼';
+                        button.classList.remove('rotated');
+                    }
+                }
+            });
+        });
+        
+        console.log('Japanese custom rounds state restored successfully');
+        
+    } catch (error) {
+        console.error('Error restoring Japanese custom rounds state:', error);
+    }
+}
+
+function startJapaneseCustomRun() {
+    console.log('Starting Japanese custom run');
+    
+    // Save current state before starting
+    saveJapaneseCustomRounds();
+    
+    // Check if we have any rounds with words
+    if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
+        console.warn('No Japanese custom rounds with words found');
+        return;
+    }
+    
+    // Reset game state for Japanese custom mode
+    currentPage = 'game';
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    currentWord = null;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Set Japanese custom mode flags
+    window.mirroredMode = true;
+    window.japaneseCustomModeEnabled = true;
+    
+    // Show game page
+    showPage('game');
+    
+    // Initialize the first round
+    initializeJapaneseCustomRound();
+}
+
+function initializeJapaneseCustomRound() {
+    console.log('Initializing Japanese custom round:', currentRound);
+    
+    // Get words for current round
+    const roundWords = getCurrentJapaneseCustomRoundWords();
+    
+    if (currentPhase === 'learning') {
+        // Learning phase - show English words, expect Japanese answers
+        currentQuestionIndex = 0;
+        showJapaneseCustomLearningQuestion();
+    } else if (currentPhase === 'elimination') {
+        // Elimination phase - show English words, expect Japanese answers
+        eliminationWords = [...roundWords];
+        showJapaneseCustomEliminationQuestion();
+    } else {
+        // Repeating phase - show English words, expect Japanese answers
+        questionQueue = [...roundWords];
+        shuffleArray(questionQueue);
+        showJapaneseCustomRepeatingQuestion();
+    }
+    
+    updateProgress();
+    updatePhaseLabel();
+    updateNextRoundButton();
+}
+
+function getCurrentJapaneseCustomRoundWords() {
+    if (!window.japaneseCustomWordPools || !window.japaneseCustomWordPools[currentRound - 1]) {
+        return [];
+    }
+    return window.japaneseCustomWordPools[currentRound - 1];
+}
+
+function showJapaneseCustomLearningQuestion() {
+    const roundWords = getCurrentJapaneseCustomRoundWords();
+    if (currentQuestionIndex >= roundWords.length) {
+        // Learning phase complete, move to elimination phase
+        currentPhase = 'elimination';
+        initializeJapaneseCustomRound();
+        return;
+    }
+    
+    const word = roundWords[currentQuestionIndex];
+    currentWord = word;
+    
+    // In Japanese custom mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.textContent = word.japanese;
+    correctAnswerDisplay.classList.remove('hidden');
+    
+    // Update phase label for Japanese custom mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
+}
+
+function showJapaneseCustomEliminationQuestion() {
+    const roundWords = getCurrentJapaneseCustomRoundWords();
+    if (eliminationWords.length === 0) {
+        // Elimination phase complete, move to repeating phase
+        currentPhase = 'repeating';
+        initializeJapaneseCustomRound();
+        return;
+    }
+    
+    const word = eliminationWords[0];
+    currentWord = word;
+    
+    // In Japanese custom mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.classList.add('hidden');
+    
+    // Update phase label for Japanese custom mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
+}
+
+function showJapaneseCustomRepeatingQuestion() {
+    const roundWords = getCurrentJapaneseCustomRoundWords();
+    if (questionQueue.length === 0) {
+        // Refill queue if empty
+        for (let i = 0; i < 21; i++) {
+            const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+            questionQueue.push(randomWord);
+            console.log('Added word to Japanese custom queue:', randomWord);
+        }
+    }
+    
+    const word = questionQueue[0];
+    currentWord = word;
+    
+    // In Japanese custom mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.classList.add('hidden');
+    
+    console.log('Showing Japanese custom repeating question:', word);
+    
+    // Update phase label for Japanese custom mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
 }
 
 function shuffleArray(array) {
@@ -4234,16 +5513,29 @@ function updateWordSelectionGrids() {
 
 function updateBackButtonText() {
     if (window.mirroredMode) {
-        // Mirrored mode - show "Back to Japanese Script Selection"
-        backToScriptBtn.setAttribute('data-en', '← Back to Japanese Script Selection');
-        backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura Japonesa');
-        backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture Japonaise');
-        backToScriptBtn.setAttribute('data-ja', '← 日本語文字選択に戻る');
-        backToScriptBtn.setAttribute('data-zh', '← 返回日语文字选择');
-        backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip Jepang');
-        backToScriptBtn.setAttribute('data-ko', '← 일본어 문자 선택으로 돌아가기');
-        backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản Tiếng Nhật');
-        backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+        if (window.japaneseCustomModeEnabled) {
+            // Japanese custom mode - show "Back to Japanese Custom Mode"
+            backToScriptBtn.setAttribute('data-en', '← Back to Japanese Custom Mode');
+            backToScriptBtn.setAttribute('data-es', '← Volver al Modo Personalizado Japonés');
+            backToScriptBtn.setAttribute('data-fr', '← Retour au Mode Personnalisé Japonais');
+            backToScriptBtn.setAttribute('data-ja', '← 日本語カスタムモードに戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回日语自定义模式');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Mode Kustom Jepang');
+            backToScriptBtn.setAttribute('data-ko', '← 일본어 맞춤형 모드로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Chế độ Tùy chỉnh Tiếng Nhật');
+            backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+        } else {
+            // Mirrored brute force mode - show "Back to Japanese Script Selection"
+            backToScriptBtn.setAttribute('data-en', '← Back to Japanese Script Selection');
+            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura Japonesa');
+            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture Japonaise');
+            backToScriptBtn.setAttribute('data-ja', '← 日本語文字選択に戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回日语文字选择');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip Jepang');
+            backToScriptBtn.setAttribute('data-ko', '← 일본어 문자 선택으로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản Tiếng Nhật');
+            backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+        }
     } else if (window.customModeEnabled) {
         // Custom mode - show "Back to Word Selection"
         backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
