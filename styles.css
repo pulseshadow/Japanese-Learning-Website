@@ -462,26 +462,24 @@ body.dark-mode .practice-btn:hover, body.dark-mode .script-btn:hover {
 }
 
 .script-btn {
-    background: #E75D38 !important;
-    color: white !important;
-    border: 1px solid #d64a2a !important;
-    width: auto !important;
-    max-width: none !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    pointer-events: auto !important;
-    user-select: none !important;
-    -webkit-user-select: none !important;
-    -moz-user-select: none !important;
-    -ms-user-select: none !important;
-    position: relative !important;
-    z-index: 10 !important;
+    background: #E75D38;
+    color: white;
+    border: 1px solid #d64a2a;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    pointer-events: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    position: relative;
+    z-index: 10;
 }
 
 body.dark-mode .script-btn {
-    background: #00bfff !important;
-    color: white !important;
-    border: 1px solid #0080ff !important;
+    background: #00bfff;
+    color: white;
+    border: 1px solid #0080ff;
 }
 
 .script-btn:hover:not(.disabled) {
@@ -493,16 +491,16 @@ body.dark-mode .script-btn:hover:not(.disabled) {
 }
 
 .script-btn.primary {
-    background: #E75D38 !important;
-    color: white !important;
-    border: 1px solid #d64a2a !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    background: #E75D38;
+    color: white;
+    border: 1px solid #d64a2a;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 body.dark-mode .script-btn.primary {
-    background: #00bfff !important;
-    color: white !important;
-    border: 1px solid #0080ff !important;
+    background: #00bfff;
+    color: white;
+    border: 1px solid #0080ff;
 }
 
 .script-btn.primary:hover:not(.disabled) {

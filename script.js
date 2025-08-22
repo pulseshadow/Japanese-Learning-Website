@@ -2625,10 +2625,11 @@ function showMirroredLearningQuestion() {
     }
     
     const word = roundWords[currentQuestionIndex];
-    currentWord = word;
     
-    // In mirrored mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In mirrored mode, show Japanese answer
     correctAnswerDisplay.textContent = word.japanese;
     correctAnswerDisplay.classList.remove('hidden');
     
@@ -2652,10 +2653,11 @@ function showMirroredEliminationQuestion() {
     }
     
     const word = eliminationWords[0];
-    currentWord = word;
     
-    // In mirrored mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
     
     // Update phase label for mirrored mode
@@ -2680,10 +2682,11 @@ function showMirroredRepeatingQuestion() {
     }
     
     const word = questionQueue[0];
-    currentWord = word;
     
-    // In mirrored mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
     
     // Update phase label for mirrored mode
@@ -5157,10 +5160,11 @@ function showJapaneseCustomLearningQuestion() {
     }
     
     const word = roundWords[currentQuestionIndex];
-    currentWord = word;
     
-    // In Japanese custom mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In Japanese custom mode, show Japanese answer
     correctAnswerDisplay.textContent = word.japanese;
     correctAnswerDisplay.classList.remove('hidden');
     
@@ -5185,10 +5189,11 @@ function showJapaneseCustomEliminationQuestion() {
     }
     
     const word = eliminationWords[0];
-    currentWord = word;
     
-    // In Japanese custom mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
     
     // Update phase label for Japanese custom mode
@@ -5214,10 +5219,11 @@ function showJapaneseCustomRepeatingQuestion() {
     }
     
     const word = questionQueue[0];
-    currentWord = word;
     
-    // In Japanese custom mode, show English word, expect Japanese answer
-    japaneseWord.textContent = word.english;
+    // Use displayWordWithSound to trigger auto-play and update answer display
+    displayWordWithSound(word);
+    
+    // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
     
     console.log('Showing Japanese custom repeating question:', word);
@@ -5806,6 +5812,8 @@ function getWordAudioFrequency(word) {
 
 function playWordSound(word) {
     console.log('playWordSound called with word:', word);
+    console.log('Word type:', typeof word);
+    console.log('Word value:', word);
     
     // Check if sound is enabled
     if (!word) {
@@ -5974,9 +5982,11 @@ function displayWordWithSound(word) {
         // Auto-play if enabled
         if (autoPlaySound) {
             if (window.mirroredMode) {
-                console.log('Auto-play enabled, playing sound for English word:', word.english);
-                // In mirrored mode, we could play a sound for the English word if desired
-                // For now, just log it
+                console.log('Auto-play enabled, playing sound for Japanese word in mirrored mode:', word.japanese);
+                console.log('Word object in mirrored mode:', word);
+                console.log('Japanese text to play:', word.japanese);
+                // In mirrored mode, play the Japanese pronunciation even though we show English
+                playWordSound(word.japanese);
             } else {
                 console.log('Auto-play enabled, playing sound for:', word.japanese);
                 playWordSound(word.japanese);
