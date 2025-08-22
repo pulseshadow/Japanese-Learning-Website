@@ -2807,15 +2807,6 @@ function showPage(pageName) {
     
     // Show the selected page
     if (pageName === 'start') {
-        startPage.style.display = 'block';
-        startPage.classList.add('active');
-    } else if (pageName === 'script') {
-        scriptPage.style.display = 'block';
-        scriptPage.classList.add('active');
-    } else if (pageName === 'game') {
-        gamePage.style.display = 'block';
-        gamePage.classList.add('active');
-    } else if (pageName === 'start') {
         // Reset mirrored mode and Japanese custom mode when returning to start
         if (window.mirroredMode) {
             window.mirroredMode = false;
@@ -2827,6 +2818,12 @@ function showPage(pageName) {
         }
         startPage.style.display = 'block';
         startPage.classList.add('active');
+    } else if (pageName === 'script') {
+        scriptPage.style.display = 'block';
+        scriptPage.classList.add('active');
+    } else if (pageName === 'game') {
+        gamePage.style.display = 'block';
+        gamePage.classList.add('active');
     } else if (pageName === 'word-entry-selection') {
         wordEntrySelectionPage.style.display = 'block';
         wordEntrySelectionPage.classList.add('active');
@@ -3188,6 +3185,9 @@ function startGame() {
     // Clear the word entry flag when starting a game
     window.cameFromWordEntry = false;
     
+    // Ensure we're NOT in mirrored mode for normal brute force
+    window.mirroredMode = false;
+    
     // Populate round selector with preset rounds
     populateRoundSelector();
     
@@ -3220,6 +3220,12 @@ function startGame() {
 }
 
 function initializeRound() {
+    // Check if we're in Japanese custom mode
+    if (window.japaneseCustomModeEnabled) {
+        initializeJapaneseCustomRound();
+        return;
+    }
+    
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
         initializeMirroredRound();
