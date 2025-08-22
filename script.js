@@ -2476,7 +2476,13 @@ backToStartFromCustomScriptBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
     window.customModeEnabled = false;
     window.customWordPools = null;
-    showPage('start');
+    
+    // Check if we came from word entry selection
+    if (window.cameFromWordEntry) {
+        showPage('word-entry-selection');
+    } else {
+        showPage('start');
+    }
 });
 
 backToStartFromCustomBtn.addEventListener('click', () => {
@@ -2488,6 +2494,8 @@ backToStartFromCustomBtn.addEventListener('click', () => {
 
 // Word entry selection page event listeners
 backToStartFromWordEntryBtn.addEventListener('click', () => {
+    // Clear the flag when going back to start
+    window.cameFromWordEntry = false;
     showPage('start');
 });
 
@@ -2496,6 +2504,9 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
     console.log('Button element:', enterJapaneseWordsBtn);
     console.log('Button disabled state:', enterJapaneseWordsBtn.disabled);
     console.log('Button classes:', enterJapaneseWordsBtn.className);
+    
+    // Set flag to indicate we came from word entry selection
+    window.cameFromWordEntry = true;
     
     // Check which mode was selected and navigate accordingly
     if (window.selectedMode === 'brute-force') {
@@ -2588,6 +2599,9 @@ function startMirroredGame() {
     
     // Set mirrored mode flag
     window.mirroredMode = true;
+    
+    // Clear the word entry flag when starting a mirrored game
+    window.cameFromWordEntry = false;
     
     // Show game page
     showPage('game');
@@ -3170,6 +3184,9 @@ function startGame() {
     // Reset custom mode variables when starting normal brute force game
     window.customModeEnabled = false;
     window.customWordPools = null;
+    
+    // Clear the word entry flag when starting a game
+    window.cameFromWordEntry = false;
     
     // Populate round selector with preset rounds
     populateRoundSelector();
@@ -5127,6 +5144,9 @@ function startJapaneseCustomRun() {
     window.mirroredMode = true;
     window.japaneseCustomModeEnabled = true;
     
+    // Clear the word entry flag when starting a Japanese custom game
+    window.cameFromWordEntry = false;
+    
     // Show game page
     showPage('game');
     
@@ -6624,6 +6644,9 @@ function startCustomRun() {
     window.customWordPools = customWordPools;
     window.customModeEnabled = true;
     window.customModeNoPracticeRounds = disablePracticeRoundsToggle.checked;
+    
+    // Clear the word entry flag when starting a custom game
+    window.cameFromWordEntry = false;
     
     // Populate round selector with custom rounds
     populateRoundSelector();
