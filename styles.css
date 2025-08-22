@@ -901,6 +901,27 @@ body.dark-mode .word-checkbox-item label {
     color: #ffffff;
 }
 
+.select-all-item {
+    background: #f8f9fa !important;
+    border-color: #E75D38 !important;
+    font-weight: bold;
+}
+
+body.dark-mode .select-all-item {
+    background: #2a2a2a !important;
+    border-color: #00bfff !important;
+}
+
+.select-all-item:hover {
+    background: #e9ecef !important;
+    border-color: #d64a2a !important;
+}
+
+body.dark-mode .select-all-item:hover {
+    background: #404040 !important;
+    border-color: #0080ff !important;
+}
+
 .custom-word-section {
     margin-top: 20px;
 }

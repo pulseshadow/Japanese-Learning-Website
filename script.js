@@ -3603,7 +3603,7 @@ function updateAllTextWithoutGrids() {
     // Skip word selection grids update to preserve state
     
     // Update select all labels in custom mode
-    const selectAllLabels = document.querySelectorAll('.select-all-container label');
+    const selectAllLabels = document.querySelectorAll('.select-all-item label');
     selectAllLabels.forEach(label => {
         const text = label.getAttribute(`data-${currentLanguage}`);
         if (text) {
@@ -3933,11 +3933,11 @@ function populateWordSelectionGrid(roundNumber) {
         wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
         // Create "Select All" checkbox for this round
-        const selectAllContainer = document.createElement('div');
-        selectAllContainer.className = 'select-all-container';
-        selectAllContainer.style.marginBottom = '10px';
-        selectAllContainer.style.paddingBottom = '10px';
-        selectAllContainer.style.borderBottom = '1px solid #ddd';
+        const selectAllItem = document.createElement('div');
+        selectAllItem.className = 'word-checkbox-item select-all-item';
+        selectAllItem.style.marginBottom = '10px';
+        selectAllItem.style.paddingBottom = '10px';
+        selectAllItem.style.borderBottom = '1px solid #ddd';
         
         const selectAllCheckbox = document.createElement('input');
         selectAllCheckbox.type = 'checkbox';
@@ -3986,9 +3986,21 @@ function populateWordSelectionGrid(roundNumber) {
             }
         };
         
-        selectAllContainer.appendChild(selectAllCheckbox);
-        selectAllContainer.appendChild(selectAllLabel);
-        wordContent.appendChild(selectAllContainer);
+        selectAllItem.appendChild(selectAllCheckbox);
+        selectAllItem.appendChild(selectAllLabel);
+        
+        // Add click event listener to the entire select all item
+        selectAllItem.addEventListener('click', (e) => {
+            // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
+            if (e.target !== selectAllCheckbox) {
+                console.log('Select All item clicked, toggling checkbox');
+                selectAllCheckbox.checked = !selectAllCheckbox.checked;
+                // Trigger the change event manually
+                selectAllCheckbox.dispatchEvent(new Event('change'));
+            }
+        });
+        
+        wordContent.appendChild(selectAllItem);
         
         // Create word checkboxes for this round
         wordGroup.forEach(word => {
@@ -4925,11 +4937,17 @@ function loadSettings() {
 
 function saveCustomRounds() {
     const rounds = document.querySelectorAll('.custom-round');
-    if (rounds.length === 0) return;
+    if (rounds.length === 0) {
+        console.log('No custom rounds to save');
+        return;
+    }
+    
+    console.log(`Saving ${rounds.length} custom rounds...`);
     
     const customData = {
         rounds: [],
-        noPracticeRounds: window.customModeNoPracticeRounds || false
+        noPracticeRounds: window.customModeNoPracticeRounds || false,
+        timestamp: Date.now()
     };
     
     rounds.forEach((round, index) => {
@@ -4974,8 +4992,31 @@ function saveCustomRounds() {
         customData.rounds.push(roundData);
     });
     
-    saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
-    console.log('Custom rounds saved:', customData);
+    try {
+        saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
+        console.log('Custom rounds saved successfully:', customData);
+        console.log(`Total data size: ${JSON.stringify(customData).length} characters`);
+    } catch (error) {
+        console.error('Error saving custom rounds:', error);
+        // Try to save a minimal version if the full save fails
+        try {
+            const minimalData = {
+                rounds: customData.rounds.map(round => ({
+                    roundNumber: round.roundNumber,
+                    checkedWords: round.checkedWords.length,
+                    customWords: round.customWords.length,
+                    openSections: round.openSections.length
+                })),
+                noPracticeRounds: customData.noPracticeRounds,
+                timestamp: customData.timestamp,
+                error: 'Minimal data due to save failure'
+            };
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, minimalData);
+            console.log('Saved minimal custom rounds data due to error');
+        } catch (secondError) {
+            console.error('Failed to save even minimal data:', secondError);
+        }
+    }
 }
 
 function loadCustomRounds() {
@@ -4989,7 +5030,19 @@ function loadCustomRounds() {
     }
     
     if (customData && typeof customData === 'object' && customData.rounds) {
+        // Validate the data structure
+        if (!Array.isArray(customData.rounds)) {
+            console.error('Invalid custom rounds data: rounds is not an array');
+            return false;
+        }
+        
+        // Check if data is too old (optional - can be removed if not needed)
+        if (customData.timestamp && Date.now() - customData.timestamp > 30 * 24 * 60 * 60 * 1000) { // 30 days
+            console.warn('Custom rounds data is over 30 days old');
+        }
+        
         console.log('Loading custom rounds data:', customData);
+        console.log(`Data contains ${customData.rounds.length} rounds`);
         
         // Store the data in memory for later restoration
         window.savedCustomRoundsData = customData;
@@ -5081,11 +5134,15 @@ function restoreCustomRoundsState() {
         
         // Restore custom words
         roundData.customWords.forEach(customWord => {
+            console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english} (checked: ${customWord.checked})`);
             addCustomWordToRound(round, customWord.japanese, customWord.english);
             // Set the checkbox state for custom words
             const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
             if (customCheckbox) {
                 customCheckbox.checked = customWord.checked;
+                console.log(`Restored custom word checkbox: ${customWord.japanese} - ${customWord.english}`);
+            } else {
+                console.warn(`Could not find custom word checkbox for: ${customWord.japanese} - ${customWord.english}`);
             }
         });
         
@@ -5098,7 +5155,12 @@ function restoreCustomRoundsState() {
                 if (button) {
                     button.textContent = '▲';
                     button.classList.add('rotated');
+                    console.log(`Restored open section: ${sectionId}`);
+                } else {
+                    console.warn(`Could not find collapse button for section: ${sectionId}`);
                 }
+            } else {
+                console.warn(`Could not find section to restore: ${sectionId}`);
             }
         });
     });
@@ -5108,6 +5170,51 @@ function restoreCustomRoundsState() {
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
+}
+
+// Debug function to help troubleshoot custom rounds issues
+function debugCustomRounds() {
+    console.log('=== Custom Rounds Debug Info ===');
+    
+    // Check localStorage
+    const savedData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+    if (savedData) {
+        console.log('Saved data in localStorage:', savedData);
+        console.log('Data size:', JSON.stringify(savedData).length, 'characters');
+        if (savedData.timestamp) {
+            const age = Date.now() - savedData.timestamp;
+            console.log('Data age:', Math.round(age / (1000 * 60 * 60 * 24)), 'days');
+        }
+    } else {
+        console.log('No saved data found in localStorage');
+    }
+    
+    // Check current DOM state
+    const rounds = document.querySelectorAll('.custom-round');
+    console.log('Current DOM rounds:', rounds.length);
+    
+    rounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
+        const customWords = round.querySelectorAll('.custom-word-item');
+        const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
+        
+        console.log(`Round ${roundNumber}:`, {
+            checkedWords: checkboxes.length,
+            customWords: customWords.length,
+            openSections: openSections.length
+        });
+    });
+    
+    // Check global variables
+    console.log('Global custom mode state:', {
+        customModeEnabled: window.customModeEnabled,
+        customWordPools: window.customWordPools,
+        customModeNoPracticeRounds: window.customModeNoPracticeRounds,
+        savedCustomRoundsData: !!window.savedCustomRoundsData
+    });
+    
+    console.log('=== End Debug Info ===');
 }
 
 function updateSelectAllState() {
