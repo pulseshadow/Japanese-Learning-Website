@@ -2460,11 +2460,16 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
-    // If in custom mode, go back to word selection, otherwise go to script selection
+    // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
     } else {
-        showPage('script');
+        // Check if we came from word entry selection
+        if (window.cameFromWordEntry) {
+            showPage('word-entry-selection');
+        } else {
+            showPage('script');
+        }
     }
 });
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
@@ -2507,6 +2512,9 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
 
 enterEnglishWordsBtn.addEventListener('click', () => {
     console.log('Enter English Words clicked, selected mode:', window.selectedMode);
+    // Set flag to indicate we came from word entry selection
+    window.cameFromWordEntry = true;
+    
     // Check which mode was selected and navigate accordingly
     if (window.selectedMode === 'brute-force') {
         console.log('Navigating to script page for brute force mode');
@@ -3357,8 +3365,8 @@ function showNextQuestion() {
         }
     }
     
-    const currentWord = questionQueue[0];
     // Update global currentWord for answer validation
+    currentWord = questionQueue[0];
     window.currentWord = currentWord;
     
     console.log('showNextQuestion - Current word:', currentWord, 'Phase:', currentPhase);
@@ -3381,8 +3389,8 @@ function showNextQuestion() {
 
 function submitAnswer() {
     const userAnswer = answerInput.value.trim().toLowerCase();
-    const currentWord = getCurrentWord();
     
+    // Use the global currentWord that was set in the question functions
     if (!currentWord) return;
     
     // Check if we're in mirrored mode
@@ -3514,10 +3522,10 @@ function submitAnswer() {
 }
 
 function handleMirroredCorrectAnswer() {
-    const currentWord = questionQueue.shift(); // Remove from queue
-    const wordKey = currentWord.japanese;
+    const word = questionQueue.shift(); // Remove from queue
+    const wordKey = word.japanese;
     
-    console.log('handleMirroredCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    console.log('handleMirroredCorrectAnswer - Processing word:', word, 'Queue length:', questionQueue.length);
     
     // Check if this word has a pending point from a previous incorrect answer
     if (wordsWithPendingPoints.has(wordKey)) {
@@ -3584,10 +3592,10 @@ function handleMirroredIncorrectAnswer(word) {
 }
 
 function handleJapaneseCustomCorrectAnswer() {
-    const currentWord = questionQueue.shift(); // Remove from queue
-    const wordKey = currentWord.japanese;
+    const word = questionQueue.shift(); // Remove from queue
+    const wordKey = word.japanese;
     
-    console.log('handleJapaneseCustomCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    console.log('handleJapaneseCustomCorrectAnswer - Processing word:', word, 'Queue length:', questionQueue.length);
     
     // Check if this word has a pending point from a previous incorrect answer
     if (wordsWithPendingPoints.has(wordKey)) {
@@ -3654,10 +3662,10 @@ function handleJapaneseCustomIncorrectAnswer(word) {
 }
 
 function handleCorrectAnswer() {
-    const currentWord = questionQueue.shift(); // Remove from queue
-    const wordKey = currentWord.japanese;
+    const word = questionQueue.shift(); // Remove from queue
+    const wordKey = word.japanese;
     
-    console.log('handleCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    console.log('handleCorrectAnswer - Processing word:', word, 'Queue length:', questionQueue.length);
     
 
     
@@ -6875,10 +6883,10 @@ function initializeCustomQuestionQueue() {
 }
 
 function handleCustomCorrectAnswer() {
-    const currentWord = questionQueue.shift();
-    const wordKey = currentWord.japanese;
+    const word = questionQueue.shift();
+    const wordKey = word.japanese;
     
-    console.log('handleCustomCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    console.log('handleCustomCorrectAnswer - Processing word:', word, 'Queue length:', questionQueue.length);
     
     // Update statistics for correct answer
     updateStats(true, currentRound);
