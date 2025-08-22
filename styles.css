@@ -1395,6 +1395,43 @@ body.dark-mode .sound-btn:disabled {
     background: #666666;
 }
 
+/* TTS availability styling */
+.sound-btn.tts-available {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+.sound-btn.tts-available:hover {
+    background: #218838;
+}
+
+body.dark-mode .sound-btn.tts-available {
+    background: #28a745;
+    border-color: #28a745;
+}
+
+body.dark-mode .sound-btn.tts-available:hover {
+    background: #218838;
+}
+
+.sound-btn.tts-unavailable {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+.sound-btn.tts-unavailable:hover {
+    background: #5a6268;
+}
+
+body.dark-mode .sound-btn.tts-unavailable {
+    background: #6c757d;
+    border-color: #6c757d;
+}
+
+body.dark-mode .sound-btn.tts-unavailable:hover {
+    background: #5a6268;
+}
+
 #answer-input {
     padding: 20px 25px;
     font-size: 1.2rem;

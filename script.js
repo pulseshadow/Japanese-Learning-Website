@@ -3421,6 +3421,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     detectBrowserLanguage();
     
+    // Initialize text-to-speech system
+    initializeTTS();
+    
     // Initialize sound system
     setupSoundButton();
     setupAutoPlayToggle();
@@ -3726,7 +3729,159 @@ function detectBrowserLanguage() {
     }
 }
 
-// Sound Functions
+// Text-to-Speech Functions
+let speechSynthesis = null;
+let japaneseVoice = null;
+
+// Initialize text-to-speech system
+function initializeTTS() {
+    if ('speechSynthesis' in window) {
+        speechSynthesis = window.speechSynthesis;
+        
+        // Wait for voices to load
+        speechSynthesis.onvoiceschanged = () => {
+            loadJapaneseVoice();
+        };
+        
+        // Load voices immediately if they're already available
+        loadJapaneseVoice();
+        
+        console.log('Text-to-speech system initialized');
+    } else {
+        console.warn('Speech synthesis not supported in this browser');
+    }
+}
+
+// Load the best available Japanese voice
+function loadJapaneseVoice() {
+    if (!speechSynthesis) return;
+    
+    const voices = speechSynthesis.getVoices();
+    console.log('Available voices:', voices.length);
+    
+    // Priority order for Japanese voices
+    const japaneseVoicePriorities = [
+        { lang: 'ja-JP', name: 'Google 日本語' },
+        { lang: 'ja-JP', name: 'Microsoft Nanami' },
+        { lang: 'ja-JP', name: 'Microsoft Sayaka' },
+        { lang: 'ja-JP', name: 'Apple Kyoko' },
+        { lang: 'ja-JP', name: 'Apple Otoya' },
+        { lang: 'ja-JP', name: 'Google 日本語 (ja-JP)' },
+        { lang: 'ja-JP', name: 'Microsoft Haruka' },
+        { lang: 'ja-JP', name: 'Microsoft Ichiro' }
+    ];
+    
+    // Try to find the best Japanese voice
+    for (const priority of japaneseVoicePriorities) {
+        const voice = voices.find(v => 
+            v.lang === priority.lang && v.name.includes(priority.name.split(' ')[1])
+        );
+        if (voice) {
+            japaneseVoice = voice;
+            console.log('Selected Japanese voice:', voice.name, voice.lang);
+            return;
+        }
+    }
+    
+    // Fallback: find any Japanese voice
+    const fallbackVoice = voices.find(v => v.lang.startsWith('ja'));
+    if (fallbackVoice) {
+        japaneseVoice = fallbackVoice;
+        console.log('Selected fallback Japanese voice:', fallbackVoice.name, fallbackVoice.lang);
+        return;
+    }
+    
+    // Last resort: find any voice that might work
+    const anyVoice = voices.find(v => v.lang.includes('ja') || v.lang.includes('JP'));
+    if (anyVoice) {
+        japaneseVoice = anyVoice;
+        console.log('Selected alternative voice:', anyVoice.name, anyVoice.lang);
+        return;
+    }
+    
+    console.warn('No suitable Japanese voice found');
+}
+
+// Enhanced text-to-speech function for Japanese
+function speakJapaneseText(text, options = {}) {
+    if (!speechSynthesis || !japaneseVoice) {
+        console.warn('Text-to-speech not available');
+        return false;
+    }
+    
+    // Stop any currently speaking
+    speechSynthesis.cancel();
+    
+    // Preprocess Japanese text for better pronunciation
+    const processedText = preprocessJapaneseText(text);
+    
+    // Create speech utterance
+    const utterance = new SpeechSynthesisUtterance(processedText);
+    
+    // Configure for Japanese pronunciation
+    utterance.voice = japaneseVoice;
+    utterance.lang = 'ja-JP';
+    utterance.rate = options.rate || 0.7; // Slower for better pronunciation
+    utterance.pitch = options.pitch || 1.0;
+    utterance.volume = options.volume || 1.0;
+    
+    // Add event handlers
+    utterance.onstart = () => {
+        console.log('Speaking Japanese text:', processedText);
+        if (soundBtn) {
+            soundBtn.disabled = true;
+            soundBtn.style.opacity = '0.5';
+            soundBtn.textContent = 'Speaking...';
+        }
+    };
+    
+    utterance.onend = () => {
+        console.log('Finished speaking');
+        if (soundBtn) {
+            soundBtn.disabled = false;
+            soundBtn.style.opacity = '1';
+            soundBtn.textContent = 'Play Sound';
+        }
+    };
+    
+    utterance.onerror = (event) => {
+        console.error('Speech synthesis error:', event.error);
+        if (soundBtn) {
+            soundBtn.disabled = false;
+            soundBtn.style.opacity = '1';
+            soundBtn.textContent = 'Play Sound';
+        }
+    };
+    
+    // Speak the text
+    speechSynthesis.speak(utterance);
+    return true;
+}
+
+// Preprocess Japanese text for better TTS pronunciation
+function preprocessJapaneseText(text) {
+    if (!text) return text;
+    
+    let processed = text.trim();
+    
+    // Remove any non-Japanese characters that might interfere with pronunciation
+    // Keep only Hiragana, Katakana, Kanji, and basic punctuation
+    processed = processed.replace(/[^\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FAF\u3000-\u303F\uFF00-\uFFEF\u0020-\u007F]/g, '');
+    
+    // Normalize spacing
+    processed = processed.replace(/\s+/g, ' ').trim();
+    
+    // Add slight pauses for better pronunciation of compound words
+    // This helps TTS engines break down longer words
+    if (processed.length > 4) {
+        // Add small pauses between characters for longer words
+        processed = processed.split('').join(' ');
+    }
+    
+    return processed;
+}
+
+// Fallback beep sound for when TTS is not available
 function createBeepSound(frequency = 800, duration = 200) {
     // Create a simple beep using Web Audio API
     try {
@@ -3766,29 +3921,46 @@ function getWordAudioFrequency(word) {
 }
 
 function playWordSound(word) {
-    // Check if sound is enabled and word is not custom
+    // Check if sound is enabled
     if (!word) return;
     
-    const isCustomWord = isCurrentWordCustom();
-    
-    // Disable sound button for custom words in custom mode
-    if (window.customModeEnabled && isCustomWord) {
-        if (soundBtn) {
-            soundBtn.disabled = true;
-            soundBtn.style.opacity = '0.5';
-            soundBtn.title = 'Audio not available for custom words';
+    // Try to use text-to-speech first
+    if (speechSynthesis && japaneseVoice) {
+        // Extract Japanese text from the word
+        let japaneseText = '';
+        
+        if (typeof word === 'string') {
+            // If word is a string, use it directly
+            japaneseText = word;
+        } else if (word.japanese) {
+            // If word is an object with japanese property
+            japaneseText = word.japanese;
+        } else {
+            console.warn('Could not extract Japanese text from word:', word);
+            return;
         }
-        return;
-    } else {
-        // Enable sound button for preset words
-        if (soundBtn) {
-            soundBtn.disabled = false;
-            soundBtn.style.opacity = '1';
-            soundBtn.title = 'Play pronunciation';
+        
+        // Clean the text (remove any non-Japanese characters that might interfere)
+        japaneseText = japaneseText.trim();
+        
+        if (japaneseText) {
+            console.log('Playing TTS for Japanese text:', japaneseText);
+            
+            // Try to speak the Japanese text
+            const success = speakJapaneseText(japaneseText, {
+                rate: 0.7, // Slower for better pronunciation
+                pitch: 1.0,
+                volume: 1.0
+            });
+            
+            if (success) {
+                return; // TTS worked, don't fall back to beep
+            }
         }
     }
     
-    // Play placeholder beep sound
+    // Fallback to beep sound if TTS is not available or fails
+    console.log('Falling back to beep sound');
     const frequency = getWordAudioFrequency(word);
     createBeepSound(frequency, 300);
 }
@@ -3823,9 +3995,21 @@ function setupSoundButton() {
     if (soundBtn) {
         soundBtn.addEventListener('click', () => {
             if (currentWord && !soundBtn.disabled) {
+                // Try to play the Japanese pronunciation
                 playWordSound(currentWord.japanese);
             }
         });
+        
+        // Update button title and appearance based on TTS availability
+        if (speechSynthesis && japaneseVoice) {
+            soundBtn.title = 'Play Japanese pronunciation';
+            soundBtn.classList.add('tts-available');
+            soundBtn.classList.remove('tts-unavailable');
+        } else {
+            soundBtn.title = 'Play sound (TTS not available)';
+            soundBtn.classList.remove('tts-available');
+            soundBtn.classList.add('tts-unavailable');
+        }
     }
 }
 
@@ -3845,26 +4029,22 @@ function displayWordWithSound(word) {
     
     // Handle sound button state and auto-play
     setTimeout(() => {
-        // Check if word is custom and update sound button state
-        const isCustomWord = isCurrentWordCustom();
-        
-        if (window.customModeEnabled && isCustomWord) {
-            if (soundBtn) {
-                soundBtn.disabled = true;
-                soundBtn.style.opacity = '0.5';
-                soundBtn.title = 'Audio not available for custom words';
-            }
-        } else {
-            if (soundBtn) {
-                soundBtn.disabled = false;
-                soundBtn.style.opacity = '1';
-                soundBtn.title = 'Play pronunciation';
-            }
+        // Enable sound button for all words (TTS can handle both preset and custom)
+        if (soundBtn) {
+            soundBtn.disabled = false;
+            soundBtn.style.opacity = '1';
             
-            // Auto-play if enabled
-            if (autoPlaySound) {
-                playWordSound(word.japanese);
+            // Update title based on TTS availability
+            if (speechSynthesis && japaneseVoice) {
+                soundBtn.title = 'Play Japanese pronunciation';
+            } else {
+                soundBtn.title = 'Play sound (TTS not available)';
             }
+        }
+        
+        // Auto-play if enabled
+        if (autoPlaySound) {
+            playWordSound(word.japanese);
         }
     }, 100); // Small delay to ensure DOM is updated
 }
@@ -5732,9 +5912,73 @@ function testLocalStorage() {
     console.log('=== localStorage Test Complete ===');
 }
 
-// Make test function available globally for debugging
+// Test TTS functionality
+function testTTS() {
+    console.log('=== TTS Test ===');
+    
+    if (!speechSynthesis) {
+        console.log('❌ Speech synthesis not supported');
+        return;
+    }
+    
+    if (!japaneseVoice) {
+        console.log('❌ No Japanese voice available');
+        return;
+    }
+    
+    console.log('✅ TTS system available');
+    console.log('Selected voice:', japaneseVoice.name, japaneseVoice.lang);
+    
+    // Test with a simple Japanese word
+    const testWord = 'こんにちは';
+    console.log('Testing pronunciation of:', testWord);
+    
+    speakJapaneseText(testWord, { rate: 0.6 });
+}
+
+// Get TTS system status
+function getTTSStatus() {
+    console.log('=== TTS Status ===');
+    
+    if (!speechSynthesis) {
+        console.log('❌ Speech synthesis not supported');
+        return;
+    }
+    
+    console.log('✅ Speech synthesis available');
+    
+    const voices = speechSynthesis.getVoices();
+    console.log('Total voices available:', voices.length);
+    
+    const japaneseVoices = voices.filter(v => v.lang.startsWith('ja'));
+    console.log('Japanese voices available:', japaneseVoices.length);
+    
+    if (japaneseVoices.length > 0) {
+        console.log('Japanese voices:');
+        japaneseVoices.forEach((voice, index) => {
+            console.log(`  ${index + 1}. ${voice.name} (${voice.lang}) - ${voice.default ? 'Default' : 'Available'}`);
+        });
+    }
+    
+    if (japaneseVoice) {
+        console.log('✅ Current Japanese voice:', japaneseVoice.name, japaneseVoice.lang);
+    } else {
+        console.log('❌ No Japanese voice selected');
+    }
+    
+    return {
+        supported: !!speechSynthesis,
+        voicesAvailable: voices.length,
+        japaneseVoices: japaneseVoices.length,
+        currentVoice: japaneseVoice
+    };
+}
+
+// Make test functions available globally for debugging
 if (typeof window !== 'undefined') {
     window.testLocalStorage = testLocalStorage;
+    window.testTTS = testTTS;
+    window.getTTSStatus = getTTSStatus;
 }
 
 // Update stats display function
