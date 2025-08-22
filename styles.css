@@ -483,6 +483,31 @@ body.dark-mode .script-btn:hover:not(.disabled) {
     background: #0080ff;
 }
 
+.script-btn.primary {
+    background: #E75D38;
+    color: white;
+    border: 1px solid #d64a2a;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .script-btn.primary {
+    background: #00bfff;
+    color: white;
+    border: 1px solid #0080ff;
+}
+
+.script-btn.primary:hover:not(.disabled) {
+    background: #d64a2a;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+body.dark-mode .script-btn.primary:hover:not(.disabled) {
+    background: #0080ff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 191, 255, 0.3);
+}
+
 .back-btn {
     padding: 10px 20px;
     font-size: 1rem;
