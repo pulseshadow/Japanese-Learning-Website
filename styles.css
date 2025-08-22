@@ -462,17 +462,26 @@ body.dark-mode .practice-btn:hover, body.dark-mode .script-btn:hover {
 }
 
 .script-btn {
-    background: #E75D38;
-    color: white;
-    border: 1px solid #d64a2a;
-    width: auto;
-    max-width: none;
+    background: #E75D38 !important;
+    color: white !important;
+    border: 1px solid #d64a2a !important;
+    width: auto !important;
+    max-width: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    pointer-events: auto !important;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    position: relative !important;
+    z-index: 10 !important;
 }
 
 body.dark-mode .script-btn {
-    background: #00bfff;
-    color: white;
-    border: 1px solid #0080ff;
+    background: #00bfff !important;
+    color: white !important;
+    border: 1px solid #0080ff !important;
 }
 
 .script-btn:hover:not(.disabled) {
@@ -484,16 +493,16 @@ body.dark-mode .script-btn:hover:not(.disabled) {
 }
 
 .script-btn.primary {
-    background: #E75D38;
-    color: white;
-    border: 1px solid #d64a2a;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: #E75D38 !important;
+    color: white !important;
+    border: 1px solid #d64a2a !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 body.dark-mode .script-btn.primary {
-    background: #00bfff;
-    color: white;
-    border: 1px solid #0080ff;
+    background: #00bfff !important;
+    color: white !important;
+    border: 1px solid #0080ff !important;
 }
 
 .script-btn.primary:hover:not(.disabled) {

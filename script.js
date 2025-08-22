@@ -2348,6 +2348,20 @@ const backToStartFromCustomBtn = document.getElementById('back-to-start-from-cus
 const backToStartFromWordEntryBtn = document.getElementById('back-to-start-from-word-entry');
 const enterJapaneseWordsBtn = document.getElementById('enter-japanese-words-btn');
 const enterEnglishWordsBtn = document.getElementById('enter-english-words-btn');
+
+// Debug: Check if buttons are found
+console.log('enterJapaneseWordsBtn found:', enterJapaneseWordsBtn);
+console.log('enterEnglishWordsBtn found:', enterEnglishWordsBtn);
+
+// Debug: Check button properties
+if (enterJapaneseWordsBtn) {
+    console.log('enterJapaneseWordsBtn properties:');
+    console.log('- disabled:', enterJapaneseWordsBtn.disabled);
+    console.log('- className:', enterJapaneseWordsBtn.className);
+    console.log('- style.display:', enterJapaneseWordsBtn.style.display);
+    console.log('- style.visibility:', enterJapaneseWordsBtn.style.visibility);
+    console.log('- style.pointerEvents:', enterJapaneseWordsBtn.style.pointerEvents);
+}
 const backToWordEntryBtn = document.getElementById('back-to-word-entry');
 const japaneseHiraganaBtn = document.getElementById('japanese-hiragana-btn');
 const japaneseKatakanaBtn = document.getElementById('japanese-katakana-btn');
@@ -2474,6 +2488,10 @@ backToStartFromWordEntryBtn.addEventListener('click', () => {
 
 enterJapaneseWordsBtn.addEventListener('click', () => {
     console.log('Enter Japanese Words clicked, selected mode:', window.selectedMode);
+    console.log('Button element:', enterJapaneseWordsBtn);
+    console.log('Button disabled state:', enterJapaneseWordsBtn.disabled);
+    console.log('Button classes:', enterJapaneseWordsBtn.className);
+    
     // Check which mode was selected and navigate accordingly
     if (window.selectedMode === 'brute-force') {
         console.log('Navigating to Japanese script page for mirrored brute force mode');
