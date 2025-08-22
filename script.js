@@ -3942,7 +3942,6 @@ function populateWordSelectionGrid(roundNumber) {
         selectAllLabel.setAttribute('data-vi', 'Chọn Tất cả');
         selectAllLabel.textContent = selectAllLabel.getAttribute(`data-${currentLanguage}`) || 'Select All';
         selectAllLabel.style.fontWeight = 'bold';
-        selectAllLabel.style.color = '#333';
         
         // Add event listener for select all functionality
         selectAllCheckbox.addEventListener('change', (e) => {
