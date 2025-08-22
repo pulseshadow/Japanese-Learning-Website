@@ -2312,6 +2312,12 @@ const wordPools = {
 
 // Helper function to get the correct answer in the current language (without brackets)
 function getCorrectAnswer(word) {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        // In mirrored mode, return Japanese characters as the correct answer
+        return word.japanese;
+    }
+    
     if (word.translations && word.translations[currentLanguage]) {
         // Return translation in current language, removing brackets and content
         return word.translations[currentLanguage].replace(/\([^)]*\)/g, '').trim();
@@ -2328,6 +2334,7 @@ const gamePage = document.getElementById('game-page');
 const customScriptPage = document.getElementById('custom-script-page');
 const customModePage = document.getElementById('custom-mode-page');
 const wordEntrySelectionPage = document.getElementById('word-entry-selection-page');
+const japaneseScriptPage = document.getElementById('japanese-script-page');
 const bruteForceBtn = document.getElementById('brute-force-btn');
 const customModeBtn = document.getElementById('custom-mode-btn');
 const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
@@ -2340,6 +2347,9 @@ const backToStartFromCustomBtn = document.getElementById('back-to-start-from-cus
 const backToStartFromWordEntryBtn = document.getElementById('back-to-start-from-word-entry');
 const enterJapaneseWordsBtn = document.getElementById('enter-japanese-words-btn');
 const enterEnglishWordsBtn = document.getElementById('enter-english-words-btn');
+const backToWordEntryBtn = document.getElementById('back-to-word-entry');
+const japaneseHiraganaBtn = document.getElementById('japanese-hiragana-btn');
+const japaneseKatakanaBtn = document.getElementById('japanese-katakana-btn');
 const roundTitle = document.getElementById('round-title');
 const phaseLabel = document.getElementById('phase-label');
 const currentQuestionSpan = document.getElementById('current-question');
@@ -2424,6 +2434,12 @@ hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
 backToScriptBtn.addEventListener('click', () => {
+    // If in mirrored mode, go back to Japanese script selection
+    if (window.mirroredMode) {
+        showPage('japanese-script');
+        return;
+    }
+    
     // If in custom mode, go back to word selection, otherwise go to script selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
@@ -2451,8 +2467,18 @@ backToStartFromWordEntryBtn.addEventListener('click', () => {
 });
 
 enterJapaneseWordsBtn.addEventListener('click', () => {
-    // Currently disabled - will be implemented in future update
-    console.log('Japanese word entry not yet implemented');
+    console.log('Enter Japanese Words clicked, selected mode:', window.selectedMode);
+    // Check which mode was selected and navigate accordingly
+    if (window.selectedMode === 'brute-force') {
+        console.log('Navigating to Japanese script page for mirrored brute force mode');
+        showPage('japanese-script');
+    } else if (window.selectedMode === 'custom') {
+        console.log('Japanese word entry not yet implemented for custom mode');
+        // TODO: Implement mirrored custom mode
+    } else {
+        console.warn('No mode selected, defaulting to Japanese script');
+        showPage('japanese-script');
+    }
 });
 
 enterEnglishWordsBtn.addEventListener('click', () => {
@@ -2469,6 +2495,158 @@ enterEnglishWordsBtn.addEventListener('click', () => {
         showPage('script');
     }
 });
+
+// Japanese script page event listeners
+backToWordEntryBtn.addEventListener('click', () => {
+    showPage('word-entry-selection');
+});
+
+japaneseHiraganaBtn.addEventListener('click', () => {
+    console.log('Starting mirrored brute force mode with Hiragana');
+    window.mirroredMode = true;
+    startMirroredGame();
+});
+
+japaneseKatakanaBtn.addEventListener('click', () => {
+    console.log('Katakana not yet implemented for mirrored mode');
+    // TODO: Implement Katakana support for mirrored mode
+});
+
+// Mirrored game mode functions
+function startMirroredGame() {
+    console.log('Starting mirrored game mode');
+    
+    // Reset game state for mirrored mode
+    currentPage = 'game';
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    currentWord = null;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Set mirrored mode flag
+    window.mirroredMode = true;
+    
+    // Show game page
+    showPage('game');
+    
+    // Initialize the first round
+    initializeMirroredRound();
+}
+
+function initializeMirroredRound() {
+    console.log('Initializing mirrored round:', currentRound);
+    
+    // Get words for current round
+    const roundWords = getCurrentRoundWords();
+    
+    // For mirrored mode, we'll use the same word pools but display them differently
+    if (currentPhase === 'learning') {
+        // Learning phase - show English words, expect Japanese answers
+        currentQuestionIndex = 0;
+        showMirroredLearningQuestion();
+    } else if (currentPhase === 'elimination') {
+        // Elimination phase - show English words, expect Japanese answers
+        eliminationWords = [...roundWords];
+        showMirroredEliminationQuestion();
+    } else {
+        // Repeating phase - show English words, expect Japanese answers
+        questionQueue = [...roundWords];
+        shuffleArray(questionQueue);
+        showMirroredRepeatingQuestion();
+    }
+    
+    updateProgress();
+    updatePhaseLabel();
+    updateNextRoundButton();
+}
+
+function showMirroredLearningQuestion() {
+    const roundWords = getCurrentRoundWords();
+    if (currentQuestionIndex >= roundWords.length) {
+        // Learning phase complete, move to elimination phase
+        currentPhase = 'elimination';
+        initializeMirroredRound();
+        return;
+    }
+    
+    const word = roundWords[currentQuestionIndex];
+    currentWord = word;
+    
+    // In mirrored mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.textContent = word.japanese;
+    correctAnswerDisplay.classList.remove('hidden');
+    
+    // Update phase label for mirrored mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
+}
+
+function showMirroredEliminationQuestion() {
+    if (eliminationWords.length === 0) {
+        // Elimination phase complete, move to repeating phase
+        currentPhase = 'repeating';
+        initializeMirroredRound();
+        return;
+    }
+    
+    const word = eliminationWords[0];
+    currentWord = word;
+    
+    // In mirrored mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.classList.add('hidden');
+    
+    // Update phase label for mirrored mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
+}
+
+function showMirroredRepeatingQuestion() {
+    if (questionQueue.length === 0) {
+        // Refill queue if empty
+        const roundWords = getCurrentRoundWords();
+        for (let i = 0; i < 21; i++) {
+            const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+            questionQueue.push(randomWord);
+        }
+    }
+    
+    const word = questionQueue[0];
+    currentWord = word;
+    
+    // In mirrored mode, show English word, expect Japanese answer
+    japaneseWord.textContent = word.english;
+    correctAnswerDisplay.classList.add('hidden');
+    
+    // Update phase label for mirrored mode
+    updatePhaseLabel();
+    
+    // Clear input and focus
+    answerInput.value = '';
+    answerInput.focus();
+    
+    // Update progress
+    updateProgress();
+}
 
 // Stats page event listeners - clearStatsBtn removed
 
@@ -2532,6 +2710,12 @@ function showPage(pageName) {
         wordEntrySelectionPage.style.display = 'none';
     }
     
+    // Get the new Japanese script page
+    const japaneseScriptPage = document.getElementById('japanese-script-page');
+    if (japaneseScriptPage) {
+        japaneseScriptPage.style.display = 'none';
+    }
+    
     // Show the selected page
     if (pageName === 'start') {
         startPage.style.display = 'block';
@@ -2542,10 +2726,22 @@ function showPage(pageName) {
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
+    } else if (pageName === 'start') {
+        // Reset mirrored mode when returning to start
+        if (window.mirroredMode) {
+            window.mirroredMode = false;
+            console.log('Mirrored mode reset');
+        }
+        startPage.style.display = 'block';
+        startPage.classList.add('active');
     } else if (pageName === 'word-entry-selection') {
         wordEntrySelectionPage.style.display = 'block';
         wordEntrySelectionPage.classList.add('active');
         console.log('Showing word entry selection page, selected mode:', window.selectedMode);
+    } else if (pageName === 'japanese-script') {
+        japaneseScriptPage.style.display = 'block';
+        japaneseScriptPage.classList.add('active');
+        console.log('Showing Japanese script page for mirrored mode');
     } else if (pageName === 'custom-script') {
         customScriptPage.style.display = 'block';
         customScriptPage.classList.add('active');
@@ -2565,8 +2761,20 @@ function changeRound(roundNumber) {
         // Don't update highest round reached when using round skip
         currentRound = roundNumber;
         
-        // Check if we're in custom mode
-        if (window.customWordPools) {
+        // Check if we're in mirrored mode
+        if (window.mirroredMode) {
+            // For mirrored mode, check if this is the final round
+            if (roundNumber >= 18) {
+                // Hide the next round button on the final round
+                nextRoundBtn.style.visibility = 'hidden';
+                nextRoundBtn.classList.add('disabled');
+            } else {
+                // Show the next round button (but keep it disabled until requirements met)
+                nextRoundBtn.style.visibility = 'visible';
+                nextRoundBtn.classList.add('disabled');
+            }
+            initializeMirroredRound();
+        } else if (window.customWordPools) {
             initializeCustomRound();
         } else {
             // For brute force mode, check if this is the final round
@@ -2648,6 +2856,40 @@ function populateRoundSelector() {
                 
                 roundSelector.appendChild(option);
             }
+        }
+    } else if (window.mirroredMode) {
+        // Populate with preset rounds (mirrored brute force mode)
+        for (let i = 1; i <= 18; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            
+            if (i % 2 === 1) {
+                // Introduction round
+                const roundNumber = Math.ceil(i / 2);
+                option.textContent = `Introduction Round ${roundNumber} (English→Japanese)`;
+                option.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
+                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
+                option.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
+                option.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
+                option.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+            } else {
+                // Practice round
+                const roundNumber = Math.floor(i / 2);
+                option.textContent = `Practice Round ${roundNumber} (English→Japanese)`;
+                option.setAttribute('data-en', `Practice Round ${roundNumber} (English→Japanese)`);
+                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber} (Inglés→Japonés)`);
+                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber} (Anglais→Japonais)`);
+                option.setAttribute('data-ja', `練習ラウンド${roundNumber} (英語→日本語)`);
+                option.setAttribute('data-zh', `练习轮次${roundNumber} (英语→日语)`);
+                option.setAttribute('data-id', `Ronde Latihan ${roundNumber} (Inggris→Jepang)`);
+                option.setAttribute('data-ko', `연습 라운드 ${roundNumber} (영어→일본어)`);
+                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+            }
+            
+            roundSelector.appendChild(option);
         }
     } else {
         // Populate with preset rounds (brute force mode)
@@ -2861,6 +3103,12 @@ function startGame() {
 }
 
 function initializeRound() {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        initializeMirroredRound();
+        return;
+    }
+    
     const isIntroductionRound = currentRound % 2 === 1;
     const roundWords = getCurrentRoundWords();
     
@@ -2946,7 +3194,13 @@ function showLearningQuestion() {
     displayWordWithSound(word);
     // Update global currentWord for answer validation
     currentWord = word;
-    correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
+    
+    // Handle correct answer display based on mode
+    if (window.mirroredMode) {
+        correctAnswerDisplay.textContent = word.japanese; // Show Japanese characters
+    } else {
+        correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
+    }
     correctAnswerDisplay.classList.remove('hidden');
     
     answerInput.value = '';
@@ -2996,6 +3250,12 @@ function initializeQuestionQueue() {
 }
 
 function showNextQuestion() {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        showMirroredRepeatingQuestion();
+        return;
+    }
+    
     if (questionQueue.length === 0) {
         // Refill queue if empty
         const roundWords = getCurrentRoundWords();
@@ -3032,6 +3292,38 @@ function submitAnswer() {
     const currentWord = getCurrentWord();
     
     if (!currentWord) return;
+    
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        // Mirrored mode - expect Japanese characters as answer
+        const correctAnswer = currentWord.japanese.toLowerCase();
+        
+        if (currentPhase === 'learning') {
+            if (userAnswer === correctAnswer) {
+                currentQuestionIndex++;
+                showMirroredLearningQuestion();
+            } else {
+                showError(currentWord.japanese);
+            }
+        } else if (currentPhase === 'elimination') {
+            if (userAnswer === correctAnswer) {
+                eliminationWords.shift();
+                showMirroredEliminationQuestion();
+            } else {
+                showError(currentWord.japanese);
+            }
+        } else {
+            // Repeating phase
+            if (userAnswer === correctAnswer) {
+                updateStats(true, currentRound);
+                handleMirroredCorrectAnswer();
+            } else {
+                updateStats(false, currentRound);
+                handleMirroredIncorrectAnswer(currentWord);
+            }
+        }
+        return;
+    }
     
     // Get the correct answer (without brackets)
     const correctAnswer = getCorrectAnswer(currentWord).toLowerCase();
@@ -3098,6 +3390,76 @@ function submitAnswer() {
     }
     
     // Progress tracking removed - no longer persisting answer progress
+}
+
+function handleMirroredCorrectAnswer() {
+    const currentWord = questionQueue.shift(); // Remove from queue
+    const wordKey = currentWord.japanese;
+    
+    console.log('handleMirroredCorrectAnswer - Processing word:', currentWord, 'Queue length:', questionQueue.length);
+    
+    // Check if this word has a pending point from a previous incorrect answer
+    if (wordsWithPendingPoints.has(wordKey)) {
+        // Award the pending point
+        if (!correctAnswers[wordKey]) {
+            correctAnswers[wordKey] = 0;
+        }
+        correctAnswers[wordKey]++;
+        wordsWithPendingPoints.delete(wordKey);
+        console.log(`Awarded pending point for ${wordKey}. Total: ${correctAnswers[wordKey]}`);
+    } else if (!currentQuestionFailed) {
+        // Normal correct answer - award point immediately (only if question wasn't failed)
+        if (!correctAnswers[wordKey]) {
+            correctAnswers[wordKey] = 0;
+        }
+        correctAnswers[wordKey]++;
+        console.log(`Awarded immediate point for ${wordKey}. Total: ${correctAnswers[wordKey]}`);
+    } else {
+        // Question was failed, no point awarded
+        console.log(`No point awarded for ${wordKey} - question was previously failed`);
+    }
+    
+    // Check if all words have 3 correct answers
+    updateNextRoundButton();
+    
+    // Show next question
+    showMirroredRepeatingQuestion();
+}
+
+function handleMirroredIncorrectAnswer(word) {
+    // Show error
+    showError(word.japanese);
+    
+    // Update statistics for incorrect answer
+    updateStats(false, currentRound);
+    
+    // Add word back to queue at positions 5 and 10 ahead
+    const queueLength = questionQueue.length;
+    
+    // Remove existing instances of this word from queue
+    questionQueue = questionQueue.filter(w => w.japanese !== word.japanese);
+    
+    // Add word at position 5 and 10
+    const insertPositions = [5, 10];
+    insertPositions.forEach(pos => {
+        if (pos <= queueLength) {
+            questionQueue.splice(pos, 0, word);
+        }
+    });
+    
+    // Mark this word as having a pending point
+    wordsWithPendingPoints.add(word.japanese);
+    console.log(`Added pending point for ${word.japanese}. Will be awarded on second correct answer.`);
+    
+    // Ensure queue has minimum length
+    while (questionQueue.length < 21) {
+        const roundWords = getCurrentRoundWords();
+        const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+        questionQueue.push(randomWord);
+    }
+    
+    // Show next question
+    showMirroredRepeatingQuestion();
 }
 
 function handleCorrectAnswer() {
@@ -3172,7 +3534,12 @@ function handleIncorrectAnswer(word) {
 }
 
 function showError(correctAnswer) {
-    correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+    // In mirrored mode, show the Japanese characters as the correct answer
+    if (window.mirroredMode) {
+        correctAnswerDisplay.textContent = correctAnswer; // Don't capitalize Japanese characters
+    } else {
+        correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+    }
     correctAnswerDisplay.classList.remove('hidden');
     
     answerInput.classList.add('error');
@@ -3182,6 +3549,38 @@ function showError(correctAnswer) {
 }
 
 function updateProgress() {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        if (currentPhase === 'learning') {
+            const roundWords = getCurrentRoundWords();
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+            totalQuestionsSpan.textContent = roundWords.length;
+            phaseProgress.textContent = '';
+        } else if (currentPhase === 'elimination') {
+            currentQuestionSpan.textContent = currentQuestionIndex + 1;
+            totalQuestionsSpan.textContent = eliminationWords.length;
+            phaseProgress.textContent = '';
+        } else {
+            const roundWords = getCurrentRoundWords();
+            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const targetCorrect = roundWords.length * 3;
+            // Cap the display at the target to prevent going over
+            const displayCorrect = Math.min(totalCorrect, targetCorrect);
+            currentQuestionSpan.textContent = displayCorrect;
+            totalQuestionsSpan.textContent = targetCorrect;
+            phaseProgress.textContent = '';
+            
+            // Add blue color when target is reached
+            const progressInfo = document.querySelector('.progress-info');
+            if (totalCorrect >= targetCorrect) {
+                progressInfo.classList.add('completed');
+            } else {
+                progressInfo.classList.remove('completed');
+            }
+        }
+        return;
+    }
+    
     // Check if we're in custom mode
     if (window.customWordPools) {
         if (currentPhase === 'learning') {
@@ -3259,6 +3658,18 @@ function updateProgress() {
 }
 
 function updatePhaseLabel() {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        if (currentPhase === 'learning') {
+            phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
+        } else if (currentPhase === 'elimination') {
+            phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+        } else {
+            phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+        }
+        return;
+    }
+    
     if (currentPhase === 'learning') {
         phaseLabel.textContent = phaseLabel.getAttribute(`data-${currentLanguage}`) || 'Words To Learn';
     } else if (currentPhase === 'elimination') {
@@ -3274,6 +3685,25 @@ function updatePhaseLabel() {
 }
 
 function updateRoundProgress() {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        if (currentPhase === 'learning') {
+            const roundWords = getCurrentRoundWords();
+            const remaining = roundWords.length - currentQuestionIndex;
+            roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+        } else if (currentPhase === 'elimination') {
+            const remaining = eliminationWords.length;
+            roundProgress.textContent = `${remaining} English words remaining (type Japanese)`;
+        } else {
+            const roundWords = getCurrentRoundWords();
+            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const targetCorrect = roundWords.length * 3;
+            const remaining = Math.max(0, targetCorrect - totalCorrect);
+            roundProgress.textContent = `${remaining} correct Japanese answers needed`;
+        }
+        return;
+    }
+    
     // Check if we're in custom mode
     if (window.customWordPools) {
         if (currentPhase === 'learning') {
@@ -3327,6 +3757,21 @@ function updateNextRoundButton() {
         return;
     }
     
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        const roundWords = getCurrentRoundWords();
+        const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+        const targetCorrect = roundWords.length * 3;
+        
+        // Enable button when target is reached
+        if (totalCorrect >= targetCorrect) {
+            nextRoundBtn.classList.remove('disabled');
+        } else {
+            nextRoundBtn.classList.add('disabled');
+        }
+        return;
+    }
+    
     const roundWords = getCurrentRoundWords();
     const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
     const targetCorrect = roundWords.length * 3;
@@ -3348,6 +3793,12 @@ function updateNextRoundButton() {
 
 function nextRound() {
     if (nextRoundBtn.classList.contains('disabled')) {
+        return;
+    }
+    
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        nextMirroredRound();
         return;
     }
     
@@ -3433,6 +3884,48 @@ function nextStandardRound() {
     }
     
     initializeRound();
+    
+    // Update highest round reached (only if not using round skip)
+    if (currentRound > userStats.highestRoundReached) {
+        userStats.highestRoundReached = currentRound;
+        saveStats();
+    }
+    
+    // Progress tracking removed - no longer persisting round progression
+}
+
+function nextMirroredRound() {
+    currentRound++;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    correctAnswers = {};
+    questionQueue = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Reset progress text color to white
+    const progressInfo = document.querySelector('.progress-info');
+    progressInfo.classList.remove('completed');
+    
+    // Check if this is the last round (round 18 for mirrored brute force mode)
+    if (currentRound >= 18) {
+        // Hide the next round button on the final round
+        nextRoundBtn.style.visibility = 'hidden';
+        nextRoundBtn.classList.add('disabled');
+    } else {
+        // Disable next round button at start of new round (but keep it visible)
+        nextRoundBtn.classList.add('disabled');
+        nextRoundBtn.style.visibility = 'visible';
+    }
+    
+    // Add words from this introduction round to all learned words
+    if (currentRound % 2 === 1) {
+        const roundWords = getCurrentRoundWords();
+        allLearnedWords = allLearnedWords.concat(roundWords);
+    }
+    
+    initializeMirroredRound();
     
     // Update highest round reached (only if not using round skip)
     if (currentRound > userStats.highestRoundReached) {
@@ -3720,7 +4213,13 @@ function updateAnswerValidation() {
     if (currentWord && currentPhase === 'learning') {
         // Update the correct answer display to show the answer in the current language
         const correctAnswer = getCorrectAnswer(currentWord);
-        correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+        if (window.mirroredMode) {
+            // In mirrored mode, show Japanese characters without capitalization
+            correctAnswerDisplay.textContent = correctAnswer;
+        } else {
+            // In normal mode, capitalize the answer
+            correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+        }
     }
 }
 
@@ -3734,7 +4233,18 @@ function updateWordSelectionGrids() {
 }
 
 function updateBackButtonText() {
-    if (window.customModeEnabled) {
+    if (window.mirroredMode) {
+        // Mirrored mode - show "Back to Japanese Script Selection"
+        backToScriptBtn.setAttribute('data-en', '← Back to Japanese Script Selection');
+        backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura Japonesa');
+        backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture Japonaise');
+        backToScriptBtn.setAttribute('data-ja', '← 日本語文字選択に戻る');
+        backToScriptBtn.setAttribute('data-zh', '← 返回日语文字选择');
+        backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip Jepang');
+        backToScriptBtn.setAttribute('data-ko', '← 일본어 문자 선택으로 돌아가기');
+        backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản Tiếng Nhật');
+        backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+    } else if (window.customModeEnabled) {
         // Custom mode - show "Back to Word Selection"
         backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
         backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
@@ -4134,7 +4644,13 @@ function displayWordWithSound(word) {
     }
     
     // Update the display
-    japaneseWord.textContent = word.japanese;
+    if (window.mirroredMode) {
+        // In mirrored mode, show English word
+        japaneseWord.textContent = word.english;
+    } else {
+        // In normal mode, show Japanese word
+        japaneseWord.textContent = word.japanese;
+    }
     currentWord = word;
     
     // Also update the global currentWord for consistency
@@ -4147,8 +4663,14 @@ function displayWordWithSound(word) {
         
         // Auto-play if enabled
         if (autoPlaySound) {
-            console.log('Auto-play enabled, playing sound for:', word.japanese);
-            playWordSound(word.japanese);
+            if (window.mirroredMode) {
+                console.log('Auto-play enabled, playing sound for English word:', word.english);
+                // In mirrored mode, we could play a sound for the English word if desired
+                // For now, just log it
+            } else {
+                console.log('Auto-play enabled, playing sound for:', word.japanese);
+                playWordSound(word.japanese);
+            }
         } else {
             console.log('Auto-play disabled, not playing sound');
         }
