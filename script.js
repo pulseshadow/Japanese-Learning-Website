@@ -3683,8 +3683,12 @@ function handleCorrectAnswer() {
 }
 
 function handleIncorrectAnswer(word) {
-    // Show error
-    showError(word.english);
+    // Show error - in mirrored mode show Japanese, in normal mode show English
+    if (window.mirroredMode) {
+        showError(word.japanese);
+    } else {
+        showError(word.english);
+    }
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
@@ -6889,8 +6893,12 @@ function handleCustomCorrectAnswer() {
 }
 
 function handleCustomIncorrectAnswer(word) {
-    // Show error
-    showError(word.english);
+    // Show error - in mirrored mode show Japanese, in normal mode show English
+    if (window.mirroredMode) {
+        showError(word.japanese);
+    } else {
+        showError(word.english);
+    }
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
