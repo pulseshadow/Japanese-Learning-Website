@@ -3488,7 +3488,13 @@ function toggleTheme() {
         document.body.classList.remove('dark-mode');
     }
     saveSettings();
-    updateAllText();
+    
+    // Use updateAllTextWithoutGrids to preserve custom mode choices
+    if (document.querySelector('.word-selection-grid')) {
+        updateAllTextWithoutGrids();
+    } else {
+        updateAllText();
+    }
 }
 
 function changeLanguage(lang) {

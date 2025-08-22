@@ -2144,13 +2144,9 @@ body.dark-mode .select-all-container {
 
 .select-all-container label {
     font-weight: bold;
-    color: #333;
+    color: inherit;
     cursor: pointer;
     user-select: none;
-}
-
-body.dark-mode .select-all-container label {
-    color: #ccc;
 }
 
 .select-all-container input[type="checkbox"] {
