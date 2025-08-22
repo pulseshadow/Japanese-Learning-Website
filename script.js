@@ -2629,6 +2629,9 @@ function showMirroredLearningQuestion() {
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
     
+    // Set currentWord for answer validation
+    currentWord = word;
+    
     // In mirrored mode, show Japanese answer
     correctAnswerDisplay.textContent = word.japanese;
     correctAnswerDisplay.classList.remove('hidden');
@@ -2656,6 +2659,9 @@ function showMirroredEliminationQuestion() {
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
+    
+    // Set currentWord for answer validation
+    currentWord = word;
     
     // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
@@ -2685,6 +2691,9 @@ function showMirroredRepeatingQuestion() {
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
+    
+    // Set currentWord for answer validation
+    currentWord = word;
     
     // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
@@ -5164,6 +5173,9 @@ function showJapaneseCustomLearningQuestion() {
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
     
+    // Set currentWord for answer validation
+    currentWord = word;
+    
     // In Japanese custom mode, show Japanese answer
     correctAnswerDisplay.textContent = word.japanese;
     correctAnswerDisplay.classList.remove('hidden');
@@ -5192,6 +5204,9 @@ function showJapaneseCustomEliminationQuestion() {
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
+    
+    // Set currentWord for answer validation
+    currentWord = word;
     
     // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
@@ -5222,6 +5237,9 @@ function showJapaneseCustomRepeatingQuestion() {
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
+    
+    // Set currentWord for answer validation
+    currentWord = word;
     
     // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
