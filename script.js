@@ -6044,8 +6044,8 @@ function displayWordWithSound(word) {
     
     // Update the display
     if (window.mirroredMode) {
-        // In mirrored mode, show English word
-        japaneseWord.textContent = word.english;
+        // In mirrored mode, show English word (capitalized)
+        japaneseWord.textContent = capitalizeWords(word.english);
     } else {
         // In normal mode, show Japanese word
         japaneseWord.textContent = word.japanese;
