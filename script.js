@@ -3595,6 +3595,15 @@ function updateAllTextWithoutGrids() {
     }
     
     // Skip word selection grids update to preserve state
+    
+    // Update select all labels in custom mode
+    const selectAllLabels = document.querySelectorAll('.select-all-container label');
+    selectAllLabels.forEach(label => {
+        const text = label.getAttribute(`data-${currentLanguage}`);
+        if (text) {
+            label.textContent = text;
+        }
+    });
 }
 
 // Function to update text while preserving HTML links
@@ -3903,6 +3912,65 @@ function populateWordSelectionGrid(roundNumber) {
         wordContent.className = 'word-section-content collapsed';
         wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
+        // Create "Select All" checkbox for this round
+        const selectAllContainer = document.createElement('div');
+        selectAllContainer.className = 'select-all-container';
+        selectAllContainer.style.marginBottom = '10px';
+        selectAllContainer.style.paddingBottom = '10px';
+        selectAllContainer.style.borderBottom = '1px solid #ddd';
+        
+        const selectAllCheckbox = document.createElement('input');
+        selectAllCheckbox.type = 'checkbox';
+        selectAllCheckbox.id = `select-all-${roundNumber - 1}-${roundIndex}`;
+        selectAllCheckbox.className = 'select-all-checkbox';
+        
+        const selectAllLabel = document.createElement('label');
+        selectAllLabel.htmlFor = `select-all-${roundNumber - 1}-${roundIndex}`;
+        selectAllLabel.setAttribute('data-en', 'Select All');
+        selectAllLabel.setAttribute('data-es', 'Seleccionar Todo');
+        selectAllLabel.setAttribute('data-fr', 'Tout Sélectionner');
+        selectAllLabel.setAttribute('data-ja', 'すべて選択');
+        selectAllLabel.setAttribute('data-zh', '全选');
+        selectAllLabel.setAttribute('data-id', 'Pilih Semua');
+        selectAllLabel.setAttribute('data-ko', '모두 선택');
+        selectAllLabel.setAttribute('data-vi', 'Chọn Tất cả');
+        selectAllLabel.textContent = selectAllLabel.getAttribute(`data-${currentLanguage}`) || 'Select All';
+        selectAllLabel.style.fontWeight = 'bold';
+        selectAllLabel.style.color = '#333';
+        
+        // Add event listener for select all functionality
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            const wordCheckboxes = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+            
+            wordCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            
+            saveCustomRounds();
+        });
+        
+        // Add event listener to update select all state when individual checkboxes change
+        const updateSelectAllState = () => {
+            const wordCheckboxes = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+            const checkedCount = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox):checked').length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === wordCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        };
+        
+        selectAllContainer.appendChild(selectAllCheckbox);
+        selectAllContainer.appendChild(selectAllLabel);
+        wordContent.appendChild(selectAllContainer);
+        
         // Create word checkboxes for this round
         wordGroup.forEach(word => {
             const wordItem = document.createElement('div');
@@ -3916,6 +3984,7 @@ function populateWordSelectionGrid(roundNumber) {
             
             // Add event listener to save custom rounds when checkbox changes
             checkbox.addEventListener('change', () => {
+                updateSelectAllState();
                 saveCustomRounds();
             });
             
@@ -3927,6 +3996,9 @@ function populateWordSelectionGrid(roundNumber) {
             wordItem.appendChild(label);
             wordContent.appendChild(wordItem);
         });
+        
+        // Initialize select all state
+        updateSelectAllState();
         
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
