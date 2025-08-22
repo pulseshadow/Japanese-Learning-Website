@@ -3045,11 +3045,22 @@ function populateRoundSelector() {
 // Auto-submit on input change with letter-by-letter checking
 answerInput.addEventListener('input', (e) => {
     const userAnswer = e.target.value.trim().toLowerCase();
-    const currentWord = getCurrentWord();
     
+    // Use the global currentWord instead of calling getCurrentWord()
     if (!currentWord) return;
     
-    const correctAnswer = getCorrectAnswer(currentWord).toLowerCase();
+    // Determine the correct answer based on mode
+    let correctAnswer;
+    if (window.mirroredMode && window.japaneseCustomModeEnabled) {
+        // Japanese custom mode - expect Japanese characters as answer
+        correctAnswer = currentWord.japanese.toLowerCase();
+    } else if (window.mirroredMode) {
+        // Mirrored brute force mode - expect Japanese characters as answer
+        correctAnswer = currentWord.japanese.toLowerCase();
+    } else {
+        // Standard mode - expect English words as answer
+        correctAnswer = getCorrectAnswer(currentWord).toLowerCase();
+    }
     
     // Check if the user answer is completely correct
     if (userAnswer === correctAnswer) {
@@ -3060,15 +3071,21 @@ answerInput.addEventListener('input', (e) => {
         return;
     }
     
-        // Check if the user answer is wrong (letter-by-letter check)
-        if (userAnswer.length > 0) {
-            // Check if the current input is wrong compared to the correct answer
-            if (checkIfAnswerIsWrong(userAnswer, correctAnswer)) {
-                // Wrong answer detected - show error and clear input
+    // Check if the user answer is wrong (letter-by-letter check)
+    if (userAnswer.length > 0) {
+        // Check if the current input is wrong compared to the correct answer
+        if (checkIfAnswerIsWrong(userAnswer, correctAnswer)) {
+            // Wrong answer detected - show error and clear input
+            if (window.mirroredMode) {
+                // In mirrored mode, show Japanese characters as correct answer
+                showErrorAndClearInput(currentWord.japanese);
+            } else {
+                // In standard mode, show English words as correct answer
                 showErrorAndClearInput(currentWord.english);
-                return;
             }
+            return;
         }
+    }
 });
 
 answerInput.addEventListener('keypress', (e) => {
@@ -3275,7 +3292,19 @@ function getCurrentRoundWords() {
 }
 
 function getCurrentWord() {
-    // Check if we're in custom mode
+    // Check if we're in Japanese custom mode first
+    if (window.japaneseCustomModeEnabled) {
+        if (currentPhase === 'learning') {
+            const roundWords = getCurrentJapaneseCustomRoundWords();
+            return roundWords[currentQuestionIndex];
+        } else if (currentPhase === 'elimination') {
+            return eliminationWords[currentQuestionIndex];
+        } else {
+            return questionQueue[0];
+        }
+    }
+    
+    // Check if we're in standard custom mode
     if (window.customWordPools) {
         if (currentPhase === 'learning') {
             const roundWords = getCurrentCustomRoundWords();
