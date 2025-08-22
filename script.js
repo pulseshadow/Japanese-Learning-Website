@@ -3498,11 +3498,16 @@ function toggleTheme() {
 }
 
 function changeLanguage(lang) {
+    console.log('Changing language from', currentLanguage, 'to', lang);
     currentLanguage = lang;
     saveSettings();
     updateLanguageButtons();
     updateAllText();
     console.log('Language changed to:', lang, 'and saved');
+    
+    // Verify the save worked
+    const savedSettings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, null);
+    console.log('Verified saved settings:', savedSettings);
 }
 
 function updateLanguageButtons() {
@@ -3700,13 +3705,22 @@ function updateBackButtonText() {
 }
 
 function detectBrowserLanguage() {
+    // Only detect browser language if no language has been saved yet
+    const savedSettings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, null);
+    if (savedSettings && savedSettings.language) {
+        console.log('Language already saved, skipping browser detection');
+        return;
+    }
+    
     const browserLang = navigator.language || navigator.userLanguage;
     const langCode = browserLang.split('-')[0];
     
     // Check if browser language is supported
     if (['en', 'es', 'fr', 'ja', 'zh', 'id', 'ko', 'vi'].includes(langCode)) {
+        console.log('Detecting browser language:', langCode);
         currentLanguage = langCode;
-        localStorage.setItem('language', langCode);
+        // Save using the proper settings system instead of direct localStorage
+        saveSettings();
         updateLanguageButtons();
         updateAllText();
     }
@@ -3935,9 +3949,6 @@ function populateWordSelectionGrid(roundNumber) {
         // Create "Select All" checkbox for this round
         const selectAllItem = document.createElement('div');
         selectAllItem.className = 'word-checkbox-item select-all-item';
-        selectAllItem.style.marginBottom = '10px';
-        selectAllItem.style.paddingBottom = '10px';
-        selectAllItem.style.borderBottom = '1px solid #ddd';
         
         const selectAllCheckbox = document.createElement('input');
         selectAllCheckbox.type = 'checkbox';
@@ -3970,7 +3981,10 @@ function populateWordSelectionGrid(roundNumber) {
         });
         
         // Add event listener to update select all state when individual checkboxes change
+        let isManualToggle = false;
         const updateSelectAllState = () => {
+            if (isManualToggle) return; // Skip if this is a manual toggle
+            
             const wordCheckboxes = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
             const checkedCount = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox):checked').length;
             
@@ -3993,10 +4007,13 @@ function populateWordSelectionGrid(roundNumber) {
         selectAllItem.addEventListener('click', (e) => {
             // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
             if (e.target !== selectAllCheckbox) {
-                console.log('Select All item clicked, toggling checkbox');
+                console.log('Select All item clicked, toggling checkbox from', selectAllCheckbox.checked, 'to', !selectAllCheckbox.checked);
+                isManualToggle = true;
                 selectAllCheckbox.checked = !selectAllCheckbox.checked;
                 // Trigger the change event manually
                 selectAllCheckbox.dispatchEvent(new Event('change'));
+                // Reset the flag after a short delay
+                setTimeout(() => { isManualToggle = false; }, 100);
             }
         });
         
@@ -4885,18 +4902,21 @@ function saveSettings() {
         darkMode: isDarkMode,
         autoPlaySound: autoPlaySound
     };
+    console.log('Saving settings:', settings);
     saveToLocalStorage(STORAGE_KEYS.SETTINGS, settings);
 }
 
 function loadSettings() {
     const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: false });
+    console.log('Loading settings:', settings);
     
     // Validate and apply language setting
     if (settings && typeof settings.language === 'string' && ['en', 'es', 'fr', 'ja', 'zh', 'id', 'ko', 'vi'].includes(settings.language)) {
+        console.log('Setting language to saved value:', settings.language);
         currentLanguage = settings.language;
     } else {
-        currentLanguage = 'en';
         console.warn('Invalid language setting, defaulting to English');
+        currentLanguage = 'en';
     }
     
     // Validate and apply dark mode setting

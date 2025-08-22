@@ -903,23 +903,26 @@ body.dark-mode .word-checkbox-item label {
 
 .select-all-item {
     background: #f8f9fa !important;
-    border-color: #E75D38 !important;
+    border-color: #e0e0e0 !important;
     font-weight: bold;
+    border-bottom: 2px solid #ddd !important;
+    margin-bottom: 15px !important;
+    padding-bottom: 10px !important;
 }
 
 body.dark-mode .select-all-item {
     background: #2a2a2a !important;
-    border-color: #00bfff !important;
+    border-color: #606060 !important;
 }
 
 .select-all-item:hover {
     background: #e9ecef !important;
-    border-color: #d64a2a !important;
+    border-color: #e0e0e0 !important;
 }
 
 body.dark-mode .select-all-item:hover {
     background: #404040 !important;
-    border-color: #0080ff !important;
+    border-color: #606060 !important;
 }
 
 .custom-word-section {
