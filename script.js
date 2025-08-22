@@ -2454,6 +2454,9 @@ hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
 backToScriptBtn.addEventListener('click', () => {
+    console.log('Back button clicked - window.cameFromWordEntry:', window.cameFromWordEntry);
+    console.log('window.customModeEnabled:', window.customModeEnabled);
+    
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
         showPage('japanese-script');
@@ -2466,8 +2469,10 @@ backToScriptBtn.addEventListener('click', () => {
     } else {
         // Check if we came from word entry selection
         if (window.cameFromWordEntry) {
+            console.log('Going back to word entry selection');
             showPage('word-entry-selection');
         } else {
+            console.log('Going back to script selection');
             showPage('script');
         }
     }
@@ -2525,6 +2530,7 @@ enterEnglishWordsBtn.addEventListener('click', () => {
     console.log('Enter English Words clicked, selected mode:', window.selectedMode);
     // Set flag to indicate we came from word entry selection
     window.cameFromWordEntry = true;
+    console.log('Set window.cameFromWordEntry to true');
     
     // Check which mode was selected and navigate accordingly
     if (window.selectedMode === 'brute-force') {
@@ -2600,8 +2606,8 @@ function startMirroredGame() {
     // Set mirrored mode flag
     window.mirroredMode = true;
     
-    // Clear the word entry flag when starting a mirrored game
-    window.cameFromWordEntry = false;
+    // Don't clear the word entry flag when starting a mirrored game
+    // This allows users to go back to word entry selection from script pages
     
     // Show game page
     showPage('game');
@@ -3199,8 +3205,8 @@ function startGame() {
     window.customModeEnabled = false;
     window.customWordPools = null;
     
-    // Clear the word entry flag when starting a game
-    window.cameFromWordEntry = false;
+    // Don't clear the word entry flag when starting a game
+    // This allows users to go back to word entry selection from script pages
     
     // Ensure we're NOT in mirrored mode for normal brute force
     window.mirroredMode = false;
@@ -5179,8 +5185,8 @@ function startJapaneseCustomRun() {
     window.mirroredMode = true;
     window.japaneseCustomModeEnabled = true;
     
-    // Clear the word entry flag when starting a Japanese custom game
-    window.cameFromWordEntry = false;
+    // Don't clear the word entry flag when starting a Japanese custom game
+    // This allows users to go back to word entry selection from script pages
     
     // Show game page
     showPage('game');
@@ -6680,8 +6686,8 @@ function startCustomRun() {
     window.customModeEnabled = true;
     window.customModeNoPracticeRounds = disablePracticeRoundsToggle.checked;
     
-    // Clear the word entry flag when starting a custom game
-    window.cameFromWordEntry = false;
+    // Don't clear the word entry flag when starting a custom game
+    // This allows users to go back to word entry selection from script pages
     
     // Populate round selector with custom rounds
     populateRoundSelector();
