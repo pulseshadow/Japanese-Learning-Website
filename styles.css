@@ -407,7 +407,7 @@ body.dark-mode .body-text {
     color: #333333;
     border: 1px solid #d0d0d0;
     width: 100%;
-    max-width: 400px;
+    max-width: 90%;
 }
 
 body.dark-mode .practice-btn, body.dark-mode .script-btn {
