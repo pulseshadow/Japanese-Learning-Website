@@ -2128,6 +2128,35 @@ body.dark-mode .ad-container {
     }
 }
 
+/* Bottom ad container styling */
+#bottom-ad {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    margin: 0;
+    border-radius: 0;
+    background: #ffffff;
+    border-top: 1px solid #e9ecef;
+}
+
+body.dark-mode #bottom-ad {
+    background: #1a1a1a;
+    border-top-color: #444;
+}
+
+/* Add bottom padding to body to prevent content from being hidden behind the ad */
+body {
+    padding-bottom: 120px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 80px;
+    }
+}
+
 .language-warning {
     color: #E75D38;
     font-weight: 600;

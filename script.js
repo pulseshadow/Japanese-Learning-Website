@@ -3554,6 +3554,49 @@ function updateAllText() {
     }
 }
 
+function updateAllTextWithoutGrids() {
+    // Update all elements with data attributes
+    const elements = document.querySelectorAll('[data-en], [data-es], [data-fr], [data-ja], [data-zh], [data-id], [data-ko], [data-vi]');
+    elements.forEach(element => {
+        const text = element.getAttribute(`data-${currentLanguage}`);
+        if (text) {
+            // Check if element contains HTML links that need to be preserved
+            const hasLinks = element.querySelector('a') !== null;
+            if (hasLinks) {
+                // Preserve HTML structure by replacing text while keeping links
+                updateTextWithPreservedLinks(element, text);
+            } else {
+                // No links to preserve, use simple textContent
+                element.textContent = text;
+            }
+        }
+    });
+    
+    // Update placeholders
+    const inputs = document.querySelectorAll('[data-en-placeholder], [data-es-placeholder], [data-fr-placeholder], [data-ja-placeholder], [data-zh-placeholder], [data-id-placeholder], [data-ko-placeholder], [data-vi-placeholder]');
+    inputs.forEach(input => {
+        const placeholder = input.getAttribute(`data-${currentLanguage}-placeholder`);
+        if (placeholder) {
+            input.placeholder = placeholder;
+        }
+    });
+    
+    // Update back button text based on mode
+    updateBackButtonText();
+    
+    // Update cookie status display if it exists
+    if (cookieStatusText) {
+        updateCookieStatusDisplay();
+    }
+    
+    // Update answer validation for current language if in game
+    if (currentPage === 'game' && currentWord) {
+        updateAnswerValidation();
+    }
+    
+    // Skip word selection grids update to preserve state
+}
+
 // Function to update text while preserving HTML links
 function updateTextWithPreservedLinks(element, newText) {
     // Store the original links
@@ -4182,8 +4225,8 @@ function removeSpecificRound(roundNumber) {
             // Update round selector with new rounds
             populateRoundSelector();
             
-            // Update language for new elements
-            updateAllText();
+            // Update language for new elements (but don't regenerate grids)
+            updateAllTextWithoutGrids();
             
             // Save custom rounds to local storage
             saveCustomRounds();
@@ -4240,8 +4283,8 @@ function removeCustomRound() {
             header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1}`);
         });
         
-        // Update language for renumbered elements
-        updateAllText();
+        // Update language for renumbered elements (but don't regenerate grids)
+        updateAllTextWithoutGrids();
     } else {
         alert(getTranslatedMessage('must-have-round'));
     }
