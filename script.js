@@ -4314,9 +4314,11 @@ function initializeJapaneseCustomMode() {
     
     // Try to load saved Japanese custom rounds first
     const loaded = loadJapaneseCustomRounds();
+    console.log('Loaded Japanese custom rounds:', loaded);
     
     if (!loaded) {
         // If no saved data, initialize with default structure
+        console.log('No saved data, initializing default structure');
         populateJapaneseWordSelectionGrids();
         setupJapaneseCustomWordButtons();
         
@@ -4325,12 +4327,15 @@ function initializeJapaneseCustomMode() {
     } else {
         // If data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
+        console.log('Data was loaded, populating grids and setting up buttons');
         populateJapaneseWordSelectionGrids();
         setupJapaneseCustomWordButtons();
         
         // Now restore the saved state after grids are populated
         restoreJapaneseCustomRoundsState();
     }
+    
+    console.log('Japanese custom mode initialization complete');
 }
 
 function populateJapaneseWordSelectionGrids() {
@@ -4338,17 +4343,25 @@ function populateJapaneseWordSelectionGrids() {
     
     // Clear existing grids
     const container = document.getElementById('japanese-custom-rounds-container');
-    if (!container) return;
+    if (!container) {
+        console.error('japanese-custom-rounds-container not found');
+        return;
+    }
+    console.log('Found container:', container);
     
     container.innerHTML = '';
     
     // Get the number of rounds from saved data or default to 1
     const savedData = loadJapaneseCustomRounds();
     const numRounds = savedData ? savedData.rounds.length : 1;
+    console.log('Number of rounds to create:', numRounds);
     
     for (let i = 1; i <= numRounds; i++) {
+        console.log('Adding round:', i);
         addJapaneseCustomRound(i);
     }
+    
+    console.log('Finished populating Japanese word selection grids');
 }
 
 function addJapaneseCustomRound(roundNumber = null) {
@@ -4583,8 +4596,8 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
             
             const label = document.createElement('label');
             label.setAttribute('for', `japanese-word-${roundNumber}-${roundIndex}-${word.japanese}`);
-            // In Japanese custom mode, show English word as label
-            label.textContent = word.english;
+            // In Japanese custom mode, show English word as label (capitalized)
+            label.textContent = capitalizeWords(word.english);
             
             wordContainer.appendChild(checkbox);
             wordContainer.appendChild(label);
