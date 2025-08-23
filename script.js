@@ -2606,6 +2606,9 @@ function startMirroredGame() {
     // Show game page
     showPage('game');
     
+    // Show hiragana keyboard for mirrored mode
+    showHiraganaKeyboard();
+    
     // Initialize the first round
     initializeMirroredRound();
 }
@@ -2816,34 +2819,52 @@ function showPage(pageName) {
             window.japaneseCustomModeEnabled = false;
             console.log('Japanese custom mode reset');
         }
+        
+        // Hide hiragana keyboard when returning to start
+        hideHiraganaKeyboard();
+        
         startPage.style.display = 'block';
         startPage.classList.add('active');
     } else if (pageName === 'script') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         scriptPage.style.display = 'block';
         scriptPage.classList.add('active');
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
     } else if (pageName === 'word-entry-selection') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         wordEntrySelectionPage.style.display = 'block';
         wordEntrySelectionPage.classList.add('active');
         console.log('Showing word entry selection page, selected mode:', window.selectedMode);
     } else if (pageName === 'japanese-script') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         japaneseScriptPage.style.display = 'block';
         japaneseScriptPage.classList.add('active');
         console.log('Showing Japanese script page for mirrored mode');
     } else if (pageName === 'custom-script') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         customScriptPage.style.display = 'block';
         customScriptPage.classList.add('active');
     } else if (pageName === 'custom-mode') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
         initializeCustomMode();
     } else if (pageName === 'japanese-custom-mode') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         japaneseCustomModePage.style.display = 'block';
         japaneseCustomModePage.classList.add('active');
         initializeJapaneseCustomMode();
     } else if (pageName === 'stats') {
+        // Hide hiragana keyboard when not in game
+        hideHiraganaKeyboard();
         statsPage.style.display = 'block';
         statsPage.classList.add('active');
     }
@@ -3204,6 +3225,9 @@ function startGame() {
     
     // Ensure we're NOT in mirrored mode for normal brute force
     window.mirroredMode = false;
+    
+    // Hide hiragana keyboard for normal mode
+    hideHiraganaKeyboard();
     
     // Populate round selector with preset rounds
     populateRoundSelector();
@@ -5198,6 +5222,9 @@ function startJapaneseCustomRun() {
     // Show game page
     showPage('game');
     
+    // Show hiragana keyboard for Japanese custom mode
+    showHiraganaKeyboard();
+    
     // Initialize the first round
     initializeJapaneseCustomRound();
 }
@@ -5357,6 +5384,72 @@ function capitalizeWords(text) {
     }).join(' ');
 }
 
+// Hiragana Keyboard Functionality
+function setupHiraganaKeyboard() {
+    console.log('Setting up hiragana keyboard');
+    
+    const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
+    if (!hiraganaKeyboard) {
+        console.error('Hiragana keyboard not found');
+        return;
+    }
+    
+    // Add click event listeners to all hiragana keys
+    const hiraganaKeys = hiraganaKeyboard.querySelectorAll('.hiragana-key');
+    hiraganaKeys.forEach(key => {
+        key.addEventListener('click', () => {
+            const character = key.getAttribute('data-char');
+            if (character) {
+                insertHiraganaCharacter(character);
+            }
+        });
+    });
+    
+    console.log('Hiragana keyboard setup complete');
+}
+
+function insertHiraganaCharacter(character) {
+    const answerInput = document.getElementById('answer-input');
+    if (!answerInput) {
+        console.error('Answer input not found');
+        return;
+    }
+    
+    // Insert the character at the current cursor position
+    const cursorPos = answerInput.selectionStart;
+    const currentValue = answerInput.value;
+    const newValue = currentValue.slice(0, cursorPos) + character + currentValue.slice(cursorPos);
+    
+    answerInput.value = newValue;
+    
+    // Set cursor position after the inserted character
+    answerInput.selectionStart = answerInput.selectionEnd = cursorPos + character.length;
+    
+    // Focus back to the input
+    answerInput.focus();
+    
+    // Trigger input event to update validation
+    answerInput.dispatchEvent(new Event('input'));
+    
+    console.log('Inserted hiragana character:', character);
+}
+
+function showHiraganaKeyboard() {
+    const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
+    if (hiraganaKeyboard) {
+        hiraganaKeyboard.classList.remove('hidden');
+        console.log('Hiragana keyboard shown');
+    }
+}
+
+function hideHiraganaKeyboard() {
+    const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
+    if (hiraganaKeyboard) {
+        hiraganaKeyboard.classList.add('hidden');
+        console.log('Hiragana keyboard hidden');
+    }
+}
+
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     showPage('start');
@@ -5369,6 +5462,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize sound system
     setupSoundButton();
     setupAutoPlayToggle();
+    
+    // Initialize hiragana keyboard
+    setupHiraganaKeyboard();
     
     // Load cookie consent preferences and set initial script states
     const consentLoaded = loadCookieConsent();
@@ -6692,6 +6788,12 @@ function startCustomRun() {
     window.customWordPools = customWordPools;
     window.customModeEnabled = true;
     window.customModeNoPracticeRounds = disablePracticeRoundsToggle.checked;
+    
+    // Ensure we're NOT in mirrored mode for normal custom mode
+    window.mirroredMode = false;
+    
+    // Hide hiragana keyboard for normal custom mode
+    hideHiraganaKeyboard();
     
     // Don't clear the word entry flag when starting a custom game
     // This allows users to go back to word entry selection from script pages
