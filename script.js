@@ -2468,7 +2468,7 @@ backToScriptBtn.addEventListener('click', () => {
         if (window.cameFromWordEntry) {
             showPage('word-entry-selection');
         } else {
-            showPage('script');
+            showPage('start');
         }
     }
 });
