@@ -2531,9 +2531,11 @@ body.dark-mode .hiragana-key:hover {
 
 /* Shift rows 4 and 5 left side characters */
 .keyboard-row:nth-child(4) {
-    margin-left: -20px;
+    justify-content: flex-start;
+    padding-left: 20px;
 }
 
 .keyboard-row:nth-child(5) {
-    margin-left: -20px;
+    justify-content: flex-start;
+    padding-left: 20px;
 }
