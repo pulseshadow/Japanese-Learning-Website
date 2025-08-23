@@ -2466,35 +2466,13 @@ body.dark-mode .hiragana-keyboard {
 .keyboard-row {
     display: flex;
     justify-content: center;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
 }
 
 .keyboard-row:last-child {
     margin-bottom: 0;
-}
-
-.keyboard-column {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.keyboard-column.centered {
-    justify-content: center;
-}
-
-.keyboard-separator {
-    font-size: 24px;
-    font-weight: bold;
-    color: #666;
-    margin: 0 10px;
-    user-select: none;
-}
-
-body.dark-mode .keyboard-separator {
-    color: #aaa;
 }
 
 .hiragana-key {
@@ -2543,4 +2521,10 @@ body.dark-mode .hiragana-key:hover {
 
 .hiragana-keyboard.hidden {
     display: none;
+}
+
+.keyboard-separator {
+    width: 40px;
+    height: 1px;
+    visibility: hidden;
 }

@@ -8140,11 +8140,15 @@ function updateSoundButtonState() {
         soundBtn.style.opacity = '0.5';
     }
     
-    // Update title based on TTS availability
+    // Update title and CSS classes based on TTS availability
     if (speechSynthesis && japaneseVoice) {
         soundBtn.title = 'Play Japanese pronunciation';
+        soundBtn.classList.add('tts-available');
+        soundBtn.classList.remove('tts-unavailable');
     } else {
         soundBtn.title = 'Play sound (TTS not available)';
+        soundBtn.classList.remove('tts-available');
+        soundBtn.classList.add('tts-unavailable');
     }
 }
 
