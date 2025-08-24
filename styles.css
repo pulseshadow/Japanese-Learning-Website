@@ -2560,22 +2560,34 @@ body.dark-mode .hiragana-key:hover {
     border-color: #b0b0b0 !important;
     color: #555 !important;
     font-weight: bold;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    cursor: default !important;
 }
 
 body.dark-mode .number-key {
     background: #404040 !important;
     border-color: #666 !important;
     color: #ccc !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    cursor: default !important;
 }
 
 .number-key:hover {
-    background: #E75D38 !important;
-    border-color: #d64a2a !important;
-    color: #ffffff !important;
+    background: #f0f0f0 !important;
+    border-color: #b0b0b0 !important;
+    color: #555 !important;
+    opacity: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 body.dark-mode .number-key:hover {
-    background: #00bfff !important;
-    border-color: #0080ff !important;
-    color: #ffffff !important;
+    background: #404040 !important;
+    border-color: #666 !important;
+    color: #ccc !important;
+    opacity: 0 !important;
+    transform: none !important;
+    box-shadow: none !important;
 }
