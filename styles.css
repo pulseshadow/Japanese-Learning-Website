@@ -2467,9 +2467,9 @@ body.dark-mode .hiragana-keyboard {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 20px;
     margin-bottom: 15px;
-    width: 100%;
+    position: relative;
 }
 
 .keyboard-row:last-child {
@@ -2480,7 +2480,7 @@ body.dark-mode .hiragana-keyboard {
     display: flex;
     gap: 8px;
     align-items: center;
-    min-width: 200px;
+    min-width: 250px;
     justify-content: flex-start;
 }
 
