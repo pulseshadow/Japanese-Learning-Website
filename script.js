@@ -7806,8 +7806,8 @@ function loadCookieConsent() {
             // Show ad containers
             showAdContainers();
         } else {
-            // Hide ad containers by default
-            hideAdContainers();
+            // Show ad containers by default
+            showAdContainers();
         }
         
         // Handle analytics based on saved preference
@@ -7838,16 +7838,17 @@ function loadCookieConsent() {
         return true;
     }
     
-    // No consent data found - ensure scripts are disabled by default
-    adsenseScript.classList.add('disabled');
+    // No consent data found - show ads by default, disable analytics
+    adsenseScript.classList.remove('disabled');
     analyticsScript.classList.add('disabled');
-    window.adsenseEnabled = false;
+    window.adsenseEnabled = true;
     window.analyticsEnabled = false;
     
-    // Hide ad containers by default
-    hideAdContainers();
+    // Show ad containers by default
+    showAdContainers();
     
-    console.log('No consent data found - scripts disabled by default');
+    console.log('No consent data found - ads enabled by default, analytics disabled');
+    console.log('Ad containers should now be visible');
     return false;
 }
 
@@ -8244,8 +8245,10 @@ function updateStatsDisplay() {
 // Ad container management functions
 function showAdContainers() {
     const adContainers = document.querySelectorAll('.ad-container');
-    adContainers.forEach(container => {
+    console.log('Found ad containers:', adContainers.length);
+    adContainers.forEach((container, index) => {
         container.classList.remove('hidden');
+        console.log(`Ad container ${index + 1} shown:`, container);
     });
     console.log('Ad containers shown');
 }
