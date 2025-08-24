@@ -2553,3 +2553,29 @@ body.dark-mode .hiragana-key:hover {
 .hiragana-keyboard.hidden {
     display: none;
 }
+
+/* Number key styling */
+.number-key {
+    background: #f0f0f0 !important;
+    border-color: #b0b0b0 !important;
+    color: #555 !important;
+    font-weight: bold;
+}
+
+body.dark-mode .number-key {
+    background: #404040 !important;
+    border-color: #666 !important;
+    color: #ccc !important;
+}
+
+.number-key:hover {
+    background: #E75D38 !important;
+    border-color: #d64a2a !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .number-key:hover {
+    background: #00bfff !important;
+    border-color: #0080ff !important;
+    color: #ffffff !important;
+}
