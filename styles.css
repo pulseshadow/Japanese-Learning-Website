@@ -2582,6 +2582,41 @@ body.dark-mode .hiragana-key:hover {
     display: none;
 }
 
+/* Ad Container Styles */
+.ad-container {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 300px;
+    max-width: 300px;
+    z-index: 100;
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.dark-mode .ad-container {
+    background: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 1200px) {
+    .ad-container {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+        right: auto;
+        top: auto;
+    }
+}
+
 /* Number key styling */
 .number-key {
     background: #f0f0f0 !important;
