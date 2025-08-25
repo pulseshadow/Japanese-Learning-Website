@@ -2592,8 +2592,31 @@ body.dark-mode .hiragana-key:hover {
     display: none;
 }
 
+  /* Left-Side Ad Container Styles (Start Page) */
+  #start-left-ad {
+      position: fixed !important;
+      left: 20px !important;
+      top: 50% !important;
+      transform: translateY(-50%) !important;
+      width: 300px !important;
+      max-width: 300px !important;
+      z-index: 100 !important;
+      background: #ffffff !important;
+      border: 1px solid #e0e0e0 !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      margin: 0 !important;
+      text-align: center !important;
+      min-height: 600px !important;
+      height: 600px !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+  
   /* Right-Side Ad Container Styles (Start Page) */
-  .ad-container:not(#bottom-ad):not(#game-ad) {
+  .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
       position: fixed !important;
       right: 20px !important;
       top: 50% !important;
@@ -2638,7 +2661,13 @@ body.dark-mode .hiragana-key:hover {
       opacity: 1 !important;
   }
 
-body.dark-mode .ad-container:not(#bottom-ad):not(#game-ad) {
+body.dark-mode #start-left-ad {
+    background: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
     background: #2a2a2a;
     border-color: #444;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -2652,7 +2681,19 @@ body.dark-mode #game-ad {
 
 /* Responsive design for smaller screens */
 @media (max-width: 1200px) {
-    .ad-container:not(#bottom-ad):not(#game-ad) {
+    #start-left-ad {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+        left: auto;
+        top: auto;
+        min-height: 250px;
+        height: auto;
+    }
+    
+    .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
         position: static;
         transform: none;
         width: 100%;
