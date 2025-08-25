@@ -5466,6 +5466,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize hiragana keyboard
     setupHiraganaKeyboard();
     
+    // Initialize AdSense after page load
+    setTimeout(() => {
+        console.log('=== Initializing AdSense ===');
+        initializeAdSense();
+    }, 2000);
+    
     // Load cookie consent preferences and set initial script states
     const consentLoaded = loadCookieConsent();
     
@@ -7847,6 +7853,32 @@ function loadCookieConsent() {
     // Show ad containers by default
     showAdContainers();
     
+    // Force AdSense to load and display ads
+    if (typeof adsbygoogle !== 'undefined') {
+        console.log('AdSense is available, pushing ads...');
+        try {
+            adsbygoogle.push({});
+            console.log('AdSense ads pushed successfully');
+        } catch (error) {
+            console.error('Error pushing AdSense ads:', error);
+        }
+    } else {
+        console.warn('AdSense not available, trying to load...');
+        // Try to load AdSense manually
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+        script.crossOrigin = 'anonymous';
+        script.onload = function() {
+            console.log('AdSense script loaded manually');
+            if (typeof adsbygoogle !== 'undefined') {
+                adsbygoogle.push({});
+                console.log('AdSense ads pushed after manual load');
+            }
+        };
+        document.head.appendChild(script);
+    }
+    
     console.log('No consent data found - ads enabled by default, analytics disabled');
     console.log('Ad containers should now be visible');
     return false;
@@ -8257,6 +8289,22 @@ function showAdContainers() {
     });
     console.log('Ad containers shown');
     
+    // Force AdSense to load ads in all containers
+    setTimeout(() => {
+        console.log('=== Forcing AdSense to load ads ===');
+        if (typeof adsbygoogle !== 'undefined') {
+            console.log('AdSense available, pushing ads to all containers...');
+            try {
+                adsbygoogle.push({});
+                console.log('AdSense ads pushed to all containers');
+            } catch (error) {
+                console.error('Error pushing AdSense ads:', error);
+            }
+        } else {
+            console.warn('AdSense not available, attempting to load...');
+        }
+    }, 1000);
+    
     // Check ad container status after a delay to see if they're still visible
     setTimeout(() => {
         console.log('=== Ad Container Status Check ===');
@@ -8265,9 +8313,54 @@ function showAdContainers() {
             const isVisible = !container.classList.contains('hidden');
             const display = window.getComputedStyle(container).display;
             const position = window.getComputedStyle(container).position;
-            console.log(`Ad container ${index + 1}: visible=${isVisible}, display=${display}, position=${position}`);
+            const height = window.getComputedStyle(container).height;
+            const width = window.getComputedStyle(container).width;
+            console.log(`Ad container ${index + 1}: visible=${isVisible}, display=${display}, position=${position}, height=${height}, width=${width}`);
+            
+            // Check if AdSense content is loaded
+            const adContent = container.querySelector('.adsbygoogle');
+            if (adContent) {
+                console.log(`Ad container ${index + 1} has AdSense content:`, adContent.innerHTML.length > 0);
+            } else {
+                console.warn(`Ad container ${index + 1} has no AdSense content`);
+            }
         });
-    }, 2000);
+    }, 3000);
+    
+    // Set up continuous monitoring to catch when ads disappear
+    setInterval(() => {
+        const adContainers = document.querySelectorAll('.ad-container');
+        adContainers.forEach((container, index) => {
+            const isVisible = !container.classList.contains('hidden');
+            const display = window.getComputedStyle(container).display;
+            const visibility = window.getComputedStyle(container).visibility;
+            const opacity = window.getComputedStyle(container).opacity;
+            
+            if (!isVisible || display === 'none' || visibility === 'hidden' || opacity === '0') {
+                console.warn(`⚠️ Ad container ${index + 1} became hidden!`);
+                console.warn(`- Classes: ${container.className}`);
+                console.warn(`- Display: ${display}`);
+                console.warn(`- Visibility: ${visibility}`);
+                console.warn(`- Opacity: ${opacity}`);
+                console.warn(`- Hidden class: ${container.classList.contains('hidden')}`);
+                
+                // Aggressively restore the ad
+                container.classList.remove('hidden');
+                container.style.display = 'block';
+                container.style.visibility = 'visible';
+                container.style.opacity = '1';
+                container.style.position = 'fixed';
+                container.style.right = '20px';
+                container.style.top = '50%';
+                container.style.transform = 'translateY(-50%)';
+                container.style.width = '300px';
+                container.style.height = '600px';
+                container.style.zIndex = '100';
+                
+                console.log(`✅ Aggressively restored ad container ${index + 1}`);
+            }
+        });
+    }, 1000);
 }
 
 function hideAdContainers() {
@@ -8276,4 +8369,56 @@ function hideAdContainers() {
         container.classList.add('hidden');
     });
     console.log('Ad containers hidden');
+}
+
+function initializeAdSense() {
+    console.log('Initializing AdSense...');
+    
+    // Check if AdSense is available
+    if (typeof adsbygoogle === 'undefined') {
+        console.warn('AdSense not available, loading script...');
+        
+        // Load AdSense script
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+        script.crossOrigin = 'anonymous';
+        
+        script.onload = function() {
+            console.log('AdSense script loaded successfully');
+            loadAdSenseAds();
+        };
+        
+        script.onerror = function() {
+            console.error('Failed to load AdSense script');
+        };
+        
+        document.head.appendChild(script);
+    } else {
+        console.log('AdSense already available');
+        loadAdSenseAds();
+    }
+}
+
+function loadAdSenseAds() {
+    console.log('Loading AdSense ads...');
+    
+    // Find all ad containers
+    const adContainers = document.querySelectorAll('.ad-container');
+    console.log(`Found ${adContainers.length} ad containers`);
+    
+    adContainers.forEach((container, index) => {
+        const adElement = container.querySelector('.adsbygoogle');
+        if (adElement) {
+            console.log(`Loading ad in container ${index + 1}...`);
+            try {
+                (adsbygoogle = window.adsbygoogle || []).push({});
+                console.log(`Ad pushed to container ${index + 1}`);
+            } catch (error) {
+                console.error(`Error loading ad in container ${index + 1}:`, error);
+            }
+        } else {
+            console.warn(`No AdSense element found in container ${index + 1}`);
+        }
+    });
 }
