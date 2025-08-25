@@ -5495,6 +5495,24 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof adsbygoogle !== 'undefined') {
             adsbygoogle.push({});
             console.log('✅ Force reloaded all AdSense ads');
+        } else {
+            console.warn('⚠️ AdSense still not available, trying manual script injection...');
+            // Try to manually inject the AdSense script
+            const script = document.createElement('script');
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+            script.async = true;
+            script.crossOrigin = 'anonymous';
+            script.onload = () => {
+                console.log('✅ Manual AdSense script injection successful');
+                if (typeof adsbygoogle !== 'undefined') {
+                    adsbygoogle.push({});
+                    console.log('✅ Ads pushed after manual injection');
+                }
+            };
+            script.onerror = (error) => {
+                console.error('❌ Manual AdSense script injection failed:', error);
+            };
+            document.head.appendChild(script);
         }
     }, 5000);
     
@@ -5520,8 +5538,40 @@ document.addEventListener('DOMContentLoaded', () => {
             
             container.insertBefore(debugText, container.firstChild);
             
+            // Add AdSense status to debug text
+            const adsenseStatus = document.createElement('div');
+            adsenseStatus.style.color = 'blue';
+            adsenseStatus.style.fontWeight = 'bold';
+            adsenseStatus.style.fontSize = '12px';
+            adsenseStatus.style.marginTop = '5px';
+            
+            if (typeof adsbygoogle !== 'undefined') {
+                adsenseStatus.textContent = '✅ AdSense is available';
+                adsenseStatus.style.color = 'green';
+            } else {
+                adsenseStatus.textContent = '❌ AdSense is NOT available';
+                adsenseStatus.style.color = 'red';
+            }
+            
+            container.appendChild(adsenseStatus);
+            
             console.log(`✅ Added visual indicator to ad container ${index + 1} (${container.id || 'no-id'})`);
         });
+        
+        // Test if AdSense script URL is accessible
+        console.log('=== TESTING ADSENSE SCRIPT ACCESS ===');
+        fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891', { method: 'HEAD' })
+            .then(response => {
+                console.log('✅ AdSense script URL is accessible:', response.status);
+            })
+            .catch(error => {
+                console.error('❌ AdSense script URL is NOT accessible:', error);
+                console.error('This might be due to:');
+                console.error('1. Network connectivity issues');
+                console.error('2. Firewall blocking the request');
+                console.error('3. DNS resolution problems');
+                console.error('4. Ad blocker blocking the request');
+            });
     }, 3000);
     
     // Load cookie consent preferences and set initial script states

@@ -174,16 +174,11 @@
 
             <!-- Google AdSense Ad -->
             <div class="ad-container" id="start-ad">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
-                     crossorigin="anonymous"></script>
                 <ins class="adsbygoogle"
                      style="display:block"
                      data-ad-format="autorelaxed"
                      data-ad-client="ca-pub-9490674375260891"
                      data-ad-slot="8498619655"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
             </div>
 
             <!-- User Stats Section -->
@@ -459,8 +454,6 @@
             
             <!-- Google AdSense Ad for Mirrored Mode -->
             <div class="ad-container" id="game-ad">
-                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
-                     crossorigin="anonymous"></script>
                 <!-- side ad left -->
                 <ins class="adsbygoogle"
                      style="display:block"
@@ -468,9 +461,6 @@
                      data-ad-slot="7138625896"
                      data-ad-format="auto"
                      data-full-width-responsive="true"></ins>
-                <script>
-                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>
             </div>
         </div>
 
@@ -978,81 +968,8 @@
     </script>
     
     <script id="adsense-script" class="adsense-script">
-        // Google AdSense Script
-        (function() {
-                    // Initialize adsenseEnabled if not set
-        if (typeof window.adsenseEnabled === 'undefined') {
-            window.adsenseEnabled = false; // Default to disabled until user consents
-        }
-        
-        // Only load AdSense if advertising cookies are accepted
-        if (window.adsenseEnabled === true) {
-                const script = document.createElement('script');
-                script.async = true;
-                script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
-                script.crossOrigin = 'anonymous';
-                script.id = 'google-adsense-script';
-                document.head.appendChild(script);
-                console.log('Google AdSense loaded');
-            } else {
-                console.log('AdSense disabled - advertising cookies rejected');
-            }
-        })();
-        
-        // Function to disable AdSense if user rejects cookies later
-        window.disableAdSense = function() {
-            const existingScript = document.getElementById('google-adsense-script');
-            if (existingScript) {
-                existingScript.remove();
-                console.log('Google AdSense script removed');
-            }
-            window.adsenseEnabled = false;
-        };
-        
-        // Function to enable AdSense if user accepts cookies later
-        window.enableAdSense = function() {
-            if (window.adsenseEnabled !== false) {
-                const script = document.createElement('script');
-                script.async = true;
-                script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
-                script.crossOrigin = 'anonymous';
-                script.id = 'google-adsense-script';
-                document.head.appendChild(script);
-                console.log('Google AdSense re-enabled');
-            }
-        };
-        
-        // Function to disable Google Analytics if user rejects cookies
-        window.disableAnalytics = function() {
-            const analyticsScript = document.getElementById('analytics-script');
-            if (analyticsScript) {
-                analyticsScript.style.display = 'none';
-                analyticsScript.classList.add('disabled');
-            }
-            // Clear dataLayer to stop tracking
-            if (window.dataLayer) {
-                window.dataLayer = [];
-            }
-            window.analyticsEnabled = false;
-            console.log('Google Analytics disabled');
-        };
-        
-        // Function to enable Google Analytics if user accepts cookies later
-        window.enableAnalytics = function() {
-            const analyticsScript = document.getElementById('analytics-script');
-            if (analyticsScript) {
-                analyticsScript.style.display = 'block';
-                analyticsScript.classList.remove('disabled');
-            }
-            // Initialize analytics if not already done
-            if (!window.analyticsEnabled) {
-                // Initialize gtag with current date and config
-                gtag('js', new Date());
-                gtag('config', 'G-2CFV890C7W');
-                window.analyticsEnabled = true;
-                console.log('Google Analytics enabled and initialized');
-            }
-        };
+        // Simplified AdSense Script - handled by script.js
+        console.log('AdSense script placeholder - actual loading handled by script.js');
     </script>
 
     <!-- Ad Unit - Bottom of Screen -->
@@ -1063,9 +980,6 @@
              data-ad-slot="1234567891"
              data-ad-format="auto"
              data-full-width-responsive="true"></ins>
-        <script>
-             (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
     </div>
 
     <script src="script.js"></script>
