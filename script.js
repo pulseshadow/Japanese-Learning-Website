@@ -8249,8 +8249,25 @@ function showAdContainers() {
     adContainers.forEach((container, index) => {
         container.classList.remove('hidden');
         console.log(`Ad container ${index + 1} shown:`, container);
+        console.log(`- ID: ${container.id || 'no-id'}`);
+        console.log(`- Classes: ${container.className}`);
+        console.log(`- Visible: ${!container.classList.contains('hidden')}`);
+        console.log(`- Display: ${window.getComputedStyle(container).display}`);
+        console.log(`- Position: ${window.getComputedStyle(container).position}`);
     });
     console.log('Ad containers shown');
+    
+    // Check ad container status after a delay to see if they're still visible
+    setTimeout(() => {
+        console.log('=== Ad Container Status Check ===');
+        const adContainers = document.querySelectorAll('.ad-container');
+        adContainers.forEach((container, index) => {
+            const isVisible = !container.classList.contains('hidden');
+            const display = window.getComputedStyle(container).display;
+            const position = window.getComputedStyle(container).position;
+            console.log(`Ad container ${index + 1}: visible=${isVisible}, display=${display}, position=${position}`);
+        });
+    }, 2000);
 }
 
 function hideAdContainers() {
