@@ -5568,52 +5568,91 @@ document.addEventListener('DOMContentLoaded', () => {
                 scriptsLoaded++;
                 if (scriptsLoaded === totalScripts) {
                     // All scripts attempted, check if any worked
-                    if (typeof adsbygoogle !== 'undefined') {
-                        console.log('✅ At least one AdSense script method worked');
-                        adContainers.forEach(container => {
-                            const successText = document.createElement('div');
-                            successText.textContent = '✅ Alternative AdSense loading successful - ads should appear';
-                            successText.style.color = 'green';
-                            successText.style.fontWeight = 'bold';
-                            successText.style.fontSize = '12px';
-                            successText.style.marginTop = '5px';
-                            container.appendChild(successText);
-                        });
-                        adsbygoogle.push({});
-                    } else {
-                        console.log('❌ All alternative methods failed');
-                        adContainers.forEach(container => {
-                            const errorText = document.createElement('div');
-                            errorText.textContent = '❌ All AdSense loading methods failed - script completely blocked';
-                            errorText.style.color = 'red';
-                            errorText.style.fontWeight = 'bold';
-                            errorText.style.fontSize = '12px';
-                            errorText.style.marginTop = '5px';
-                            container.appendChild(errorText);
+                                            if (typeof adsbygoogle !== 'undefined') {
+                            console.log('✅ At least one AdSense script method worked');
                             
-                            // Add a test ad to verify containers work
-                            const testAd = document.createElement('div');
-                            testAd.innerHTML = `
-                                <div style="background: #f0f0f0; border: 2px solid #333; padding: 20px; text-align: center; margin-top: 10px;">
-                                    <h3 style="margin: 0 0 10px 0; color: #333;">🧪 TEST AD CONTAINER</h3>
-                                    <p style="margin: 0 0 15px 0; color: #666;">This shows the ad container is working</p>
-                                    <div style="background: #007bff; color: white; padding: 10px; border-radius: 5px;">
-                                        📢 Sample Ad Content
+                            // Remove all debugging indicators and restore normal ad display
+                            adContainers.forEach(container => {
+                                // Remove debugging styles
+                                container.style.border = '';
+                                container.style.backgroundColor = '';
+                                container.style.padding = '';
+                                container.style.margin = '';
+                                
+                                // Remove all debugging text elements
+                                const debugElements = container.querySelectorAll('div');
+                                debugElements.forEach(element => {
+                                    if (element.textContent.includes('AD CONTAINER') || 
+                                        element.textContent.includes('AdSense') ||
+                                        element.textContent.includes('TEST AD') ||
+                                        element.textContent.includes('SOLUTIONS')) {
+                                        element.remove();
+                                    }
+                                });
+                                
+                                // Show the container normally
+                                container.style.display = 'block';
+                                container.style.visibility = 'visible';
+                                container.style.opacity = '1';
+                            });
+                            
+                            // Push ads to all containers
+                            adsbygoogle.push({});
+                            console.log('✅ Ads pushed to all containers');
+                            
+                            // Add success indicator briefly
+                            adContainers.forEach(container => {
+                                const successText = document.createElement('div');
+                                successText.textContent = '✅ AdSense loaded successfully - ads should appear shortly';
+                                successText.style.color = 'green';
+                                successText.style.fontWeight = 'bold';
+                                successText.style.fontSize = '12px';
+                                successText.style.marginTop = '5px';
+                                successText.style.textAlign = 'center';
+                                container.appendChild(successText);
+                                
+                                // Remove success text after 5 seconds
+                                setTimeout(() => {
+                                    if (successText.parentNode) {
+                                        successText.remove();
+                                    }
+                                }, 5000);
+                            });
+                        } else {
+                            console.log('❌ All alternative methods failed');
+                            adContainers.forEach(container => {
+                                const errorText = document.createElement('div');
+                                errorText.textContent = '❌ All AdSense loading methods failed - script completely blocked';
+                                errorText.style.color = 'red';
+                                errorText.style.fontWeight = 'bold';
+                                errorText.style.fontSize = '12px';
+                                errorText.style.marginTop = '5px';
+                                container.appendChild(errorText);
+                                
+                                // Add a test ad to verify containers work
+                                const testAd = document.createElement('div');
+                                testAd.innerHTML = `
+                                    <div style="background: #f0f0f0; border: 2px solid #333; padding: 20px; text-align: center; margin-top: 10px;">
+                                        <h3 style="margin: 0 0 10px 0; color: #333;">🧪 TEST AD CONTAINER</h3>
+                                        <p style="margin: 0 0 15px 0; color: #666;">This shows the ad container is working</p>
+                                        <div style="background: #007bff; color: white; padding: 10px; border-radius: 5px;">
+                                            📢 Sample Ad Content
+                                        </div>
+                                        <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
+                                            AdSense blocked by network - container functional
+                                        </p>
+                                        <div style="background: #ff6b6b; color: white; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                            <strong>🔧 SOLUTIONS TO TRY:</strong><br>
+                                            1. Contact your network administrator<br>
+                                            2. Try using a VPN service<br>
+                                            3. Contact your ISP about Google blocking<br>
+                                            4. Use alternative ad networks
+                                        </div>
                                     </div>
-                                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
-                                        AdSense blocked by network - container functional
-                                    </p>
-                                    <div style="background: #ff6b6b; color: white; padding: 10px; border-radius: 5px; margin-top: 15px;">
-                                        <strong>🔧 SOLUTIONS TO TRY:</strong><br>
-                                        1. Contact your network administrator<br>
-                                        2. Try using a VPN service<br>
-                                        3. Contact your ISP about Google blocking<br>
-                                        4. Use alternative ad networks
-                                    </div>
-                                </div>
-                            `;
-                            container.appendChild(testAd);
-                        });
+                                `;
+                                container.appendChild(testAd);
+                            });
+                        }
                     }
                 }
             };
@@ -8749,3 +8788,43 @@ function loadAdSenseAds() {
         console.warn('❌ Game ad container not found');
     }
 }
+
+// Function to manually clean up debugging indicators
+function cleanupDebugIndicators() {
+    const adContainers = document.querySelectorAll('.ad-container');
+    adContainers.forEach(container => {
+        // Remove debugging styles
+        container.style.border = '';
+        container.style.backgroundColor = '';
+        container.style.padding = '';
+        container.style.margin = '';
+        
+        // Remove all debugging text elements
+        const debugElements = container.querySelectorAll('div');
+        debugElements.forEach(element => {
+            if (element.textContent.includes('AD CONTAINER') || 
+                element.textContent.includes('AdSense') ||
+                element.textContent.includes('TEST AD') ||
+                element.textContent.includes('SOLUTIONS') ||
+                element.textContent.includes('URLs accessible') ||
+                element.textContent.includes('URLs blocked')) {
+                element.remove();
+            }
+        });
+        
+        // Show the container normally
+        container.style.display = 'block';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+    });
+    
+    console.log('✅ Debug indicators cleaned up');
+}
+
+// Auto-cleanup after 10 seconds if AdSense is available
+setTimeout(() => {
+    if (typeof adsbygoogle !== 'undefined') {
+        console.log('✅ AdSense available, cleaning up debug indicators...');
+        cleanupDebugIndicators();
+    }
+}, 10000);
