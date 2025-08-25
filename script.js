@@ -5498,6 +5498,32 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }, 5000);
     
+    // Add visual indicators to ad containers for debugging
+    setTimeout(() => {
+        console.log('=== ADDING VISUAL INDICATORS ===');
+        const adContainers = document.querySelectorAll('.ad-container');
+        adContainers.forEach((container, index) => {
+            // Add a visible border and background for debugging
+            container.style.border = '3px solid red';
+            container.style.backgroundColor = 'yellow';
+            container.style.padding = '10px';
+            container.style.margin = '10px';
+            
+            // Add text to show the container is visible
+            const debugText = document.createElement('div');
+            debugText.textContent = `AD CONTAINER ${index + 1} (${container.id || 'no-id'}) - SHOULD BE VISIBLE`;
+            debugText.style.color = 'red';
+            debugText.style.fontWeight = 'bold';
+            debugText.style.fontSize = '14px';
+            debugText.style.textAlign = 'center';
+            debugText.style.marginBottom = '10px';
+            
+            container.insertBefore(debugText, container.firstChild);
+            
+            console.log(`✅ Added visual indicator to ad container ${index + 1} (${container.id || 'no-id'})`);
+        });
+    }, 3000);
+    
     // Load cookie consent preferences and set initial script states
     loadCookieConsent();
     
@@ -8329,11 +8355,14 @@ function hideAdContainers() {
 }
 
 function initializeAdSense() {
-    console.log('Initializing AdSense...');
+    console.log('=== INITIALIZING ADSENSE ===');
     
     // Check if AdSense is available
+    console.log('AdSense available at start:', typeof adsbygoogle !== 'undefined');
+    console.log('window.adsbygoogle at start:', window.adsbygoogle);
+    
     if (typeof adsbygoogle === 'undefined') {
-        console.warn('AdSense not available, loading script...');
+        console.warn('⚠️ AdSense not available, loading script...');
         
         // Load AdSense script
         const script = document.createElement('script');
@@ -8342,58 +8371,109 @@ function initializeAdSense() {
         script.crossOrigin = 'anonymous';
         
         script.onload = function() {
-            console.log('AdSense script loaded successfully');
+            console.log('✅ AdSense script loaded successfully');
+            console.log('AdSense available after load:', typeof adsbygoogle !== 'undefined');
+            console.log('window.adsbygoogle after load:', window.adsbygoogle);
             loadAdSenseAds();
         };
         
-        script.onerror = function() {
-            console.error('Failed to load AdSense script');
+        script.onerror = function(error) {
+            console.error('❌ Failed to load AdSense script:', error);
+            console.error('This might be due to:');
+            console.error('1. Network connectivity issues');
+            console.error('2. Ad blocker blocking the script');
+            console.error('3. Browser security settings');
+            console.error('4. Firewall blocking the request');
         };
         
+        // Add a timeout to detect if script loading is taking too long
+        setTimeout(() => {
+            if (typeof adsbygoogle === 'undefined') {
+                console.warn('⚠️ AdSense script loading timeout - script may be blocked');
+                console.warn('Check browser console for network errors');
+            }
+        }, 10000);
+        
         document.head.appendChild(script);
+        console.log('AdSense script element added to head');
+        console.log('Script src:', script.src);
     } else {
-        console.log('AdSense already available');
+        console.log('✅ AdSense already available');
         loadAdSenseAds();
     }
 }
 
 function loadAdSenseAds() {
-    console.log('Loading AdSense ads...');
+    console.log('=== LOADING ADSENSE ADS ===');
+    
+    // Check if AdSense is available
+    console.log('AdSense available:', typeof adsbygoogle !== 'undefined');
+    console.log('window.adsbygoogle:', window.adsbygoogle);
     
     // Find all ad containers
     const adContainers = document.querySelectorAll('.ad-container');
     console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
+        console.log(`\n--- Ad Container ${index + 1} ---`);
+        console.log('Container ID:', container.id || 'no-id');
+        console.log('Container HTML:', container.innerHTML.substring(0, 200) + '...');
+        console.log('Container classes:', container.className);
+        console.log('Container display:', window.getComputedStyle(container).display);
+        console.log('Container visibility:', window.getComputedStyle(container).visibility);
+        console.log('Container opacity:', window.getComputedStyle(container).opacity);
+        
         const adElement = container.querySelector('.adsbygoogle');
         if (adElement) {
-            console.log(`Loading ad in container ${index + 1} (ID: ${container.id || 'no-id'})...`);
+            console.log('✅ AdSense element found in container');
+            console.log('AdSense element HTML:', adElement.outerHTML);
+            console.log('AdSense element data attributes:', {
+                'data-ad-client': adElement.getAttribute('data-ad-client'),
+                'data-ad-slot': adElement.getAttribute('data-ad-slot'),
+                'data-ad-format': adElement.getAttribute('data-ad-format')
+            });
+            
             try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log(`Ad pushed to container ${index + 1} (ID: ${container.id || 'no-id'})`);
+                if (typeof adsbygoogle !== 'undefined') {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    console.log('✅ Ad pushed to container successfully');
+                } else {
+                    console.error('❌ AdSense not available when trying to push ad');
+                }
             } catch (error) {
-                console.error(`Error loading ad in container ${index + 1} (ID: ${container.id || 'no-id'}):`, error);
+                console.error('❌ Error loading ad in container:', error);
             }
         } else {
-            console.warn(`No AdSense element found in container ${index + 1} (ID: ${container.id || 'no-id'})`);
+            console.warn('❌ No AdSense element found in container');
+            console.log('Container children:', Array.from(container.children).map(child => child.tagName + (child.className ? '.' + child.className : '')));
         }
     });
     
     // Specifically handle game ad if it exists
     const gameAd = document.getElementById('game-ad');
     if (gameAd) {
+        console.log('\n--- Game Ad Container ---');
         console.log('Game ad container found, ensuring it loads properly...');
+        console.log('Game ad HTML:', gameAd.innerHTML.substring(0, 300) + '...');
+        
         const gameAdElement = gameAd.querySelector('.adsbygoogle');
         if (gameAdElement) {
-            console.log('Game ad element found, pushing ad...');
+            console.log('✅ Game ad element found, pushing ad...');
+            console.log('Game ad element HTML:', gameAdElement.outerHTML);
             try {
-                (adsbygoogle = window.adsbygoogle || []).push({});
-                console.log('Game ad pushed successfully');
+                if (typeof adsbygoogle !== 'undefined') {
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                    console.log('✅ Game ad pushed successfully');
+                } else {
+                    console.error('❌ AdSense not available for game ad');
+                }
             } catch (error) {
-                console.error('Error loading game ad:', error);
+                console.error('❌ Error loading game ad:', error);
             }
         } else {
-            console.warn('No AdSense element found in game ad container');
+            console.warn('❌ No AdSense element found in game ad container');
         }
+    } else {
+        console.warn('❌ Game ad container not found');
     }
 }
