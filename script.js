@@ -5522,45 +5522,101 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.appendChild(warningText);
             });
             
-            // Try to manually inject the AdSense script
-            const script = document.createElement('script');
-            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
-            script.async = true;
-            script.crossOrigin = 'anonymous';
-            script.onload = () => {
-                console.log('✅ Manual AdSense script injection successful');
-                
-                // Update visual indicator
-                adContainers.forEach(container => {
-                    const successText = document.createElement('div');
-                    successText.textContent = '✅ Manual AdSense injection successful - ads should appear';
-                    successText.style.color = 'green';
-                    successText.style.fontWeight = 'bold';
-                    successText.style.fontSize = '12px';
-                    successText.style.marginTop = '5px';
-                    container.appendChild(successText);
-                });
-                
-                if (typeof adsbygoogle !== 'undefined') {
-                    adsbygoogle.push({});
-                    console.log('✅ Ads pushed after manual injection');
+            // Try multiple methods to load AdSense script
+            console.log('⚠️ Trying alternative AdSense loading methods...');
+            
+            // Method 1: Direct script injection
+            const script1 = document.createElement('script');
+            script1.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+            script1.async = true;
+            script1.crossOrigin = 'anonymous';
+            
+            // Method 2: Try without crossOrigin
+            const script2 = document.createElement('script');
+            script2.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+            script2.async = true;
+            
+            // Method 3: Try with different client parameter
+            const script3 = document.createElement('script');
+            script3.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
+            script3.async = true;
+            
+            let scriptsLoaded = 0;
+            let totalScripts = 3;
+            
+            const checkAllScriptsLoaded = () => {
+                scriptsLoaded++;
+                if (scriptsLoaded === totalScripts) {
+                    // All scripts attempted, check if any worked
+                    if (typeof adsbygoogle !== 'undefined') {
+                        console.log('✅ At least one AdSense script method worked');
+                        adContainers.forEach(container => {
+                            const successText = document.createElement('div');
+                            successText.textContent = '✅ Alternative AdSense loading successful - ads should appear';
+                            successText.style.color = 'green';
+                            successText.style.fontWeight = 'bold';
+                            successText.style.fontSize = '12px';
+                            successText.style.marginTop = '5px';
+                            container.appendChild(successText);
+                        });
+                        adsbygoogle.push({});
+                    } else {
+                        console.log('❌ All alternative methods failed');
+                        adContainers.forEach(container => {
+                            const errorText = document.createElement('div');
+                            errorText.textContent = '❌ All AdSense loading methods failed - script completely blocked';
+                            errorText.style.color = 'red';
+                            errorText.style.fontWeight = 'bold';
+                            errorText.style.fontSize = '12px';
+                            errorText.style.marginTop = '5px';
+                            container.appendChild(errorText);
+                        });
+                    }
                 }
             };
-            script.onerror = (error) => {
-                console.error('❌ Manual AdSense script injection failed:', error);
-                
-                // Update visual indicator
-                adContainers.forEach(container => {
-                    const errorText = document.createElement('div');
-                    errorText.textContent = '❌ Manual AdSense injection failed - script blocked';
-                    errorText.style.color = 'red';
-                    errorText.style.fontWeight = 'bold';
-                    errorText.style.fontSize = '12px';
-                    errorText.style.marginTop = '5px';
-                    container.appendChild(errorText);
-                });
+            
+            script1.onload = () => {
+                console.log('✅ Method 1 (with crossOrigin) successful');
+                checkAllScriptsLoaded();
             };
-            document.head.appendChild(script);
+            script1.onerror = () => {
+                console.log('❌ Method 1 failed');
+                checkAllScriptsLoaded();
+            };
+            
+            script2.onload = () => {
+                console.log('✅ Method 2 (without crossOrigin) successful');
+                checkAllScriptsLoaded();
+            };
+            script2.onerror = () => {
+                console.log('❌ Method 2 failed');
+                checkAllScriptsLoaded();
+            };
+            
+            script3.onload = () => {
+                console.log('✅ Method 3 (basic URL) successful');
+                checkAllScriptsLoaded();
+            };
+            script3.onerror = () => {
+                console.log('❌ Method 3 failed');
+                checkAllScriptsLoaded();
+            };
+            
+            // Try all methods
+            document.head.appendChild(script1);
+            document.head.appendChild(script2);
+            document.head.appendChild(script3);
+            
+            // Update visual indicator
+            adContainers.forEach(container => {
+                const warningText = document.createElement('div');
+                warningText.textContent = '⚠️ Trying 3 alternative AdSense loading methods...';
+                warningText.style.color = 'orange';
+                warningText.style.fontWeight = 'bold';
+                warningText.style.fontSize = '12px';
+                warningText.style.marginTop = '5px';
+                container.appendChild(warningText);
+            });
         }
     }, 5000);
     
@@ -5608,33 +5664,50 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Test if AdSense script URL is accessible
         console.log('=== TESTING ADSENSE SCRIPT ACCESS ===');
-        fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891', { method: 'HEAD' })
-            .then(response => {
-                console.log('✅ AdSense script URL is accessible:', response.status);
-                // Add visual success indicator
-                adContainers.forEach(container => {
-                    const successText = document.createElement('div');
-                    successText.textContent = '✅ AdSense script URL accessible - script should load';
-                    successText.style.color = 'green';
-                    successText.style.fontWeight = 'bold';
-                    successText.style.fontSize = '12px';
-                    successText.style.marginTop = '5px';
-                    container.appendChild(successText);
+        
+        // Test multiple URLs to see which ones are blocked
+        const testUrls = [
+            'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891',
+            'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
+            'https://www.googletagmanager.com/gtag/js',
+            'https://www.google.com'
+        ];
+        
+        let accessibleUrls = [];
+        let blockedUrls = [];
+        
+        testUrls.forEach((url, index) => {
+            fetch(url, { method: 'HEAD' })
+                .then(response => {
+                    accessibleUrls.push(url);
+                    console.log(`✅ URL ${index + 1} accessible:`, url);
+                })
+                .catch(error => {
+                    blockedUrls.push(url);
+                    console.log(`❌ URL ${index + 1} blocked:`, url);
+                })
+                .finally(() => {
+                    if (index === testUrls.length - 1) {
+                        // All tests complete, show results
+                        adContainers.forEach(container => {
+                            const resultText = document.createElement('div');
+                            resultText.style.fontWeight = 'bold';
+                            resultText.style.fontSize = '12px';
+                            resultText.style.marginTop = '5px';
+                            
+                            if (accessibleUrls.length > 0) {
+                                resultText.textContent = `✅ ${accessibleUrls.length} URLs accessible, ${blockedUrls.length} blocked`;
+                                resultText.style.color = 'green';
+                            } else {
+                                resultText.textContent = `❌ All URLs blocked - network issue detected`;
+                                resultText.style.color = 'red';
+                            }
+                            
+                            container.appendChild(resultText);
+                        });
+                    }
                 });
-            })
-            .catch(error => {
-                console.error('❌ AdSense script URL is NOT accessible:', error);
-                // Add visual error indicator
-                adContainers.forEach(container => {
-                    const errorText = document.createElement('div');
-                    errorText.textContent = '❌ AdSense script URL blocked - check ad blocker/firewall';
-                    errorText.style.color = 'red';
-                    errorText.style.fontWeight = 'bold';
-                    errorText.style.fontSize = '12px';
-                    errorText.style.marginTop = '5px';
-                    container.appendChild(errorText);
-                });
-            });
+        });
     }, 3000);
     
     // Load cookie consent preferences and set initial script states
