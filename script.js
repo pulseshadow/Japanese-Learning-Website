@@ -5551,8 +5551,18 @@ document.addEventListener('DOMContentLoaded', () => {
             script5.src = 'https://www.gstatic.com/adsense/adsbygoogle.js';
             script5.async = true;
             
+            // Method 6: Try loading from a proxy/CDN service
+            const script6 = document.createElement('script');
+            script6.src = 'https://unpkg.com/adsbygoogle@1.0.0/dist/adsbygoogle.min.js';
+            script6.async = true;
+            
+            // Method 7: Try loading from a different Google subdomain
+            const script7 = document.createElement('script');
+            script7.src = 'https://ssl.gstatic.com/adsense/adsbygoogle.js';
+            script7.async = true;
+            
             let scriptsLoaded = 0;
-            let totalScripts = 5;
+            let totalScripts = 7;
             
             const checkAllScriptsLoaded = () => {
                 scriptsLoaded++;
@@ -5593,6 +5603,13 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
                                         AdSense blocked by network - container functional
                                     </p>
+                                    <div style="background: #ff6b6b; color: white; padding: 10px; border-radius: 5px; margin-top: 15px;">
+                                        <strong>🔧 SOLUTIONS TO TRY:</strong><br>
+                                        1. Contact your network administrator<br>
+                                        2. Try using a VPN service<br>
+                                        3. Contact your ISP about Google blocking<br>
+                                        4. Use alternative ad networks
+                                    </div>
                                 </div>
                             `;
                             container.appendChild(testAd);
@@ -5646,17 +5663,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkAllScriptsLoaded();
             };
             
+            script6.onload = () => {
+                console.log('✅ Method 6 (unpkg CDN) successful');
+                checkAllScriptsLoaded();
+            };
+            script6.onerror = () => {
+                console.log('❌ Method 6 failed');
+                checkAllScriptsLoaded();
+            };
+            
+            script7.onload = () => {
+                console.log('✅ Method 7 (ssl.gstatic) successful');
+                checkAllScriptsLoaded();
+            };
+            script7.onerror = () => {
+                console.log('❌ Method 7 failed');
+                checkAllScriptsLoaded();
+            };
+            
             // Try all methods
             document.head.appendChild(script1);
             document.head.appendChild(script2);
             document.head.appendChild(script3);
             document.head.appendChild(script4);
             document.head.appendChild(script5);
+            document.head.appendChild(script6);
+            document.head.appendChild(script7);
             
             // Update visual indicator
             adContainers.forEach(container => {
                 const warningText = document.createElement('div');
-                warningText.textContent = '⚠️ Trying 5 alternative AdSense loading methods...';
+                warningText.textContent = '⚠️ Trying 7 alternative AdSense loading methods...';
                 warningText.style.color = 'orange';
                 warningText.style.fontWeight = 'bold';
                 warningText.style.fontSize = '12px';
