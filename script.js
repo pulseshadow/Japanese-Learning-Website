@@ -5541,8 +5541,18 @@ document.addEventListener('DOMContentLoaded', () => {
             script3.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js';
             script3.async = true;
             
+            // Method 4: Try loading from a different domain (CDN approach)
+            const script4 = document.createElement('script');
+            script4.src = 'https://cdn.jsdelivr.net/npm/adsbygoogle@1.0.0/dist/adsbygoogle.min.js';
+            script4.async = true;
+            
+            // Method 5: Try loading from a different Google domain
+            const script5 = document.createElement('script');
+            script5.src = 'https://www.gstatic.com/adsense/adsbygoogle.js';
+            script5.async = true;
+            
             let scriptsLoaded = 0;
-            let totalScripts = 3;
+            let totalScripts = 5;
             
             const checkAllScriptsLoaded = () => {
                 scriptsLoaded++;
@@ -5570,6 +5580,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             errorText.style.fontSize = '12px';
                             errorText.style.marginTop = '5px';
                             container.appendChild(errorText);
+                            
+                            // Add a test ad to verify containers work
+                            const testAd = document.createElement('div');
+                            testAd.innerHTML = `
+                                <div style="background: #f0f0f0; border: 2px solid #333; padding: 20px; text-align: center; margin-top: 10px;">
+                                    <h3 style="margin: 0 0 10px 0; color: #333;">🧪 TEST AD CONTAINER</h3>
+                                    <p style="margin: 0 0 15px 0; color: #666;">This shows the ad container is working</p>
+                                    <div style="background: #007bff; color: white; padding: 10px; border-radius: 5px;">
+                                        📢 Sample Ad Content
+                                    </div>
+                                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">
+                                        AdSense blocked by network - container functional
+                                    </p>
+                                </div>
+                            `;
+                            container.appendChild(testAd);
                         });
                     }
                 }
@@ -5602,15 +5628,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 checkAllScriptsLoaded();
             };
             
+            script4.onload = () => {
+                console.log('✅ Method 4 (CDN) successful');
+                checkAllScriptsLoaded();
+            };
+            script4.onerror = () => {
+                console.log('❌ Method 4 failed');
+                checkAllScriptsLoaded();
+            };
+            
+            script5.onload = () => {
+                console.log('✅ Method 5 (gstatic) successful');
+                checkAllScriptsLoaded();
+            };
+            script5.onerror = () => {
+                console.log('❌ Method 5 failed');
+                checkAllScriptsLoaded();
+            };
+            
             // Try all methods
             document.head.appendChild(script1);
             document.head.appendChild(script2);
             document.head.appendChild(script3);
+            document.head.appendChild(script4);
+            document.head.appendChild(script5);
             
             // Update visual indicator
             adContainers.forEach(container => {
                 const warningText = document.createElement('div');
-                warningText.textContent = '⚠️ Trying 3 alternative AdSense loading methods...';
+                warningText.textContent = '⚠️ Trying 5 alternative AdSense loading methods...';
                 warningText.style.color = 'orange';
                 warningText.style.fontWeight = 'bold';
                 warningText.style.fontSize = '12px';
@@ -5670,7 +5716,10 @@ document.addEventListener('DOMContentLoaded', () => {
             'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891',
             'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js',
             'https://www.googletagmanager.com/gtag/js',
-            'https://www.google.com'
+            'https://www.google.com',
+            'https://www.bing.com',
+            'https://www.yahoo.com',
+            'https://httpbin.org/get'
         ];
         
         let accessibleUrls = [];
