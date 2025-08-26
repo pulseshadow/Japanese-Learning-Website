@@ -8826,32 +8826,5 @@ setTimeout(() => {
     if (typeof adsbygoogle !== 'undefined') {
         console.log('✅ AdSense available, cleaning up debug indicators...');
         cleanupDebugIndicators();
-        
-        // Add status indicator for AdSense ads
-        const adContainers = document.querySelectorAll('.ad-container');
-        adContainers.forEach(container => {
-            const statusText = document.createElement('div');
-            statusText.innerHTML = `
-                <div style="background: #e8f5e8; border: 2px solid #4caf50; padding: 15px; text-align: center; margin-top: 10px; border-radius: 8px;">
-                    <h4 style="margin: 0 0 10px 0; color: #2e7d32;">✅ AdSense Status</h4>
-                    <p style="margin: 0 0 8px 0; color: #388e3c; font-size: 14px;">
-                        <strong>AdSense script loaded successfully!</strong>
-                    </p>
-                    <p style="margin: 0 0 8px 0; color: #666; font-size: 12px;">
-                        If you see white boxes, your AdSense account may need:
-                    </p>
-                    <ul style="margin: 0; padding-left: 20px; text-align: left; color: #666; font-size: 12px;">
-                        <li>Account approval from Google</li>
-                        <li>Site verification on AdSense dashboard</li>
-                        <li>Ad unit configuration</li>
-                        <li>Policy compliance review</li>
-                    </ul>
-                    <p style="margin: 8px 0 0 0; color: #999; font-size: 11px;">
-                        Check your AdSense dashboard for status updates
-                    </p>
-                </div>
-            `;
-            container.appendChild(statusText);
-        });
     }
 }, 10000);
