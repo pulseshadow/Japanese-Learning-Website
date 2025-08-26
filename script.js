@@ -5495,12 +5495,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof adsbygoogle !== 'undefined') {
             adsbygoogle.push({});
             console.log('✅ Force reloaded all AdSense ads');
-            
-            console.log('✅ AdSense loaded successfully - ads should appear');
         } else {
             console.warn('⚠️ AdSense still not available, trying manual script injection...');
-            
-            console.log('⚠️ AdSense not available - trying manual injection...');
             
             // Try to manually inject the AdSense script
             const script = document.createElement('script');
@@ -5510,8 +5506,6 @@ document.addEventListener('DOMContentLoaded', () => {
             script.onload = () => {
                 console.log('✅ Manual AdSense script injection successful');
                 
-                console.log('✅ Manual AdSense injection successful - ads should appear');
-                
                 if (typeof adsbygoogle !== 'undefined') {
                     adsbygoogle.push({});
                     console.log('✅ Ads pushed after manual injection');
@@ -5519,8 +5513,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             script.onerror = (error) => {
                 console.error('❌ Manual AdSense script injection failed:', error);
-                
-                console.log('❌ Manual AdSense injection failed - script blocked');
             };
             document.head.appendChild(script);
         }
