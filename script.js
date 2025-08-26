@@ -5496,31 +5496,11 @@ document.addEventListener('DOMContentLoaded', () => {
             adsbygoogle.push({});
             console.log('✅ Force reloaded all AdSense ads');
             
-            // Add visual success indicator
-            const adContainers = document.querySelectorAll('.ad-container');
-            adContainers.forEach(container => {
-                const successText = document.createElement('div');
-                successText.textContent = '✅ AdSense loaded successfully - ads should appear';
-                successText.style.color = 'green';
-                successText.style.fontWeight = 'bold';
-                successText.style.fontSize = '12px';
-                successText.style.marginTop = '5px';
-                container.appendChild(successText);
-            });
+            console.log('✅ AdSense loaded successfully - ads should appear');
         } else {
             console.warn('⚠️ AdSense still not available, trying manual script injection...');
             
-            // Add visual warning indicator
-            const adContainers = document.querySelectorAll('.ad-container');
-            adContainers.forEach(container => {
-                const warningText = document.createElement('div');
-                warningText.textContent = '⚠️ AdSense not available - trying manual injection...';
-                warningText.style.color = 'orange';
-                warningText.style.fontWeight = 'bold';
-                warningText.style.fontSize = '12px';
-                warningText.style.marginTop = '5px';
-                container.appendChild(warningText);
-            });
+            console.log('⚠️ AdSense not available - trying manual injection...');
             
             // Try to manually inject the AdSense script
             const script = document.createElement('script');
@@ -5530,16 +5510,7 @@ document.addEventListener('DOMContentLoaded', () => {
             script.onload = () => {
                 console.log('✅ Manual AdSense script injection successful');
                 
-                // Update visual indicator
-                adContainers.forEach(container => {
-                    const successText = document.createElement('div');
-                    successText.textContent = '✅ Manual AdSense injection successful - ads should appear';
-                    successText.style.color = 'green';
-                    successText.style.fontWeight = 'bold';
-                    successText.style.fontSize = '12px';
-                    successText.style.marginTop = '5px';
-                    container.appendChild(successText);
-                });
+                console.log('✅ Manual AdSense injection successful - ads should appear');
                 
                 if (typeof adsbygoogle !== 'undefined') {
                     adsbygoogle.push({});
@@ -5549,92 +5520,22 @@ document.addEventListener('DOMContentLoaded', () => {
             script.onerror = (error) => {
                 console.error('❌ Manual AdSense script injection failed:', error);
                 
-                // Update visual indicator
-                adContainers.forEach(container => {
-                    const errorText = document.createElement('div');
-                    errorText.textContent = '❌ Manual AdSense injection failed - script blocked';
-                    errorText.style.color = 'red';
-                    errorText.style.fontWeight = 'bold';
-                    errorText.style.fontSize = '12px';
-                    errorText.style.marginTop = '5px';
-                    container.appendChild(errorText);
-                });
+                console.log('❌ Manual AdSense injection failed - script blocked');
             };
             document.head.appendChild(script);
         }
     }, 5000);
     
-    // Add visual indicators to ad containers for debugging
+    // Log ad container status (console only, no visual debugging)
     setTimeout(() => {
-        console.log('=== ADDING VISUAL INDICATORS ===');
+        console.log('=== CHECKING AD CONTAINERS ===');
         const adContainers = document.querySelectorAll('.ad-container');
         adContainers.forEach((container, index) => {
-            // Add a visible border and background for debugging
-            container.style.border = '3px solid red';
-            container.style.backgroundColor = 'yellow';
-            container.style.padding = '10px';
-            container.style.margin = '10px';
-            
-            // Add text to show the container is visible
-            const debugText = document.createElement('div');
-            debugText.textContent = `AD CONTAINER ${index + 1} (${container.id || 'no-id'}) - SHOULD BE VISIBLE`;
-            debugText.style.color = 'red';
-            debugText.style.fontWeight = 'bold';
-            debugText.style.fontSize = '14px';
-            debugText.style.textAlign = 'center';
-            debugText.style.marginBottom = '10px';
-            
-            container.insertBefore(debugText, container.firstChild);
-            
-            // Add AdSense status to debug text
-            const adsenseStatus = document.createElement('div');
-            adsenseStatus.style.color = 'blue';
-            adsenseStatus.style.fontWeight = 'bold';
-            adsenseStatus.style.fontSize = '12px';
-            adsenseStatus.style.marginTop = '5px';
-            
-            if (typeof adsbygoogle !== 'undefined') {
-                adsenseStatus.textContent = '✅ AdSense is available';
-                adsenseStatus.style.color = 'green';
-            } else {
-                adsenseStatus.textContent = '❌ AdSense is NOT available';
-                adsenseStatus.style.color = 'red';
-            }
-            
-            container.appendChild(adsenseStatus);
-            
-            console.log(`✅ Added visual indicator to ad container ${index + 1} (${container.id || 'no-id'})`);
+            console.log(`Ad Container ${index + 1}: ${container.id || 'no-id'}`);
+            console.log('Display:', window.getComputedStyle(container).display);
+            console.log('Visibility:', window.getComputedStyle(container).visibility);
+            console.log('Opacity:', window.getComputedStyle(container).opacity);
         });
-        
-        // Test if AdSense script URL is accessible
-        console.log('=== TESTING ADSENSE SCRIPT ACCESS ===');
-        fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891', { method: 'HEAD' })
-            .then(response => {
-                console.log('✅ AdSense script URL is accessible:', response.status);
-                // Add visual success indicator
-                adContainers.forEach(container => {
-                    const successText = document.createElement('div');
-                    successText.textContent = '✅ AdSense script URL accessible - script should load';
-                    successText.style.color = 'green';
-                    successText.style.fontWeight = 'bold';
-                    successText.style.fontSize = '12px';
-                    successText.style.marginTop = '5px';
-                    container.appendChild(successText);
-                });
-            })
-            .catch(error => {
-                console.error('❌ AdSense script URL is NOT accessible:', error);
-                // Add visual error indicator
-                adContainers.forEach(container => {
-                    const errorText = document.createElement('div');
-                    errorText.textContent = '❌ AdSense script URL blocked - check ad blocker/firewall';
-                    errorText.style.color = 'red';
-                    errorText.style.fontWeight = 'bold';
-                    errorText.style.fontSize = '12px';
-                    errorText.style.marginTop = '5px';
-                    container.appendChild(errorText);
-                });
-            });
     }, 3000);
     
     // Load cookie consent preferences and set initial script states

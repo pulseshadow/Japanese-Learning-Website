@@ -2299,13 +2299,13 @@ body.dark-mode .select-all-container label {
     z-index: 1000;
     margin: 0;
     border-radius: 0;
-    background: #ffffff;
-    border-top: 1px solid #e9ecef;
+    background: transparent;
+    border-top: none;
 }
 
 body.dark-mode #bottom-ad {
-    background: #1a1a1a;
-    border-top-color: #444;
+    background: transparent;
+    border-top: none;
 }
 
 /* Add bottom padding to body to prevent content from being hidden behind the ad */
@@ -2601,11 +2601,11 @@ body.dark-mode .hiragana-key:hover {
       width: 300px !important;
       max-width: 300px !important;
       z-index: 100 !important;
-      background: #ffffff !important;
-      border: 1px solid #e0e0e0 !important;
+      background: transparent !important;
+      border: none !important;
       border-radius: 8px !important;
       padding: 15px !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: none !important;
       margin: 0 !important;
       text-align: center !important;
       min-height: 600px !important;
@@ -2624,11 +2624,11 @@ body.dark-mode .hiragana-key:hover {
       width: 300px !important;
       max-width: 300px !important;
       z-index: 100 !important;
-      background: #ffffff !important;
-      border: 1px solid #e0e0e0 !important;
+      background: transparent !important;
+      border: none !important;
       border-radius: 8px !important;
       padding: 15px !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: none !important;
       margin: 0 !important;
       text-align: center !important;
       min-height: 600px !important;
@@ -2647,11 +2647,11 @@ body.dark-mode .hiragana-key:hover {
       width: 300px !important;
       max-width: 300px !important;
       z-index: 100 !important;
-      background: #ffffff !important;
-      border: 1px solid #e0e0e0 !important;
+      background: transparent !important;
+      border: none !important;
       border-radius: 8px !important;
       padding: 15px !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+      box-shadow: none !important;
       margin: 0 !important;
       text-align: center !important;
       min-height: 600px !important;
@@ -2662,15 +2662,15 @@ body.dark-mode .hiragana-key:hover {
   }
 
 body.dark-mode #start-ad-right {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 body.dark-mode #start-ad-left {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    background: transparent;
+    border: none;
+    box-shadow: none;
 }
 
 body.dark-mode #game-ad {
