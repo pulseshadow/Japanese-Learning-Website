@@ -27,7 +27,6 @@ body.dark-mode {
     justify-content: center;
     padding: 20px;
     position: relative;
-    z-index: 99999 !important;
 }
 
 /* Top Controls */
@@ -55,8 +54,6 @@ body.dark-mode {
     color: #ffffff;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1000;
 }
 
 body.dark-mode .settings-btn {
@@ -269,8 +266,6 @@ body.dark-mode .lang-btn.active {
     display: none;
     width: 100%;
     max-width: 800px;
-    position: relative;
-    z-index: 100;
 }
 
 .page.active {
@@ -294,8 +289,6 @@ body.dark-mode .lang-btn.active {
     background: #f0f0f0;
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 100;
 }
 
 body.dark-mode .text-box {
@@ -415,8 +408,6 @@ body.dark-mode .body-text {
     border: 1px solid #d0d0d0;
     width: 100%;
     max-width: 90%;
-    position: relative;
-    z-index: 100;
 }
 
 body.dark-mode .practice-btn, body.dark-mode .script-btn {
@@ -1746,32 +1737,8 @@ body.dark-mode .stat-value {
     backdrop-filter: blur(5px);
 }
 
-/* FORCE HIDE COOKIE OVERLAY - Emergency fix */
-.cookie-overlay {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-}
-
-/* EMERGENCY FIX - Remove any blocking overlays */
-.cookie-overlay,
-.policy-page,
-#cookie-consent-overlay,
-[id*="overlay"],
-[class*="overlay"] {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    z-index: -1 !important;
-}
-
 .cookie-overlay.hidden {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
+    display: none;
 }
 
 .cookie-popup {
@@ -2625,39 +2592,15 @@ body.dark-mode .hiragana-key:hover {
     display: none;
 }
 
-  /* Left-Side Ad Container Styles (Start Page) */
-  #start-left-ad {
-      position: fixed !important;
-      left: 20px !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      width: 300px !important;
-      max-width: 300px !important;
-      z-index: 50 !important;
-      background: #ffffff !important;
-      border: 1px solid #e0e0e0 !important;
-      border-radius: 8px !important;
-      padding: 15px !important;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-      margin: 0 !important;
-      text-align: center !important;
-      min-height: 600px !important;
-      height: 600px !important;
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      pointer-events: none !important;
-  }
-  
   /* Right-Side Ad Container Styles (Start Page) */
-  .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
+  .ad-container:not(#bottom-ad):not(#game-ad) {
       position: fixed !important;
       right: 20px !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
       width: 300px !important;
       max-width: 300px !important;
-      z-index: 50 !important;
+      z-index: 100 !important;
       background: #ffffff !important;
       border: 1px solid #e0e0e0 !important;
       border-radius: 8px !important;
@@ -2670,7 +2613,6 @@ body.dark-mode .hiragana-key:hover {
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
-      pointer-events: none !important;
   }
   
   /* Game Page Ad Container Styles */
@@ -2696,13 +2638,7 @@ body.dark-mode .hiragana-key:hover {
       opacity: 1 !important;
   }
 
-body.dark-mode #start-left-ad {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
+body.dark-mode .ad-container:not(#bottom-ad):not(#game-ad) {
     background: #2a2a2a;
     border-color: #444;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
@@ -2716,23 +2652,7 @@ body.dark-mode #game-ad {
 
 /* Responsive design for smaller screens */
 @media (max-width: 1200px) {
-    #app {
-        padding: 20px; /* Reset padding on mobile */
-    }
-    
-    #start-left-ad {
-        position: static;
-        transform: none;
-        width: 100%;
-        max-width: 100%;
-        margin: 20px 0;
-        left: auto;
-        top: auto;
-        min-height: 250px;
-        height: auto;
-    }
-    
-    .ad-container:not(#bottom-ad):not(#game-ad):not(#start-left-ad) {
+    .ad-container:not(#bottom-ad):not(#game-ad) {
         position: static;
         transform: none;
         width: 100%;
