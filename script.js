@@ -2341,7 +2341,7 @@ const customModeBtn = document.getElementById('custom-mode-btn');
 const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
 const hiraganaBtn = document.getElementById('hiragana-btn');
 const katakanaBtn = document.getElementById('katakana-btn');
-const backToStartBtn = document.getElementById('back-to-start');
+const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
 const backToScriptBtn = document.getElementById('back-to-script');
 const backToStartFromCustomScriptBtn = document.getElementById('back-to-start-from-custom-script');
 const backToStartFromCustomBtn = document.getElementById('back-to-start-from-custom');
@@ -2452,7 +2452,7 @@ userStatsBtn.addEventListener('click', () => {
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
-backToStartBtn.addEventListener('click', () => showPage('start'));
+backToWordEntryFromScriptBtn.addEventListener('click', () => showPage('word-entry-selection'));
 backToScriptBtn.addEventListener('click', () => {
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
