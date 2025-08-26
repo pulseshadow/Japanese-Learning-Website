@@ -2586,7 +2586,7 @@ body.dark-mode .hiragana-key:hover {
   #start-ad-right {
       position: fixed !important;
       right: 20px !important;
-      top: 50% !important;
+      top: 40% !important;
       transform: translateY(-50%) !important;
       width: 300px !important;
       max-width: 300px !important;
@@ -2598,8 +2598,8 @@ body.dark-mode .hiragana-key:hover {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
       margin: 0 !important;
       text-align: center !important;
-      min-height: 800px !important;
-      height: 800px !important;
+      min-height: 700px !important;
+      height: 700px !important;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
@@ -2609,7 +2609,7 @@ body.dark-mode .hiragana-key:hover {
   #start-ad-left {
       position: fixed !important;
       left: 20px !important;
-      top: 50% !important;
+      top: 40% !important;
       transform: translateY(-50%) !important;
       width: 300px !important;
       max-width: 300px !important;
@@ -2621,8 +2621,8 @@ body.dark-mode .hiragana-key:hover {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
       margin: 0 !important;
       text-align: center !important;
-      min-height: 800px !important;
-      height: 800px !important;
+      min-height: 700px !important;
+      height: 700px !important;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
