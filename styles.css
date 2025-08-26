@@ -2621,6 +2621,46 @@ body.dark-mode .hiragana-key:hover {
       visibility: visible !important;
       opacity: 1 !important;
   }
+
+  /* Brute Force English Mode Ad Container Styles (Bottom) */
+  #brute-force-english-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+
+  /* Brute Force Japanese Mode Ad Container Styles (Bottom) */
+  #brute-force-japanese-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
   
 
 
@@ -2636,7 +2676,71 @@ body.dark-mode #custom-mode-ad {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
+body.dark-mode #brute-force-english-ad {
+    background: #2a2a2a !important;
+    border-color: #444 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
 
+  body.dark-mode #brute-force-japanese-ad {
+      background: #2a2a2a !important;
+      border-color: #444 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Custom Script Selection Ad Container Styles (Bottom) */
+  #custom-script-selection-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+  
+  body.dark-mode #custom-script-selection-ad {
+      background: #2a2a2a !important;
+      border-color: #444 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  /* Japanese Custom Mode Ad Container Styles (Bottom) */
+  #japanese-custom-mode-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+  
+  body.dark-mode #japanese-custom-mode-ad {
+      background: #2a2a2a !important;
+      border-color: #444 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+  
 
 /* Responsive design for smaller screens */
 @media (max-width: 1200px) {
@@ -2646,6 +2750,26 @@ body.dark-mode #custom-mode-ad {
     }
     
     #custom-mode-ad {
+        margin: 15px 0;
+        min-height: 200px;
+    }
+    
+    #brute-force-english-ad {
+        margin: 15px 0;
+        min-height: 200px;
+    }
+    
+    #brute-force-japanese-ad {
+        margin: 15px 0;
+        min-height: 200px;
+    }
+    
+    #custom-script-selection-ad {
+        margin: 15px 0;
+        min-height: 200px;
+    }
+    
+    #japanese-custom-mode-ad {
         margin: 15px 0;
         min-height: 200px;
     }
