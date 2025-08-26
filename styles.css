@@ -27,7 +27,7 @@ body.dark-mode {
     justify-content: center;
     padding: 20px;
     position: relative;
-    z-index: 100;
+    z-index: 99999 !important;
 }
 
 /* Top Controls */
@@ -1746,8 +1746,32 @@ body.dark-mode .stat-value {
     backdrop-filter: blur(5px);
 }
 
+/* FORCE HIDE COOKIE OVERLAY - Emergency fix */
+.cookie-overlay {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* EMERGENCY FIX - Remove any blocking overlays */
+.cookie-overlay,
+.policy-page,
+#cookie-consent-overlay,
+[id*="overlay"],
+[class*="overlay"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+}
+
 .cookie-overlay.hidden {
-    display: none;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 .cookie-popup {

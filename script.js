@@ -5468,6 +5468,17 @@ function hideHiraganaKeyboard() {
 
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
+    // FORCE HIDE COOKIE OVERLAY - Emergency fix
+    const cookieOverlay = document.getElementById('cookie-consent-overlay');
+    if (cookieOverlay) {
+        cookieOverlay.classList.add('hidden');
+        cookieOverlay.style.display = 'none';
+        cookieOverlay.style.visibility = 'hidden';
+        cookieOverlay.style.opacity = '0';
+        cookieOverlay.style.pointerEvents = 'none';
+        console.log('✅ Forced cookie overlay to be hidden');
+    }
+    
     showPage('start');
     initializeSettings();
     detectBrowserLanguage();
