@@ -25,7 +25,7 @@ body.dark-mode {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 20px;
+    padding: 20px 340px 20px 340px; /* Add left and right padding for ads */
     position: relative;
 }
 
@@ -2681,6 +2681,10 @@ body.dark-mode #game-ad {
 
 /* Responsive design for smaller screens */
 @media (max-width: 1200px) {
+    #app {
+        padding: 20px; /* Reset padding on mobile */
+    }
+    
     #start-left-ad {
         position: static;
         transform: none;

@@ -7644,6 +7644,11 @@ function loadSettings() {
         autoPlayToggle.checked = autoPlaySound;
     }
     
+    // Update theme toggle checkbox
+    if (themeToggle) {
+        themeToggle.checked = isDarkMode;
+    }
+    
     // Update cookie status display
     if (cookieStatusText) {
         updateCookieStatusDisplay();
