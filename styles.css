@@ -2582,11 +2582,11 @@ body.dark-mode .hiragana-key:hover {
     display: none;
 }
 
-  /* Right-Side Ad Container Styles (Start Page) */
-  #start-ad-right {
+  /* Brute Force Mode Ad Container Styles (Left Side) */
+  #brute-force-ad {
       position: fixed !important;
-      right: 20px !important;
-      top: 60% !important;
+      left: 20px !important;
+      top: 35% !important;
       transform: translateY(-50%) !important;
       width: 300px !important;
       max-width: 300px !important;
@@ -2605,11 +2605,11 @@ body.dark-mode .hiragana-key:hover {
       opacity: 1 !important;
   }
 
-  /* Left-Side Ad Container Styles (Start Page) */
-  #start-ad-left {
+  /* Custom Mode Ad Container Styles (Right Side) */
+  #custom-mode-ad {
       position: fixed !important;
-      left: 20px !important;
-      top: 60% !important;
+      right: 20px !important;
+      top: 35% !important;
       transform: translateY(-50%) !important;
       width: 300px !important;
       max-width: 300px !important;
@@ -2628,50 +2628,37 @@ body.dark-mode .hiragana-key:hover {
       opacity: 1 !important;
   }
   
-  /* Game Page Ad Container Styles */
-  #game-ad {
-      position: fixed !important;
-      left: 20px !important;
-      top: 50% !important;
-      transform: translateY(-50%) !important;
-      width: 300px !important;
-      max-width: 300px !important;
-      z-index: 100 !important;
-      background: #f8f9fa !important;
-      border: 1px solid #e9ecef !important;
-      border-radius: 8px !important;
-      padding: 15px !important;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      margin: 0 !important;
-      text-align: center !important;
-      min-height: 600px !important;
-      height: 600px !important;
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-  }
 
-body.dark-mode #start-ad-right {
+
+body.dark-mode #brute-force-ad {
     background: #2a2a2a !important;
     border-color: #444 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
-body.dark-mode #start-ad-left {
+body.dark-mode #custom-mode-ad {
     background: #2a2a2a !important;
     border-color: #444 !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
-body.dark-mode #game-ad {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
+
 
 /* Responsive design for smaller screens */
 @media (max-width: 1200px) {
-    #start-ad-right {
+    #brute-force-ad {
+        position: static;
+        transform: none;
+        width: 100%;
+        max-width: 100%;
+        margin: 20px 0;
+        left: auto;
+        top: auto;
+        min-height: 250px;
+        height: auto;
+    }
+    
+    #custom-mode-ad {
         position: static;
         transform: none;
         width: 100%;
@@ -2683,29 +2670,7 @@ body.dark-mode #game-ad {
         height: auto;
     }
     
-    #start-ad-left {
-        position: static;
-        transform: none;
-        width: 100%;
-        max-width: 100%;
-        margin: 20px 0;
-        left: auto;
-        top: auto;
-        min-height: 250px;
-        height: auto;
-    }
-    
-    #game-ad {
-        position: static;
-        transform: none;
-        width: 100%;
-        max-width: 100%;
-        margin: 20px 0;
-        left: auto;
-        top: auto;
-        min-height: 250px;
-        height: auto;
-    }
+
 }
 
 /* Number key styling */

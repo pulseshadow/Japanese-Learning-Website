@@ -2869,21 +2869,7 @@ function showPage(pageName) {
         statsPage.classList.add('active');
     }
     
-    // Show/hide game ad based on page
-    const gameAd = document.getElementById('game-ad');
-    if (gameAd) {
-        if (pageName === 'game') {
-            gameAd.style.display = 'block';
-            gameAd.style.visibility = 'visible';
-            gameAd.style.opacity = '1';
-            console.log('Game ad shown');
-        } else {
-            gameAd.style.display = 'none';
-            gameAd.style.visibility = 'hidden';
-            gameAd.style.opacity = '0';
-            console.log('Game ad hidden');
-        }
-    }
+
 }
 
 // Round selection functionality
@@ -8455,31 +8441,5 @@ function loadAdSenseAds() {
         }
     });
     
-    // Specifically handle game ad if it exists
-    const gameAd = document.getElementById('game-ad');
-    if (gameAd) {
-        console.log('\n--- Game Ad Container ---');
-        console.log('Game ad container found, ensuring it loads properly...');
-        console.log('Game ad HTML:', gameAd.innerHTML.substring(0, 300) + '...');
-        
-        const gameAdElement = gameAd.querySelector('.adsbygoogle');
-        if (gameAdElement) {
-            console.log('✅ Game ad element found, pushing ad...');
-            console.log('Game ad element HTML:', gameAdElement.outerHTML);
-            try {
-                if (typeof adsbygoogle !== 'undefined') {
-                    (adsbygoogle = window.adsbygoogle || []).push({});
-                    console.log('✅ Game ad pushed successfully');
-                } else {
-                    console.error('❌ AdSense not available for game ad');
-                }
-            } catch (error) {
-                console.error('❌ Error loading game ad:', error);
-            }
-        } else {
-            console.warn('❌ No AdSense element found in game ad container');
-        }
-    } else {
-        console.warn('❌ Game ad container not found');
-    }
+
 }
