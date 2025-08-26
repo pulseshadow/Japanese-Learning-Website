@@ -2598,8 +2598,8 @@ body.dark-mode .hiragana-key:hover {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
       margin: 0 !important;
       text-align: center !important;
-      min-height: 600px !important;
-      height: 600px !important;
+      min-height: 800px !important;
+      height: 800px !important;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
@@ -2621,8 +2621,8 @@ body.dark-mode .hiragana-key:hover {
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
       margin: 0 !important;
       text-align: center !important;
-      min-height: 600px !important;
-      height: 600px !important;
+      min-height: 800px !important;
+      height: 800px !important;
       display: block !important;
       visibility: visible !important;
       opacity: 1 !important;
@@ -2652,15 +2652,15 @@ body.dark-mode .hiragana-key:hover {
   }
 
 body.dark-mode #start-ad-right {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: #2a2a2a !important;
+    border-color: #444 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 body.dark-mode #start-ad-left {
-    background: #2a2a2a;
-    border-color: #444;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    background: #2a2a2a !important;
+    border-color: #444 !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 body.dark-mode #game-ad {
