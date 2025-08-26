@@ -2289,13 +2289,13 @@ body.dark-mode .select-all-container label {
     z-index: 1000;
     margin: 0;
     border-radius: 0;
-    background: transparent;
-    border-top: none;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
 }
 
 body.dark-mode #bottom-ad {
-    background: transparent;
-    border-top: none;
+    background: #2a2a2a;
+    border-top-color: #444;
 }
 
 /* Add bottom padding to body to prevent content from being hidden behind the ad */
@@ -2637,11 +2637,11 @@ body.dark-mode .hiragana-key:hover {
       width: 300px !important;
       max-width: 300px !important;
       z-index: 100 !important;
-      background: transparent !important;
-      border: none !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
       border-radius: 8px !important;
       padding: 15px !important;
-      box-shadow: none !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
       margin: 0 !important;
       text-align: center !important;
       min-height: 600px !important;
@@ -2652,21 +2652,21 @@ body.dark-mode .hiragana-key:hover {
   }
 
 body.dark-mode #start-ad-right {
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    background: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode #start-ad-left {
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    background: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 body.dark-mode #game-ad {
-    background: transparent;
-    border: none;
-    box-shadow: none;
+    background: #2a2a2a;
+    border-color: #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive design for smaller screens */
