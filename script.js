@@ -6293,7 +6293,8 @@ function populateWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '▼';
+        // Show expanded state for first section
+        collapseBtn.textContent = isFirstSection ? '▲' : '▼';
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
@@ -6304,9 +6305,16 @@ function populateWordSelectionGrid(roundNumber) {
         sectionHeader.appendChild(collapseBtn);
         sectionContainer.appendChild(sectionHeader);
         
+        // Add click event listener to toggle section visibility
+        sectionHeader.addEventListener('click', () => {
+            toggleWordSection(roundNumber - 1, roundIndex);
+        });
+        
         // Create word content container
         const wordContent = document.createElement('div');
-        wordContent.className = 'word-section-content collapsed';
+        // Show expanded state for first section to make word selection visible
+        const isFirstSection = roundIndex === 0;
+        wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
         wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
         // Create "Select All" checkbox for this round
