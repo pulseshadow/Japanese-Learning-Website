@@ -2340,11 +2340,8 @@ const bruteForceBtn = document.getElementById('brute-force-btn');
 const customModeBtn = document.getElementById('custom-mode-btn');
 const customHiraganaBtn = document.getElementById('custom-hiragana-btn');
 const hiraganaBtn = document.getElementById('hiragana-btn');
-if (!hiraganaBtn) {
-    console.error('Hiragana button not found!');
-}
 const katakanaBtn = document.getElementById('katakana-btn');
-const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
+const backToStartBtn = document.getElementById('back-to-start');
 const backToScriptBtn = document.getElementById('back-to-script');
 const backToStartFromCustomScriptBtn = document.getElementById('back-to-start-from-custom-script');
 const backToStartFromCustomBtn = document.getElementById('back-to-start-from-custom');
@@ -2437,9 +2434,151 @@ const languageOptions = document.getElementById('language-options');
 const langOptionBtns = document.querySelectorAll('.lang-option');
 const cookieThemeToggle = document.getElementById('cookie-theme-toggle');
 
-// Event listeners moved to DOMContentLoaded
+// Event listeners
+bruteForceBtn.addEventListener('click', () => {
+    console.log('Brute Force Mode clicked');
+    window.selectedMode = 'brute-force';
+    showPage('word-entry-selection');
+});
+customModeBtn.addEventListener('click', () => {
+    console.log('Custom Mode clicked');
+    window.selectedMode = 'custom';
+    showPage('word-entry-selection');
+});
+userStatsBtn.addEventListener('click', () => {
+    showPage('stats');
+    updateStatsDisplay();
+});
+customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
+hiraganaBtn.addEventListener('click', startGame);
+    katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
+backToStartBtn.addEventListener('click', () => showPage('start'));
+backToScriptBtn.addEventListener('click', () => {
+    // If in mirrored mode, go back to Japanese script selection
+    if (window.mirroredMode) {
+        showPage('japanese-script');
+        return;
+    }
+    
+    // If in custom mode, go back to word selection, otherwise go to word entry selection
+    if (window.customModeEnabled) {
+        showPage('custom-mode');
+    } else {
+        // Check if we came from word entry selection
+        if (window.cameFromWordEntry) {
+            showPage('word-entry-selection');
+        } else {
+            showPage('start');
+        }
+    }
+});
+backToStartFromCustomScriptBtn.addEventListener('click', () => {
+    // Reset custom mode variables when leaving custom mode
+    window.customModeEnabled = false;
+    window.customWordPools = null;
+    
+    // Check if we came from word entry selection
+    if (window.cameFromWordEntry) {
+        showPage('word-entry-selection');
+    } else {
+        showPage('start');
+    }
+});
 
-// Event listeners moved to DOMContentLoaded
+backToStartFromCustomBtn.addEventListener('click', () => {
+    // Reset custom mode variables when leaving custom mode
+    window.customModeEnabled = false;
+    window.customWordPools = null;
+    showPage('custom-script');
+});
+
+// Word entry selection page event listeners
+backToStartFromWordEntryBtn.addEventListener('click', () => {
+    // Clear the flag when going back to start
+    window.cameFromWordEntry = false;
+    showPage('start');
+});
+
+enterJapaneseWordsBtn.addEventListener('click', () => {
+    console.log('Enter Japanese Words clicked, selected mode:', window.selectedMode);
+    console.log('Button element:', enterJapaneseWordsBtn);
+    console.log('Button disabled state:', enterJapaneseWordsBtn.disabled);
+    console.log('Button classes:', enterJapaneseWordsBtn.className);
+    
+    // Set flag to indicate we came from word entry selection
+    window.cameFromWordEntry = true;
+    
+    // Check which mode was selected and navigate accordingly
+    if (window.selectedMode === 'brute-force') {
+        console.log('Navigating to Japanese script page for mirrored brute force mode');
+        showPage('japanese-script');
+    } else if (window.selectedMode === 'custom') {
+        console.log('Navigating to Japanese custom mode for mirrored custom mode');
+        showPage('japanese-custom-mode');
+    } else {
+        console.warn('No mode selected, defaulting to Japanese script');
+        showPage('japanese-script');
+    }
+});
+
+enterEnglishWordsBtn.addEventListener('click', () => {
+    console.log('Enter English Words clicked, selected mode:', window.selectedMode);
+    // Set flag to indicate we came from word entry selection
+    window.cameFromWordEntry = true;
+    
+    // Check which mode was selected and navigate accordingly
+    if (window.selectedMode === 'brute-force') {
+        console.log('Navigating to script page for brute force mode');
+        showPage('script');
+    } else if (window.selectedMode === 'custom') {
+        console.log('Navigating to custom script page for custom mode');
+        showPage('custom-script');
+    } else {
+        console.warn('No mode selected, defaulting to brute force');
+        showPage('script');
+    }
+});
+
+// Japanese script page event listeners
+backToWordEntryBtn.addEventListener('click', () => {
+    showPage('word-entry-selection');
+});
+
+japaneseHiraganaBtn.addEventListener('click', () => {
+    console.log('Starting mirrored brute force mode with Hiragana');
+    window.mirroredMode = true;
+    startMirroredGame();
+});
+
+japaneseKatakanaBtn.addEventListener('click', () => {
+    console.log('Katakana not yet implemented for mirrored mode');
+    // TODO: Implement Katakana support for mirrored mode
+});
+
+// Japanese custom mode page event listeners
+backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
+    showPage('word-entry-selection');
+});
+
+japaneseAddRoundBtn.addEventListener('click', () => {
+    console.log('Adding round to Japanese custom mode');
+    addJapaneseCustomRound();
+});
+
+japaneseRemoveRoundBtn.addEventListener('click', () => {
+    console.log('Removing round from Japanese custom mode');
+    removeJapaneseCustomRound();
+});
+
+japaneseStartCustomRunBtn.addEventListener('click', () => {
+    console.log('Starting Japanese custom run');
+    startJapaneseCustomRun();
+});
+
+japaneseDisablePracticeRoundsToggle.addEventListener('change', () => {
+    window.japaneseCustomModeNoPracticeRounds = japaneseDisablePracticeRoundsToggle.checked;
+    saveJapaneseCustomRounds();
+});
 
 // Mirrored game mode functions
 function startMirroredGame() {
@@ -5381,120 +5520,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadCookieConsent();
     
     // No cookie consent popup - ads are always enabled
-    
-    // Set up event listeners after DOM is loaded
-    if (bruteForceBtn) bruteForceBtn.addEventListener('click', () => {
-        console.log('Brute Force Mode clicked');
-        window.selectedMode = 'brute-force';
-        showPage('word-entry-selection');
-    });
-    
-    if (customModeBtn) customModeBtn.addEventListener('click', () => {
-        console.log('Custom Mode clicked');
-        window.selectedMode = 'custom';
-        showPage('word-entry-selection');
-    });
-    
-    if (userStatsBtn) userStatsBtn.addEventListener('click', () => {
-        showPage('stats');
-        updateStatsDisplay();
-    });
-    
-    if (customHiraganaBtn) customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
-    
-    if (hiraganaBtn) hiraganaBtn.addEventListener('click', () => {
-        startGame();
-    });
-    
-    if (katakanaBtn) katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
-    
-    if (backToWordEntryFromScriptBtn) backToWordEntryFromScriptBtn.addEventListener('click', () => showPage('word-entry-selection'));
-    
-    if (backToScriptBtn) backToScriptBtn.addEventListener('click', () => {
-        // If in mirrored mode, go back to Japanese script selection
-        if (window.mirroredMode) {
-            showPage('japanese-script');
-            return;
-        }
-        
-        // If in custom mode, go back to word selection, otherwise go to word entry selection
-        if (window.customModeEnabled) {
-            showPage('custom-mode');
-        } else {
-            // Check if we came from word entry selection
-            if (window.cameFromWordEntry) {
-                showPage('word-entry-selection');
-            } else {
-                showPage('start');
-            }
-        }
-    });
-    
-    if (backToStartFromCustomScriptBtn) backToStartFromCustomScriptBtn.addEventListener('click', () => {
-        // Reset custom mode variables when leaving custom mode
-        window.customModeEnabled = false;
-        window.customWordPools = null;
-        
-        // Check if we came from word entry selection
-        if (window.cameFromWordEntry) {
-            showPage('word-entry-selection');
-        } else {
-            showPage('start');
-        }
-    });
-    
-    if (backToStartFromCustomBtn) backToStartFromCustomBtn.addEventListener('click', () => {
-        // Reset custom mode variables when leaving custom mode
-        window.customModeEnabled = false;
-        window.customWordPools = null;
-        showPage('custom-script');
-    });
-    
-    if (backToStartFromWordEntryBtn) backToStartFromWordEntryBtn.addEventListener('click', () => {
-        // Clear the flag when going back to start
-        window.cameFromWordEntry = false;
-        showPage('start');
-    });
-    
-    if (enterJapaneseWordsBtn) enterJapaneseWordsBtn.addEventListener('click', () => {
-        console.log('Enter Japanese Words clicked, selected mode:', window.selectedMode);
-        console.log('Button element:', enterJapaneseWordsBtn);
-        console.log('Button disabled state:', enterJapaneseWordsBtn.disabled);
-        console.log('Button classes:', enterJapaneseWordsBtn.className);
-        
-        // Set flag to indicate we came from word entry selection
-        window.cameFromWordEntry = true;
-        
-        // Check which mode was selected and navigate accordingly
-        if (window.selectedMode === 'brute-force') {
-            console.log('Navigating to Japanese script page for mirrored brute force mode');
-            showPage('japanese-script');
-        } else if (window.selectedMode === 'custom') {
-            console.log('Navigating to Japanese custom mode for mirrored custom mode');
-            showPage('japanese-custom-mode');
-        } else {
-            console.warn('No mode selected, defaulting to Japanese script');
-            showPage('japanese-script');
-        }
-    });
-    
-    if (enterEnglishWordsBtn) enterEnglishWordsBtn.addEventListener('click', () => {
-        console.log('Enter English Words clicked, selected mode:', window.selectedMode);
-        // Set flag to indicate we came from word entry selection
-        window.cameFromWordEntry = true;
-        
-        // Check which mode was selected and navigate accordingly
-        if (window.selectedMode === 'brute-force') {
-            console.log('Navigating to script page for brute force mode');
-            showPage('script');
-        } else if (window.selectedMode === 'custom') {
-            console.log('Navigating to custom script page for custom mode');
-            showPage('custom-script');
-        } else {
-            console.warn('No mode selected, defaulting to script');
-            showPage('script');
-        }
-    });
 });
 
 // Toggle section visibility
@@ -6268,8 +6293,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        // Show expanded state for first section
-        collapseBtn.textContent = isFirstSection ? '▲' : '▼';
+        collapseBtn.textContent = '▼';
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
@@ -6280,16 +6304,9 @@ function populateWordSelectionGrid(roundNumber) {
         sectionHeader.appendChild(collapseBtn);
         sectionContainer.appendChild(sectionHeader);
         
-        // Add click event listener to toggle section visibility
-        sectionHeader.addEventListener('click', () => {
-            toggleWordSection(roundNumber - 1, roundIndex);
-        });
-        
         // Create word content container
         const wordContent = document.createElement('div');
-        // Show expanded state for first section to make word selection visible
-        const isFirstSection = roundIndex === 0;
-        wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
+        wordContent.className = 'word-section-content collapsed';
         wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
         // Create "Select All" checkbox for this round
