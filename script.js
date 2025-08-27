@@ -2448,7 +2448,7 @@ customModeBtn.addEventListener('click', () => {
 userStatsBtn.addEventListener('click', () => {
     showPage('stats');
     updateStatsDisplay();
-});ther
+});
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
@@ -6256,21 +6256,11 @@ function initializeCustomMode() {
 }
 
 function populateWordSelectionGrid(roundNumber) {
-    console.log(`populateWordSelectionGrid called for round ${roundNumber}`);
-    
     const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-    if (!round) {
-        console.log(`Round ${roundNumber} not found`);
-        return;
-    }
+    if (!round) return;
     
     const grid = round.querySelector('.word-selection-grid');
-    if (!grid) {
-        console.log(`Word selection grid not found in round ${roundNumber}`);
-        return;
-    }
-    
-    console.log(`Found round ${roundNumber} and grid, proceeding to populate`);
+    if (!grid) return;
     
     grid.innerHTML = '';
     
@@ -6284,7 +6274,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const sectionHeader = document.createElement('div');
         sectionHeader.className = 'word-section-header';
-        // Remove onclick to avoid conflicts with collapse button
+        sectionHeader.onclick = () => toggleWordSection(roundNumber - 1, roundIndex);
         
         const headerText = document.createElement('h4');
         headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
@@ -6301,46 +6291,23 @@ function populateWordSelectionGrid(roundNumber) {
         headerText.style.fontSize = '0.9rem';
         headerText.style.fontWeight = 'bold';
         
-        // Create word content container first to determine if this is the first section
-        const isFirstSection = roundIndex === 0;
-        
-        // Debug: Log section creation
-        console.log(`Creating section ${roundIndex + 1}, isFirstSection: ${isFirstSection}`);
-        
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        // Show expanded state for first section
-        collapseBtn.textContent = isFirstSection ? '▲' : '▼';
+        collapseBtn.textContent = '▼';
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
         collapseBtn.style.fontSize = '0.8rem';
         collapseBtn.style.color = '#ffffff';
         
-        // Create word content container
-        const wordContent = document.createElement('div');
-        // Show expanded state for first section to make word selection visible
-        wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
-        wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
-        
-        // Debug: Log word content creation
-        console.log(`Word content for section ${roundIndex + 1}:`, wordContent.className, 'ID:', wordContent.id);
-        
-        // Add click event listener to toggle section visibility
-        collapseBtn.addEventListener('click', () => {
-            const isCollapsed = wordContent.classList.contains('collapsed');
-            if (isCollapsed) {
-                wordContent.classList.remove('collapsed');
-                collapseBtn.textContent = '▲';
-            } else {
-                wordContent.classList.add('collapsed');
-                collapseBtn.textContent = '▼';
-            }
-        });
-        
         sectionHeader.appendChild(headerText);
         sectionHeader.appendChild(collapseBtn);
         sectionContainer.appendChild(sectionHeader);
+        
+        // Create word content container
+        const wordContent = document.createElement('div');
+        wordContent.className = 'word-section-content collapsed';
+        wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
         // Create "Select All" checkbox for this round
         const selectAllItem = document.createElement('div');
@@ -6415,9 +6382,6 @@ function populateWordSelectionGrid(roundNumber) {
         
         wordContent.appendChild(selectAllItem);
         
-        // Debug: Log words in this group
-        console.log(`Section ${roundIndex + 1} has ${wordGroup.length} words:`, wordGroup);
-        
         // Create word checkboxes for this round
         wordGroup.forEach(word => {
             const wordItem = document.createElement('div');
@@ -6447,27 +6411,16 @@ function populateWordSelectionGrid(roundNumber) {
         // Initialize select all state
         updateSelectAllState();
         
-        // Debug: Check if word content has children
-        console.log(`Section ${roundIndex + 1} word content has ${wordContent.children.length} children`);
-        console.log(`Word content class: ${wordContent.className}`);
-        
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
-        
-        // Debug: Log section addition
-        console.log(`Added section ${roundIndex + 1} to grid. Grid now has ${grid.children.length} children.`);
     });
 }
 
 function populateWordSelectionGrids() {
-    console.log('populateWordSelectionGrids called');
-    
     const rounds = document.querySelectorAll('.custom-round');
-    console.log(`Found ${rounds.length} custom rounds`);
     
     rounds.forEach((round, index) => {
         const roundNumber = index + 1;
-        console.log(`Processing round ${roundNumber}`);
         populateWordSelectionGrid(roundNumber);
     });
 }
@@ -6475,20 +6428,13 @@ function populateWordSelectionGrids() {
 function getAllWordsByRound() {
     const wordsByRound = [];
     
-    // Debug: Log available word pools
-    console.log('Available word pools:', Object.keys(wordPools));
-    
     // Add words from each introduction round
     for (let i = 1; i <= 18; i += 2) { // Odd numbers are introduction rounds
         if (wordPools[i]) {
-            console.log(`Adding word pool ${i} with ${wordPools[i].length} words`);
             wordsByRound.push(wordPools[i]);
-        } else {
-            console.log(`Word pool ${i} is empty or undefined`);
         }
     }
     
-    console.log('Total word groups:', wordsByRound.length);
     return wordsByRound;
 }
 
