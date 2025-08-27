@@ -825,22 +825,20 @@ body.dark-mode .word-section-header:hover {
 }
 
 .word-section-content {
-    padding-left: 15px;
-    /* Debug: Add visible styling to ensure content is visible */
+    padding: 15px;
     background: #f8f9fa;
     border: 1px solid #e9ecef;
-    border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 10px;
-}
-
-.word-section-content.collapsed {
-    display: none;
+    border-radius: 8px;
+    margin: 10px 0;
 }
 
 body.dark-mode .word-section-content {
     background: #2a2a2a;
     border-color: #444;
+}
+
+.word-section-content.collapsed {
+    display: none;
 }
 
 .collapse-btn.small {
@@ -889,11 +887,6 @@ body.dark-mode .custom-round p {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 20px;
-    /* Debug: Add visible styling to ensure grid is visible */
-    background: #ffffff;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 20px;
 }
 
 .word-selection-grid h4 {
@@ -905,11 +898,6 @@ body.dark-mode .custom-round p {
 
 body.dark-mode .word-selection-grid h4 {
     color: #cccccc;
-}
-
-body.dark-mode .word-selection-grid {
-    background: #2a2a2a;
-    border-color: #444;
 }
 
 .word-checkbox-item {

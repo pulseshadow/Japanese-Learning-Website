@@ -6256,11 +6256,21 @@ function initializeCustomMode() {
 }
 
 function populateWordSelectionGrid(roundNumber) {
+    console.log(`populateWordSelectionGrid called for round ${roundNumber}`);
+    
     const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-    if (!round) return;
+    if (!round) {
+        console.log(`Round ${roundNumber} not found`);
+        return;
+    }
     
     const grid = round.querySelector('.word-selection-grid');
-    if (!grid) return;
+    if (!grid) {
+        console.log(`Word selection grid not found in round ${roundNumber}`);
+        return;
+    }
+    
+    console.log(`Found round ${roundNumber} and grid, proceeding to populate`);
     
     grid.innerHTML = '';
     
@@ -6321,10 +6331,10 @@ function populateWordSelectionGrid(roundNumber) {
             const isCollapsed = wordContent.classList.contains('collapsed');
             if (isCollapsed) {
                 wordContent.classList.remove('collapsed');
-                collapseBtn.textContent = '▲'; // Show up arrow when expanded
+                collapseBtn.textContent = '▲';
             } else {
                 wordContent.classList.add('collapsed');
-                collapseBtn.textContent = '▼'; // Show down arrow when collapsed
+                collapseBtn.textContent = '▼';
             }
         });
         
@@ -6437,6 +6447,10 @@ function populateWordSelectionGrid(roundNumber) {
         // Initialize select all state
         updateSelectAllState();
         
+        // Debug: Check if word content has children
+        console.log(`Section ${roundIndex + 1} word content has ${wordContent.children.length} children`);
+        console.log(`Word content class: ${wordContent.className}`);
+        
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
         
@@ -6446,10 +6460,14 @@ function populateWordSelectionGrid(roundNumber) {
 }
 
 function populateWordSelectionGrids() {
+    console.log('populateWordSelectionGrids called');
+    
     const rounds = document.querySelectorAll('.custom-round');
+    console.log(`Found ${rounds.length} custom rounds`);
     
     rounds.forEach((round, index) => {
         const roundNumber = index + 1;
+        console.log(`Processing round ${roundNumber}`);
         populateWordSelectionGrid(roundNumber);
     });
 }
