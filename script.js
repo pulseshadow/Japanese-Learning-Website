@@ -6291,6 +6291,9 @@ function populateWordSelectionGrid(roundNumber) {
         headerText.style.fontSize = '0.9rem';
         headerText.style.fontWeight = 'bold';
         
+        // Create word content container first to determine if this is the first section
+        const isFirstSection = roundIndex === 0;
+        
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
         // Show expanded state for first section
@@ -6301,16 +6304,27 @@ function populateWordSelectionGrid(roundNumber) {
         collapseBtn.style.fontSize = '0.8rem';
         collapseBtn.style.color = '#ffffff';
         
+        // Create word content container
+        const wordContent = document.createElement('div');
+        // Show expanded state for first section to make word selection visible
+        wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
+        wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
+        
+        // Add click event listener to toggle section visibility
+        collapseBtn.addEventListener('click', () => {
+            const isCollapsed = wordContent.classList.contains('collapsed');
+            if (isCollapsed) {
+                wordContent.classList.remove('collapsed');
+                collapseBtn.textContent = '▲';
+            } else {
+                wordContent.classList.add('collapsed');
+                collapseBtn.textContent = '▼';
+            }
+        });
+        
         sectionHeader.appendChild(headerText);
         sectionHeader.appendChild(collapseBtn);
         sectionContainer.appendChild(sectionHeader);
-        
-        // Create word content container
-        const wordContent = document.createElement('div');
-        // Expand the first section by default for better UX
-        const isFirstSection = roundIndex === 0;
-        wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
-        wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
         // Create "Select All" checkbox for this round
         const selectAllItem = document.createElement('div');
