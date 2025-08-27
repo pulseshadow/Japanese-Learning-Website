@@ -2448,7 +2448,7 @@ customModeBtn.addEventListener('click', () => {
 userStatsBtn.addEventListener('click', () => {
     showPage('stats');
     updateStatsDisplay();
-});
+});ther
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
@@ -6274,7 +6274,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const sectionHeader = document.createElement('div');
         sectionHeader.className = 'word-section-header';
-        sectionHeader.onclick = () => toggleWordSection(roundNumber - 1, roundIndex);
+        // Remove onclick to avoid conflicts with collapse button
         
         const headerText = document.createElement('h4');
         headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
@@ -6294,6 +6294,9 @@ function populateWordSelectionGrid(roundNumber) {
         // Create word content container first to determine if this is the first section
         const isFirstSection = roundIndex === 0;
         
+        // Debug: Log section creation
+        console.log(`Creating section ${roundIndex + 1}, isFirstSection: ${isFirstSection}`);
+        
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
         // Show expanded state for first section
@@ -6310,15 +6313,18 @@ function populateWordSelectionGrid(roundNumber) {
         wordContent.className = isFirstSection ? 'word-section-content' : 'word-section-content collapsed';
         wordContent.id = `word-content-${roundNumber - 1}-${roundIndex}`;
         
+        // Debug: Log word content creation
+        console.log(`Word content for section ${roundIndex + 1}:`, wordContent.className, 'ID:', wordContent.id);
+        
         // Add click event listener to toggle section visibility
         collapseBtn.addEventListener('click', () => {
             const isCollapsed = wordContent.classList.contains('collapsed');
             if (isCollapsed) {
                 wordContent.classList.remove('collapsed');
-                collapseBtn.textContent = '▲';
+                collapseBtn.textContent = '▲'; // Show up arrow when expanded
             } else {
                 wordContent.classList.add('collapsed');
-                collapseBtn.textContent = '▼';
+                collapseBtn.textContent = '▼'; // Show down arrow when collapsed
             }
         });
         
@@ -6399,6 +6405,9 @@ function populateWordSelectionGrid(roundNumber) {
         
         wordContent.appendChild(selectAllItem);
         
+        // Debug: Log words in this group
+        console.log(`Section ${roundIndex + 1} has ${wordGroup.length} words:`, wordGroup);
+        
         // Create word checkboxes for this round
         wordGroup.forEach(word => {
             const wordItem = document.createElement('div');
@@ -6430,6 +6439,9 @@ function populateWordSelectionGrid(roundNumber) {
         
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
+        
+        // Debug: Log section addition
+        console.log(`Added section ${roundIndex + 1} to grid. Grid now has ${grid.children.length} children.`);
     });
 }
 
@@ -6445,13 +6457,20 @@ function populateWordSelectionGrids() {
 function getAllWordsByRound() {
     const wordsByRound = [];
     
+    // Debug: Log available word pools
+    console.log('Available word pools:', Object.keys(wordPools));
+    
     // Add words from each introduction round
     for (let i = 1; i <= 18; i += 2) { // Odd numbers are introduction rounds
         if (wordPools[i]) {
+            console.log(`Adding word pool ${i} with ${wordPools[i].length} words`);
             wordsByRound.push(wordPools[i]);
+        } else {
+            console.log(`Word pool ${i} is empty or undefined`);
         }
     }
     
+    console.log('Total word groups:', wordsByRound.length);
     return wordsByRound;
 }
 
