@@ -2450,10 +2450,11 @@ userStatsBtn.addEventListener('click', () => {
     updateStatsDisplay();
 });
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
-hiraganaBtn.addEventListener('click', () => {
-    console.log('Hiragana button clicked');
-    startGame();
-});
+if (hiraganaBtn) {
+    hiraganaBtn.addEventListener('click', () => {
+        startGame();
+    });
+}
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToWordEntryFromScriptBtn.addEventListener('click', () => showPage('word-entry-selection'));
 backToScriptBtn.addEventListener('click', () => {
@@ -2834,7 +2835,6 @@ function showPage(pageName) {
         scriptPage.style.display = 'block';
         scriptPage.classList.add('active');
     } else if (pageName === 'game') {
-        console.log('Showing game page');
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
     } else if (pageName === 'word-entry-selection') {
@@ -3220,7 +3220,6 @@ function showErrorAndClearInput(correctAnswer) {
 
 // Game functions
 function startGame() {
-    console.log('startGame function called');
     currentPage = 'game';
     
     // Reset custom mode variables when starting normal brute force game
@@ -3268,10 +3267,8 @@ function startGame() {
 }
 
 function initializeRound() {
-    console.log('initializeRound function called');
     // Check if we're in Japanese custom mode
     if (window.japaneseCustomModeEnabled) {
-        console.log('Initializing Japanese custom round');
         initializeJapaneseCustomRound();
         return;
     }
