@@ -561,6 +561,14 @@ body.dark-mode .settings-btn:hover {
     background: #d64a2a;
 }
 
+.hidden-back-btn {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    pointer-events: none !important;
+}
+
 /* Game Page Styles */
 .game-box {
     margin: 40px auto;

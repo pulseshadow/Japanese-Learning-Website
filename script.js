@@ -2453,6 +2453,12 @@ customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
+
+// Add event listener for the new back button in script selection
+const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
+backToWordEntryFromScriptBtn.addEventListener('click', () => {
+    showPage('word-entry-selection');
+});
 backToScriptBtn.addEventListener('click', () => {
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
