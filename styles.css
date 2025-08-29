@@ -1396,6 +1396,58 @@ body.dark-mode #correct-answer-display {
     display: none;
 }
 
+/* Mobile optimization for game layout - bring answer box closer to question box */
+@media (max-width: 768px) {
+    #correct-answer-display {
+        margin-bottom: 3px;
+        padding: 6px 12px;
+        font-size: 0.9rem;
+    }
+    
+    .word-display-container {
+        margin: 20px 0 10px 0;
+        gap: 10px;
+    }
+    
+    .japanese-text {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #correct-answer-display {
+        margin-bottom: 2px;
+        padding: 5px 10px;
+        font-size: 0.85rem;
+    }
+    
+    .word-display-container {
+        margin: 15px 0 8px 0;
+        gap: 8px;
+    }
+    
+    .japanese-text {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 360px) {
+    #correct-answer-display {
+        margin-bottom: 1px;
+        padding: 4px 8px;
+        font-size: 0.8rem;
+    }
+    
+    .word-display-container {
+        margin: 12px 0 6px 0;
+        gap: 6px;
+    }
+    
+    .japanese-text {
+        font-size: 1.6rem;
+    }
+}
+
 .word-display-container {
     display: flex;
     align-items: center;
