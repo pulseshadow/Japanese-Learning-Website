@@ -2275,6 +2275,62 @@ body.dark-mode .ad-container {
     max-width: 100% !important;
 }
 
+/* Force all ad containers to be positioned correctly */
+.ad-container,
+[class*="ad"],
+[id*="ad"] {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+}
+
+/* Specific ad container overrides */
+#brute-force-ad,
+#custom-mode-ad,
+#brute-force-english-ad,
+#brute-force-japanese-ad,
+#custom-script-selection-ad,
+#japanese-custom-mode-ad,
+#game-english-hiragana-ad,
+#game-japanese-hiragana-ad {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override any Google AdSense injected styles */
+.adsbygoogle,
+ins.adsbygoogle {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    float: none !important;
+    clear: both !important;
+    display: block !important;
+}
+
 /* Responsive ad sizing for inline ads */
 @media (max-width: 768px) {
     .ad-container {
