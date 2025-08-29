@@ -2599,8 +2599,131 @@ body.dark-mode .hiragana-key:hover {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Touch-friendly improvements for mobile */
+@media (hover: none) and (pointer: coarse) {
+    .hiragana-key {
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+    }
+    
+    .hiragana-key:active {
+        background: #E75D38;
+        border-color: #d64a2a;
+        color: #ffffff;
+        transform: scale(0.95);
+        transition: all 0.1s ease;
+    }
+    
+    body.dark-mode .hiragana-key:active {
+        background: #00bfff;
+        border-color: #0080ff;
+        color: #ffffff;
+    }
+}
+
 .hiragana-keyboard.hidden {
     display: none;
+}
+
+/* Mobile Optimization for Hiragana Keyboard */
+@media (max-width: 768px) {
+    .hiragana-keyboard {
+        margin: 15px 0;
+        padding: 15px;
+        border-radius: 8px;
+    }
+    
+    .keyboard-row {
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .keyboard-group {
+        gap: 6px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .keyboard-separator {
+        font-size: 16px;
+        margin: 0 4px;
+        min-width: 8px;
+    }
+    
+    .keyboard-separator-row {
+        gap: 4px;
+        margin: 4px 0;
+    }
+    
+    .hiragana-key {
+        padding: 8px 12px;
+        font-size: 16px;
+        min-width: 40px;
+        height: 40px;
+        border-radius: 6px;
+        border-width: 1px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hiragana-keyboard {
+        margin: 10px 0;
+        padding: 10px;
+        border-radius: 6px;
+    }
+    
+    .keyboard-row {
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+    
+    .keyboard-group {
+        gap: 4px;
+    }
+    
+    .keyboard-separator {
+        font-size: 14px;
+        margin: 0 3px;
+        min-width: 6px;
+    }
+    
+    .keyboard-separator-row {
+        gap: 3px;
+        margin: 3px 0;
+    }
+    
+    .hiragana-key {
+        padding: 6px 8px;
+        font-size: 14px;
+        min-width: 36px;
+        height: 36px;
+        border-radius: 4px;
+    }
+}
+
+@media (max-width: 360px) {
+    .hiragana-keyboard {
+        margin: 8px 0;
+        padding: 8px;
+    }
+    
+    .keyboard-row {
+        gap: 4px;
+        margin-bottom: 8px;
+    }
+    
+    .keyboard-group {
+        gap: 3px;
+    }
+    
+    .hiragana-key {
+        padding: 5px 6px;
+        font-size: 13px;
+        min-width: 32px;
+        height: 32px;
+    }
 }
 
   /* Brute Force Mode Ad Container Styles (Bottom) */
