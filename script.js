@@ -4256,7 +4256,27 @@ function nextStandardRound() {
         saveStats();
     }
     
+    // Refresh the game ad when moving to a new round
+    refreshGameAd();
+    
     // Progress tracking removed - no longer persisting round progression
+}
+
+// Function to refresh the game ad when moving to a new round
+function refreshGameAd() {
+    const gameAd = document.getElementById('game-english-hiragana-ad');
+    if (gameAd) {
+        // Check if AdSense is available
+        if (window.adsbygoogle) {
+            try {
+                // Push a new ad request to refresh the ad
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+                console.log('Game ad refreshed for new round');
+            } catch (error) {
+                console.log('Ad refresh failed:', error);
+            }
+        }
+    }
 }
 
 function nextMirroredRound() {
