@@ -2658,10 +2658,10 @@ body.dark-mode .hiragana-key:hover {
     }
     
     .hiragana-key {
-        padding: 8px 12px;
-        font-size: 16px;
-        min-width: 40px;
-        height: 40px;
+        padding: 6px 10px;
+        font-size: 15px;
+        min-width: 36px;
+        height: 36px;
         border-radius: 6px;
         border-width: 1px;
     }
@@ -2695,10 +2695,10 @@ body.dark-mode .hiragana-key:hover {
     }
     
     .hiragana-key {
-        padding: 6px 8px;
-        font-size: 14px;
-        min-width: 36px;
-        height: 36px;
+        padding: 5px 7px;
+        font-size: 13px;
+        min-width: 32px;
+        height: 32px;
         border-radius: 4px;
     }
 }
@@ -2719,10 +2719,45 @@ body.dark-mode .hiragana-key:hover {
     }
     
     .hiragana-key {
-        padding: 5px 6px;
-        font-size: 13px;
-        min-width: 32px;
-        height: 32px;
+        padding: 4px 5px;
+        font-size: 12px;
+        min-width: 28px;
+        height: 28px;
+    }
+}
+
+@media (max-width: 320px) {
+    .hiragana-keyboard {
+        margin: 6px 0;
+        padding: 6px;
+    }
+    
+    .keyboard-row {
+        gap: 3px;
+        margin-bottom: 6px;
+    }
+    
+    .keyboard-group {
+        gap: 2px;
+    }
+    
+    .keyboard-separator {
+        font-size: 12px;
+        margin: 0 2px;
+        min-width: 4px;
+    }
+    
+    .keyboard-separator-row {
+        gap: 2px;
+        margin: 2px 0;
+    }
+    
+    .hiragana-key {
+        padding: 3px 4px;
+        font-size: 11px;
+        min-width: 24px;
+        height: 24px;
+        border-radius: 3px;
     }
 }
 
