@@ -2557,6 +2557,10 @@ body.dark-mode .theme-label {
     border: 2px solid #e0e0e0;
     border-radius: 10px;
     text-align: center;
+    width: 95%;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 body.dark-mode .hiragana-keyboard {
@@ -2656,6 +2660,12 @@ body.dark-mode .hiragana-key:hover {
     .hiragana-key {
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
+        /* Prevent focus on mobile devices */
+        outline: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
     }
     
     .hiragana-key:active {
@@ -2670,6 +2680,12 @@ body.dark-mode .hiragana-key:hover {
         background: #00bfff;
         border-color: #0080ff;
         color: #ffffff;
+    }
+    
+    /* Additional mobile optimizations */
+    .hiragana-key:focus {
+        outline: none;
+        box-shadow: none;
     }
 }
 
@@ -2762,8 +2778,10 @@ body.dark-mode .hiragana-key:hover {
         margin: 10px 0;
         padding: 20px;
         border-radius: 8px;
-        width: 100%;
-        max-width: 100%;
+        width: 98%;
+        max-width: 98%;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .keyboard-row {
@@ -2807,6 +2825,8 @@ body.dark-mode .hiragana-key:hover {
         border-radius: 6px;
         width: 100%;
         max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .keyboard-row {
@@ -2846,6 +2866,8 @@ body.dark-mode .hiragana-key:hover {
         padding: 12px;
         width: 100%;
         max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .keyboard-row {
@@ -2874,6 +2896,8 @@ body.dark-mode .hiragana-key:hover {
         padding: 10px;
         width: 100%;
         max-width: 100%;
+        margin-left: auto;
+        margin-right: auto;
     }
     
     .keyboard-row {

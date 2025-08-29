@@ -4369,13 +4369,21 @@ function initializeJapaneseCustomMode() {
     console.log('Loaded Japanese custom rounds:', loaded);
     
     if (!loaded) {
-        // If no saved data, initialize with default structure
-        console.log('No saved data, initializing default structure');
-        populateJapaneseWordSelectionGrids();
-        setupJapaneseCustomWordButtons();
+        // If no saved data, automatically add round 1 and open it
+        console.log('No saved data, adding round 1 and opening it');
+        addJapaneseCustomRound(1);
         
-        // Explicitly set up the custom word button for Round 1 (initial round)
-        setupJapaneseCustomWordButtonsForRound(1);
+        // Open the first round dropdown
+        const firstRound = document.querySelector('.custom-round[data-round="1"]');
+        if (firstRound) {
+            const roundContent = firstRound.querySelector('.custom-round-content');
+            const collapseBtn = firstRound.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                roundContent.style.display = 'block';
+                collapseBtn.textContent = '▼';
+                collapseBtn.style.transform = 'rotate(180deg)';
+            }
+        }
     } else {
         // If data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
@@ -5412,6 +5420,13 @@ function capitalizeWords(text) {
     }).join(' ');
 }
 
+// Mobile device detection
+function isMobileDevice() {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           (window.innerWidth <= 768) || 
+           ('ontouchstart' in window);
+}
+
 // Hiragana Keyboard Functionality
 function setupHiraganaKeyboard() {
     console.log('Setting up hiragana keyboard');
@@ -5453,8 +5468,11 @@ function insertHiraganaCharacter(character) {
     // Set cursor position after the inserted character
     answerInput.selectionStart = answerInput.selectionEnd = cursorPos + character.length;
     
-    // Focus back to the input
-    answerInput.focus();
+    // Only focus the input on desktop devices, not on mobile
+    // This prevents the mobile keyboard from popping up when tapping hiragana keys
+    if (!isMobileDevice()) {
+        answerInput.focus();
+    }
     
     // Trigger input event to update validation
     answerInput.dispatchEvent(new Event('input'));
@@ -6375,12 +6393,20 @@ function initializeCustomMode() {
     const loaded = loadCustomRounds();
     
     if (!loaded) {
-        // If no saved data, initialize with default structure
-        populateWordSelectionGrids();
-        setupCustomWordButtons();
+        // If no saved data, automatically add round 1 and open it
+        addCustomRound();
         
-        // Explicitly set up the custom word button for Round 1 (initial round)
-        setupCustomWordButtonsForRound(1);
+        // Open the first round dropdown
+        const firstRound = document.querySelector('.custom-round[data-round="1"]');
+        if (firstRound) {
+            const roundContent = firstRound.querySelector('.custom-round-content');
+            const collapseBtn = firstRound.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                roundContent.style.display = 'block';
+                collapseBtn.textContent = '▼';
+                collapseBtn.style.transform = 'rotate(180deg)';
+            }
+        }
     } else {
         // If data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
