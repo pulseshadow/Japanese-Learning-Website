@@ -2621,6 +2621,85 @@ body.dark-mode .hiragana-key:hover {
     }
 }
 
+/* General mobile UI spacing optimizations */
+@media (max-width: 768px) {
+    .text-box {
+        margin-bottom: 15px;
+    }
+    
+    .text-box-header {
+        margin-bottom: 12px;
+    }
+    
+    .text-box-content {
+        padding: 15px;
+    }
+    
+    .button-container {
+        margin-bottom: 12px;
+    }
+    
+    .practice-btn, .script-btn, .back-btn {
+        margin-bottom: 8px;
+    }
+    
+    .body-text {
+        margin-bottom: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .text-box {
+        margin-bottom: 12px;
+    }
+    
+    .text-box-header {
+        margin-bottom: 10px;
+    }
+    
+    .text-box-content {
+        padding: 12px;
+    }
+    
+    .button-container {
+        margin-bottom: 10px;
+    }
+    
+    .practice-btn, .script-btn, .back-btn {
+        margin-bottom: 6px;
+    }
+    
+    .body-text {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 360px) {
+    .text-box {
+        margin-bottom: 10px;
+    }
+    
+    .text-box-header {
+        margin-bottom: 8px;
+    }
+    
+    .text-box-content {
+        padding: 10px;
+    }
+    
+    .button-container {
+        margin-bottom: 8px;
+    }
+    
+    .practice-btn, .script-btn, .back-btn {
+        margin-bottom: 5px;
+    }
+    
+    .body-text {
+        margin-bottom: 8px;
+    }
+}
+
 .hiragana-keyboard.hidden {
     display: none;
 }
@@ -2628,30 +2707,71 @@ body.dark-mode .hiragana-key:hover {
 /* Mobile Optimization for Hiragana Keyboard */
 @media (max-width: 768px) {
     .hiragana-keyboard {
-        margin: 15px 0;
-        padding: 15px;
+        margin: 10px 0;
+        padding: 20px;
         border-radius: 8px;
-        width: 95%;
-        max-width: 95%;
+        width: 100%;
+        max-width: 100%;
     }
     
     .keyboard-row {
-        gap: 6px;
-        margin-bottom: 12px;
+        gap: 8px;
+        margin-bottom: 10px;
         flex-wrap: nowrap;
         justify-content: center;
     }
     
     .keyboard-group {
-        gap: 4px;
+        gap: 6px;
         flex-wrap: nowrap;
         justify-content: center;
     }
     
     .keyboard-separator {
         font-size: 14px;
+        margin: 0 4px;
+        min-width: 8px;
+    }
+    
+    .keyboard-separator-row {
+        gap: 4px;
+        margin: 4px 0;
+    }
+    
+    .hiragana-key {
+        padding: 6px 8px;
+        font-size: 14px;
+        min-width: 32px;
+        height: 32px;
+        border-radius: 5px;
+        border-width: 1px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hiragana-keyboard {
+        margin: 8px 0;
+        padding: 16px;
+        border-radius: 6px;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .keyboard-row {
+        gap: 5px;
+        margin-bottom: 8px;
+        flex-wrap: nowrap;
+    }
+    
+    .keyboard-group {
+        gap: 4px;
+        flex-wrap: nowrap;
+    }
+    
+    .keyboard-separator {
+        font-size: 12px;
         margin: 0 3px;
-        min-width: 6px;
+        min-width: 5px;
     }
     
     .keyboard-separator-row {
@@ -2661,26 +2781,24 @@ body.dark-mode .hiragana-key:hover {
     
     .hiragana-key {
         padding: 4px 6px;
-        font-size: 14px;
-        min-width: 30px;
-        height: 30px;
-        border-radius: 5px;
-        border-width: 1px;
+        font-size: 12px;
+        min-width: 28px;
+        height: 28px;
+        border-radius: 4px;
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 360px) {
     .hiragana-keyboard {
-        margin: 10px 0;
-        padding: 10px;
-        border-radius: 6px;
-        width: 98%;
-        max-width: 98%;
+        margin: 6px 0;
+        padding: 12px;
+        width: 100%;
+        max-width: 100%;
     }
     
     .keyboard-row {
         gap: 4px;
-        margin-bottom: 10px;
+        margin-bottom: 6px;
         flex-wrap: nowrap;
     }
     
@@ -2689,8 +2807,36 @@ body.dark-mode .hiragana-key:hover {
         flex-wrap: nowrap;
     }
     
+    .hiragana-key {
+        padding: 3px 5px;
+        font-size: 11px;
+        min-width: 26px;
+        height: 26px;
+        border-radius: 3px;
+    }
+}
+
+@media (max-width: 320px) {
+    .hiragana-keyboard {
+        margin: 4px 0;
+        padding: 10px;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .keyboard-row {
+        gap: 3px;
+        margin-bottom: 5px;
+        flex-wrap: nowrap;
+    }
+    
+    .keyboard-group {
+        gap: 2px;
+        flex-wrap: nowrap;
+    }
+    
     .keyboard-separator {
-        font-size: 12px;
+        font-size: 10px;
         margin: 0 2px;
         min-width: 4px;
     }
@@ -2701,77 +2847,10 @@ body.dark-mode .hiragana-key:hover {
     }
     
     .hiragana-key {
-        padding: 3px 5px;
-        font-size: 12px;
-        min-width: 26px;
-        height: 26px;
-        border-radius: 4px;
-    }
-}
-
-@media (max-width: 360px) {
-    .hiragana-keyboard {
-        margin: 8px 0;
-        padding: 8px;
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .keyboard-row {
-        gap: 3px;
-        margin-bottom: 8px;
-        flex-wrap: nowrap;
-    }
-    
-    .keyboard-group {
-        gap: 2px;
-        flex-wrap: nowrap;
-    }
-    
-    .hiragana-key {
         padding: 2px 4px;
-        font-size: 11px;
-        min-width: 24px;
-        height: 24px;
-        border-radius: 3px;
-    }
-}
-
-@media (max-width: 320px) {
-    .hiragana-keyboard {
-        margin: 6px 0;
-        padding: 6px;
-        width: 100%;
-        max-width: 100%;
-    }
-    
-    .keyboard-row {
-        gap: 2px;
-        margin-bottom: 6px;
-        flex-wrap: nowrap;
-    }
-    
-    .keyboard-group {
-        gap: 1px;
-        flex-wrap: nowrap;
-    }
-    
-    .keyboard-separator {
         font-size: 10px;
-        margin: 0 1px;
-        min-width: 3px;
-    }
-    
-    .keyboard-separator-row {
-        gap: 1px;
-        margin: 1px 0;
-    }
-    
-    .hiragana-key {
-        padding: 1px 3px;
-        font-size: 10px;
-        min-width: 20px;
-        height: 20px;
+        min-width: 22px;
+        height: 22px;
         border-radius: 2px;
     }
 }

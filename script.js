@@ -5631,6 +5631,111 @@ function updateLanguageButtons() {
     });
 }
 
+function updateEnterWordsButton() {
+    const enterWordsBtn = document.getElementById('enter-english-words-btn');
+    if (enterWordsBtn) {
+        const languageNames = {
+            'en': { 
+                'en': 'English', 
+                'es': 'Inglés', 
+                'fr': 'Anglais', 
+                'ja': '英語', 
+                'zh': '英语', 
+                'id': 'Bahasa Inggris', 
+                'ko': '영어', 
+                'vi': 'Tiếng Anh' 
+            },
+            'es': { 
+                'en': 'Spanish', 
+                'es': 'Español', 
+                'fr': 'Espagnol', 
+                'ja': 'スペイン語', 
+                'zh': '西班牙语', 
+                'id': 'Bahasa Spanyol', 
+                'ko': '스페인어', 
+                'vi': 'Tiếng Tây Ban Nha' 
+            },
+            'fr': { 
+                'en': 'French', 
+                'es': 'Francés', 
+                'fr': 'Français', 
+                'ja': 'フランス語', 
+                'zh': '法语', 
+                'id': 'Bahasa Prancis', 
+                'ko': '프랑스어', 
+                'vi': 'Tiếng Pháp' 
+            },
+            'ja': { 
+                'en': 'Japanese', 
+                'es': 'Japonés', 
+                'fr': 'Japonais', 
+                'ja': '日本語', 
+                'zh': '日语', 
+                'id': 'Bahasa Jepang', 
+                'ko': '일본어', 
+                'vi': 'Tiếng Nhật' 
+            },
+            'zh': { 
+                'en': 'Chinese', 
+                'es': 'Chino', 
+                'fr': 'Chinois', 
+                'ja': '中国語', 
+                'zh': '中文', 
+                'id': 'Bahasa Tiongkok', 
+                'ko': '중국어', 
+                'vi': 'Tiếng Trung' 
+            },
+            'id': { 
+                'en': 'Indonesian', 
+                'es': 'Indonesio', 
+                'fr': 'Indonésien', 
+                'ja': 'インドネシア語', 
+                'zh': '印尼语', 
+                'id': 'Bahasa Indonesia', 
+                'ko': '인도네시아어', 
+                'vi': 'Tiếng Indonesia' 
+            },
+            'ko': { 
+                'en': 'Korean', 
+                'es': 'Coreano', 
+                'fr': 'Coréen', 
+                'ja': '韓国語', 
+                'zh': '韩语', 
+                'id': 'Bahasa Korea', 
+                'ko': '한국어', 
+                'vi': 'Tiếng Hàn' 
+            },
+            'vi': { 
+                'en': 'Vietnamese', 
+                'es': 'Vietnamita', 
+                'fr': 'Vietnamien', 
+                'ja': 'ベトナム語', 
+                'zh': '越南语', 
+                'id': 'Bahasa Vietnam', 
+                'ko': '베트남어', 
+                'vi': 'Tiếng Việt' 
+            }
+        };
+        
+        const buttonTextTemplates = {
+            'en': 'Enter {language} Words',
+            'es': 'Ingresar Palabras en {language}',
+            'fr': 'Entrer des Mots en {language}',
+            'ja': '{language}の単語を入力',
+            'zh': '输入{language}单词',
+            'id': 'Masukkan Kata-kata dalam {language}',
+            'ko': '{language} 단어 입력',
+            'vi': 'Nhập Từ {language}'
+        };
+        
+        const currentLangName = languageNames[currentLanguage][currentLanguage];
+        const template = buttonTextTemplates[currentLanguage];
+        const buttonText = template.replace('{language}', currentLangName);
+        
+        enterWordsBtn.textContent = buttonText;
+    }
+}
+
 function updateAllText() {
     // Update all elements with data attributes
     const elements = document.querySelectorAll('[data-en], [data-es], [data-fr], [data-ja], [data-zh], [data-id], [data-ko], [data-vi]');
@@ -5675,6 +5780,9 @@ function updateAllText() {
     if (document.querySelector('.word-selection-grid')) {
         updateWordSelectionGrids();
     }
+    
+    // Update the "Enter English Words" button to show current language
+    updateEnterWordsButton();
 }
 
 function updateAllTextWithoutGrids() {
@@ -5727,6 +5835,9 @@ function updateAllTextWithoutGrids() {
             label.textContent = text;
         }
     });
+    
+    // Update the "Enter English Words" button to show current language
+    updateEnterWordsButton();
 }
 
 // Function to update text while preserving HTML links
