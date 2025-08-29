@@ -2248,9 +2248,13 @@ body.dark-mode .language-names {
     border: 1px solid #e9ecef;
     border-radius: 8px;
     padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: block;
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
 }
 
 body.dark-mode .ad-container {
@@ -2261,6 +2265,14 @@ body.dark-mode .ad-container {
 /* Ad container base styling */
 .ad-container {
     z-index: 100;
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: 100% !important;
 }
 
 /* Responsive ad sizing for inline ads */
@@ -2755,13 +2767,64 @@ body.dark-mode #brute-force-english-ad {
       opacity: 1 !important;
   }
   
-  body.dark-mode #japanese-custom-mode-ad {
+    body.dark-mode #japanese-custom-mode-ad {
       background: #2a2a2a !important;
       border-color: #444 !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
   }
 
   /* Game Page Ad Container Styles (Bottom) */
+  #game-english-hiragana-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+  
+  body.dark-mode #game-english-hiragana-ad {
+      background: #2a2a2a !important;
+      border-color: #444 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+
+  #game-japanese-hiragana-ad {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      z-index: 100 !important;
+      background: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
+      border-radius: 8px !important;
+      padding: 15px !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+      margin: 20px 0 !important;
+      text-align: center !important;
+      min-height: 250px !important;
+      height: auto !important;
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+  }
+  
+  body.dark-mode #game-japanese-hiragana-ad {
+      background: #2a2a2a !important;
+      border-color: #444 !important;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  }
+  
+    /* Game Page Ad Container Styles (Bottom) */
   #game-english-hiragana-ad {
       position: static !important;
       width: 100% !important;
