@@ -2625,7 +2625,7 @@ body.dark-mode .keyboard-separator {
     display: flex;
     justify-content: center;
     gap: 7.5px;
-    margin: 0.5px 0;
+    margin: 0.9375px 0;
 }
 
 .hiragana-key {
