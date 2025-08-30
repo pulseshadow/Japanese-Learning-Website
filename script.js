@@ -3493,7 +3493,7 @@ function submitAnswer() {
                 }
             } else if (currentPhase === 'elimination') {
                 if (userAnswer === correctAnswer) {
-                    eliminationWords.shift();
+                    currentQuestionIndex++;
                     showJapaneseCustomEliminationQuestion();
                 } else {
                     showError(currentWord.japanese);
@@ -3519,7 +3519,7 @@ function submitAnswer() {
                 }
             } else if (currentPhase === 'elimination') {
                 if (userAnswer === correctAnswer) {
-                    eliminationWords.shift();
+                    currentQuestionIndex++;
                     showMirroredEliminationQuestion();
                 } else {
                     showError(currentWord.japanese);
@@ -4120,11 +4120,11 @@ function updateNextRoundButton() {
         } else {
             // Mirrored brute force mode
             const roundWords = getCurrentRoundWords();
-            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const totalCorrectMirrored = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = roundWords.length * 3;
             
             // Enable button when target is reached
-            if (totalCorrect >= targetCorrect) {
+            if (totalCorrectMirrored >= targetCorrect) {
                 nextRoundBtn.classList.remove('disabled');
             } else {
                 nextRoundBtn.classList.add('disabled');
@@ -4133,19 +4133,40 @@ function updateNextRoundButton() {
         return;
     }
     
+    // Check if we're in custom mode
+    if (window.customWordPools) {
+        // Custom mode
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
+        
+        let allWords;
+        if (isIntroductionRound) {
+            // For introduction rounds, only use the current round's words
+            allWords = getCurrentCustomRoundWords();
+        } else {
+            // For practice rounds, use accumulated words from all previous introduction rounds
+            allWords = getAllCustomWordsUpToRound(currentRound);
+        }
+        
+        const totalCorrectCustom = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+        const targetCorrect = allWords.length * 3;
+        
+        // Enable button when target is reached
+        if (totalCorrectCustom >= targetCorrect) {
+            nextRoundBtn.classList.remove('disabled');
+        } else {
+            nextRoundBtn.classList.add('disabled');
+        }
+        return;
+    }
+    
+    // Standard mode
     const roundWords = getCurrentRoundWords();
-    const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+    const totalCorrectStandard = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
     const targetCorrect = roundWords.length * 3;
     
-    // Check if all words have 3 correct answers
-    const allWordsHaveThreeCorrect = roundWords.every(word => 
-        (correctAnswers[word.japanese] || 0) >= 3
-    );
-    
-
-    
     // Enable button when target is reached
-    if (totalCorrect >= targetCorrect) {
+    if (totalCorrectStandard >= targetCorrect) {
         nextRoundBtn.classList.remove('disabled');
     } else {
         nextRoundBtn.classList.add('disabled');
@@ -5303,7 +5324,12 @@ function showJapaneseCustomLearningQuestion() {
     if (currentQuestionIndex >= roundWords.length) {
         // Learning phase complete, move to elimination phase
         currentPhase = 'elimination';
-        initializeJapaneseCustomRound();
+        eliminationWords = [...roundWords]; // Copy array
+        shuffleArray(eliminationWords); // Randomize order
+        currentQuestionIndex = 0;
+        // Disable next round button during elimination phase
+        nextRoundBtn.classList.add('disabled');
+        showJapaneseCustomEliminationQuestion();
         return;
     }
     
@@ -5332,14 +5358,18 @@ function showJapaneseCustomLearningQuestion() {
 
 function showJapaneseCustomEliminationQuestion() {
     const roundWords = getCurrentJapaneseCustomRoundWords();
-    if (eliminationWords.length === 0) {
+    if (currentQuestionIndex >= eliminationWords.length) {
         // Elimination phase complete, move to repeating phase
         currentPhase = 'repeating';
-        initializeJapaneseCustomRound();
+        initializeJapaneseCustomQuestionQueue();
+        currentQuestionIndex = 0;
+        // Disable next round button during repeating phase until requirements are met
+        nextRoundBtn.classList.add('disabled');
+        showJapaneseCustomRepeatingQuestion();
         return;
     }
     
-    const word = eliminationWords[0];
+    const word = eliminationWords[currentQuestionIndex];
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
@@ -5359,6 +5389,24 @@ function showJapaneseCustomEliminationQuestion() {
     
     // Update progress
     updateProgress();
+}
+
+function initializeJapaneseCustomQuestionQueue() {
+    const roundWords = getCurrentJapaneseCustomRoundWords();
+    questionQueue = [];
+    
+    // Initialize correctAnswers for all words in this round
+    roundWords.forEach(word => {
+        if (!correctAnswers[word.japanese]) {
+            correctAnswers[word.japanese] = 0;
+        }
+    });
+    
+    // Create initial queue of 21 questions
+    for (let i = 0; i < 21; i++) {
+        const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+        questionQueue.push(randomWord);
+    }
 }
 
 function showJapaneseCustomRepeatingQuestion() {
