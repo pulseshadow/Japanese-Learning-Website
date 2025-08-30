@@ -2615,14 +2615,14 @@ body.dark-mode .keyboard-separator {
     background: #ffffff;
     border: 2px solid #d0d0d0;
     border-radius: 8px;
-    padding: 11px 14px;
-    font-size: 16px;
+    padding: 12px 15px;
+    font-size: 17px;
     font-weight: bold;
     color: #333333;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 45px;
-    height: 45px;
+    min-width: 47px;
+    height: 47px;
     display: flex;
     align-items: center;
     justify-content: center;
