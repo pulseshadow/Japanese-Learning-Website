@@ -2651,7 +2651,9 @@ function showMirroredLearningQuestion() {
     if (currentQuestionIndex >= roundWords.length) {
         // Learning phase complete, move to elimination phase
         currentPhase = 'elimination';
-        initializeMirroredRound();
+        eliminationWords = [...roundWords];
+        currentQuestionIndex = 0;
+        showMirroredEliminationQuestion();
         return;
     }
     
@@ -2682,11 +2684,14 @@ function showMirroredEliminationQuestion() {
     if (eliminationWords.length === 0) {
         // Elimination phase complete, move to repeating phase
         currentPhase = 'repeating';
-        initializeMirroredRound();
+        questionQueue = [...getCurrentRoundWords()];
+        shuffleArray(questionQueue);
+        currentQuestionIndex = 0;
+        showMirroredRepeatingQuestion();
         return;
     }
     
-    const word = eliminationWords[0];
+    const word = eliminationWords[currentQuestionIndex];
     
     // Use displayWordWithSound to trigger auto-play and update answer display
     displayWordWithSound(word);
@@ -2716,6 +2721,28 @@ function showMirroredRepeatingQuestion() {
             const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
             questionQueue.push(randomWord);
         }
+    }
+    
+    // Filter out words that have already been answered correctly 3 times
+    questionQueue = questionQueue.filter(word => (correctAnswers[word.japanese] || 0) < 3);
+    
+    // If queue is empty after filtering, refill it
+    if (questionQueue.length === 0) {
+        const roundWords = getCurrentRoundWords();
+        for (let i = 0; i < 21; i++) {
+            const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+            questionQueue.push(randomWord);
+        }
+        // Filter again
+        questionQueue = questionQueue.filter(word => (correctAnswers[word.japanese] || 0) < 3);
+    }
+    
+    // Check if all words have been answered correctly 3 times
+    if (questionQueue.length === 0) {
+        // All words have been answered correctly 3 times
+        console.log('All words have been answered correctly 3 times');
+        updateNextRoundButton();
+        return;
     }
     
     const word = questionQueue[0];
@@ -3493,6 +3520,13 @@ function submitAnswer() {
                 }
             } else if (currentPhase === 'elimination') {
                 if (userAnswer === correctAnswer) {
+                    // Award a point for correct answer in elimination phase
+                    const wordKey = currentWord.japanese;
+                    if (!correctAnswers[wordKey]) {
+                        correctAnswers[wordKey] = 0;
+                    }
+                    correctAnswers[wordKey]++;
+                    
                     currentQuestionIndex++;
                     showJapaneseCustomEliminationQuestion();
                 } else {
@@ -3519,6 +3553,13 @@ function submitAnswer() {
                 }
             } else if (currentPhase === 'elimination') {
                 if (userAnswer === correctAnswer) {
+                    // Award a point for correct answer in elimination phase
+                    const wordKey = currentWord.japanese;
+                    if (!correctAnswers[wordKey]) {
+                        correctAnswers[wordKey] = 0;
+                    }
+                    correctAnswers[wordKey]++;
+                    
                     currentQuestionIndex++;
                     showMirroredEliminationQuestion();
                 } else {
@@ -3635,6 +3676,12 @@ function handleMirroredCorrectAnswer() {
     // Check if all words have 3 correct answers
     updateNextRoundButton();
     
+    // Check if this word has been answered correctly 3 times
+    if ((correctAnswers[wordKey] || 0) >= 3) {
+        // Word has been answered correctly 3 times, don't add it back to queue
+        console.log(`Word ${wordKey} has been answered correctly 3 times, removing from queue`);
+    }
+    
     // Show next question
     showMirroredRepeatingQuestion();
 }
@@ -3645,6 +3692,15 @@ function handleMirroredIncorrectAnswer(word) {
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
+    
+    // Check if this word has been answered correctly 3 times
+    if ((correctAnswers[word.japanese] || 0) >= 3) {
+        // Word has been answered correctly 3 times, don't add it back to queue
+        console.log(`Word ${word.japanese} has been answered correctly 3 times, not adding back to queue`);
+        // Show next question without adding this word back
+        showMirroredRepeatingQuestion();
+        return;
+    }
     
     // Add word back to queue at positions 5 and 10 ahead
     const queueLength = questionQueue.length;
@@ -3705,6 +3761,12 @@ function handleJapaneseCustomCorrectAnswer() {
     // Check if all words have 3 correct answers
     updateNextRoundButton();
     
+    // Check if this word has been answered correctly 3 times
+    if ((correctAnswers[wordKey] || 0) >= 3) {
+        // Word has been answered correctly 3 times, don't add it back to queue
+        console.log(`Word ${wordKey} has been answered correctly 3 times, removing from queue`);
+    }
+    
     // Show next question
     showJapaneseCustomRepeatingQuestion();
 }
@@ -3715,6 +3777,15 @@ function handleJapaneseCustomIncorrectAnswer(word) {
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
+    
+    // Check if this word has been answered correctly 3 times
+    if ((correctAnswers[word.japanese] || 0) >= 3) {
+        // Word has been answered correctly 3 times, don't add it back to queue
+        console.log(`Word ${word.japanese} has been answered correctly 3 times, not adding back to queue`);
+        // Show next question without adding this word back
+        showJapaneseCustomRepeatingQuestion();
+        return;
+    }
     
     // Add word back to queue at positions 5 and 10 ahead
     const queueLength = questionQueue.length;
@@ -4111,8 +4182,13 @@ function updateNextRoundButton() {
             const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = roundWords.length * 3;
             
-            // Enable button when target is reached
-            if (totalCorrect >= targetCorrect) {
+            // Check if all words have 3 correct answers
+            const allWordsHaveThreeCorrect = roundWords.every(word => 
+                (correctAnswers[word.japanese] || 0) >= 3
+            );
+            
+            // Enable button when all words have 3 correct answers
+            if (allWordsHaveThreeCorrect) {
                 nextRoundBtn.classList.remove('disabled');
             } else {
                 nextRoundBtn.classList.add('disabled');
@@ -4120,11 +4196,16 @@ function updateNextRoundButton() {
         } else {
             // Mirrored brute force mode
             const roundWords = getCurrentRoundWords();
-            const totalCorrectMirrored = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+            const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = roundWords.length * 3;
             
-            // Enable button when target is reached
-            if (totalCorrectMirrored >= targetCorrect) {
+            // Check if all words have 3 correct answers
+            const allWordsHaveThreeCorrect = roundWords.every(word => 
+                (correctAnswers[word.japanese] || 0) >= 3
+            );
+            
+            // Enable button when all words have 3 correct answers
+            if (allWordsHaveThreeCorrect) {
                 nextRoundBtn.classList.remove('disabled');
             } else {
                 nextRoundBtn.classList.add('disabled');
@@ -4133,40 +4214,19 @@ function updateNextRoundButton() {
         return;
     }
     
-    // Check if we're in custom mode
-    if (window.customWordPools) {
-        // Custom mode
-        const noPracticeRounds = window.customModeNoPracticeRounds || false;
-        const isIntroductionRound = noPracticeRounds ? true : (currentRound % 2 === 1);
-        
-        let allWords;
-        if (isIntroductionRound) {
-            // For introduction rounds, only use the current round's words
-            allWords = getCurrentCustomRoundWords();
-        } else {
-            // For practice rounds, use accumulated words from all previous introduction rounds
-            allWords = getAllCustomWordsUpToRound(currentRound);
-        }
-        
-        const totalCorrectCustom = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
-        const targetCorrect = allWords.length * 3;
-        
-        // Enable button when target is reached
-        if (totalCorrectCustom >= targetCorrect) {
-            nextRoundBtn.classList.remove('disabled');
-        } else {
-            nextRoundBtn.classList.add('disabled');
-        }
-        return;
-    }
-    
-    // Standard mode
     const roundWords = getCurrentRoundWords();
-    const totalCorrectStandard = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
+    const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
     const targetCorrect = roundWords.length * 3;
     
+    // Check if all words have 3 correct answers
+    const allWordsHaveThreeCorrect = roundWords.every(word => 
+        (correctAnswers[word.japanese] || 0) >= 3
+    );
+    
+
+    
     // Enable button when target is reached
-    if (totalCorrectStandard >= targetCorrect) {
+    if (totalCorrect >= targetCorrect) {
         nextRoundBtn.classList.remove('disabled');
     } else {
         nextRoundBtn.classList.add('disabled');
@@ -5324,11 +5384,8 @@ function showJapaneseCustomLearningQuestion() {
     if (currentQuestionIndex >= roundWords.length) {
         // Learning phase complete, move to elimination phase
         currentPhase = 'elimination';
-        eliminationWords = [...roundWords]; // Copy array
-        shuffleArray(eliminationWords); // Randomize order
+        eliminationWords = [...roundWords];
         currentQuestionIndex = 0;
-        // Disable next round button during elimination phase
-        nextRoundBtn.classList.add('disabled');
         showJapaneseCustomEliminationQuestion();
         return;
     }
@@ -5358,13 +5415,12 @@ function showJapaneseCustomLearningQuestion() {
 
 function showJapaneseCustomEliminationQuestion() {
     const roundWords = getCurrentJapaneseCustomRoundWords();
-    if (currentQuestionIndex >= eliminationWords.length) {
+    if (eliminationWords.length === 0) {
         // Elimination phase complete, move to repeating phase
         currentPhase = 'repeating';
-        initializeJapaneseCustomQuestionQueue();
+        questionQueue = [...roundWords];
+        shuffleArray(questionQueue);
         currentQuestionIndex = 0;
-        // Disable next round button during repeating phase until requirements are met
-        nextRoundBtn.classList.add('disabled');
         showJapaneseCustomRepeatingQuestion();
         return;
     }
@@ -5391,24 +5447,6 @@ function showJapaneseCustomEliminationQuestion() {
     updateProgress();
 }
 
-function initializeJapaneseCustomQuestionQueue() {
-    const roundWords = getCurrentJapaneseCustomRoundWords();
-    questionQueue = [];
-    
-    // Initialize correctAnswers for all words in this round
-    roundWords.forEach(word => {
-        if (!correctAnswers[word.japanese]) {
-            correctAnswers[word.japanese] = 0;
-        }
-    });
-    
-    // Create initial queue of 21 questions
-    for (let i = 0; i < 21; i++) {
-        const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
-        questionQueue.push(randomWord);
-    }
-}
-
 function showJapaneseCustomRepeatingQuestion() {
     const roundWords = getCurrentJapaneseCustomRoundWords();
     if (questionQueue.length === 0) {
@@ -5418,6 +5456,27 @@ function showJapaneseCustomRepeatingQuestion() {
             questionQueue.push(randomWord);
             console.log('Added word to Japanese custom queue:', randomWord);
         }
+    }
+    
+    // Filter out words that have already been answered correctly 3 times
+    questionQueue = questionQueue.filter(word => (correctAnswers[word.japanese] || 0) < 3);
+    
+    // If queue is empty after filtering, refill it
+    if (questionQueue.length === 0) {
+        for (let i = 0; i < 21; i++) {
+            const randomWord = roundWords[Math.floor(Math.random() * roundWords.length)];
+            questionQueue.push(randomWord);
+        }
+        // Filter again
+        questionQueue = questionQueue.filter(word => (correctAnswers[word.japanese] || 0) < 3);
+    }
+    
+    // Check if all words have been answered correctly 3 times
+    if (questionQueue.length === 0) {
+        // All words have been answered correctly 3 times
+        console.log('All words have been answered correctly 3 times');
+        updateNextRoundButton();
+        return;
     }
     
     const word = questionQueue[0];
