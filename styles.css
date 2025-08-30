@@ -1532,39 +1532,55 @@ body.dark-mode .sound-btn:disabled {
 
 /* TTS availability styling */
 .sound-btn.tts-available {
-    background: #28a745;
-    border-color: #28a745;
+    background: linear-gradient(135deg, #E75D38 0%, #ff6b3d 100%);
+    border-color: #d64a2a;
+    box-shadow: 0 3px 10px rgba(231, 93, 56, 0.3);
 }
 
 .sound-btn.tts-available:hover {
-    background: #218838;
+    background: linear-gradient(135deg, #d64a2a 0%, #E75D38 100%);
+    border-color: #c03d1f;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 93, 56, 0.4);
 }
 
 body.dark-mode .sound-btn.tts-available {
-    background: #28a745;
-    border-color: #28a745;
+    background: linear-gradient(135deg, #00bfff 0%, #40d4ff 100%);
+    border-color: #0080ff;
+    box-shadow: 0 3px 10px rgba(0, 191, 255, 0.3);
 }
 
 body.dark-mode .sound-btn.tts-available:hover {
-    background: #218838;
+    background: linear-gradient(135deg, #0080ff 0%, #00bfff 100%);
+    border-color: #0066cc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
 }
 
 .sound-btn.tts-unavailable {
-    background: #6c757d;
-    border-color: #6c757d;
+    background: linear-gradient(135deg, #E75D38 0%, #ff6b3d 100%);
+    border-color: #d64a2a;
+    box-shadow: 0 3px 10px rgba(231, 93, 56, 0.3);
 }
 
 .sound-btn.tts-unavailable:hover {
-    background: #5a6268;
+    background: linear-gradient(135deg, #d64a2a 0%, #E75D38 100%);
+    border-color: #c03d1f;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(231, 93, 56, 0.4);
 }
 
 body.dark-mode .sound-btn.tts-unavailable {
-    background: #6c757d;
-    border-color: #6c757d;
+    background: linear-gradient(135deg, #00bfff 0%, #40d4ff 100%);
+    border-color: #0080ff;
+    box-shadow: 0 3px 10px rgba(0, 191, 255, 0.3);
 }
 
 body.dark-mode .sound-btn.tts-unavailable:hover {
-    background: #5a6268;
+    background: linear-gradient(135deg, #0080ff 0%, #00bfff 100%);
+    border-color: #0066cc;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 191, 255, 0.4);
 }
 
 #answer-input {
