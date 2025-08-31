@@ -301,126 +301,49 @@ body.dark-mode .lang-btn.active {
     display: block;
 }
 
-/* Compact pages for word entry and script selection */
-#word-entry-selection-page,
+/* Compact pages for script selection */
 #script-page,
 #japanese-script-page {
     max-height: 100vh;
     overflow: hidden;
 }
 
-/* Make word entry selection page shorter */
-#word-entry-selection-page {
-    max-height: 85vh !important;
-    height: auto !important;
-    min-height: auto !important;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    overflow: visible;
-    position: relative !important;
-    box-sizing: border-box !important;
-}
 
-/* Additional targeting to ensure height constraint */
-#word-entry-selection-page.page,
-#word-entry-selection-page.page.active {
-    max-height: 70vh !important;
-    height: 70vh !important;
-}
 
-/* Ensure all content fits within the page height */
-#word-entry-selection-page * {
-    max-height: inherit;
-}
 
-/* Force app container height when word entry selection page is active */
-#app:has(#word-entry-selection-page.active) {
-    height: auto !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-}
 
-/* Alternative for browsers that don't support :has() */
-#word-entry-selection-page.active ~ #app,
-#word-entry-selection-page.active + #app {
-    height: auto !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-}
 
-/* Force body height when word entry selection page is active */
-body:has(#word-entry-selection-page.active) {
-    height: auto !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-    overflow: visible !important;
-}
 
-/* Direct page height enforcement */
-#word-entry-selection-page {
-    height: auto !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-    overflow: visible !important;
-    position: relative !important;
-    top: 0 !important;
-}
 
-/* Alternative body targeting */
-#word-entry-selection-page.active ~ body,
-#word-entry-selection-page.active + body {
-    height: auto !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-    overflow: visible !important;
-}
 
-#word-entry-selection-page .text-box,
+
+
+
+
+
+
 #script-page .text-box,
 #japanese-script-page .text-box {
     margin-bottom: 10px;
 }
 
-#word-entry-selection-page .text-box {
-    max-height: 45vh !important;
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
-    flex-shrink: 1 !important;
-}
 
-#word-entry-selection-page .text-box-content,
+
 #script-page .text-box-content,
 #japanese-script-page .text-box-content {
     padding: 12px 20px;
 }
 
-#word-entry-selection-page .text-box-content {
-    max-height: 40vh !important;
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
-    flex-shrink: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: flex-start !important;
-}
 
-#word-entry-selection-page .button-container,
+
 #script-page .button-container,
 #japanese-script-page .button-container {
     margin: 10px 0;
     gap: 8px;
 }
 
-#word-entry-selection-page .button-container {
-    margin: 8px 0 !important;
-    gap: 6px !important;
-    flex-shrink: 1 !important;
-}
 
-#word-entry-selection-page .body-text,
+
 #script-page .body-text,
 #japanese-script-page .body-text {
     margin-bottom: 10px;
@@ -428,33 +351,21 @@ body:has(#word-entry-selection-page.active) {
     line-height: 1.4;
 }
 
-#word-entry-selection-page .body-text {
-    margin-bottom: 8px !important;
-    line-height: 1.3 !important;
-    flex-shrink: 1 !important;
-}
+
 
 /* Responsive adjustments for compact pages */
 @media (max-width: 768px) {
-    #word-entry-selection-page {
-        max-height: 90vh !important;
-        height: auto !important;
-    }
-    
-    #word-entry-selection-page .text-box-content,
     #script-page .text-box-content,
     #japanese-script-page .text-box-content {
         padding: 10px 15px;
     }
     
-    #word-entry-selection-page .button-container,
     #script-page .button-container,
     #japanese-script-page .button-container {
         margin: 8px 0;
         gap: 6px;
     }
     
-    #word-entry-selection-page .body-text,
     #script-page .body-text,
     #japanese-script-page .body-text {
         font-size: 0.9rem;
@@ -462,7 +373,6 @@ body:has(#word-entry-selection-page.active) {
         margin-bottom: 8px;
     }
     
-    #word-entry-selection-page .subtitle,
     #script-page .subtitle,
     #japanese-script-page .subtitle {
         font-size: 1.3rem;
