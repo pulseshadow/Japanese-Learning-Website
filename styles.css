@@ -2524,56 +2524,107 @@ body {
 /* Mobile-specific bottom ad sizing */
 @media (max-width: 768px) {
     body {
-        padding-bottom: 60px;
+        padding-bottom: 40px;
     }
     
     #bottom-ad {
-        height: 60px !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
+        transform: scale(0.8) !important;
+        transform-origin: bottom center !important;
     }
     
     #bottom-ad ins {
-        height: 60px !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding-bottom: 50px;
+        padding-bottom: 30px;
     }
     
     #bottom-ad {
-        height: 50px !important;
-        min-height: 50px !important;
-        max-height: 50px !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        max-height: 30px !important;
+        transform: scale(0.6) !important;
+        transform-origin: bottom center !important;
     }
     
     #bottom-ad ins {
-        height: 50px !important;
-        min-height: 50px !important;
-        max-height: 50px !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        max-height: 30px !important;
     }
 }
 
 /* Additional mobile ad constraints */
 @media (max-width: 768px) {
     #bottom-ad .adsbygoogle {
-        height: 60px !important;
-        min-height: 60px !important;
-        max-height: 60px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        max-height: 40px !important;
         overflow: hidden !important;
+        transform: scale(0.8) !important;
+        transform-origin: bottom center !important;
+    }
+    
+    /* Force all child elements to respect height */
+    #bottom-ad * {
+        height: 40px !important;
+        max-height: 40px !important;
+        min-height: 40px !important;
     }
 }
 
 @media (max-width: 480px) {
     #bottom-ad .adsbygoogle {
-        height: 50px !important;
-        min-height: 50px !important;
-        max-height: 50px !important;
+        height: 30px !important;
+        min-height: 30px !important;
+        max-height: 30px !important;
         overflow: hidden !important;
+        transform: scale(0.6) !important;
+        transform-origin: bottom center !important;
+    }
+    
+    /* Force all child elements to respect height */
+    #bottom-ad * {
+        height: 30px !important;
+        max-height: 30px !important;
+        min-height: 30px !important;
+    }
+}
+
+/* Aggressive mobile ad size override */
+@media (max-width: 768px) {
+    #bottom-ad,
+    #bottom-ad *,
+    #bottom-ad ins,
+    #bottom-ad .adsbygoogle,
+    #bottom-ad iframe {
+        height: 40px !important;
+        max-height: 40px !important;
+        min-height: 40px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #bottom-ad,
+    #bottom-ad *,
+    #bottom-ad ins,
+    #bottom-ad .adsbygoogle,
+    #bottom-ad iframe {
+        height: 30px !important;
+        max-height: 30px !important;
+        min-height: 30px !important;
+        width: 100% !important;
+        max-width: 100% !important;
     }
 }
 
