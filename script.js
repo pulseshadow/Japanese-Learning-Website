@@ -2708,6 +2708,9 @@ function showMirroredEliminationQuestion() {
     // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
     
+    // Reset the failed flag for the new question
+    currentQuestionFailed = false;
+    
     // Update phase label for mirrored mode
     updatePhaseLabel();
     
@@ -2761,6 +2764,9 @@ function showMirroredRepeatingQuestion() {
     
     // In mirrored mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
+    
+    // Reset the failed flag for the new question
+    currentQuestionFailed = false;
     
     // Update phase label for mirrored mode
     updatePhaseLabel();
@@ -3769,6 +3775,7 @@ function handleJapaneseCustomCorrectAnswer() {
     }
     
     // Check if all words have 3 correct answers
+    console.log(`Word ${wordKey} now has ${correctAnswers[wordKey]} correct answers`);
     updateNextRoundButton();
     
     // Check if this word has been answered correctly 3 times
@@ -3932,6 +3939,9 @@ function updateProgress() {
                 const targetCorrect = roundWords.length * 3;
                 // Cap the display at the target to prevent going over
                 const displayCorrect = Math.min(totalCorrect, targetCorrect);
+                
+
+                
                 currentQuestionSpan.textContent = displayCorrect;
                 totalQuestionsSpan.textContent = targetCorrect;
                 phaseProgress.textContent = '';
@@ -4189,6 +4199,13 @@ function updateNextRoundButton() {
         if (window.japaneseCustomModeEnabled) {
             // Japanese custom mode
             const roundWords = getCurrentJapaneseCustomRoundWords();
+            
+            if (roundWords.length === 0) {
+                console.warn('No words available for Japanese custom mode round');
+                nextRoundBtn.classList.add('disabled');
+                return;
+            }
+            
             const totalCorrect = Object.values(correctAnswers).reduce((sum, count) => sum + count, 0);
             const targetCorrect = roundWords.length * 3;
             
@@ -4197,9 +4214,12 @@ function updateNextRoundButton() {
                 (correctAnswers[word.japanese] || 0) >= 3
             );
             
+            console.log(`Japanese custom mode - Round ${currentRound}: ${totalCorrect}/${targetCorrect} correct answers. All words have 3: ${allWordsHaveThreeCorrect}`);
+            
             // Enable button when all words have 3 correct answers
             if (allWordsHaveThreeCorrect) {
                 nextRoundBtn.classList.remove('disabled');
+                console.log('Next round button enabled for Japanese custom mode');
             } else {
                 nextRoundBtn.classList.add('disabled');
             }
@@ -4245,14 +4265,19 @@ function updateNextRoundButton() {
 
 function nextRound() {
     if (nextRoundBtn.classList.contains('disabled')) {
+        console.log('Next round button is disabled, cannot proceed');
         return;
     }
+    
+    console.log(`Proceeding to next round. Current round: ${currentRound}, Phase: ${currentPhase}`);
     
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
         if (window.japaneseCustomModeEnabled) {
+            console.log('Moving to next Japanese custom round');
             nextJapaneseCustomRound();
         } else {
+            console.log('Moving to next mirrored round');
             nextMirroredRound();
         }
         return;
@@ -4260,8 +4285,10 @@ function nextRound() {
     
     // Check if we're in custom mode
     if (window.customWordPools) {
+            console.log('Moving to next custom round');
         nextCustomRound();
     } else {
+            console.log('Moving to next standard round');
         nextStandardRound();
     }
 }
@@ -4413,6 +4440,8 @@ function nextMirroredRound() {
 }
 
 function nextJapaneseCustomRound() {
+    console.log(`Moving to next Japanese custom round. Current round: ${currentRound}`);
+    
     currentRound++;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
@@ -4424,23 +4453,49 @@ function nextJapaneseCustomRound() {
     
     // Reset progress text color to white
     const progressInfo = document.querySelector('.progress-info');
-    progressInfo.classList.remove('completed');
+    if (progressInfo) {
+        progressInfo.classList.remove('completed');
+    }
     
     // Check if this is the last round
     const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
     const totalRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
     
+    console.log(`Round ${currentRound} of ${totalRounds}. No practice rounds: ${noPracticeRounds}`);
+    
     if (currentRound >= totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
+        console.log(`Final round reached. Next round button hidden.`);
     } else {
         // Disable next round button at start of new round (but keep it visible)
         nextRoundBtn.classList.add('disabled');
         nextRoundBtn.style.visibility = 'visible';
+        console.log(`Next round button visible but disabled until requirements met.`);
     }
     
-    initializeJapaneseCustomRound();
+    // Validate that the next round has words before initializing
+    const nextRoundWords = getCurrentJapaneseCustomRoundWords();
+    if (nextRoundWords.length === 0) {
+        console.error(`Cannot proceed to round ${currentRound} - no words available.`);
+        console.error('Available word pools:', window.japaneseCustomWordPools);
+        // Revert the round increment
+        currentRound--;
+        return;
+    }
+    
+    console.log(`Initializing round ${currentRound} with ${nextRoundWords.length} words.`);
+    
+    // Ensure the round is properly initialized
+    try {
+        initializeJapaneseCustomRound();
+        console.log(`Round ${currentRound} initialized successfully`);
+    } catch (error) {
+        console.error(`Error initializing round ${currentRound}:`, error);
+        // Revert the round increment on error
+        currentRound--;
+    }
     
     // Update highest round reached (only if not using round skip)
     if (currentRound > userStats.highestRoundReached) {
@@ -5362,6 +5417,14 @@ function initializeJapaneseCustomRound() {
     // Get words for current round
     const roundWords = getCurrentJapaneseCustomRoundWords();
     
+    // Validate that we have words for this round
+    if (roundWords.length === 0) {
+        console.error(`No words found for round ${currentRound}. Cannot initialize round.`);
+        return;
+    }
+    
+    console.log(`Initializing round ${currentRound} with ${roundWords.length} words. Current phase: ${currentPhase}`);
+    
     if (currentPhase === 'learning') {
         // Learning phase - show English words, expect Japanese answers
         currentQuestionIndex = 0;
@@ -5386,20 +5449,29 @@ function initializeJapaneseCustomRound() {
 
 function getCurrentJapaneseCustomRoundWords() {
     if (!window.japaneseCustomWordPools || !window.japaneseCustomWordPools[currentRound - 1]) {
+        console.warn(`No word pool found for round ${currentRound}. Available pools:`, window.japaneseCustomWordPools);
         return [];
     }
-    return window.japaneseCustomWordPools[currentRound - 1];
+    
+    const roundWords = window.japaneseCustomWordPools[currentRound - 1];
+    if (!Array.isArray(roundWords) || roundWords.length === 0) {
+        console.warn(`Word pool for round ${currentRound} is empty or invalid:`, roundWords);
+        return [];
+    }
+    
+    return roundWords;
 }
 
 function showJapaneseCustomLearningQuestion() {
     const roundWords = getCurrentJapaneseCustomRoundWords();
     if (currentQuestionIndex >= roundWords.length) {
         // Learning phase complete, move to elimination phase
+        console.log('Japanese custom learning phase complete, transitioning to elimination phase.');
         currentPhase = 'elimination';
         eliminationWords = [...roundWords];
         shuffleArray(eliminationWords); // Shuffle the elimination words
         currentQuestionIndex = 0;
-        console.log('Japanese custom learning phase complete, transitioning to elimination phase. eliminationWords:', eliminationWords, 'currentQuestionIndex:', currentQuestionIndex);
+        console.log('Elimination phase initialized with', eliminationWords.length, 'words');
         showJapaneseCustomEliminationQuestion();
         return;
     }
@@ -5433,10 +5505,12 @@ function showJapaneseCustomEliminationQuestion() {
     
     if (currentQuestionIndex >= eliminationWords.length) {
         // Elimination phase complete, move to repeating phase
+        console.log('Japanese custom elimination phase complete, transitioning to repeating phase.');
         currentPhase = 'repeating';
         questionQueue = [...roundWords];
         shuffleArray(questionQueue);
         currentQuestionIndex = 0;
+        console.log('Repeating phase initialized with', questionQueue.length, 'words in queue');
         showJapaneseCustomRepeatingQuestion();
         return;
     }
@@ -5451,6 +5525,9 @@ function showJapaneseCustomEliminationQuestion() {
     
     // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
+    
+    // Reset the failed flag for the new question
+    currentQuestionFailed = false;
     
     // Update phase label for Japanese custom mode
     updatePhaseLabel();
@@ -5490,7 +5567,8 @@ function showJapaneseCustomRepeatingQuestion() {
     // Check if all words have been answered correctly 3 times
     if (questionQueue.length === 0) {
         // All words have been answered correctly 3 times
-        console.log('All words have been answered correctly 3 times');
+        console.log('All words have been answered correctly 3 times - repetition phase complete!');
+        console.log('Current correctAnswers state:', JSON.stringify(correctAnswers));
         updateNextRoundButton();
         return;
     }
@@ -5505,6 +5583,9 @@ function showJapaneseCustomRepeatingQuestion() {
     
     // In Japanese custom mode, hide answer
     correctAnswerDisplay.classList.add('hidden');
+    
+    // Reset the failed flag for the new question
+    currentQuestionFailed = false;
     
     console.log('Showing Japanese custom repeating question:', word);
     
