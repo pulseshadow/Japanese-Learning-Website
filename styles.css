@@ -25,7 +25,7 @@ body.dark-mode {
     display: flex;
     align-items: flex-start;
     justify-content: center;
-    padding: 15px;
+    padding: 10px;
     position: relative;
 }
 
@@ -296,66 +296,61 @@ body.dark-mode .lang-btn.active {
 #word-entry-selection-page .text-box,
 #script-page .text-box,
 #japanese-script-page .text-box {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 #word-entry-selection-page .text-box-content,
 #script-page .text-box-content,
 #japanese-script-page .text-box-content {
-    padding: 10px 20px;
+    padding: 8px 20px;
 }
 
 #word-entry-selection-page .button-container,
 #script-page .button-container,
 #japanese-script-page .button-container {
-    margin: 8px 0;
+    margin: 6px 0;
     gap: 6px;
 }
 
 #word-entry-selection-page .body-text,
 #script-page .body-text,
 #japanese-script-page .body-text {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     font-size: 0.9rem;
     line-height: 1.3;
 }
 
-/* Extra compact styling for word entry selection page */
-#word-entry-selection-page .compact-text {
-    margin-bottom: 6px;
-    font-size: 0.85rem;
-    line-height: 1.2;
-}
-
-#word-entry-selection-page .back-btn {
-    margin-top: 10px;
-}
-
-/* Ultra-compact layout for word entry selection */
-#word-entry-selection-page {
-    padding-top: 0;
-}
-
-#word-entry-selection-page .text-box-header {
-    padding: 8px 20px;
-}
-
-#word-entry-selection-page .text-box-content {
-    padding: 8px 20px;
-}
-
-#word-entry-selection-page .button-container {
-    margin: 6px 0;
-    gap: 5px;
-}
-
-#word-entry-selection-page .script-btn {
-    padding: 10px 20px;
-    font-size: 1rem;
-}
-
 /* Responsive adjustments for compact pages */
 @media (max-width: 768px) {
+    #word-entry-selection-page .text-box-content,
+    #script-page .text-box-content,
+    #japanese-script-page .text-box-content {
+        padding: 10px 15px;
+    }
+    
+    #word-entry-selection-page .button-container,
+    #script-page .button-container,
+    #japanese-script-page .button-container {
+        margin: 8px 0;
+        gap: 6px;
+    }
+    
+    #word-entry-selection-page .body-text,
+    #script-page .body-text,
+    #japanese-script-page .body-text {
+        font-size: 0.9rem;
+        line-height: 1.3;
+        margin-bottom: 8px;
+    }
+    
+    #word-entry-selection-page .subtitle,
+#script-page .subtitle,
+#japanese-script-page .subtitle {
+    font-size: 1.2rem;
+}
+}
+
+@media (max-width: 480px) {
     #word-entry-selection-page .text-box-content,
     #script-page .text-box-content,
     #japanese-script-page .text-box-content {
@@ -382,75 +377,6 @@ body.dark-mode .lang-btn.active {
     #japanese-script-page .subtitle {
         font-size: 1.2rem;
     }
-    
-    /* Extra compact for word entry selection on mobile */
-    #word-entry-selection-page .text-box-header {
-        padding: 6px 15px;
-    }
-    
-    #word-entry-selection-page .text-box-content {
-        padding: 6px 15px;
-    }
-    
-    #word-entry-selection-page .script-btn {
-        padding: 8px 16px;
-        font-size: 0.95rem;
-    }
-    
-    #word-entry-selection-page .back-btn {
-        margin-top: 8px;
-        padding: 6px 12px;
-        font-size: 0.85rem;
-    }
-}
-
-@media (max-width: 480px) {
-    #word-entry-selection-page .text-box-content,
-    #script-page .text-box-content,
-    #japanese-script-page .text-box-content {
-        padding: 6px 10px;
-    }
-    
-    #word-entry-selection-page .button-container,
-    #script-page .button-container,
-    #japanese-script-page .button-container {
-        margin: 5px 0;
-        gap: 4px;
-    }
-    
-    #word-entry-selection-page .body-text,
-    #script-page .body-text,
-    #japanese-script-page .body-text {
-        font-size: 0.8rem;
-        line-height: 1.1;
-        margin-bottom: 5px;
-    }
-    
-    #word-entry-selection-page .subtitle,
-    #script-page .subtitle,
-    #japanese-script-page .subtitle {
-        font-size: 1.1rem;
-    }
-    
-    /* Ultra-compact for word entry selection on small mobile */
-    #word-entry-selection-page .text-box-header {
-        padding: 5px 12px;
-    }
-    
-    #word-entry-selection-page .text-box-content {
-        padding: 5px 12px;
-    }
-    
-    #word-entry-selection-page .script-btn {
-        padding: 6px 12px;
-        font-size: 0.9rem;
-    }
-    
-    #word-entry-selection-page .back-btn {
-        margin-top: 6px;
-        padding: 5px 10px;
-        font-size: 0.8rem;
-    }
 }
 
 /* Container and Layout */
@@ -466,7 +392,7 @@ body.dark-mode .lang-btn.active {
 
 /* Text Box Styles */
 .text-box {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     background: #f0f0f0;
     border: none;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -480,7 +406,7 @@ body.dark-mode .text-box {
 
 .text-box-header {
     background: #E75D38;
-    padding: 10px 20px;
+    padding: 8px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -493,7 +419,7 @@ body.dark-mode .text-box-header {
 }
 
 .text-box-content {
-    padding: 15px 20px;
+    padding: 12px 20px;
     text-align: left;
     background: #f0f0f0;
 }
@@ -560,7 +486,7 @@ body.dark-mode .subtitle {
     font-size: 1rem;
     line-height: 1.5;
     color: #333333;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-align: left;
 }
 
@@ -571,8 +497,8 @@ body.dark-mode .body-text {
 .button-container {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin: 15px 0;
+    gap: 8px;
+    margin: 12px 0;
     align-items: center;
 }
 
@@ -705,7 +631,7 @@ body.dark-mode .script-btn.primary:hover:not(.disabled) {
     border-radius: 0;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 body.dark-mode .back-btn {
@@ -3127,7 +3053,7 @@ body.dark-mode .hiragana-key:hover {
       border-radius: 8px !important;
       padding: 12px !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      margin: 15px 0 !important;
+      margin: 10px 0 !important;
       text-align: center !important;
       min-height: 200px !important;
       height: auto !important;
@@ -3165,11 +3091,11 @@ body.dark-mode .hiragana-key:hover {
       background: #f8f9fa !important;
       border: 1px solid #e9ecef !important;
       border-radius: 8px !important;
-      padding: 15px !important;
+      padding: 12px !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      margin: 20px 0 !important;
+      margin: 10px 0 !important;
       text-align: center !important;
-      min-height: 250px !important;
+      min-height: 200px !important;
       height: auto !important;
       display: block !important;
       visibility: visible !important;
@@ -3185,11 +3111,11 @@ body.dark-mode .hiragana-key:hover {
       background: #f8f9fa !important;
       border: 1px solid #e9ecef !important;
       border-radius: 8px !important;
-      padding: 15px !important;
+      padding: 12px !important;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-      margin: 20px 0 !important;
+      margin: 10px 0 !important;
       text-align: center !important;
-      min-height: 250px !important;
+      min-height: 200px !important;
       height: auto !important;
       display: block !important;
       visibility: visible !important;
