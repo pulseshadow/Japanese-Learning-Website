@@ -285,6 +285,16 @@ body.dark-mode .lang-btn.active {
 .page#word-entry-selection-page {
     max-height: 70vh !important;
     height: 70vh !important;
+    min-height: 70vh !important;
+}
+
+/* Force height on the page element itself */
+.page#word-entry-selection-page,
+.page#word-entry-selection-page.active {
+    max-height: 70vh !important;
+    height: 70vh !important;
+    min-height: 70vh !important;
+    overflow: hidden !important;
 }
 
 .page.active {
@@ -303,10 +313,13 @@ body.dark-mode .lang-btn.active {
 #word-entry-selection-page {
     max-height: 70vh !important;
     height: 70vh !important;
+    min-height: 70vh !important;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     overflow: hidden;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
 /* Additional targeting to ensure height constraint */
@@ -321,6 +334,49 @@ body.dark-mode .lang-btn.active {
     max-height: inherit;
 }
 
+/* Force app container height when word entry selection page is active */
+#app:has(#word-entry-selection-page.active) {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    min-height: 70vh !important;
+}
+
+/* Alternative for browsers that don't support :has() */
+#word-entry-selection-page.active ~ #app,
+#word-entry-selection-page.active + #app {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    min-height: 70vh !important;
+}
+
+/* Force body height when word entry selection page is active */
+body:has(#word-entry-selection-page.active) {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    min-height: 70vh !important;
+    overflow: hidden !important;
+}
+
+/* Direct page height enforcement */
+#word-entry-selection-page {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    min-height: 70vh !important;
+    overflow: hidden !important;
+    position: relative !important;
+    top: 0 !important;
+    bottom: 70vh !important;
+}
+
+/* Alternative body targeting */
+#word-entry-selection-page.active ~ body,
+#word-entry-selection-page.active + body {
+    height: 70vh !important;
+    max-height: 70vh !important;
+    min-height: 70vh !important;
+    overflow: hidden !important;
+}
+
 #word-entry-selection-page .text-box,
 #script-page .text-box,
 #japanese-script-page .text-box {
@@ -329,7 +385,10 @@ body.dark-mode .lang-btn.active {
 
 #word-entry-selection-page .text-box {
     max-height: 60vh !important;
-    height: auto !important;
+    height: 60vh !important;
+    min-height: auto !important;
+    overflow: hidden !important;
+    flex-shrink: 1 !important;
 }
 
 #word-entry-selection-page .text-box-content,
@@ -340,7 +399,10 @@ body.dark-mode .lang-btn.active {
 
 #word-entry-selection-page .text-box-content {
     max-height: 55vh !important;
-    height: auto !important;
+    height: 55vh !important;
+    min-height: auto !important;
+    overflow: hidden !important;
+    flex-shrink: 1 !important;
 }
 
 #word-entry-selection-page .button-container,
