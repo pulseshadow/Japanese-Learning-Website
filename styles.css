@@ -384,8 +384,8 @@ body:has(#word-entry-selection-page.active) {
 }
 
 #word-entry-selection-page .text-box {
-    max-height: 60vh !important;
-    height: 60vh !important;
+    max-height: 45vh !important;
+    height: 45vh !important;
     min-height: auto !important;
     overflow: hidden !important;
     flex-shrink: 1 !important;
@@ -398,11 +398,14 @@ body:has(#word-entry-selection-page.active) {
 }
 
 #word-entry-selection-page .text-box-content {
-    max-height: 55vh !important;
-    height: 55vh !important;
+    max-height: 40vh !important;
+    height: 40vh !important;
     min-height: auto !important;
     overflow: hidden !important;
     flex-shrink: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
 }
 
 #word-entry-selection-page .button-container,
@@ -412,12 +415,24 @@ body:has(#word-entry-selection-page.active) {
     gap: 8px;
 }
 
+#word-entry-selection-page .button-container {
+    margin: 8px 0 !important;
+    gap: 6px !important;
+    flex-shrink: 1 !important;
+}
+
 #word-entry-selection-page .body-text,
 #script-page .body-text,
 #japanese-script-page .body-text {
     margin-bottom: 10px;
     font-size: 0.95rem;
     line-height: 1.4;
+}
+
+#word-entry-selection-page .body-text {
+    margin-bottom: 8px !important;
+    line-height: 1.3 !important;
+    flex-shrink: 1 !important;
 }
 
 /* Responsive adjustments for compact pages */
