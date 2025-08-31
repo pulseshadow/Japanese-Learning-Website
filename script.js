@@ -2633,6 +2633,8 @@ function initializeMirroredRound() {
     } else if (currentPhase === 'elimination') {
         // Elimination phase - show English words, expect Japanese answers
         eliminationWords = [...roundWords];
+        shuffleArray(eliminationWords); // Shuffle the elimination words
+        currentQuestionIndex = 0; // Reset question index
         showMirroredEliminationQuestion();
     } else {
         // Repeating phase - show English words, expect Japanese answers
@@ -2652,7 +2654,9 @@ function showMirroredLearningQuestion() {
         // Learning phase complete, move to elimination phase
         currentPhase = 'elimination';
         eliminationWords = [...roundWords];
+        shuffleArray(eliminationWords); // Shuffle the elimination words
         currentQuestionIndex = 0;
+        console.log('Learning phase complete, transitioning to elimination phase. eliminationWords:', eliminationWords, 'currentQuestionIndex:', currentQuestionIndex);
         showMirroredEliminationQuestion();
         return;
     }
@@ -2681,7 +2685,9 @@ function showMirroredLearningQuestion() {
 }
 
 function showMirroredEliminationQuestion() {
-    if (eliminationWords.length === 0) {
+    console.log('showMirroredEliminationQuestion - currentQuestionIndex:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length, 'eliminationWords:', eliminationWords);
+    
+    if (currentQuestionIndex >= eliminationWords.length) {
         // Elimination phase complete, move to repeating phase
         currentPhase = 'repeating';
         questionQueue = [...getCurrentRoundWords()];
@@ -3527,7 +3533,9 @@ function submitAnswer() {
                     }
                     correctAnswers[wordKey]++;
                     
+                    console.log('Japanese custom correct answer in elimination phase. currentQuestionIndex before:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length);
                     currentQuestionIndex++;
+                    console.log('Japanese custom correct answer in elimination phase. currentQuestionIndex after:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length);
                     showJapaneseCustomEliminationQuestion();
                 } else {
                     showError(currentWord.japanese);
@@ -3560,7 +3568,9 @@ function submitAnswer() {
                     }
                     correctAnswers[wordKey]++;
                     
+                    console.log('Correct answer in elimination phase. currentQuestionIndex before:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length);
                     currentQuestionIndex++;
+                    console.log('Correct answer in elimination phase. currentQuestionIndex after:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length);
                     showMirroredEliminationQuestion();
                 } else {
                     showError(currentWord.japanese);
@@ -5359,6 +5369,8 @@ function initializeJapaneseCustomRound() {
     } else if (currentPhase === 'elimination') {
         // Elimination phase - show English words, expect Japanese answers
         eliminationWords = [...roundWords];
+        shuffleArray(eliminationWords); // Shuffle the elimination words
+        currentQuestionIndex = 0; // Reset question index
         showJapaneseCustomEliminationQuestion();
     } else {
         // Repeating phase - show English words, expect Japanese answers
@@ -5385,7 +5397,9 @@ function showJapaneseCustomLearningQuestion() {
         // Learning phase complete, move to elimination phase
         currentPhase = 'elimination';
         eliminationWords = [...roundWords];
+        shuffleArray(eliminationWords); // Shuffle the elimination words
         currentQuestionIndex = 0;
+        console.log('Japanese custom learning phase complete, transitioning to elimination phase. eliminationWords:', eliminationWords, 'currentQuestionIndex:', currentQuestionIndex);
         showJapaneseCustomEliminationQuestion();
         return;
     }
@@ -5415,7 +5429,9 @@ function showJapaneseCustomLearningQuestion() {
 
 function showJapaneseCustomEliminationQuestion() {
     const roundWords = getCurrentJapaneseCustomRoundWords();
-    if (eliminationWords.length === 0) {
+    console.log('showJapaneseCustomEliminationQuestion - currentQuestionIndex:', currentQuestionIndex, 'eliminationWords.length:', eliminationWords.length, 'eliminationWords:', eliminationWords);
+    
+    if (currentQuestionIndex >= eliminationWords.length) {
         // Elimination phase complete, move to repeating phase
         currentPhase = 'repeating';
         questionQueue = [...roundWords];
