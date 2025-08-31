@@ -284,17 +284,17 @@ body.dark-mode .lang-btn.active {
 /* Override for word entry selection page height */
 .page#word-entry-selection-page {
     max-height: 85vh !important;
-    height: 85vh !important;
-    min-height: 85vh !important;
+    height: auto !important;
+    min-height: auto !important;
 }
 
 /* Force height on the page element itself */
 .page#word-entry-selection-page,
 .page#word-entry-selection-page.active {
     max-height: 85vh !important;
-    height: 85vh !important;
-    min-height: 85vh !important;
-    overflow: hidden !important;
+    height: auto !important;
+    min-height: auto !important;
+    overflow: visible !important;
 }
 
 .page.active {
@@ -312,12 +312,12 @@ body.dark-mode .lang-btn.active {
 /* Make word entry selection page shorter */
 #word-entry-selection-page {
     max-height: 85vh !important;
-    height: 85vh !important;
-    min-height: 85vh !important;
+    height: auto !important;
+    min-height: auto !important;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    overflow: hidden;
+    overflow: visible;
     position: relative !important;
     box-sizing: border-box !important;
 }
@@ -336,45 +336,44 @@ body.dark-mode .lang-btn.active {
 
 /* Force app container height when word entry selection page is active */
 #app:has(#word-entry-selection-page.active) {
-    height: 85vh !important;
+    height: auto !important;
     max-height: 85vh !important;
-    min-height: 85vh !important;
+    min-height: auto !important;
 }
 
 /* Alternative for browsers that don't support :has() */
 #word-entry-selection-page.active ~ #app,
 #word-entry-selection-page.active + #app {
-    height: 85vh !important;
+    height: auto !important;
     max-height: 85vh !important;
-    min-height: 85vh !important;
+    min-height: auto !important;
 }
 
 /* Force body height when word entry selection page is active */
 body:has(#word-entry-selection-page.active) {
-    height: 85vh !important;
+    height: auto !important;
     max-height: 85vh !important;
-    min-height: 85vh !important;
-    overflow: hidden !important;
+    min-height: auto !important;
+    overflow: visible !important;
 }
 
 /* Direct page height enforcement */
 #word-entry-selection-page {
-    height: 85vh !important;
+    height: auto !important;
     max-height: 85vh !important;
-    min-height: 85vh !important;
-    overflow: hidden !important;
+    min-height: auto !important;
+    overflow: visible !important;
     position: relative !important;
     top: 0 !important;
-    bottom: 85vh !important;
 }
 
 /* Alternative body targeting */
 #word-entry-selection-page.active ~ body,
 #word-entry-selection-page.active + body {
-    height: 85vh !important;
+    height: auto !important;
     max-height: 85vh !important;
-    min-height: 85vh !important;
-    overflow: hidden !important;
+    min-height: auto !important;
+    overflow: visible !important;
 }
 
 #word-entry-selection-page .text-box,
@@ -385,9 +384,9 @@ body:has(#word-entry-selection-page.active) {
 
 #word-entry-selection-page .text-box {
     max-height: 45vh !important;
-    height: 45vh !important;
+    height: auto !important;
     min-height: auto !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     flex-shrink: 1 !important;
 }
 
@@ -399,9 +398,9 @@ body:has(#word-entry-selection-page.active) {
 
 #word-entry-selection-page .text-box-content {
     max-height: 40vh !important;
-    height: 40vh !important;
+    height: auto !important;
     min-height: auto !important;
-    overflow: hidden !important;
+    overflow: visible !important;
     flex-shrink: 1 !important;
     display: flex !important;
     flex-direction: column !important;
@@ -439,7 +438,7 @@ body:has(#word-entry-selection-page.active) {
 @media (max-width: 768px) {
     #word-entry-selection-page {
         max-height: 90vh !important;
-        height: 90vh !important;
+        height: auto !important;
     }
     
     #word-entry-selection-page .text-box-content,
@@ -473,7 +472,7 @@ body:has(#word-entry-selection-page.active) {
 @media (max-width: 480px) {
     #word-entry-selection-page {
         max-height: 95vh !important;
-        height: 95vh !important;
+        height: auto !important;
     }
     
     #word-entry-selection-page .text-box-content,
