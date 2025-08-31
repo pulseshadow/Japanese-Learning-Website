@@ -281,6 +281,12 @@ body.dark-mode .lang-btn.active {
     max-width: 800px;
 }
 
+/* Override for word entry selection page height */
+.page#word-entry-selection-page {
+    max-height: 70vh !important;
+    height: 70vh !important;
+}
+
 .page.active {
     display: block;
 }
@@ -295,10 +301,24 @@ body.dark-mode .lang-btn.active {
 
 /* Make word entry selection page shorter */
 #word-entry-selection-page {
-    max-height: 70vh;
+    max-height: 70vh !important;
+    height: 70vh !important;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    overflow: hidden;
+}
+
+/* Additional targeting to ensure height constraint */
+#word-entry-selection-page.page,
+#word-entry-selection-page.page.active {
+    max-height: 70vh !important;
+    height: 70vh !important;
+}
+
+/* Ensure all content fits within the page height */
+#word-entry-selection-page * {
+    max-height: inherit;
 }
 
 #word-entry-selection-page .text-box,
@@ -307,10 +327,20 @@ body.dark-mode .lang-btn.active {
     margin-bottom: 10px;
 }
 
+#word-entry-selection-page .text-box {
+    max-height: 60vh !important;
+    height: auto !important;
+}
+
 #word-entry-selection-page .text-box-content,
 #script-page .text-box-content,
 #japanese-script-page .text-box-content {
     padding: 12px 20px;
+}
+
+#word-entry-selection-page .text-box-content {
+    max-height: 55vh !important;
+    height: auto !important;
 }
 
 #word-entry-selection-page .button-container,
@@ -331,7 +361,8 @@ body.dark-mode .lang-btn.active {
 /* Responsive adjustments for compact pages */
 @media (max-width: 768px) {
     #word-entry-selection-page {
-        max-height: 75vh;
+        max-height: 75vh !important;
+        height: 75vh !important;
     }
     
     #word-entry-selection-page .text-box-content,
@@ -364,7 +395,8 @@ body.dark-mode .lang-btn.active {
 
 @media (max-width: 480px) {
     #word-entry-selection-page {
-        max-height: 80vh;
+        max-height: 80vh !important;
+        height: 80vh !important;
     }
     
     #word-entry-selection-page .text-box-content,
