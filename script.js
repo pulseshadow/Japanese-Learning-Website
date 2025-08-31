@@ -20,13 +20,13 @@ let autoPlaySound = true; // Default to true (enabled)
 const wordPools = {
     1: [ // Introduction Round 1
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -92,13 +92,13 @@ const wordPools = {
     ],
     2: [ // Practice Round 1 (rounds 1 + 2 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -320,13 +320,13 @@ const wordPools = {
     ],
     4: [ // Practice Round 2 (rounds 1 + 3 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -632,13 +632,13 @@ const wordPools = {
     ],
     6: [ // Practice Round 3 (rounds 1 + 3 + 5 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -1042,13 +1042,13 @@ const wordPools = {
     ],
     8: [ // Practice Round 4 (rounds 1 + 3 + 5 + 7 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -1522,13 +1522,13 @@ const wordPools = {
     ],
     10: [ // Practice Round 5 (rounds 1 + 3 + 5 + 7 + 9 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -2250,13 +2250,13 @@ const wordPools = {
     ],
     17: [ // Practice Round 6 (rounds 1 + 3 + 5 + 7 + 9 + 11 + 12 + 13 + 14 + 15 + 16 combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -2280,13 +2280,13 @@ const wordPools = {
     ],
     18: [ // Final Practice Round (all rounds combined)
         { 
-            japanese: 'こんにちは', 
+            japanese: 'こんにちわ', 
             english: 'hi',
             translations: {
                 en: 'hi',
                 es: 'hola',
                 fr: 'salut',
-                ja: 'こんにちは',
+                ja: 'こんにちわ',
                 zh: '你好',
                 id: 'hai',
                 ko: '안녕',
@@ -8474,7 +8474,7 @@ function testTTS() {
     console.log('Selected voice:', japaneseVoice.name, japaneseVoice.lang);
     
     // Test with a simple Japanese word
-    const testWord = 'こんにちは';
+    const testWord = 'こんにちわ';
     console.log('Testing pronunciation of:', testWord);
     
     speakJapaneseText(testWord, { rate: 0.6 });
@@ -8547,7 +8547,7 @@ function testAutoPlay() {
     console.log('Auto-play toggle state:', autoPlayToggle ? autoPlayToggle.checked : 'Toggle not found');
     
     // Test with a sample word
-    const testWord = { japanese: 'こんにちは', english: 'hello' };
+    const testWord = { japanese: 'こんにちわ', english: 'hello' };
     console.log('Testing auto-play with word:', testWord.japanese);
     
     // Simulate showing a word
