@@ -1725,6 +1725,35 @@ body.dark-mode .sound-btn.tts-unavailable:hover {
     display: block;
 }
 
+/* Prevent mobile keyboard when hiragana keyboard is active */
+@media (max-width: 768px) {
+    #hiragana-keyboard:not(.hidden) ~ #answer-input {
+        pointer-events: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -khtml-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+    
+    /* Additional mobile protection when hiragana keyboard is active */
+    #answer-input.mobile-keyboard-active {
+        pointer-events: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-user-select: none !important;
+        -khtml-user-select: none !important;
+        -moz-user-select: none !important;
+        -ms-user-select: none !important;
+        user-select: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+}
+
+
+
+
+
 body.dark-mode #answer-input {
     border: none;
     background: #333333;

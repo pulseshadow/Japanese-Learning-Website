@@ -5644,12 +5644,25 @@ function setupHiraganaKeyboard() {
     // Add click event listeners to all hiragana keys
     const hiraganaKeys = hiraganaKeyboard.querySelectorAll('.hiragana-key');
     hiraganaKeys.forEach(key => {
-        key.addEventListener('click', () => {
+        key.addEventListener('click', (event) => {
+            // Prevent default behavior on mobile to avoid focus issues
+            if (isMobileDevice()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            
             const character = key.getAttribute('data-char');
             if (character) {
                 insertHiraganaCharacter(character);
             }
         });
+        
+        // Add touchstart event for mobile to prevent focus
+        if (isMobileDevice()) {
+            key.addEventListener('touchstart', (event) => {
+                event.preventDefault();
+            }, { passive: false });
+        }
     });
     
     console.log('Hiragana keyboard setup complete');
@@ -5662,6 +5675,9 @@ function insertHiraganaCharacter(character) {
         return;
     }
     
+    // Store current focus state
+    const wasFocused = document.activeElement === answerInput;
+    
     // Insert the character at the current cursor position
     const cursorPos = answerInput.selectionStart;
     const currentValue = answerInput.value;
@@ -5672,10 +5688,26 @@ function insertHiraganaCharacter(character) {
     // Set cursor position after the inserted character
     answerInput.selectionStart = answerInput.selectionEnd = cursorPos + character.length;
     
-    // Only focus the input on desktop devices, not on mobile
-    // This prevents the mobile keyboard from popping up when tapping hiragana keys
-    if (!isMobileDevice()) {
-        answerInput.focus();
+    // On mobile, explicitly blur the input to prevent keyboard from appearing
+    if (isMobileDevice()) {
+        answerInput.blur();
+        // Prevent any focus events from occurring
+        setTimeout(() => {
+            if (document.activeElement === answerInput) {
+                answerInput.blur();
+            }
+        }, 10);
+        
+        // Additional mobile protection - temporarily disable the input
+        answerInput.setAttribute('readonly', 'readonly');
+        setTimeout(() => {
+            answerInput.removeAttribute('readonly');
+        }, 100);
+    } else {
+        // Only focus the input on desktop devices
+        if (!wasFocused) {
+            answerInput.focus();
+        }
     }
     
     // Trigger input event to update validation
@@ -5686,16 +5718,26 @@ function insertHiraganaCharacter(character) {
 
 function showHiraganaKeyboard() {
     const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
+    const answerInput = document.getElementById('answer-input');
     if (hiraganaKeyboard) {
         hiraganaKeyboard.classList.remove('hidden');
+        // Add mobile protection class to input
+        if (answerInput && isMobileDevice()) {
+            answerInput.classList.add('mobile-keyboard-active');
+        }
         console.log('Hiragana keyboard shown');
     }
 }
 
 function hideHiraganaKeyboard() {
     const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
+    const answerInput = document.getElementById('answer-input');
     if (hiraganaKeyboard) {
         hiraganaKeyboard.classList.add('hidden');
+        // Remove mobile protection class from input
+        if (answerInput) {
+            answerInput.classList.remove('mobile-keyboard-active');
+        }
         console.log('Hiragana keyboard hidden');
     }
 }
