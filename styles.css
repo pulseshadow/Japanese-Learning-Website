@@ -369,11 +369,6 @@ body.dark-mode .lang-btn.active {
 }
 
 @media (max-width: 480px) {
-    #word-entry-selection-page {
-        max-height: 95vh !important;
-        height: auto !important;
-    }
-    
     #word-entry-selection-page .text-box-content,
     #script-page .text-box-content,
     #japanese-script-page .text-box-content {
