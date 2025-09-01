@@ -4526,22 +4526,8 @@ function initializeJapaneseCustomMode() {
         console.log('No meaningful data, adding round 1 and opening it');
         addJapaneseCustomRound(1);
         
-        // Open the first round dropdown
-        const firstRound = document.querySelector('.custom-round[data-round="1"]');
-        console.log('Looking for first round:', firstRound);
-        if (firstRound) {
-            const roundContent = firstRound.querySelector('.custom-round-content');
-            const collapseBtn = firstRound.querySelector('.collapse-btn');
-            console.log('Found round content:', roundContent, 'and collapse button:', collapseBtn);
-            if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
-                collapseBtn.textContent = '▼';
-                collapseBtn.style.transform = 'rotate(180deg)';
-                console.log('First round dropdown opened successfully');
-            }
-        } else {
-            console.error('First round not found after creation');
-        }
+        // Round 1 is now created with content visible by default
+        console.log('Round 1 created and should be open by default');
     } else {
         // If meaningful data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
@@ -4640,7 +4626,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     const collapseBtn = document.createElement('button');
     collapseBtn.className = 'collapse-btn';
-    collapseBtn.textContent = '▼';
+    collapseBtn.textContent = '▲'; // Show up arrow since content is open by default
     
     controlsDiv.appendChild(removeBtn);
     controlsDiv.appendChild(collapseBtn);
@@ -4652,6 +4638,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'custom-round-content';
     contentDiv.id = `japanese-round-content-${roundNumber}`;
+    contentDiv.style.display = 'block'; // Ensure content is visible by default
     
     const descriptionP = document.createElement('p');
     descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.');
