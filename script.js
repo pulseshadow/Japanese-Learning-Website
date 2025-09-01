@@ -4742,7 +4742,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '▼';
+        collapseBtn.textContent = '▶'; // Right arrow when collapsed (default state)
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.color = '#ffffff';
@@ -4859,13 +4859,13 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
     if (section.classList.contains('collapsed')) {
         section.classList.remove('collapsed');
         grid.style.display = 'block';
-        button.textContent = '▼';
+        button.textContent = '▼'; // Down arrow when open
         button.classList.remove('rotated');
     } else {
         section.classList.add('collapsed');
         grid.style.display = 'none';
-        button.textContent = '▶';
-        button.classList.remove('rotated');
+        button.textContent = '▶'; // Right arrow when closed
+        button.classList.add('rotated');
     }
 }
 
@@ -6664,7 +6664,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '▶';
+        collapseBtn.textContent = '▶'; // Right arrow when collapsed (default state)
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
@@ -7166,12 +7166,12 @@ function toggleWordSection(gridIndex, roundIndex) {
     
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
-        button.textContent = '▼';
+        button.textContent = '▼'; // Down arrow when open
         button.classList.remove('rotated');
     } else {
         content.classList.add('collapsed');
-        button.textContent = '▶';
-        button.classList.remove('rotated');
+        button.textContent = '▶'; // Right arrow when closed
+        button.classList.add('rotated');
     }
 }
 
