@@ -283,22 +283,59 @@ body.dark-mode .lang-btn.active {
 
 /* Override for word entry selection page height */
 .page#word-entry-selection-page {
-    max-height: 85vh !important;
-    height: auto !important;
-    min-height: auto !important;
+    max-height: 100vh !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
 /* Force height on the page element itself */
 .page#word-entry-selection-page,
 .page#word-entry-selection-page.active {
-    max-height: 85vh !important;
-    height: auto !important;
-    min-height: auto !important;
-    overflow: visible !important;
+    max-height: 100vh !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+    position: relative !important;
+    box-sizing: border-box !important;
 }
 
 .page.active {
     display: block;
+}
+
+/* Force the app container to also respect the height */
+#app:has(#word-entry-selection-page.active) {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Force body height when this page is active */
+body:has(#word-entry-selection-page.active) {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Force the text box to fit within the constrained height */
+#word-entry-selection-page .text-box {
+    max-height: 80vh !important;
+    height: auto !important;
+    overflow: hidden !important;
+}
+
+#word-entry-selection-page .text-box-content {
+    max-height: 70vh !important;
+    height: auto !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
 }
 
 /* Compact pages for script selection */
@@ -355,6 +392,20 @@ body.dark-mode .lang-btn.active {
 
 /* Responsive adjustments for compact pages */
 @media (max-width: 768px) {
+    #word-entry-selection-page {
+        max-height: 100vh !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+    
+    #word-entry-selection-page .text-box {
+        max-height: 75vh !important;
+    }
+    
+    #word-entry-selection-page .text-box-content {
+        max-height: 65vh !important;
+    }
+    
     #script-page .text-box-content,
     #japanese-script-page .text-box-content {
         padding: 10px 15px;
@@ -381,8 +432,17 @@ body.dark-mode .lang-btn.active {
 
 @media (max-width: 480px) {
     #word-entry-selection-page {
-        max-height: 95vh !important;
-        height: auto !important;
+        max-height: 100vh !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+    
+    #word-entry-selection-page .text-box {
+        max-height: 70vh !important;
+    }
+    
+    #word-entry-selection-page .text-box-content {
+        max-height: 60vh !important;
     }
     
     #word-entry-selection-page .text-box-content,
@@ -1724,35 +1784,6 @@ body.dark-mode .sound-btn.tts-unavailable:hover {
     margin: 0 auto;
     display: block;
 }
-
-/* Prevent mobile keyboard when hiragana keyboard is active */
-@media (max-width: 768px) {
-    #hiragana-keyboard:not(.hidden) ~ #answer-input {
-        pointer-events: none;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        -khtml-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
-    }
-    
-    /* Additional mobile protection when hiragana keyboard is active */
-    #answer-input.mobile-keyboard-active {
-        pointer-events: none !important;
-        -webkit-touch-callout: none !important;
-        -webkit-user-select: none !important;
-        -khtml-user-select: none !important;
-        -moz-user-select: none !important;
-        -ms-user-select: none !important;
-        user-select: none !important;
-        -webkit-tap-highlight-color: transparent !important;
-    }
-}
-
-
-
-
 
 body.dark-mode #answer-input {
     border: none;
@@ -3476,4 +3507,59 @@ body.dark-mode .number-key:hover {
     opacity: 0 !important;
     transform: none !important;
     box-shadow: none !important;
+}
+
+/* Ensure child elements don't exceed their containers */
+#word-entry-selection-page .button-container {
+    margin: 8px 0 !important;
+    gap: 6px !important;
+    flex-shrink: 1 !important;
+}
+
+#word-entry-selection-page .body-text {
+    margin-bottom: 8px !important;
+    line-height: 1.3 !important;
+    flex-shrink: 1 !important;
+}
+
+#word-entry-selection-page .back-btn {
+    margin-top: 8px !important;
+    flex-shrink: 0 !important;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Responsive adjustments for word entry selection page */
+@media (max-width: 768px) {
+    #word-entry-selection-page {
+        max-height: 100vh !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+    
+    #word-entry-selection-page .text-box {
+        max-height: 75vh !important;
+    }
+    
+    #word-entry-selection-page .text-box-content {
+        max-height: 65vh !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #word-entry-selection-page {
+        max-height: 100vh !important;
+        height: 100vh !important;
+        min-height: 100vh !important;
+    }
+    
+    #word-entry-selection-page .text-box {
+        max-height: 70vh !important;
+    }
+    
+    #word-entry-selection-page .text-box-content {
+        max-height: 60vh !important;
+    }
 }
