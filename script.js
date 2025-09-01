@@ -4521,26 +4521,17 @@ function initializeJapaneseCustomMode() {
         console.log('Has meaningful data:', hasMeaningfulData);
     }
     
-    if (!loaded) {
-        // If no saved data, automatically add round 1 and open it
-        console.log('No saved data, adding round 1 and opening it');
+    if (!loaded || !hasMeaningfulData) {
+        // If no saved data or no meaningful data, automatically add round 1 and open it
+        console.log('No meaningful data, adding round 1 and opening it');
         addJapaneseCustomRound(1);
         
-        // Open the first round dropdown like English version
-        const firstRound = document.querySelector('.custom-round[data-round="1"]');
-        if (firstRound) {
-            const roundContent = firstRound.querySelector('.custom-round-content');
-            const collapseBtn = firstRound.querySelector('.collapse-btn');
-            if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
-                collapseBtn.textContent = '▼';
-                collapseBtn.style.transform = 'rotate(180deg)';
-            }
-        }
+        // Round 1 is now created with content visible by default
+        console.log('Round 1 created and should be open by default');
     } else {
-        // If data was loaded, we still need to populate grids and setup buttons
+        // If meaningful data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
-        console.log('Saved data was loaded, populating grids and setting up buttons');
+        console.log('Meaningful data was loaded, populating grids and setting up buttons');
         populateJapaneseWordSelectionGrids();
         setupJapaneseCustomWordButtons();
         
@@ -4635,7 +4626,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     const collapseBtn = document.createElement('button');
     collapseBtn.className = 'collapse-btn';
-    collapseBtn.textContent = '▼'; // Show down arrow like English version
+    collapseBtn.textContent = '▲'; // Show up arrow since content is open by default
     
     controlsDiv.appendChild(removeBtn);
     controlsDiv.appendChild(collapseBtn);
@@ -4647,7 +4638,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'custom-round-content';
     contentDiv.id = `japanese-round-content-${roundNumber}`;
-    // Don't set display style - let CSS handle it like English version
+    contentDiv.style.display = 'block'; // Ensure content is visible by default
     
     const descriptionP = document.createElement('p');
     descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.');
@@ -4873,8 +4864,8 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
     } else {
         section.classList.add('collapsed');
         grid.style.display = 'none';
-        button.textContent = '▲';
-        button.classList.add('rotated');
+        button.textContent = '▶';
+        button.classList.remove('rotated');
     }
 }
 
@@ -6673,7 +6664,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '▼';
+        collapseBtn.textContent = '▶';
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
@@ -7179,8 +7170,8 @@ function toggleWordSection(gridIndex, roundIndex) {
         button.classList.remove('rotated');
     } else {
         content.classList.add('collapsed');
-        button.textContent = '▲';
-        button.classList.add('rotated');
+        button.textContent = '▶';
+        button.classList.remove('rotated');
     }
 }
 
