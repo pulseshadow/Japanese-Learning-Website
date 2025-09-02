@@ -4859,7 +4859,7 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
     if (section.classList.contains('collapsed')) {
         section.classList.remove('collapsed');
         grid.style.display = 'block';
-        button.textContent = '▶'; // Right arrow when open
+        button.textContent = '▼'; // Down arrow when open
     } else {
         section.classList.add('collapsed');
         grid.style.display = 'none';
@@ -7164,7 +7164,7 @@ function toggleWordSection(gridIndex, roundIndex) {
     
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
-        button.textContent = '▶'; // Right arrow when open
+        button.textContent = '▼'; // Down arrow when open
     } else {
         content.classList.add('collapsed');
         button.textContent = '◀'; // Left arrow when closed
