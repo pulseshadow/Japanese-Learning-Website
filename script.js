@@ -4860,12 +4860,10 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
         section.classList.remove('collapsed');
         grid.style.display = 'block';
         button.textContent = '▶'; // Right arrow when open
-        button.classList.remove('rotated');
     } else {
         section.classList.add('collapsed');
         grid.style.display = 'none';
         button.textContent = '◀'; // Left arrow when closed
-        button.classList.add('rotated');
     }
 }
 
@@ -7167,11 +7165,9 @@ function toggleWordSection(gridIndex, roundIndex) {
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
         button.textContent = '▶'; // Right arrow when open
-        button.classList.remove('rotated');
     } else {
         content.classList.add('collapsed');
         button.textContent = '◀'; // Left arrow when closed
-        button.classList.add('rotated');
     }
 }
 
