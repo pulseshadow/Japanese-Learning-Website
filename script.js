@@ -6946,6 +6946,8 @@ function addCustomRound() {
         </div>
         
         <div class="custom-round-content" id="round-content-${roundNumber}">
+        <p data-en="Please select the words you'd like to include in this round." data-es="Por favor selecciona las palabras que quieres incluir en esta ronda." data-fr="Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronde." data-ja="このラウンドに含めたい単語を選択してください。">Please select the words you'd like to include in this round.</p>
+        
         <div class="word-selection-grid" id="word-selection-${roundNumber}">
             <!-- Word checkboxes will be populated by JavaScript -->
         </div>
@@ -7830,6 +7832,8 @@ function loadCustomRounds() {
                 </div>
                 
                 <div class="custom-round-content" id="round-content-${roundNumber}">
+                <p data-en="Please select the words you'd like to include in this round." data-es="Por favor selecciona las palabras que quieres incluir en esta ronda." data-fr="Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronde." data-ja="このラウンドに含めたい単語を選択してください。">Please select the words you'd like to include in this round.</p>
+                
                 <div class="word-selection-grid" id="word-selection-${roundNumber}">
                     <!-- Word checkboxes will be populated by JavaScript -->
                 </div>
