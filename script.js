@@ -4742,7 +4742,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '◀'; // Left arrow when collapsed (default state)
+        collapseBtn.textContent = '▶'; // Right arrow when collapsed (default state)
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.color = '#ffffff';
@@ -4862,7 +4862,7 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
     } else {
         section.classList.add('collapsed');
         grid.style.display = 'none';
-        button.textContent = '◀'; // Left arrow when closed
+        button.textContent = '▶'; // Right arrow when closed
     }
 }
 
@@ -6661,7 +6661,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn small';
-        collapseBtn.textContent = '◀'; // Left arrow when collapsed (default state)
+        collapseBtn.textContent = '▶'; // Right arrow when collapsed (default state)
         collapseBtn.style.background = 'none';
         collapseBtn.style.border = 'none';
         collapseBtn.style.cursor = 'pointer';
@@ -7166,7 +7166,7 @@ function toggleWordSection(gridIndex, roundIndex) {
         button.textContent = '▼'; // Down arrow when open
     } else {
         content.classList.add('collapsed');
-        button.textContent = '◀'; // Left arrow when closed
+        button.textContent = '▶'; // Right arrow when closed
     }
 }
 
