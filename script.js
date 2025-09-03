@@ -4843,7 +4843,6 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         // Initially collapse all sections
         wordGrid.style.display = 'none';
         sectionContainer.classList.add('collapsed');
-        collapseBtn.classList.add('rotated');
         
         grid.appendChild(sectionContainer);
     });

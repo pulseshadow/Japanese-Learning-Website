@@ -1053,6 +1053,11 @@ body.dark-mode .custom-round-header h3 {
     transform: rotate(180deg);
 }
 
+/* Prevent rotation for word section collapse buttons */
+.word-section-header .collapse-btn.rotated {
+    transform: none !important;
+}
+
 
 
 .word-section-container {
