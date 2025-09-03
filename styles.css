@@ -1144,6 +1144,10 @@ body.dark-mode .custom-round p {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 10px;
     margin-bottom: 20px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
 }
 
 .word-selection-grid h4 {
@@ -1151,6 +1155,11 @@ body.dark-mode .custom-round p {
     font-size: 0.9rem;
     font-weight: bold;
     margin: 20px 0 10px 0;
+}
+
+body.dark-mode .word-selection-grid {
+    background: #2a2a2a;
+    border-color: #444;
 }
 
 body.dark-mode .word-selection-grid h4 {
