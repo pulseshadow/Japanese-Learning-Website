@@ -1090,17 +1090,21 @@ body.dark-mode .word-section-header:hover {
     background: #0080ff;
 }
 
-.word-section-content {
-    padding: 15px;
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    margin-top: 10px;
+.word-section-content,
+.custom-round .word-section-content,
+.word-section-container .word-section-content {
+    padding: 15px !important;
+    background: #f8f9fa !important;
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    margin-top: 10px !important;
 }
 
-body.dark-mode .word-section-content {
-    background: #2a2a2a;
-    border-color: #444;
+body.dark-mode .word-section-content,
+body.dark-mode .custom-round .word-section-content,
+body.dark-mode .word-section-container .word-section-content {
+    background: #2a2a2a !important;
+    border-color: #444 !important;
 }
 
 .word-section-content.collapsed {
