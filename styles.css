@@ -1091,7 +1091,16 @@ body.dark-mode .word-section-header:hover {
 }
 
 .word-section-content {
-    padding-left: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+body.dark-mode .word-section-content {
+    background: #2a2a2a;
+    border-color: #444;
 }
 
 .word-section-content.collapsed {
@@ -2635,6 +2644,7 @@ body.dark-mode .select-all-container label {
     border-radius: 0;
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
+    min-height: 120px;
 }
 
 body.dark-mode #bottom-ad {
@@ -2649,7 +2659,31 @@ body {
 
 @media (max-width: 768px) {
     body {
-        padding-bottom: 80px;
+        padding-bottom: 60px;
+    }
+    
+    #bottom-ad {
+        min-height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-bottom: 50px;
+    }
+    
+    #bottom-ad {
+        min-height: 50px;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        padding-bottom: 45px;
+    }
+    
+    #bottom-ad {
+        min-height: 45px;
     }
 }
 
@@ -3053,6 +3087,20 @@ body.dark-mode .hiragana-key:hover {
         max-width: 95vw;
         margin-left: calc(-47.5vw + 50%);
         margin-right: calc(-47.5vw + 50%);
+    }
+    
+    /* Remove background box on mobile for word section content */
+    .word-section-content {
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        margin-top: 5px !important;
+        padding: 10px 0 0 15px !important;
+    }
+    
+    body.dark-mode .word-section-content {
+        background: transparent !important;
+        border: none !important;
     }
     
     .keyboard-row {
