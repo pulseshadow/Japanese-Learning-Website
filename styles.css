@@ -3035,10 +3035,10 @@ body.dark-mode .hiragana-key:hover {
         margin: 10px 0;
         padding: 20px;
         border-radius: 8px;
-        width: 100vw;
-        max-width: 100vw;
-        margin-left: calc(-50vw + 50%);
-        margin-right: calc(-50vw + 50%);
+        width: 95vw;
+        max-width: 95vw;
+        margin-left: calc(-47.5vw + 50%);
+        margin-right: calc(-47.5vw + 50%);
     }
     
     .keyboard-row {
@@ -3080,10 +3080,10 @@ body.dark-mode .hiragana-key:hover {
         margin: 8px 0;
         padding: 16px;
         border-radius: 6px;
-        width: 100vw;
-        max-width: 100vw;
-        margin-left: calc(-50vw + 50%);
-        margin-right: calc(-50vw + 50%);
+        width: 92vw;
+        max-width: 92vw;
+        margin-left: calc(-46vw + 50%);
+        margin-right: calc(-46vw + 50%);
     }
     
     .keyboard-row {
@@ -3151,10 +3151,10 @@ body.dark-mode .hiragana-key:hover {
     .hiragana-keyboard {
         margin: 4px 0;
         padding: 10px;
-        width: 100vw;
-        max-width: 100vw;
-        margin-left: calc(-50vw + 50%);
-        margin-right: calc(-50vw + 50%);
+        width: 90vw;
+        max-width: 90vw;
+        margin-left: calc(-45vw + 50%);
+        margin-right: calc(-45vw + 50%);
     }
     
     .keyboard-row {
