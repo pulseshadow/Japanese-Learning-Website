@@ -971,9 +971,13 @@ body.dark-mode .game-box-content {
 /* Custom Mode Styles */
 .custom-round {
     margin-bottom: 30px;
-    background: transparent;
+    background: #e8e8e8;
     border: none;
     border-radius: 4px;
+}
+
+body.dark-mode .custom-round {
+    background: transparent;
 }
 
 .custom-round-header {
@@ -1043,10 +1047,6 @@ body.dark-mode .custom-round-header h3 {
 
 .custom-round-content {
     padding: 20px;
-    background: #e8e8e8;
-}
-
-body.dark-mode .custom-round-content {
     background: transparent;
 }
 
