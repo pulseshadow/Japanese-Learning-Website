@@ -981,8 +981,8 @@ body.dark-mode .game-box-content {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background: #E75D38;
-    border-bottom: 1px solid #d64a2a;
+    background: transparent;
+    border-bottom: none;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
@@ -1019,21 +1019,21 @@ body.dark-mode .remove-round-btn:hover {
 }
 
 body.dark-mode .custom-round-header {
-    background: #3a3a3a;
-    border-bottom-color: #505050;
+    background: transparent;
+    border-bottom: none;
 }
 
 .custom-round-header:hover {
-    background: #d64a2a;
+    background: transparent;
 }
 
 body.dark-mode .custom-round-header:hover {
-    background: #505050;
+    background: transparent;
 }
 
 .custom-round-header h3 {
     margin: 0;
-    color: #ffffff;
+    color: #333333;
     font-size: 1.3rem;
 }
 
