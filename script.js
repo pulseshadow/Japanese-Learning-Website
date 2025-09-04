@@ -4756,12 +4756,12 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         // Create word selection grid for this section
         const wordGrid = document.createElement('div');
-        wordGrid.className = 'word-section-content';
+        wordGrid.className = 'word-grid';
         wordGrid.id = `japanese-word-grid-${roundNumber}-${roundIndex}`;
         
         // Add "Select All" checkbox for this section
         const selectAllContainer = document.createElement('div');
-        selectAllContainer.className = 'select-all-container select-all-item';
+        selectAllContainer.className = 'select-all-container';
         
         const selectAllCheckbox = document.createElement('input');
         selectAllCheckbox.type = 'checkbox';
@@ -4794,7 +4794,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         // Add words to the grid
         wordGroup.forEach(word => {
             const wordContainer = document.createElement('div');
-            wordContainer.className = 'word-checkbox-item';
+            wordContainer.className = 'word-item';
             
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
