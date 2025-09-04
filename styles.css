@@ -1043,6 +1043,11 @@ body.dark-mode .custom-round-header h3 {
 
 .custom-round-content {
     padding: 20px;
+    background: #e8e8e8;
+}
+
+body.dark-mode .custom-round-content {
+    background: transparent;
 }
 
 .custom-round-content.collapsed {
@@ -1180,7 +1185,7 @@ body.dark-mode .word-selection-grid h4 {
     align-items: center;
     gap: 8px;
     padding: 8px;
-    background: #ffffff;
+    background: #f8f9fa;
     border: 1px solid #e0e0e0;
     border-radius: 4px;
     cursor: pointer;
@@ -1188,18 +1193,18 @@ body.dark-mode .word-selection-grid h4 {
 }
 
 body.dark-mode .word-checkbox-item {
-    background: #404040;
+    background: #2a2a2a;
     border-color: #606060;
 }
 
 .word-checkbox-item:hover {
-    background: #f0f0f0;
-    border-color: #E75D38;
+    background: #e9ecef;
+    border-color: #e0e0e0;
 }
 
 body.dark-mode .word-checkbox-item:hover {
-    background: #505050;
-    border-color: #00bfff;
+    background: #404040;
+    border-color: #606060;
 }
 
 .word-checkbox-item input[type="checkbox"] {
