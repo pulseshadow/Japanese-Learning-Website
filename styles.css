@@ -1051,7 +1051,7 @@ body.dark-mode .custom-round-header h3 {
 }
 
 body.dark-mode .custom-round-content {
-    background: transparent;
+    background: #2a2a2a;
 }
 
 .custom-round-content.collapsed {
