@@ -985,7 +985,7 @@ body.dark-mode .custom-round {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background: transparent;
+    background: #E75D38;
     border-bottom: 1px solid #d64a2a;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -1023,16 +1023,16 @@ body.dark-mode .remove-round-btn:hover {
 }
 
 body.dark-mode .custom-round-header {
-    background: transparent;
+    background: #00bfff;
     border-bottom-color: #0080ff;
 }
 
 .custom-round-header:hover {
-    background: rgba(214, 74, 42, 0.1);
+    background: #d64a2a;
 }
 
 body.dark-mode .custom-round-header:hover {
-    background: rgba(0, 128, 255, 0.1);
+    background: #505050;
 }
 
 .custom-round-header h3 {
@@ -1193,7 +1193,7 @@ body.dark-mode .word-selection-grid h4 {
 }
 
 body.dark-mode .word-checkbox-item {
-    background: #2a2a2a;
+    background: #3a3a3a;
     border-color: #606060;
 }
 
