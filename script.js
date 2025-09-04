@@ -4595,15 +4595,15 @@ function addJapaneseCustomRound(roundNumber = null) {
     headerDiv.onclick = () => toggleJapaneseCustomRound(roundNumber);
     
     const titleH3 = document.createElement('h3');
-    titleH3.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
-    titleH3.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
-    titleH3.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
-    titleH3.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
-    titleH3.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
-    titleH3.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
-    titleH3.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
-    titleH3.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
-    titleH3.textContent = titleH3.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber} (English→Japanese)`;
+    titleH3.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+    titleH3.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+    titleH3.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+    titleH3.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+    titleH3.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+    titleH3.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+    titleH3.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+    titleH3.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
+    titleH3.textContent = titleH3.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber}`;
     
     const controlsDiv = document.createElement('div');
     controlsDiv.className = 'round-header-controls';
@@ -4945,15 +4945,15 @@ function removeJapaneseCustomRound() {
             wordGrid.id = `japanese-word-selection-${roundNumber}`;
             
             // Update title
-            title.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
-            title.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
-            title.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
-            title.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
-            title.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
-            title.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
-            title.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
-            title.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
-            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber} (English→Japanese)`;
+            title.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+            title.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+            title.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+            title.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+            title.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+            title.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+            title.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+            title.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
+            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${roundNumber}`;
             
             // Update onclick handlers
             const header = round.querySelector('.custom-round-header');
@@ -5032,15 +5032,15 @@ function removeJapaneseSpecificRound(roundNumber) {
             wordGrid.id = `japanese-word-selection-${newRoundNumber}`;
             
             // Update title
-            title.setAttribute('data-en', `Introduction Round ${newRoundNumber} (English→Japanese)`);
-            title.setAttribute('data-es', `Ronda de Introducción ${newRoundNumber} (Inglés→Japonés)`);
-            title.setAttribute('data-fr', `Ronde d'Introduction ${newRoundNumber} (Anglais→Japonais)`);
-            title.setAttribute('data-ja', `導入ラウンド${newRoundNumber} (英語→日本語)`);
-            title.setAttribute('data-zh', `介绍轮次${newRoundNumber} (英语→日语)`);
-            title.setAttribute('data-id', `Ronde Pengenalan ${newRoundNumber} (Inggris→Jepang)`);
-            title.setAttribute('data-ko', `소개 라운드 ${newRoundNumber} (영어→일본어)`);
-            title.setAttribute('data-vi', `Vòng Giới thiệu ${newRoundNumber} (Tiếng Anh→Tiếng Nhật)`);
-            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${newRoundNumber} (English→Japanese)`;
+            title.setAttribute('data-en', `Introduction Round ${newRoundNumber}`);
+            title.setAttribute('data-es', `Ronda de Introducción ${newRoundNumber}`);
+            title.setAttribute('data-fr', `Ronde d'Introduction ${newRoundNumber}`);
+            title.setAttribute('data-ja', `導入ラウンド${newRoundNumber}`);
+            title.setAttribute('data-zh', `介绍轮次${newRoundNumber}`);
+            title.setAttribute('data-id', `Ronde Pengenalan ${newRoundNumber}`);
+            title.setAttribute('data-ko', `소개 라운드 ${newRoundNumber}`);
+            title.setAttribute('data-vi', `Vòng Giới thiệu ${newRoundNumber}`);
+            title.textContent = title.getAttribute(`data-${currentLanguage}`) || `Introduction Round ${newRoundNumber}`;
             
             // Update onclick handlers
             const header = round.querySelector('.custom-round-header');
@@ -6625,26 +6625,6 @@ function initializeCustomMode() {
         // Now restore the saved state after grids are populated
         restoreCustomRoundsState();
     }
-    
-    // Force update round titles to show correct direction arrows
-    updateCustomRoundTitles();
-}
-
-function updateCustomRoundTitles() {
-    // Update all custom round titles to show correct direction arrows
-    const customRounds = document.querySelectorAll('#custom-rounds-container .custom-round h3');
-    customRounds.forEach((title, index) => {
-        const roundNumber = index + 1;
-        title.textContent = `Introduction Round ${roundNumber} (Japanese→English)`;
-        title.setAttribute('data-en', `Introduction Round ${roundNumber} (Japanese→English)`);
-        title.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Japonés→Inglés)`);
-        title.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Japonais→Anglais)`);
-        title.setAttribute('data-ja', `導入ラウンド${roundNumber} (日本語→英語)`);
-        title.setAttribute('data-zh', `介绍轮次${roundNumber} (日语→英语)`);
-        title.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Jepang→Inggris)`);
-        title.setAttribute('data-ko', `소개 라운드 ${roundNumber} (일본어→영어)`);
-        title.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Nhật→Tiếng Anh)`);
-    });
 }
 
 function populateWordSelectionGrid(roundNumber) {
@@ -6962,7 +6942,7 @@ function addCustomRound() {
     
     newRound.innerHTML = `
         <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
-            <h3 data-en="Introduction Round ${roundNumber} (Japanese→English)" data-es="Ronda de Introducción ${roundNumber} (Japonés→Inglés)" data-fr="Ronde d'Introduction ${roundNumber} (Japonais→Anglais)" data-ja="導入ラウンド${roundNumber} (日本語→英語)" data-zh="介绍轮次${roundNumber} (日语→英语)" data-id="Ronde Pengenalan ${roundNumber} (Jepang→Inggris)" data-ko="소개 라운드 ${roundNumber} (일본어→영어)" data-vi="Vòng Giới thiệu ${roundNumber} (Tiếng Nhật→Tiếng Anh)">Introduction Round ${roundNumber} (Japanese→English)</h3>
+            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
             <div class="round-header-controls">
                 <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
                 <button class="collapse-btn">▼</button>
@@ -7148,15 +7128,15 @@ function removeCustomRound() {
             headerDiv.onclick = () => toggleCustomRound(index + 1);
             
             // Update text content
-            header.textContent = `Introduction Round ${index + 1} (Japanese→English)`;
-            header.setAttribute('data-en', `Introduction Round ${index + 1} (Japanese→English)`);
-            header.setAttribute('data-es', `Ronda de Introducción ${index + 1} (Japonés→Inglés)`);
-            header.setAttribute('data-fr', `Ronde d'Introduction ${index + 1} (Japonais→Anglais)`);
-            header.setAttribute('data-ja', `導入ラウンド${index + 1} (日本語→英語)`);
-            header.setAttribute('data-zh', `介绍轮次${index + 1} (日语→英语)`);
-            header.setAttribute('data-id', `Ronde Pengenalan ${index + 1} (Jepang→Inggris)`);
-            header.setAttribute('data-ko', `소개 라운드 ${index + 1} (일본어→영어)`);
-            header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1} (Tiếng Nhật→Tiếng Anh)`);
+            header.textContent = `Introduction Round ${index + 1}`;
+            header.setAttribute('data-en', `Introduction Round ${index + 1}`);
+            header.setAttribute('data-es', `Ronda de Introducción ${index + 1}`);
+            header.setAttribute('data-fr', `Ronde d'Introduction ${index + 1}`);
+            header.setAttribute('data-ja', `導入ラウンド${index + 1}`);
+            header.setAttribute('data-zh', `介绍轮次${index + 1}`);
+            header.setAttribute('data-id', `Ronde Pengenalan ${index + 1}`);
+            header.setAttribute('data-ko', `소개 라운드 ${index + 1}`);
+            header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1}`);
         });
         
         // Update language for renumbered elements (but don't regenerate grids)
