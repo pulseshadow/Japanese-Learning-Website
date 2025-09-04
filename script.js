@@ -5675,7 +5675,7 @@ function capitalizeWords(text) {
         }
     } else {
         // Handle normal text without brackets at the beginning
-        return text.split(' ').map(word => {
+        const result = text.split(' ').map(word => {
             if (word.startsWith('(') && word.includes(')')) {
                 const bracketContent = word.substring(1, word.indexOf(')'));
                 const restOfWord = word.substring(word.indexOf(')') + 1);
