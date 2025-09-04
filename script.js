@@ -7128,15 +7128,15 @@ function removeCustomRound() {
             headerDiv.onclick = () => toggleCustomRound(index + 1);
             
             // Update text content
-            header.textContent = `Introduction Round ${index + 1}`;
-            header.setAttribute('data-en', `Introduction Round ${index + 1}`);
-            header.setAttribute('data-es', `Ronda de Introducción ${index + 1}`);
-            header.setAttribute('data-fr', `Ronde d'Introduction ${index + 1}`);
-            header.setAttribute('data-ja', `導入ラウンド${index + 1}`);
-            header.setAttribute('data-zh', `介绍轮次${index + 1}`);
-            header.setAttribute('data-id', `Ronde Pengenalan ${index + 1}`);
-            header.setAttribute('data-ko', `소개 라운드 ${index + 1}`);
-            header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1}`);
+            header.textContent = `Introduction Round ${index + 1} (Japanese→English)`;
+            header.setAttribute('data-en', `Introduction Round ${index + 1} (Japanese→English)`);
+            header.setAttribute('data-es', `Ronda de Introducción ${index + 1} (Japonés→Inglés)`);
+            header.setAttribute('data-fr', `Ronde d'Introduction ${index + 1} (Japonais→Anglais)`);
+            header.setAttribute('data-ja', `導入ラウンド${index + 1} (日本語→英語)`);
+            header.setAttribute('data-zh', `介绍轮次${index + 1} (日语→英语)`);
+            header.setAttribute('data-id', `Ronde Pengenalan ${index + 1} (Jepang→Inggris)`);
+            header.setAttribute('data-ko', `소개 라운드 ${index + 1} (일본어→영어)`);
+            header.setAttribute('data-vi', `Vòng Giới thiệu ${index + 1} (Tiếng Nhật→Tiếng Anh)`);
         });
         
         // Update language for renumbered elements (but don't regenerate grids)
