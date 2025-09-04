@@ -6942,7 +6942,7 @@ function addCustomRound() {
     
     newRound.innerHTML = `
         <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
-            <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
+            <h3 data-en="Introduction Round ${roundNumber} (Japanese→English)" data-es="Ronda de Introducción ${roundNumber} (Japonés→Inglés)" data-fr="Ronde d'Introduction ${roundNumber} (Japonais→Anglais)" data-ja="導入ラウンド${roundNumber} (日本語→英語)" data-zh="介绍轮次${roundNumber} (日语→英语)" data-id="Ronde Pengenalan ${roundNumber} (Jepang→Inggris)" data-ko="소개 라운드 ${roundNumber} (일본어→영어)" data-vi="Vòng Giới thiệu ${roundNumber} (Tiếng Nhật→Tiếng Anh)">Introduction Round ${roundNumber} (Japanese→English)</h3>
             <div class="round-header-controls">
                 <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
                 <button class="collapse-btn">▼</button>
