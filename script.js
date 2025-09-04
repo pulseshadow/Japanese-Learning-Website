@@ -4844,9 +4844,17 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         sectionContainer.appendChild(sectionHeader);
         sectionContainer.appendChild(wordGrid);
         
-        // Initially collapse all sections
-        wordGrid.style.display = 'none';
-        sectionContainer.classList.add('collapsed');
+        // Initially collapse all sections except the first one
+        if (roundIndex === 0) {
+            // First section (Round 1 Words) should be open by default
+            wordGrid.style.display = 'block';
+            sectionContainer.classList.remove('collapsed');
+            collapseBtn.textContent = '▼';
+        } else {
+            // All other sections should be collapsed
+            wordGrid.style.display = 'none';
+            sectionContainer.classList.add('collapsed');
+        }
         
         grid.appendChild(sectionContainer);
     });
@@ -6782,6 +6790,18 @@ function populateWordSelectionGrid(roundNumber) {
         
         // Initialize select all state
         updateSelectAllState();
+        
+        // Initially collapse all sections except the first one
+        if (roundIndex === 0) {
+            // First section (Round 1 Words) should be open by default
+            wordContent.style.display = 'block';
+            wordContent.classList.remove('collapsed');
+            collapseBtn.textContent = '▼';
+        } else {
+            // All other sections should be collapsed
+            wordContent.style.display = 'none';
+            wordContent.classList.add('collapsed');
+        }
         
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
