@@ -1092,15 +1092,15 @@ body.dark-mode .word-section-header:hover {
 
 .word-section-content {
     padding: 15px;
-    background: #e8e8e8;
-    border: 1px solid #d8d8d8;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
     border-radius: 8px;
     margin-top: 10px;
 }
 
 body.dark-mode .word-section-content {
-    background: #25262B;
-    border-color: #404040;
+    background: #2a2a2a;
+    border-color: #444;
 }
 
 .word-section-content.collapsed {
