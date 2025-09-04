@@ -2103,7 +2103,7 @@ const wordPools = {
         },
         { 
             japanese: 'ごはん', 
-            english: 'rice (or meal)',
+            english: 'rice (/meal)',
             translations: {
                 en: 'rice',
                 es: 'arroz',
