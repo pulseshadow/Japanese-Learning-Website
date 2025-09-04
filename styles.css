@@ -985,7 +985,7 @@ body.dark-mode .custom-round {
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background: #E75D38;
+    background: transparent;
     border-bottom: 1px solid #d64a2a;
     cursor: pointer;
     transition: background-color 0.2s ease;
@@ -1023,16 +1023,16 @@ body.dark-mode .remove-round-btn:hover {
 }
 
 body.dark-mode .custom-round-header {
-    background: #00bfff;
+    background: transparent;
     border-bottom-color: #0080ff;
 }
 
 .custom-round-header:hover {
-    background: #d64a2a;
+    background: rgba(214, 74, 42, 0.1);
 }
 
 body.dark-mode .custom-round-header:hover {
-    background: #505050;
+    background: rgba(0, 128, 255, 0.1);
 }
 
 .custom-round-header h3 {
