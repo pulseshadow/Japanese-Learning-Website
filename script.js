@@ -4786,7 +4786,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         selectAllContainer.appendChild(selectAllCheckbox);
         selectAllContainer.appendChild(selectAllLabel);
-        selectAllContainer.className = 'select-all-item';
+        selectAllContainer.className = 'word-checkbox-item select-all-item';
         
         // Add separator line
         selectAllContainer.style.borderBottom = '2px solid #ddd';
@@ -4794,6 +4794,18 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         selectAllContainer.style.paddingBottom = '10px';
         
         wordGrid.appendChild(selectAllContainer);
+        
+        // Add event listener for select all functionality
+        selectAllCheckbox.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            const wordCheckboxes = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+            
+            wordCheckboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            
+            saveJapaneseCustomRounds();
+        });
         
         // Add words to the grid
         wordGroup.forEach(word => {
@@ -4825,12 +4837,27 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         });
         
         // Set up "Select All" functionality
-        selectAllCheckbox.addEventListener('change', () => {
-            const wordCheckboxes = wordGrid.querySelectorAll('.word-checkbox');
-            wordCheckboxes.forEach(cb => {
-                cb.checked = selectAllCheckbox.checked;
-            });
-            saveJapaneseCustomRounds();
+        const updateSelectAllState = () => {
+            const wordCheckboxes = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+            const checkedCount = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox):checked').length;
+            
+            if (checkedCount === 0) {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = false;
+            } else if (checkedCount === wordCheckboxes.length) {
+                selectAllCheckbox.checked = true;
+                selectAllCheckbox.indeterminate = false;
+            } else {
+                selectAllCheckbox.checked = false;
+                selectAllCheckbox.indeterminate = true;
+            }
+        };
+        
+        // Add event listener to update select all state when individual checkboxes change
+        wordGrid.addEventListener('change', (e) => {
+            if (e.target.classList.contains('word-checkbox')) {
+                updateSelectAllState();
+            }
         });
         
         // Add click handler for the select all container
@@ -4841,20 +4868,19 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
             }
         });
         
-        sectionContainer.appendChild(sectionHeader);
-        sectionContainer.appendChild(wordGrid);
+        // Create word content container
+        const wordContent = document.createElement('div');
+        wordContent.className = 'word-section-content collapsed';
+        wordContent.id = `japanese-word-content-${roundNumber}-${roundIndex}`;
         
-        // Initially collapse all sections except the first one
-        if (roundIndex === 0) {
-            // First section (Round 1 Words) should be open by default
-            wordGrid.style.display = 'block';
-            sectionContainer.classList.remove('collapsed');
-            collapseBtn.textContent = '▼';
-        } else {
-            // All other sections should be collapsed
-            wordGrid.style.display = 'none';
-            sectionContainer.classList.add('collapsed');
-        }
+        wordContent.appendChild(wordGrid);
+        
+        sectionContainer.appendChild(sectionHeader);
+        sectionContainer.appendChild(wordContent);
+        
+        // Initially collapse all sections
+        wordContent.style.display = 'none';
+        sectionContainer.classList.add('collapsed');
         
         grid.appendChild(sectionContainer);
     });
@@ -4863,17 +4889,17 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
 }
 
 function toggleJapaneseWordSection(roundNumber, sectionIndex) {
-    const grid = document.getElementById(`japanese-word-grid-${roundNumber}-${sectionIndex}`);
-    const section = grid.parentElement;
+    const wordContent = document.getElementById(`japanese-word-content-${roundNumber}-${sectionIndex}`);
+    const section = wordContent.parentElement;
     const button = section.querySelector('.collapse-btn');
     
     if (section.classList.contains('collapsed')) {
         section.classList.remove('collapsed');
-        grid.style.display = 'block';
+        wordContent.style.display = 'block';
         button.textContent = '▼'; // Down arrow when open
     } else {
         section.classList.add('collapsed');
-        grid.style.display = 'none';
+        wordContent.style.display = 'none';
         button.textContent = '▶'; // Right arrow when closed
     }
 }
@@ -6790,18 +6816,6 @@ function populateWordSelectionGrid(roundNumber) {
         
         // Initialize select all state
         updateSelectAllState();
-        
-        // Initially collapse all sections except the first one
-        if (roundIndex === 0) {
-            // First section (Round 1 Words) should be open by default
-            wordContent.style.display = 'block';
-            wordContent.classList.remove('collapsed');
-            collapseBtn.textContent = '▼';
-        } else {
-            // All other sections should be collapsed
-            wordContent.style.display = 'none';
-            wordContent.classList.add('collapsed');
-        }
         
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
