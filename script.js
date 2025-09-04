@@ -4794,7 +4794,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         // Add words to the grid
         wordGroup.forEach(word => {
             const wordContainer = document.createElement('div');
-            wordContainer.className = 'word-item';
+            wordContainer.className = 'word-checkbox-item';
             
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
