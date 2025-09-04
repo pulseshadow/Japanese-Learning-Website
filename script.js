@@ -4608,27 +4608,31 @@ function addJapaneseCustomRound(roundNumber = null) {
     const controlsDiv = document.createElement('div');
     controlsDiv.className = 'round-header-controls';
     
-    const removeBtn = document.createElement('button');
-    removeBtn.className = 'remove-round-btn';
-    removeBtn.setAttribute('data-en', 'Remove Round');
-    removeBtn.setAttribute('data-es', 'Eliminar Ronda');
-    removeBtn.setAttribute('data-fr', 'Supprimer une Ronde');
-    removeBtn.setAttribute('data-ja', 'ラウンドを削除');
-    removeBtn.setAttribute('data-zh', '删除轮次');
-    removeBtn.setAttribute('data-id', 'Hapus Ronde');
-    removeBtn.setAttribute('data-ko', '라운드 제거');
-    removeBtn.setAttribute('data-vi', 'Xóa Vòng');
-    removeBtn.textContent = removeBtn.getAttribute(`data-${currentLanguage}`) || 'Remove Round';
-    removeBtn.onclick = (e) => {
-        e.stopPropagation();
-        removeJapaneseSpecificRound(roundNumber);
-    };
+    // Only add remove button for rounds other than round 1
+    if (roundNumber > 1) {
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-round-btn';
+        removeBtn.setAttribute('data-en', 'Remove Round');
+        removeBtn.setAttribute('data-es', 'Eliminar Ronda');
+        removeBtn.setAttribute('data-fr', 'Supprimer une Ronde');
+        removeBtn.setAttribute('data-ja', 'ラウンドを削除');
+        removeBtn.setAttribute('data-zh', '删除轮次');
+        removeBtn.setAttribute('data-id', 'Hapus Ronde');
+        removeBtn.setAttribute('data-ko', '라운드 제거');
+        removeBtn.setAttribute('data-vi', 'Xóa Vòng');
+        removeBtn.textContent = removeBtn.getAttribute(`data-${currentLanguage}`) || 'Remove Round';
+        removeBtn.onclick = (e) => {
+            e.stopPropagation();
+            removeJapaneseSpecificRound(roundNumber);
+        };
+        
+        controlsDiv.appendChild(removeBtn);
+    }
     
     const collapseBtn = document.createElement('button');
     collapseBtn.className = 'collapse-btn';
     collapseBtn.textContent = '▲'; // Show up arrow since content is open by default
     
-    controlsDiv.appendChild(removeBtn);
     controlsDiv.appendChild(collapseBtn);
     
     headerDiv.appendChild(titleH3);
