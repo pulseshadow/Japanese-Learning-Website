@@ -4645,15 +4645,15 @@ function addJapaneseCustomRound(roundNumber = null) {
     contentDiv.style.display = 'block'; // Ensure content is visible by default
     
     const descriptionP = document.createElement('p');
-    descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.');
-    descriptionP.setAttribute('data-es', 'Por favor selecciona las palabras que quieres incluir en esta ronda. En este modo, verás palabras en inglés como preguntas y necesitarás escribir caracteres japoneses como respuestas.');
-    descriptionP.setAttribute('data-fr', 'Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronda. Dans ce mode, vous verrez des mots anglais comme questions et devrez taper des caractères japonais comme réponses.');
-    descriptionP.setAttribute('data-ja', 'このラウンドに含めたい単語を選択してください。このモードでは、英語の単語が質問として表示され、日本語の文字を答えとして入力する必要があります。');
-    descriptionP.setAttribute('data-zh', '请选择您想在此轮次中包含的单词。在此模式下，您将看到英语单词作为问题，需要输入日语字符作为答案。');
-    descriptionP.setAttribute('data-id', 'Silakan pilih kata-kata yang ingin Anda sertakan dalam ronde ini. Dalam mode ini, Anda akan melihat kata-kata dalam bahasa Inggris sebagai pertanyaan dan perlu mengetik karakter Jepang sebagai jawaban.');
-    descriptionP.setAttribute('data-ko', '이 라운드에 포함하고 싶은 단어들을 선택하세요. 이 모드에서는 영어 단어가 질문으로 표시되고 일본어 문자를 답으로 입력해야 합니다.');
-    descriptionP.setAttribute('data-vi', 'Vui lòng chọn những từ bạn muốn bao gồm trong vòng này. Trong chế độ này, bạn sẽ thấy từ tiếng Anh làm câu hỏi và cần nhập ký tự tiếng Nhật làm câu trả lời.');
-    descriptionP.textContent = descriptionP.getAttribute(`data-${currentLanguage}`) || 'Please select the words you\'d like to include in this round. In this mode, you\'ll see English words as questions and need to type Japanese characters as answers.';
+    descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round.');
+    descriptionP.setAttribute('data-es', 'Por favor selecciona las palabras que quieres incluir en esta ronda.');
+    descriptionP.setAttribute('data-fr', 'Veuillez sélectionner les mots que vous souhaitez inclure dans cette ronda.');
+    descriptionP.setAttribute('data-ja', 'このラウンドに含めたい単語を選択してください。');
+    descriptionP.setAttribute('data-zh', '请选择您想在此轮次中包含的单词。');
+    descriptionP.setAttribute('data-id', 'Silakan pilih kata-kata yang ingin Anda sertakan dalam ronde ini.');
+    descriptionP.setAttribute('data-ko', '이 라운드에 포함하고 싶은 단어들을 선택하세요.');
+    descriptionP.setAttribute('data-vi', 'Vui lòng chọn những từ bạn muốn bao gồm trong vòng này.');
+    descriptionP.textContent = descriptionP.getAttribute(`data-${currentLanguage}`) || 'Please select the words you\'d like to include in this round.';
     
     const wordGrid = document.createElement('div');
     wordGrid.className = 'word-selection-grid';
