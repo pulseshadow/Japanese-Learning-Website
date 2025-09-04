@@ -4521,21 +4521,25 @@ function initializeJapaneseCustomMode() {
         console.log('Has meaningful data:', hasMeaningfulData);
     }
     
+    // Always populate grids and setup buttons since we now have a pre-built structure
+    console.log('Populating grids and setting up buttons');
+    populateJapaneseWordSelectionGrids();
+    setupJapaneseCustomWordButtons();
+    
     if (!loaded || !hasMeaningfulData) {
-        // If no saved data or no meaningful data, automatically add round 1 and open it
-        console.log('No meaningful data, adding round 1 and opening it');
-        addJapaneseCustomRound(1);
-        
-        // Round 1 is now created with content visible by default
-        console.log('Round 1 created and should be open by default');
+        // If no saved data or no meaningful data, ensure round 1 is open by default
+        console.log('No meaningful data, ensuring round 1 is open by default');
+        const round1Content = document.getElementById('japanese-round-content-1');
+        if (round1Content) {
+            round1Content.style.display = 'block';
+        }
+        const round1CollapseBtn = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"] .collapse-btn');
+        if (round1CollapseBtn) {
+            round1CollapseBtn.textContent = '▼';
+        }
     } else {
-        // If meaningful data was loaded, we still need to populate grids and setup buttons
-        // but the state restoration will happen after grids are populated
-        console.log('Meaningful data was loaded, populating grids and setting up buttons');
-        populateJapaneseWordSelectionGrids();
-        setupJapaneseCustomWordButtons();
-        
-        // Now restore the saved state after grids are populated
+        // If meaningful data was loaded, restore the saved state after grids are populated
+        console.log('Meaningful data was loaded, restoring saved state');
         restoreJapaneseCustomRoundsState();
     }
     
@@ -4545,7 +4549,6 @@ function initializeJapaneseCustomMode() {
 function populateJapaneseWordSelectionGrids() {
     console.log('Populating Japanese word selection grids');
     
-    // Clear existing grids
     const container = document.getElementById('japanese-custom-rounds-container');
     if (!container) {
         console.error('japanese-custom-rounds-container not found');
@@ -4553,17 +4556,19 @@ function populateJapaneseWordSelectionGrids() {
     }
     console.log('Found container:', container);
     
-    container.innerHTML = '';
-    
     // Get the number of rounds from saved data or default to 1
     const savedData = loadJapaneseCustomRounds();
     const numRounds = savedData ? savedData.rounds.length : 1;
     console.log('Number of rounds to create:', numRounds);
     
-    for (let i = 1; i <= numRounds; i++) {
-        console.log('Adding round:', i);
+    // If we have more than 1 round in saved data, add the additional rounds
+    for (let i = 2; i <= numRounds; i++) {
+        console.log('Adding additional round:', i);
         addJapaneseCustomRound(i);
     }
+    
+    // Populate the word selection grid for round 1 (which already exists in HTML)
+    populateJapaneseWordSelectionGrid(1);
     
     console.log('Finished populating Japanese word selection grids');
 }
