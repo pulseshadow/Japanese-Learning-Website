@@ -6625,6 +6625,26 @@ function initializeCustomMode() {
         // Now restore the saved state after grids are populated
         restoreCustomRoundsState();
     }
+    
+    // Force update round titles to show correct direction arrows
+    updateCustomRoundTitles();
+}
+
+function updateCustomRoundTitles() {
+    // Update all custom round titles to show correct direction arrows
+    const customRounds = document.querySelectorAll('#custom-rounds-container .custom-round h3');
+    customRounds.forEach((title, index) => {
+        const roundNumber = index + 1;
+        title.textContent = `Introduction Round ${roundNumber} (Japanese→English)`;
+        title.setAttribute('data-en', `Introduction Round ${roundNumber} (Japanese→English)`);
+        title.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Japonés→Inglés)`);
+        title.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Japonais→Anglais)`);
+        title.setAttribute('data-ja', `導入ラウンド${roundNumber} (日本語→英語)`);
+        title.setAttribute('data-zh', `介绍轮次${roundNumber} (日语→英语)`);
+        title.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Jepang→Inggris)`);
+        title.setAttribute('data-ko', `소개 라운드 ${roundNumber} (일본어→영어)`);
+        title.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Nhật→Tiếng Anh)`);
+    });
 }
 
 function populateWordSelectionGrid(roundNumber) {
