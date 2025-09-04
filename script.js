@@ -5647,20 +5647,44 @@ function shuffleArray(array) {
 }
 
 function capitalizeWords(text) {
-    return text.split(' ').map(word => {
-        // Handle words in brackets
-        if (word.startsWith('(') && word.includes(')')) {
-            const bracketContent = word.substring(1, word.indexOf(')'));
-            const restOfWord = word.substring(word.indexOf(')') + 1);
-            return `(${bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1)})${restOfWord.charAt(0).toUpperCase() + restOfWord.slice(1)}`;
-        } else if (word.startsWith('(')) {
-            const bracketContent = word.substring(1, word.indexOf(')'));
-            const restOfWord = word.substring(word.indexOf(')') + 1);
-            return `(${bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1)})${restOfWord.charAt(0).toUpperCase() + restOfWord.slice(1)}`;
+    // Handle text that contains brackets at the beginning
+    if (text.startsWith('(') && text.includes(')')) {
+        const firstParenIndex = text.indexOf(')');
+        const bracketContent = text.substring(1, firstParenIndex);
+        const restOfText = text.substring(firstParenIndex + 1).trim();
+        
+        // Capitalize the bracket content
+        const capitalizedBracket = bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1);
+        
+        // Handle the rest of the text
+        if (restOfText) {
+            // If there's more text after the bracket, capitalize it properly
+            const capitalizedRest = restOfText.split(' ').map(word => {
+                if (word.startsWith('(') && word.includes(')')) {
+                    // Handle nested brackets
+                    const nestedBracketContent = word.substring(1, word.indexOf(')'));
+                    const nestedRestOfWord = word.substring(word.indexOf(')') + 1);
+                    return `(${nestedBracketContent.charAt(0).toUpperCase() + nestedBracketContent.slice(1)})${nestedRestOfWord.charAt(0).toUpperCase() + nestedRestOfWord.slice(1)}`;
+                } else {
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                }
+            }).join(' ');
+            return `(${capitalizedBracket}) ${capitalizedRest}`;
         } else {
-            return word.charAt(0).toUpperCase() + word.slice(1);
+            return `(${capitalizedBracket})`;
         }
-    }).join(' ');
+    } else {
+        // Handle normal text without brackets at the beginning
+        return text.split(' ').map(word => {
+            if (word.startsWith('(') && word.includes(')')) {
+                const bracketContent = word.substring(1, word.indexOf(')'));
+                const restOfWord = word.substring(word.indexOf(')') + 1);
+                return `(${bracketContent.charAt(0).toUpperCase() + bracketContent.slice(1)})${restOfWord.charAt(0).toUpperCase() + restOfWord.slice(1)}`;
+            } else {
+                return word.charAt(0).toUpperCase() + word.slice(1);
+            }
+        }).join(' ');
+    }
 }
 
 // Mobile device detection
@@ -6008,8 +6032,11 @@ function updateAllText() {
             if (hasLinks) {
                 // Preserve HTML structure by replacing text while keeping links
                 updateTextWithPreservedLinks(element, text);
+            } else if (text.includes('<br>') || text.includes('<br/>') || text.includes('<br />')) {
+                // Text contains HTML line breaks, use innerHTML
+                element.innerHTML = text;
             } else {
-                // No links to preserve, use simple textContent
+                // No links or HTML to preserve, use simple textContent
                 element.textContent = text;
             }
         }
