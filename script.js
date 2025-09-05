@@ -2310,6 +2310,27 @@ const wordPools = {
     ]
 };
 
+// Helper function to calculate total rounds for current mode
+function getTotalRounds() {
+    if (window.customWordPools) {
+        // English custom mode
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        const totalIntroductionRounds = window.customWordPools.length;
+        return noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
+    } else if (window.japaneseCustomWordPools) {
+        // Japanese custom mode
+        const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+        const totalIntroductionRounds = window.japaneseCustomWordPools.length;
+        return noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
+    } else if (window.mirroredMode) {
+        // Mirrored brute force mode
+        return 18;
+    } else {
+        // Standard brute force mode
+        return 18;
+    }
+}
+
 // Helper function to get the correct answer in the current language (without brackets)
 function getCorrectAnswer(word) {
     // Check if we're in mirrored mode
@@ -2953,10 +2974,9 @@ function changeRound(roundNumber) {
         if (window.mirroredMode) {
             if (window.japaneseCustomModeEnabled) {
                 // For Japanese custom mode, check if this is the final round
-                const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
-                const totalRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+                const totalRounds = getTotalRounds();
                 
-                if (roundNumber >= totalRounds) {
+                if (roundNumber > totalRounds) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2968,7 +2988,8 @@ function changeRound(roundNumber) {
                 initializeJapaneseCustomRound();
             } else {
                 // For mirrored brute force mode, check if this is the final round
-                if (roundNumber >= 18) {
+                const totalRounds = getTotalRounds();
+                if (roundNumber > totalRounds) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2983,7 +3004,8 @@ function changeRound(roundNumber) {
             initializeCustomRound();
         } else {
             // For brute force mode, check if this is the final round
-            if (roundNumber >= 18) {
+            const totalRounds = getTotalRounds();
+            if (roundNumber > totalRounds) {
                 // Hide the next round button on the final round
                 nextRoundBtn.style.visibility = 'hidden';
                 nextRoundBtn.classList.add('disabled');
@@ -3004,6 +3026,9 @@ function changeRound(roundNumber) {
 function populateRoundSelector() {
     // Clear existing options
     roundSelector.innerHTML = '';
+    
+    // Get total rounds for current mode
+    const totalRounds = getTotalRounds();
     
     // Check if we're in custom mode
     if (window.customWordPools) {
@@ -3029,7 +3054,7 @@ function populateRoundSelector() {
             }
         } else {
             // Introduction and practice rounds
-            for (let i = 1; i <= customWordPools.length * 2; i++) {
+            for (let i = 1; i <= totalRounds; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 
@@ -3085,7 +3110,7 @@ function populateRoundSelector() {
             }
         } else {
             // Introduction and practice rounds
-            for (let i = 1; i <= japaneseCustomWordPools.length * 2; i++) {
+            for (let i = 1; i <= totalRounds; i++) {
                 const option = document.createElement('option');
                 option.value = i;
                 
@@ -3120,7 +3145,7 @@ function populateRoundSelector() {
         }
     } else if (window.mirroredMode) {
         // Populate with preset rounds (mirrored brute force mode)
-        for (let i = 1; i <= 18; i++) {
+        for (let i = 1; i <= totalRounds; i++) {
             const option = document.createElement('option');
             option.value = i;
             
@@ -3154,7 +3179,7 @@ function populateRoundSelector() {
         }
     } else {
         // Populate with preset rounds (brute force mode)
-        for (let i = 1; i <= 18; i++) {
+        for (let i = 1; i <= totalRounds; i++) {
             const option = document.createElement('option');
             option.value = i;
             
@@ -4397,9 +4422,7 @@ function nextCustomRound() {
     nextRoundBtn.classList.add('disabled');
     
     // Check if this is the last round
-    const noPracticeRounds = window.customModeNoPracticeRounds || false;
-    const totalIntroductionRounds = window.customWordPools.length;
-    const totalRounds = noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
+    const totalRounds = getTotalRounds();
     
     if (currentRound > totalRounds) {
         // Hide the next round button on the final round
@@ -4548,13 +4571,11 @@ function nextJapaneseCustomRound() {
     }
     
     // Check if this is the last round
-    const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
-    const totalIntroductionRounds = window.japaneseCustomWordPools.length;
-    const totalRounds = noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
+    const totalRounds = getTotalRounds();
     
-    console.log(`Round ${currentRound} of ${totalRounds}. No practice rounds: ${noPracticeRounds}`);
+    console.log(`Round ${currentRound} of ${totalRounds}`);
     
-    if (currentRound >= totalRounds) {
+    if (currentRound > totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
