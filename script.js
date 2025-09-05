@@ -2318,6 +2318,11 @@ function getCorrectAnswer(word) {
         return word.japanese;
     }
     
+    // For English mode, always use the english field to preserve brackets
+    if (currentLanguage === 'en') {
+        return word.english;
+    }
+    
     if (word.translations && word.translations[currentLanguage]) {
         // Return translation in current language, removing brackets and content
         return word.translations[currentLanguage].replace(/\([^)]*\)/g, '').trim();
