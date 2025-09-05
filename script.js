@@ -3062,6 +3062,62 @@ function populateRoundSelector() {
                 roundSelector.appendChild(option);
             }
         }
+    } else if (window.japaneseCustomWordPools) {
+        // Populate with Japanese custom rounds
+        const japaneseCustomWordPools = window.japaneseCustomWordPools;
+        const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+        
+        if (noPracticeRounds) {
+            // Only introduction rounds
+            for (let i = 1; i <= japaneseCustomWordPools.length; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = `Introduction Round ${i}`;
+                option.setAttribute('data-en', `Introduction Round ${i}`);
+                option.setAttribute('data-es', `Ronda de Introducción ${i}`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${i}`);
+                option.setAttribute('data-ja', `導入ラウンド${i}`);
+                option.setAttribute('data-zh', `介绍轮次${i}`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${i}`);
+                option.setAttribute('data-ko', `소개 라운드 ${i}`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${i}`);
+                roundSelector.appendChild(option);
+            }
+        } else {
+            // Introduction and practice rounds
+            for (let i = 1; i <= japaneseCustomWordPools.length * 2; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                
+                if (i % 2 === 1) {
+                    // Introduction round
+                    const roundNumber = Math.ceil(i / 2);
+                    option.textContent = `Introduction Round ${roundNumber}`;
+                    option.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+                    option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+                    option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+                    option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+                    option.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+                    option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+                    option.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+                    option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
+                } else {
+                    // Practice round
+                    const roundNumber = Math.floor(i / 2);
+                    option.textContent = `Practice Round ${roundNumber}`;
+                    option.setAttribute('data-en', `Practice Round ${roundNumber}`);
+                    option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
+                    option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
+                    option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+                    option.setAttribute('data-zh', `练习轮次${roundNumber}`);
+                    option.setAttribute('data-id', `Ronde Latihan ${roundNumber}`);
+                    option.setAttribute('data-ko', `연습 라운드 ${roundNumber}`);
+                    option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
+                }
+                
+                roundSelector.appendChild(option);
+            }
+        }
     } else if (window.mirroredMode) {
         // Populate with preset rounds (mirrored brute force mode)
         for (let i = 1; i <= 18; i++) {
@@ -3131,6 +3187,9 @@ function populateRoundSelector() {
             roundSelector.appendChild(option);
         }
     }
+    
+    // Set the round selector to match the current round
+    roundSelector.value = currentRound;
     
     // Update language for new options
     updateAllText();
@@ -4321,6 +4380,7 @@ function nextRound() {
 
 function nextCustomRound() {
     currentRound++;
+    roundSelector.value = currentRound;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4364,6 +4424,7 @@ function nextCustomRound() {
 
 function nextStandardRound() {
     currentRound++;
+    roundSelector.value = currentRound;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4426,6 +4487,7 @@ function refreshGameAd() {
 
 function nextMirroredRound() {
     currentRound++;
+    roundSelector.value = currentRound;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4470,6 +4532,7 @@ function nextJapaneseCustomRound() {
     console.log(`Moving to next Japanese custom round. Current round: ${currentRound}`);
     
     currentRound++;
+    roundSelector.value = currentRound;
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -5471,6 +5534,9 @@ function startJapaneseCustomRun() {
     
     // Don't clear the word entry flag when starting a Japanese custom game
     // This allows users to go back to word entry selection from script pages
+    
+    // Populate round selector with Japanese custom rounds
+    populateRoundSelector();
     
     // Show game page
     showPage('game');
