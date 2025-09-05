@@ -3171,7 +3171,7 @@ answerInput.addEventListener('input', (e) => {
                 showErrorAndClearInput(currentWord.japanese);
             } else {
                 // In standard mode, show English words as correct answer
-                showErrorAndClearInput(currentWord.english);
+                showErrorAndClearInput(getDisplayText(currentWord));
             }
             return;
         }
@@ -3628,14 +3628,14 @@ function submitAnswer() {
                 currentQuestionIndex++;
                 showCustomLearningQuestion();
             } else {
-                showError(currentWord.english);
+                showError(getDisplayText(currentWord));
             }
         } else if (currentPhase === 'elimination') {
             if (userAnswer === correctAnswer) {
                 currentQuestionIndex++;
                 showCustomEliminationQuestion();
             } else {
-                showError(currentWord.english);
+                showError(getDisplayText(currentWord));
             }
         } else {
             // Repeating phase
@@ -3656,7 +3656,7 @@ function submitAnswer() {
                 showLearningQuestion();
             } else {
                 // Show error but don't move on
-                showError(currentWord.english);
+                showError(getDisplayText(currentWord));
             }
         } else if (currentPhase === 'elimination') {
             // Elimination phase - check answer and move to next word
@@ -3665,7 +3665,7 @@ function submitAnswer() {
                 showEliminationQuestion();
             } else {
                 // Show error but don't move on
-                showError(currentWord.english);
+                showError(getDisplayText(currentWord));
             }
         } else {
             // Repeating phase - full game logic
@@ -3895,7 +3895,7 @@ function handleCorrectAnswer() {
 
 function handleIncorrectAnswer(word) {
     // Show error
-    showError(word.english);
+    showError(getDisplayText(word));
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
@@ -6197,13 +6197,13 @@ function updateTextWithPreservedLinks(element, newText) {
 function updateAnswerValidation() {
     if (currentWord && currentPhase === 'learning') {
         // Update the correct answer display to show the answer in the current language
-        const correctAnswer = getCorrectAnswer(currentWord);
+        const displayText = getDisplayText(currentWord);
         if (window.mirroredMode) {
             // In mirrored mode, show Japanese characters without capitalization
-            correctAnswerDisplay.textContent = correctAnswer;
+            correctAnswerDisplay.textContent = displayText;
         } else {
             // In normal mode, capitalize the answer
-            correctAnswerDisplay.textContent = capitalizeWords(correctAnswer);
+            correctAnswerDisplay.textContent = capitalizeWords(displayText);
         }
     }
 }
@@ -7438,7 +7438,7 @@ function showCustomLearningQuestion() {
     displayWordWithSound(word);
     // Update global currentWord for answer validation
     currentWord = word;
-    correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
+    correctAnswerDisplay.textContent = capitalizeWords(getDisplayText(word));
     correctAnswerDisplay.classList.remove('hidden');
     
     answerInput.value = '';
@@ -7586,7 +7586,7 @@ function handleCustomCorrectAnswer() {
 
 function handleCustomIncorrectAnswer(word) {
     // Show error
-    showError(word.english);
+    showError(getDisplayText(word));
     
     // Update statistics for incorrect answer
     updateStats(false, currentRound);
