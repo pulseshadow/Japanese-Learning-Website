@@ -2318,7 +2318,24 @@ function getCorrectAnswer(word) {
         return word.japanese;
     }
     
-    // For English mode, always use the english field to preserve brackets
+    if (word.translations && word.translations[currentLanguage]) {
+        // Return translation in current language, removing brackets and content
+        return word.translations[currentLanguage].replace(/\([^)]*\)/g, '').trim();
+    } else {
+        // Fallback to English if translation not available
+        return word.english.replace(/\([^)]*\)/g, '').trim();
+    }
+}
+
+// Helper function to get the display text (with brackets for English)
+function getDisplayText(word) {
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        // In mirrored mode, return Japanese characters as the display text
+        return word.japanese;
+    }
+    
+    // For English mode, use the english field to preserve brackets
     if (currentLanguage === 'en') {
         return word.english;
     }
@@ -3427,7 +3444,7 @@ function showLearningQuestion() {
     if (window.mirroredMode) {
         correctAnswerDisplay.textContent = word.japanese; // Show Japanese characters
     } else {
-        correctAnswerDisplay.textContent = capitalizeWords(getCorrectAnswer(word));
+        correctAnswerDisplay.textContent = capitalizeWords(getDisplayText(word));
     }
     correctAnswerDisplay.classList.remove('hidden');
     
@@ -6839,7 +6856,7 @@ function populateWordSelectionGrid(roundNumber) {
             
             const label = document.createElement('label');
             label.htmlFor = `word-${roundNumber - 1}-${word.japanese}`;
-            label.textContent = capitalizeWords(getCorrectAnswer(word));
+            label.textContent = capitalizeWords(getDisplayText(word));
             
             wordItem.appendChild(checkbox);
             wordItem.appendChild(label);
