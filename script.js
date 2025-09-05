@@ -2177,7 +2177,7 @@ const wordPools = {
     15: [ // Introduction Round 10 (Survival Phrases Final)
         { 
             japanese: 'せんせい', 
-            english: 'teacher / doctor',
+            english: 'teacher',
             translations: {
                 en: 'teacher',
                 es: 'profesor',
@@ -2627,6 +2627,10 @@ function startMirroredGame() {
     
     // Set mirrored mode flag
     window.mirroredMode = true;
+    
+    // Reset next round button visibility
+    nextRoundBtn.style.visibility = 'visible';
+    nextRoundBtn.classList.add('disabled');
     
     // Don't clear the word entry flag when starting a mirrored game
     // This allows users to go back to word entry selection from script pages
@@ -4334,9 +4338,10 @@ function nextCustomRound() {
     
     // Check if this is the last round
     const noPracticeRounds = window.customModeNoPracticeRounds || false;
-    const totalRounds = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
+    const totalIntroductionRounds = window.customWordPools.length;
+    const totalRounds = noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
     
-    if (currentRound >= totalRounds) {
+    if (currentRound > totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4481,7 +4486,8 @@ function nextJapaneseCustomRound() {
     
     // Check if this is the last round
     const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
-    const totalRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+    const totalIntroductionRounds = window.japaneseCustomWordPools.length;
+    const totalRounds = noPracticeRounds ? totalIntroductionRounds : totalIntroductionRounds * 2;
     
     console.log(`Round ${currentRound} of ${totalRounds}. No practice rounds: ${noPracticeRounds}`);
     
@@ -5458,6 +5464,10 @@ function startJapaneseCustomRun() {
     // Set Japanese custom mode flags
     window.mirroredMode = true;
     window.japaneseCustomModeEnabled = true;
+    
+    // Reset next round button visibility
+    nextRoundBtn.style.visibility = 'visible';
+    nextRoundBtn.classList.add('disabled');
     
     // Don't clear the word entry flag when starting a Japanese custom game
     // This allows users to go back to word entry selection from script pages
@@ -7329,6 +7339,9 @@ function startCustomGame() {
     
     // Disable next round button at start
     nextRoundBtn.classList.add('disabled');
+    
+    // Ensure next round button is visible when starting (not on final round)
+    nextRoundBtn.style.visibility = 'visible';
     
     // Keep custom mode enabled for the duration of the game
     // Only reset when explicitly leaving custom mode
