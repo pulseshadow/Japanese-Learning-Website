@@ -1165,7 +1165,7 @@ body.dark-mode .custom-round p {
     background: transparent;
     border: none;
     border-radius: 8px;
-    padding: 20px;
+    padding: 10px 20px 20px 20px;
 }
 
 .word-selection-grid h4 {
