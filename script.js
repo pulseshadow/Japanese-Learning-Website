@@ -4424,7 +4424,7 @@ function nextCustomRound() {
     // Check if this is the last round
     const totalRounds = getTotalRounds();
     
-    if (currentRound > totalRounds) {
+    if (currentRound >= totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4460,8 +4460,9 @@ function nextStandardRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Check if this is the last round (round 18 for brute force mode)
-    if (currentRound >= 18) {
+    // Check if this is the last round
+    const totalRounds = getTotalRounds();
+    if (currentRound >= totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4523,8 +4524,9 @@ function nextMirroredRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Check if this is the last round (round 18 for mirrored brute force mode)
-    if (currentRound >= 18) {
+    // Check if this is the last round
+    const totalRounds = getTotalRounds();
+    if (currentRound >= totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4575,7 +4577,7 @@ function nextJapaneseCustomRound() {
     
     console.log(`Round ${currentRound} of ${totalRounds}`);
     
-    if (currentRound > totalRounds) {
+    if (currentRound >= totalRounds) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
