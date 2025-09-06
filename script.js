@@ -4366,21 +4366,25 @@ function nextRound() {
     }
     
     console.log(`Proceeding to next round. Current round: ${currentRound}, Phase: ${currentPhase}`);
+    console.log(`Mode detection debug: customWordPools=${!!window.customWordPools}, japaneseCustomWordPools=${!!window.japaneseCustomWordPools}, mirroredMode=${window.mirroredMode}, japaneseCustomModeEnabled=${window.japaneseCustomModeEnabled}`);
     
     // Check if the next round would be the final round and hide button if so
     const nextRoundNumber = currentRound + 1;
     
     // Handle custom mode differently
     if (window.customWordPools) {
-        // English custom mode
+        // English custom mode - copy exact logic from Japanese custom mode
         const noPracticeRounds = window.customModeNoPracticeRounds || false;
         const maxRounds = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
-        console.log(`Custom mode: nextRound=${nextRoundNumber}, maxRounds=${maxRounds}, noPracticeRounds=${noPracticeRounds}`);
+        console.log(`English custom mode: nextRound=${nextRoundNumber}, maxRounds=${maxRounds}, noPracticeRounds=${noPracticeRounds}`);
+        console.log(`English custom mode debug: customWordPools.length=${window.customWordPools.length}, currentRound=${currentRound}`);
         
         if (nextRoundNumber > maxRounds) {
-            console.log(`Custom mode: Next round (${nextRoundNumber}) exceeds max rounds (${maxRounds}). Hiding next round button.`);
+            console.log(`English custom mode: Next round (${nextRoundNumber}) exceeds max rounds (${maxRounds}). Hiding next round button.`);
             nextRoundBtn.style.visibility = 'hidden';
             nextRoundBtn.classList.add('disabled');
+        } else {
+            console.log(`English custom mode: Next round (${nextRoundNumber}) is within max rounds (${maxRounds}). Keeping next round button visible.`);
         }
     } else if (window.japaneseCustomWordPools) {
         // Japanese custom mode
