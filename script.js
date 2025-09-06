@@ -6971,7 +6971,8 @@ function populateWordSelectionGrid(roundNumber) {
             
             const label = document.createElement('label');
             label.htmlFor = `word-${roundNumber - 1}-${word.japanese}`;
-            label.textContent = capitalizeWords(getDisplayText(word));
+            // In English custom mode, always show English word as label (capitalized)
+            label.textContent = capitalizeWords(word.english);
             
             wordItem.appendChild(checkbox);
             wordItem.appendChild(label);
