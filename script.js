@@ -4370,25 +4370,41 @@ function nextRound() {
     // Check if the next round would be the final round and hide button if so
     const nextRoundNumber = currentRound + 1;
     
-    // Calculate max round number if not already set
-    let maxRoundNumber = window.maxRoundNumber;
-    if (!maxRoundNumber) {
-        if (window.customWordPools) {
-            const noPracticeRounds = window.customModeNoPracticeRounds || false;
-            maxRoundNumber = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
-        } else if (window.japaneseCustomWordPools) {
-            const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
-            maxRoundNumber = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
-        } else {
+    // Handle custom mode differently
+    if (window.customWordPools) {
+        // English custom mode
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        const maxRounds = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
+        console.log(`Custom mode: nextRound=${nextRoundNumber}, maxRounds=${maxRounds}, noPracticeRounds=${noPracticeRounds}`);
+        
+        if (nextRoundNumber > maxRounds) {
+            console.log(`Custom mode: Next round (${nextRoundNumber}) exceeds max rounds (${maxRounds}). Hiding next round button.`);
+            nextRoundBtn.style.visibility = 'hidden';
+            nextRoundBtn.classList.add('disabled');
+        }
+    } else if (window.japaneseCustomWordPools) {
+        // Japanese custom mode
+        const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+        const maxRounds = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+        console.log(`Japanese custom mode: nextRound=${nextRoundNumber}, maxRounds=${maxRounds}, noPracticeRounds=${noPracticeRounds}`);
+        
+        if (nextRoundNumber > maxRounds) {
+            console.log(`Japanese custom mode: Next round (${nextRoundNumber}) exceeds max rounds (${maxRounds}). Hiding next round button.`);
+            nextRoundBtn.style.visibility = 'hidden';
+            nextRoundBtn.classList.add('disabled');
+        }
+    } else {
+        // Brute force modes - use existing logic
+        let maxRoundNumber = window.maxRoundNumber;
+        if (!maxRoundNumber) {
             maxRoundNumber = 18; // Default for brute force modes
         }
-        console.log(`Calculated max round number: ${maxRoundNumber}`);
-    }
-    
-    if (nextRoundNumber >= maxRoundNumber) {
-        console.log(`Next round (${nextRoundNumber}) would be the final round. Hiding next round button. Max rounds: ${maxRoundNumber}`);
-        nextRoundBtn.style.visibility = 'hidden';
-        nextRoundBtn.classList.add('disabled');
+        
+        if (nextRoundNumber >= maxRoundNumber) {
+            console.log(`Brute force mode: Next round (${nextRoundNumber}) would be the final round. Hiding next round button. Max rounds: ${maxRoundNumber}`);
+            nextRoundBtn.style.visibility = 'hidden';
+            nextRoundBtn.classList.add('disabled');
+        }
     }
     
     // Check if we're in mirrored mode
