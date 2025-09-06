@@ -4407,26 +4407,30 @@ function nextRound() {
         }
     }
     
-    // Check if we're in mirrored mode
-    if (window.mirroredMode) {
-        if (window.japaneseCustomModeEnabled) {
-            console.log('Moving to next Japanese custom round');
-            nextJapaneseCustomRound();
-        } else {
-            console.log('Moving to next mirrored round');
-            nextMirroredRound();
-        }
+    // Check if we're in custom mode first (prioritize custom mode over mirrored mode)
+    if (window.customWordPools) {
+        console.log('Moving to next custom round');
+        nextCustomRound();
         return;
     }
     
-    // Check if we're in custom mode
-    if (window.customWordPools) {
-            console.log('Moving to next custom round');
-        nextCustomRound();
-    } else {
-            console.log('Moving to next standard round');
-        nextStandardRound();
+    // Check if we're in Japanese custom mode
+    if (window.japaneseCustomWordPools && window.japaneseCustomModeEnabled) {
+        console.log('Moving to next Japanese custom round');
+        nextJapaneseCustomRound();
+        return;
     }
+    
+    // Check if we're in mirrored mode
+    if (window.mirroredMode) {
+        console.log('Moving to next mirrored round');
+        nextMirroredRound();
+        return;
+    }
+    
+    // Default to standard round
+    console.log('Moving to next standard round');
+    nextStandardRound();
 }
 
 function nextCustomRound() {
@@ -7451,6 +7455,10 @@ function startCustomGame() {
     
     // Keep custom mode enabled for the duration of the game
     // Only reset when explicitly leaving custom mode
+    
+    // Ensure we're NOT in mirrored mode for English custom mode
+    window.mirroredMode = false;
+    window.japaneseCustomModeEnabled = false;
     
     // Populate round selector with custom rounds
     populateRoundSelector();
