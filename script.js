@@ -2956,7 +2956,7 @@ function changeRound(roundNumber) {
         if (window.mirroredMode) {
             if (window.japaneseCustomModeEnabled) {
                 // For Japanese custom mode, check if this is the final round using dynamic max round number
-                if (roundNumber >= window.maxRoundNumber) {
+                if (roundNumber > window.maxRoundNumber) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2968,7 +2968,7 @@ function changeRound(roundNumber) {
                 initializeJapaneseCustomRound();
             } else {
                 // For mirrored brute force mode, check if this is the final round using dynamic max round number
-                if (roundNumber >= window.maxRoundNumber) {
+                if (roundNumber > window.maxRoundNumber) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2983,7 +2983,7 @@ function changeRound(roundNumber) {
             initializeCustomRound();
         } else {
             // For brute force mode, check if this is the final round using dynamic max round number
-            if (roundNumber >= window.maxRoundNumber) {
+            if (roundNumber > window.maxRoundNumber) {
                 // Hide the next round button on the final round
                 nextRoundBtn.style.visibility = 'hidden';
                 nextRoundBtn.classList.add('disabled');
@@ -4408,7 +4408,7 @@ function nextCustomRound() {
     nextRoundBtn.classList.add('disabled');
     
     // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound >= window.maxRoundNumber) {
+    if (currentRound > window.maxRoundNumber) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4445,7 +4445,7 @@ function nextStandardRound() {
     progressInfo.classList.remove('completed');
     
     // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound >= window.maxRoundNumber) {
+    if (currentRound > window.maxRoundNumber) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4508,7 +4508,7 @@ function nextMirroredRound() {
     progressInfo.classList.remove('completed');
     
     // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound >= window.maxRoundNumber) {
+    if (currentRound > window.maxRoundNumber) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4557,7 +4557,7 @@ function nextJapaneseCustomRound() {
     // Check if this is the last round using the dynamically calculated max round number
     console.log(`Round ${currentRound} of ${window.maxRoundNumber}`);
     
-    if (currentRound >= window.maxRoundNumber) {
+    if (currentRound > window.maxRoundNumber) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
