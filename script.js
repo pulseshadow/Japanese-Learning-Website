@@ -2331,6 +2331,42 @@ function getTotalRounds() {
     }
 }
 
+// Helper function to determine when next round button should disappear
+// Prioritizes practice rounds and uses the higher value
+function getNextRoundButtonHideRound() {
+    if (window.customWordPools) {
+        // English custom mode
+        const totalIntroductionRounds = window.customWordPools.length;
+        const noPracticeRounds = window.customModeNoPracticeRounds || false;
+        
+        if (noPracticeRounds) {
+            // No practice rounds - hide after last introduction round
+            return totalIntroductionRounds;
+        } else {
+            // Practice rounds exist - prioritize them (hide after last practice round)
+            return totalIntroductionRounds * 2;
+        }
+    } else if (window.japaneseCustomWordPools) {
+        // Japanese custom mode
+        const totalIntroductionRounds = window.japaneseCustomWordPools.length;
+        const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+        
+        if (noPracticeRounds) {
+            // No practice rounds - hide after last introduction round
+            return totalIntroductionRounds;
+        } else {
+            // Practice rounds exist - prioritize them (hide after last practice round)
+            return totalIntroductionRounds * 2;
+        }
+    } else if (window.mirroredMode) {
+        // Mirrored brute force mode - always has practice rounds
+        return 18;
+    } else {
+        // Standard brute force mode - always has practice rounds
+        return 18;
+    }
+}
+
 // Helper function to get the correct answer in the current language (without brackets)
 function getCorrectAnswer(word) {
     // Check if we're in mirrored mode
@@ -2974,9 +3010,9 @@ function changeRound(roundNumber) {
         if (window.mirroredMode) {
             if (window.japaneseCustomModeEnabled) {
                 // For Japanese custom mode, check if this is the final round
-                const totalRounds = getTotalRounds();
+                const hideRound = getNextRoundButtonHideRound();
                 
-                if (roundNumber > totalRounds) {
+                if (roundNumber > hideRound) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2988,8 +3024,8 @@ function changeRound(roundNumber) {
                 initializeJapaneseCustomRound();
             } else {
                 // For mirrored brute force mode, check if this is the final round
-                const totalRounds = getTotalRounds();
-                if (roundNumber > totalRounds) {
+                const hideRound = getNextRoundButtonHideRound();
+                if (roundNumber > hideRound) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -3004,8 +3040,8 @@ function changeRound(roundNumber) {
             initializeCustomRound();
         } else {
             // For brute force mode, check if this is the final round
-            const totalRounds = getTotalRounds();
-            if (roundNumber > totalRounds) {
+            const hideRound = getNextRoundButtonHideRound();
+            if (roundNumber > hideRound) {
                 // Hide the next round button on the final round
                 nextRoundBtn.style.visibility = 'hidden';
                 nextRoundBtn.classList.add('disabled');
@@ -4422,9 +4458,9 @@ function nextCustomRound() {
     nextRoundBtn.classList.add('disabled');
     
     // Check if this is the last round
-    const totalRounds = getTotalRounds();
+    const hideRound = getNextRoundButtonHideRound();
     
-    if (currentRound >= totalRounds) {
+    if (currentRound >= hideRound) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4461,8 +4497,8 @@ function nextStandardRound() {
     progressInfo.classList.remove('completed');
     
     // Check if this is the last round
-    const totalRounds = getTotalRounds();
-    if (currentRound >= totalRounds) {
+    const hideRound = getNextRoundButtonHideRound();
+    if (currentRound >= hideRound) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4525,8 +4561,8 @@ function nextMirroredRound() {
     progressInfo.classList.remove('completed');
     
     // Check if this is the last round
-    const totalRounds = getTotalRounds();
-    if (currentRound >= totalRounds) {
+    const hideRound = getNextRoundButtonHideRound();
+    if (currentRound >= hideRound) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
@@ -4573,11 +4609,11 @@ function nextJapaneseCustomRound() {
     }
     
     // Check if this is the last round
-    const totalRounds = getTotalRounds();
+    const hideRound = getNextRoundButtonHideRound();
     
-    console.log(`Round ${currentRound} of ${totalRounds}`);
+    console.log(`Round ${currentRound} of ${hideRound}`);
     
-    if (currentRound >= totalRounds) {
+    if (currentRound >= hideRound) {
         // Hide the next round button on the final round
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
