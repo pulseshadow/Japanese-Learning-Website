@@ -5594,17 +5594,33 @@ function initializeJapaneseCustomRound() {
 }
 
 function getCurrentJapaneseCustomRoundWords() {
-    if (!window.japaneseCustomWordPools || !window.japaneseCustomWordPools[currentRound - 1]) {
-        console.warn(`No word pool found for round ${currentRound}. Available pools:`, window.japaneseCustomWordPools);
+    if (!window.japaneseCustomWordPools) {
+        console.warn(`No Japanese custom word pools found.`);
         return [];
     }
     
-    const roundWords = window.japaneseCustomWordPools[currentRound - 1];
+    // Calculate which introduction round this corresponds to
+    let introductionRoundIndex;
+    if (currentRound % 2 === 1) {
+        // Odd rounds are introduction rounds
+        introductionRoundIndex = Math.ceil(currentRound / 2) - 1;
+    } else {
+        // Even rounds are practice rounds (use same words as previous introduction round)
+        introductionRoundIndex = Math.floor(currentRound / 2) - 1;
+    }
+    
+    if (!window.japaneseCustomWordPools[introductionRoundIndex]) {
+        console.warn(`No word pool found for round ${currentRound} (introduction round ${introductionRoundIndex + 1}). Available pools:`, window.japaneseCustomWordPools);
+        return [];
+    }
+    
+    const roundWords = window.japaneseCustomWordPools[introductionRoundIndex];
     if (!Array.isArray(roundWords) || roundWords.length === 0) {
-        console.warn(`Word pool for round ${currentRound} is empty or invalid:`, roundWords);
+        console.warn(`Word pool for round ${currentRound} (introduction round ${introductionRoundIndex + 1}) is empty or invalid:`, roundWords);
         return [];
     }
     
+    console.log(`Round ${currentRound} using words from Introduction Round ${introductionRoundIndex + 1}`);
     return roundWords;
 }
 
