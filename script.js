@@ -2956,7 +2956,7 @@ function changeRound(roundNumber) {
         if (window.mirroredMode) {
             if (window.japaneseCustomModeEnabled) {
                 // For Japanese custom mode, check if this is the final round using dynamic max round number
-                if (roundNumber > window.maxRoundNumber) {
+                if (roundNumber >= window.maxRoundNumber) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2968,7 +2968,7 @@ function changeRound(roundNumber) {
                 initializeJapaneseCustomRound();
             } else {
                 // For mirrored brute force mode, check if this is the final round using dynamic max round number
-                if (roundNumber > window.maxRoundNumber) {
+                if (roundNumber >= window.maxRoundNumber) {
                     // Hide the next round button on the final round
                     nextRoundBtn.style.visibility = 'hidden';
                     nextRoundBtn.classList.add('disabled');
@@ -2983,7 +2983,7 @@ function changeRound(roundNumber) {
             initializeCustomRound();
         } else {
             // For brute force mode, check if this is the final round using dynamic max round number
-            if (roundNumber > window.maxRoundNumber) {
+            if (roundNumber >= window.maxRoundNumber) {
                 // Hide the next round button on the final round
                 nextRoundBtn.style.visibility = 'hidden';
                 nextRoundBtn.classList.add('disabled');
@@ -4367,6 +4367,14 @@ function nextRound() {
     
     console.log(`Proceeding to next round. Current round: ${currentRound}, Phase: ${currentPhase}`);
     
+    // Check if the next round would be the final round and hide button if so
+    const nextRoundNumber = currentRound + 1;
+    if (nextRoundNumber >= window.maxRoundNumber) {
+        console.log(`Next round (${nextRoundNumber}) would be the final round. Hiding next round button.`);
+        nextRoundBtn.style.visibility = 'hidden';
+        nextRoundBtn.classList.add('disabled');
+    }
+    
     // Check if we're in mirrored mode
     if (window.mirroredMode) {
         if (window.japaneseCustomModeEnabled) {
@@ -4404,19 +4412,9 @@ function nextCustomRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Disable next round button at start of new round
+    // Disable next round button at start of new round (but keep it visible)
     nextRoundBtn.classList.add('disabled');
-    
-    // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound > window.maxRoundNumber) {
-        // Hide the next round button on the final round
-        nextRoundBtn.style.visibility = 'hidden';
-        nextRoundBtn.classList.add('disabled');
-    } else {
-        // Disable next round button at start of new round (but keep it visible)
-        nextRoundBtn.classList.add('disabled');
-        nextRoundBtn.style.visibility = 'visible';
-    }
+    nextRoundBtn.style.visibility = 'visible';
     
     initializeCustomRound();
     
@@ -4444,16 +4442,9 @@ function nextStandardRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound > window.maxRoundNumber) {
-        // Hide the next round button on the final round
-        nextRoundBtn.style.visibility = 'hidden';
-        nextRoundBtn.classList.add('disabled');
-    } else {
-        // Disable next round button at start of new round (but keep it visible)
-        nextRoundBtn.classList.add('disabled');
-        nextRoundBtn.style.visibility = 'visible';
-    }
+    // Disable next round button at start of new round (but keep it visible)
+    nextRoundBtn.classList.add('disabled');
+    nextRoundBtn.style.visibility = 'visible';
     
     // Add words from this introduction round to all learned words
     if (currentRound % 2 === 1) {
@@ -4507,16 +4498,9 @@ function nextMirroredRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Check if this is the last round using the dynamically calculated max round number
-    if (currentRound > window.maxRoundNumber) {
-        // Hide the next round button on the final round
-        nextRoundBtn.style.visibility = 'hidden';
-        nextRoundBtn.classList.add('disabled');
-    } else {
-        // Disable next round button at start of new round (but keep it visible)
-        nextRoundBtn.classList.add('disabled');
-        nextRoundBtn.style.visibility = 'visible';
-    }
+    // Disable next round button at start of new round (but keep it visible)
+    nextRoundBtn.classList.add('disabled');
+    nextRoundBtn.style.visibility = 'visible';
     
     // Add words from this introduction round to all learned words
     if (currentRound % 2 === 1) {
@@ -4554,20 +4538,10 @@ function nextJapaneseCustomRound() {
         progressInfo.classList.remove('completed');
     }
     
-    // Check if this is the last round using the dynamically calculated max round number
-    console.log(`Round ${currentRound} of ${window.maxRoundNumber}`);
-    
-    if (currentRound > window.maxRoundNumber) {
-        // Hide the next round button on the final round
-        nextRoundBtn.style.visibility = 'hidden';
-        nextRoundBtn.classList.add('disabled');
-        console.log(`Final round reached. Next round button hidden.`);
-    } else {
-        // Disable next round button at start of new round (but keep it visible)
-        nextRoundBtn.classList.add('disabled');
-        nextRoundBtn.style.visibility = 'visible';
-        console.log(`Next round button visible but disabled until requirements met.`);
-    }
+    // Disable next round button at start of new round (but keep it visible)
+    nextRoundBtn.classList.add('disabled');
+    nextRoundBtn.style.visibility = 'visible';
+    console.log(`Next round button visible but disabled until requirements met.`);
     
     // Validate that the next round has words before initializing
     const nextRoundWords = getCurrentJapaneseCustomRoundWords();
