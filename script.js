@@ -4452,9 +4452,8 @@ function nextCustomRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Disable next round button at start of new round (but keep it visible)
+    // Disable next round button at start of new round (visibility already set in main nextRound function)
     nextRoundBtn.classList.add('disabled');
-    nextRoundBtn.style.visibility = 'visible';
     
     initializeCustomRound();
     
@@ -4482,9 +4481,8 @@ function nextStandardRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Disable next round button at start of new round (but keep it visible)
+    // Disable next round button at start of new round (visibility already set in main nextRound function)
     nextRoundBtn.classList.add('disabled');
-    nextRoundBtn.style.visibility = 'visible';
     
     // Add words from this introduction round to all learned words
     if (currentRound % 2 === 1) {
@@ -4538,9 +4536,8 @@ function nextMirroredRound() {
     const progressInfo = document.querySelector('.progress-info');
     progressInfo.classList.remove('completed');
     
-    // Disable next round button at start of new round (but keep it visible)
+    // Disable next round button at start of new round (visibility already set in main nextRound function)
     nextRoundBtn.classList.add('disabled');
-    nextRoundBtn.style.visibility = 'visible';
     
     // Add words from this introduction round to all learned words
     if (currentRound % 2 === 1) {
@@ -4578,10 +4575,9 @@ function nextJapaneseCustomRound() {
         progressInfo.classList.remove('completed');
     }
     
-    // Disable next round button at start of new round (but keep it visible)
+    // Disable next round button at start of new round (visibility already set in main nextRound function)
     nextRoundBtn.classList.add('disabled');
-    nextRoundBtn.style.visibility = 'visible';
-    console.log(`Next round button visible but disabled until requirements met.`);
+    console.log(`Next round button disabled until requirements met.`);
     
     // Validate that the next round has words before initializing
     const nextRoundWords = getCurrentJapaneseCustomRoundWords();
