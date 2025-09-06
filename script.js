@@ -4369,8 +4369,24 @@ function nextRound() {
     
     // Check if the next round would be the final round and hide button if so
     const nextRoundNumber = currentRound + 1;
-    if (nextRoundNumber >= window.maxRoundNumber) {
-        console.log(`Next round (${nextRoundNumber}) would be the final round. Hiding next round button.`);
+    
+    // Calculate max round number if not already set
+    let maxRoundNumber = window.maxRoundNumber;
+    if (!maxRoundNumber) {
+        if (window.customWordPools) {
+            const noPracticeRounds = window.customModeNoPracticeRounds || false;
+            maxRoundNumber = noPracticeRounds ? window.customWordPools.length : window.customWordPools.length * 2;
+        } else if (window.japaneseCustomWordPools) {
+            const noPracticeRounds = window.japaneseCustomModeNoPracticeRounds || false;
+            maxRoundNumber = noPracticeRounds ? window.japaneseCustomWordPools.length : window.japaneseCustomWordPools.length * 2;
+        } else {
+            maxRoundNumber = 18; // Default for brute force modes
+        }
+        console.log(`Calculated max round number: ${maxRoundNumber}`);
+    }
+    
+    if (nextRoundNumber >= maxRoundNumber) {
+        console.log(`Next round (${nextRoundNumber}) would be the final round. Hiding next round button. Max rounds: ${maxRoundNumber}`);
         nextRoundBtn.style.visibility = 'hidden';
         nextRoundBtn.classList.add('disabled');
     }
