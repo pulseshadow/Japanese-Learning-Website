@@ -4625,6 +4625,7 @@ function nextJapaneseCustomRound() {
 
 // Japanese Custom Mode Functions
 function initializeJapaneseCustomMode() {
+    console.log('=== INITIALIZE JAPANESE CUSTOM MODE CALLED ===');
     console.log('Initializing Japanese custom mode');
     
     // Try to load saved Japanese custom rounds first
@@ -5471,6 +5472,7 @@ function loadJapaneseCustomRounds() {
 }
 
 function restoreJapaneseCustomRoundsState() {
+    console.log('=== RESTORE JAPANESE CUSTOM ROUNDS STATE CALLED ===');
     console.log('Restoring Japanese custom rounds state');
     
     try {
@@ -6840,8 +6842,10 @@ function displayWordWithSound(word) {
 
 // Custom Mode Functions
 function initializeCustomMode() {
+    console.log('=== INITIALIZE CUSTOM MODE CALLED ===');
     // Try to load saved custom rounds first
     const loaded = loadCustomRounds();
+    console.log('Custom mode loaded result:', loaded);
     
     if (!loaded) {
         // If no saved data, automatically add round 1 and open it
@@ -8162,6 +8166,7 @@ function loadCustomRounds() {
 }
 
 function restoreCustomRoundsState() {
+    console.log('=== RESTORE CUSTOM ROUNDS STATE CALLED ===');
     if (!window.savedCustomRoundsData || !window.savedCustomRoundsData.rounds) {
         console.log('No saved custom rounds data to restore');
         return;
