@@ -898,48 +898,105 @@ body.dark-mode .round-selector:hover {
 
 /* Round selector dropdown options */
 .round-selector option {
-    background: #fc6f28;
-    color: #ffffff;
-    transition: background-color 0.2s ease;
+    background: #fc6f28 !important;
+    background-color: #fc6f28 !important;
+    color: #ffffff !important;
+    transition: background-color 0.2s ease !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }
 
 .round-selector option:nth-child(odd) {
-    background: #f05000;
+    background: #f05000 !important;
+    background-color: #f05000 !important;
 }
 
 .round-selector option:nth-child(even) {
-    background: #fc6f28;
+    background: #fc6f28 !important;
+    background-color: #fc6f28 !important;
 }
 
 body.dark-mode .round-selector option {
-    background: #40a0ff;
-    color: #ffffff;
-    transition: background-color 0.2s ease;
+    background: #40a0ff !important;
+    background-color: #40a0ff !important;
+    color: #ffffff !important;
+    transition: background-color 0.2s ease !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
 }
 
 body.dark-mode .round-selector option:nth-child(odd) {
-    background: #0066cc;
+    background: #0066cc !important;
+    background-color: #0066cc !important;
 }
 
 body.dark-mode .round-selector option:nth-child(even) {
-    background: #40a0ff;
+    background: #40a0ff !important;
+    background-color: #40a0ff !important;
 }
 
-/* Hover effects for individual round selector options */
-.round-selector option:nth-child(odd):hover {
+/* Hover effects for individual round selector options - Force override */
+.round-selector option:nth-child(odd):hover,
+.round-selector option:nth-child(odd):focus,
+.round-selector option:nth-child(odd):active {
     background: #d63d00 !important; /* Darker orange for odd rounds in light mode */
+    background-color: #d63d00 !important;
+    color: #ffffff !important;
 }
 
-.round-selector option:nth-child(even):hover {
+.round-selector option:nth-child(even):hover,
+.round-selector option:nth-child(even):focus,
+.round-selector option:nth-child(even):active {
     background: #e55a1a !important; /* Darker orange for even rounds in light mode */
+    background-color: #e55a1a !important;
+    color: #ffffff !important;
 }
 
-body.dark-mode .round-selector option:nth-child(odd):hover {
+body.dark-mode .round-selector option:nth-child(odd):hover,
+body.dark-mode .round-selector option:nth-child(odd):focus,
+body.dark-mode .round-selector option:nth-child(odd):active {
     background: #1a7ce6 !important; /* Lighter blue for odd rounds in dark mode */
+    background-color: #1a7ce6 !important;
+    color: #ffffff !important;
 }
 
-body.dark-mode .round-selector option:nth-child(even):hover {
+body.dark-mode .round-selector option:nth-child(even):hover,
+body.dark-mode .round-selector option:nth-child(even):focus,
+body.dark-mode .round-selector option:nth-child(even):active {
     background: #66b3ff !important; /* Lighter blue for even rounds in dark mode */
+    background-color: #66b3ff !important;
+    color: #ffffff !important;
+}
+
+/* Force override for all browsers and states */
+.round-selector:focus option:nth-child(odd):hover,
+.round-selector:active option:nth-child(odd):hover,
+.round-selector option:nth-child(odd):hover {
+    background: #d63d00 !important;
+    background-color: #d63d00 !important;
+}
+
+.round-selector:focus option:nth-child(even):hover,
+.round-selector:active option:nth-child(even):hover,
+.round-selector option:nth-child(even):hover {
+    background: #e55a1a !important;
+    background-color: #e55a1a !important;
+}
+
+body.dark-mode .round-selector:focus option:nth-child(odd):hover,
+body.dark-mode .round-selector:active option:nth-child(odd):hover,
+body.dark-mode .round-selector option:nth-child(odd):hover {
+    background: #1a7ce6 !important;
+    background-color: #1a7ce6 !important;
+}
+
+body.dark-mode .round-selector:focus option:nth-child(even):hover,
+body.dark-mode .round-selector:active option:nth-child(even):hover,
+body.dark-mode .round-selector option:nth-child(even):hover {
+    background: #66b3ff !important;
+    background-color: #66b3ff !important;
 }
 
 body.dark-mode .game-box {

@@ -3256,11 +3256,24 @@ function addRoundSelectorHoverEffects() {
     // Add hover effects to individual options
     options.forEach((option, index) => {
         option.addEventListener('mouseenter', () => {
-            option.style.background = getOptionHoverColor(index);
+            option.style.setProperty('background', getOptionHoverColor(index), 'important');
+            option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
         });
         
         option.addEventListener('mouseleave', () => {
-            option.style.background = getOptionDefaultColor(index);
+            option.style.setProperty('background', getOptionDefaultColor(index), 'important');
+            option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
+        });
+        
+        // Also add focus/blur events
+        option.addEventListener('focus', () => {
+            option.style.setProperty('background', getOptionHoverColor(index), 'important');
+            option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
+        });
+        
+        option.addEventListener('blur', () => {
+            option.style.setProperty('background', getOptionDefaultColor(index), 'important');
+            option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
         });
     });
 }
