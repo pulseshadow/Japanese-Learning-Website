@@ -3264,9 +3264,11 @@ function getDefaultBackgroundColor() {
 
 function getHoverBackgroundColor() {
     if (document.body.classList.contains('dark-mode')) {
+        // Dark mode: make it lighter (brighter blue)
         return '#66b3ff';
     } else {
-        return '#E75D38';
+        // Light mode: make it darker (darker red)
+        return '#b8391f';
     }
 }
 
