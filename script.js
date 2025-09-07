@@ -5522,7 +5522,11 @@ function restoreJapaneseCustomRoundsState() {
         
         customData.rounds.forEach(roundData => {
             const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
-            if (!round) return;
+            if (!round) {
+                console.warn(`Could not find Japanese round ${roundData.roundNumber} for restoration`);
+                return;
+            }
+            console.log(`Restoring Japanese round ${roundData.roundNumber}, isOpen: ${roundData.isOpen}`);
             
             // Restore checked words
             roundData.checkedWords.forEach(checkedWord => {
@@ -5555,16 +5559,27 @@ function restoreJapaneseCustomRoundsState() {
             if (roundData.isOpen !== undefined) {
                 const roundContent = round.querySelector('.custom-round-content');
                 const collapseBtn = round.querySelector('.collapse-btn');
+                console.log(`Attempting to restore dropdown state for round ${roundData.roundNumber}:`, {
+                    isOpen: roundData.isOpen,
+                    roundContent: !!roundContent,
+                    collapseBtn: !!collapseBtn
+                });
                 if (roundContent && collapseBtn) {
                     if (roundData.isOpen) {
                         roundContent.style.display = 'block';
                         collapseBtn.textContent = '▼';
+                        console.log(`Set round ${roundData.roundNumber} dropdown to OPEN`);
                     } else {
                         roundContent.style.display = 'none';
-                        collapseBtn.textContent = '▲';
+                        collapseBtn.textContent = '▶';
+                        console.log(`Set round ${roundData.roundNumber} dropdown to CLOSED`);
                     }
                     console.log(`Restored Japanese round ${roundData.roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+                } else {
+                    console.warn(`Could not find dropdown elements for round ${roundData.roundNumber}`);
                 }
+            } else {
+                console.log(`No dropdown state saved for round ${roundData.roundNumber}`);
             }
             
             // Restore open sections
