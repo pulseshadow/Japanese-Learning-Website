@@ -3230,6 +3230,46 @@ function populateRoundSelector() {
     updateAllText();
 }
 
+function addRoundSelectorHoverEffects() {
+    // Since option elements don't support :hover in many browsers,
+    // we'll use a different approach with focus and selection
+    const options = roundSelector.querySelectorAll('option');
+    
+    // Add event listeners for mouse events on the select element
+    roundSelector.addEventListener('mouseenter', () => {
+        roundSelector.style.background = getHoverBackgroundColor();
+    });
+    
+    roundSelector.addEventListener('mouseleave', () => {
+        roundSelector.style.background = getDefaultBackgroundColor();
+    });
+    
+    // Add focus/blur effects
+    roundSelector.addEventListener('focus', () => {
+        roundSelector.style.background = getHoverBackgroundColor();
+    });
+    
+    roundSelector.addEventListener('blur', () => {
+        roundSelector.style.background = getDefaultBackgroundColor();
+    });
+}
+
+function getDefaultBackgroundColor() {
+    if (document.body.classList.contains('dark-mode')) {
+        return '#40a0ff';
+    } else {
+        return '#d64a2a';
+    }
+}
+
+function getHoverBackgroundColor() {
+    if (document.body.classList.contains('dark-mode')) {
+        return '#66b3ff';
+    } else {
+        return '#E75D38';
+    }
+}
+
 // Auto-submit on input change with letter-by-letter checking
 answerInput.addEventListener('input', (e) => {
     const userAnswer = e.target.value.trim().toLowerCase();
