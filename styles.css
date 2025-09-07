@@ -898,6 +898,7 @@ body.dark-mode .round-selector:hover {
 .round-selector option {
     background: #fc6f28;
     color: #ffffff;
+    transition: background-color 0.2s ease;
 }
 
 .round-selector option:nth-child(odd) {
@@ -908,9 +909,19 @@ body.dark-mode .round-selector:hover {
     background: #fc6f28;
 }
 
+/* Hover effects for round selector options */
+.round-selector option:hover {
+    background: #ff8a4d !important;
+}
+
+.round-selector option:nth-child(odd):hover {
+    background: #ff6b1a !important;
+}
+
 body.dark-mode .round-selector option {
     background: #40a0ff;
     color: #ffffff;
+    transition: background-color 0.2s ease;
 }
 
 body.dark-mode .round-selector option:nth-child(odd) {
@@ -919,6 +930,15 @@ body.dark-mode .round-selector option:nth-child(odd) {
 
 body.dark-mode .round-selector option:nth-child(even) {
     background: #40a0ff;
+}
+
+/* Hover effects for round selector options in dark mode */
+body.dark-mode .round-selector option:hover {
+    background: #66b3ff !important;
+}
+
+body.dark-mode .round-selector option:nth-child(odd):hover {
+    background: #1a7ce6 !important;
 }
 
 body.dark-mode .game-box {
