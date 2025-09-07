@@ -999,6 +999,75 @@ body.dark-mode .round-selector option:nth-child(even):hover {
     background-color: #66b3ff !important;
 }
 
+/* Nuclear option - target every possible browser and state */
+.round-selector option:hover,
+.round-selector option:focus,
+.round-selector option:active,
+.round-selector option:checked,
+.round-selector option:selected,
+.round-selector option:target,
+.round-selector option:visited,
+.round-selector option:link,
+.round-selector option:any-link {
+    background: #d63d00 !important;
+    background-color: #d63d00 !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.round-selector option:nth-child(even):hover,
+.round-selector option:nth-child(even):focus,
+.round-selector option:nth-child(even):active,
+.round-selector option:nth-child(even):checked,
+.round-selector option:nth-child(even):selected,
+.round-selector option:nth-child(even):target,
+.round-selector option:nth-child(even):visited,
+.round-selector option:nth-child(even):link,
+.round-selector option:nth-child(even):any-link {
+    background: #e55a1a !important;
+    background-color: #e55a1a !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .round-selector option:hover,
+body.dark-mode .round-selector option:focus,
+body.dark-mode .round-selector option:active,
+body.dark-mode .round-selector option:checked,
+body.dark-mode .round-selector option:selected,
+body.dark-mode .round-selector option:target,
+body.dark-mode .round-selector option:visited,
+body.dark-mode .round-selector option:link,
+body.dark-mode .round-selector option:any-link {
+    background: #1a7ce6 !important;
+    background-color: #1a7ce6 !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+body.dark-mode .round-selector option:nth-child(even):hover,
+body.dark-mode .round-selector option:nth-child(even):focus,
+body.dark-mode .round-selector option:nth-child(even):active,
+body.dark-mode .round-selector option:nth-child(even):checked,
+body.dark-mode .round-selector option:nth-child(even):selected,
+body.dark-mode .round-selector option:nth-child(even):target,
+body.dark-mode .round-selector option:nth-child(even):visited,
+body.dark-mode .round-selector option:nth-child(even):link,
+body.dark-mode .round-selector option:nth-child(even):any-link {
+    background: #66b3ff !important;
+    background-color: #66b3ff !important;
+    color: #ffffff !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 body.dark-mode .game-box {
     background: #25262B;
     border-color: #404040;

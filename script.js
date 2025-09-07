@@ -3231,9 +3231,15 @@ function populateRoundSelector() {
 }
 
 function addRoundSelectorHoverEffects() {
+    const roundSelector = document.getElementById('round-selector');
+    if (!roundSelector) return;
+    
     // Since option elements don't support :hover in many browsers,
     // we'll use a different approach with focus and selection
     const options = roundSelector.querySelectorAll('option');
+    if (options.length === 0) return;
+    
+    console.log('Setting up hover effects for', options.length, 'options');
     
     // Add event listeners for mouse events on the select element
     roundSelector.addEventListener('mouseenter', () => {
@@ -3256,24 +3262,50 @@ function addRoundSelectorHoverEffects() {
     // Add hover effects to individual options
     options.forEach((option, index) => {
         option.addEventListener('mouseenter', () => {
+            console.log(`Mouse enter option ${index}, setting hover color:`, getOptionHoverColor(index));
             option.style.setProperty('background', getOptionHoverColor(index), 'important');
             option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
+            option.style.setProperty('color', '#ffffff', 'important');
+            // Force a reflow to ensure the style is applied
+            option.offsetHeight;
         });
         
         option.addEventListener('mouseleave', () => {
+            console.log(`Mouse leave option ${index}, setting default color:`, getOptionDefaultColor(index));
             option.style.setProperty('background', getOptionDefaultColor(index), 'important');
             option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
+            option.style.setProperty('color', '#ffffff', 'important');
+            // Force a reflow to ensure the style is applied
+            option.offsetHeight;
         });
         
         // Also add focus/blur events
         option.addEventListener('focus', () => {
+            console.log(`Focus option ${index}, setting hover color:`, getOptionHoverColor(index));
             option.style.setProperty('background', getOptionHoverColor(index), 'important');
             option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
+            option.style.setProperty('color', '#ffffff', 'important');
         });
         
         option.addEventListener('blur', () => {
+            console.log(`Blur option ${index}, setting default color:`, getOptionDefaultColor(index));
             option.style.setProperty('background', getOptionDefaultColor(index), 'important');
             option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
+            option.style.setProperty('color', '#ffffff', 'important');
+        });
+        
+        // Add click event to test
+        option.addEventListener('click', () => {
+            console.log(`Click option ${index}`);
+        });
+        
+        // Add a temporary visual test - change border when hovered
+        option.addEventListener('mouseenter', () => {
+            option.style.setProperty('border', '2px solid red', 'important');
+        });
+        
+        option.addEventListener('mouseleave', () => {
+            option.style.setProperty('border', 'none', 'important');
         });
     });
 }
