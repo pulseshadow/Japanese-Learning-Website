@@ -4643,8 +4643,17 @@ function initializeJapaneseCustomMode() {
         console.log('No meaningful data, adding round 1 and opening it');
         addJapaneseCustomRound(1);
         
-        // Round 1 is now created with content visible by default
-        console.log('Round 1 created and should be open by default');
+        // Ensure the first round is properly opened (same as English custom mode)
+        const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
+        if (firstRound) {
+            const roundContent = firstRound.querySelector('.custom-round-content');
+            const collapseBtn = firstRound.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                roundContent.style.display = 'block';
+                collapseBtn.textContent = '▼';
+                console.log('Round 1 opened and collapse button set to down arrow');
+            }
+        }
     } else {
         // If meaningful data was loaded, we still need to populate grids and setup buttons
         // but the state restoration will happen after grids are populated
@@ -4748,7 +4757,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     const collapseBtn = document.createElement('button');
     collapseBtn.className = 'collapse-btn';
-    collapseBtn.textContent = '▲'; // Show up arrow since content is open by default
+    collapseBtn.textContent = '▼'; // Show down arrow since content is open by default
     
     controlsDiv.appendChild(collapseBtn);
     
@@ -5019,6 +5028,9 @@ function toggleJapaneseWordSection(roundNumber, sectionIndex) {
         wordContent.style.display = 'none';
         button.textContent = '▶'; // Right arrow when closed
     }
+    
+    // Save the state when toggling word sections
+    saveJapaneseCustomRounds();
 }
 
 function updateJapaneseSelectAllState(roundNumber, sectionIndex) {
@@ -5071,6 +5083,9 @@ function toggleJapaneseCustomRound(roundNumber) {
         button.textContent = '▲';
         header.classList.add('collapsed');
     }
+    
+    // Save the state when toggling
+    saveJapaneseCustomRounds();
 }
 
 function removeJapaneseCustomRound() {
@@ -5313,7 +5328,8 @@ function saveJapaneseCustomRounds() {
                 roundNumber: roundNumber,
                 checkedWords: [],
                 customWords: [],
-                openSections: []
+                openSections: [],
+                isOpen: round.querySelector('.custom-round-content').style.display !== 'none'
             };
             
             // Get checked words
@@ -5500,6 +5516,22 @@ function restoreJapaneseCustomRoundsState() {
                     }
                 }
             });
+            
+            // Restore main round dropdown state
+            if (roundData.isOpen !== undefined) {
+                const roundContent = round.querySelector('.custom-round-content');
+                const collapseBtn = round.querySelector('.collapse-btn');
+                if (roundContent && collapseBtn) {
+                    if (roundData.isOpen) {
+                        roundContent.style.display = 'block';
+                        collapseBtn.textContent = '▼';
+                    } else {
+                        roundContent.style.display = 'none';
+                        collapseBtn.textContent = '▲';
+                    }
+                    console.log(`Restored Japanese round ${roundData.roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+                }
+            }
             
             // Restore open sections
             roundData.openSections.forEach(sectionIndex => {
@@ -7374,6 +7406,9 @@ function toggleCustomRound(roundNumber) {
         button.textContent = '▲';
         button.classList.add('rotated');
     }
+    
+    // Save the state when toggling
+    saveCustomRounds();
 }
 
 function toggleWordSection(gridIndex, roundIndex) {
@@ -7387,6 +7422,9 @@ function toggleWordSection(gridIndex, roundIndex) {
         content.classList.add('collapsed');
         button.textContent = '▶'; // Right arrow when closed
     }
+    
+    // Save the state when toggling word sections
+    saveCustomRounds();
 }
 
 function startCustomRun() {
@@ -7973,7 +8011,8 @@ function saveCustomRounds() {
             roundNumber: roundNumber,
             checkedWords: [],
             customWords: [],
-            openSections: []
+            openSections: [],
+            isOpen: !round.querySelector('.custom-round-content').classList.contains('collapsed')
         };
         
         // Save checked words
@@ -8161,6 +8200,24 @@ function restoreCustomRoundsState() {
                 console.warn(`Could not find custom word checkbox for: ${customWord.japanese} - ${customWord.english}`);
             }
         });
+        
+        // Restore main round dropdown state
+        if (roundData.isOpen !== undefined) {
+            const roundContent = round.querySelector('.custom-round-content');
+            const collapseBtn = round.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                if (roundData.isOpen) {
+                    roundContent.classList.remove('collapsed');
+                    collapseBtn.textContent = '▼';
+                    collapseBtn.classList.remove('rotated');
+                } else {
+                    roundContent.classList.add('collapsed');
+                    collapseBtn.textContent = '▲';
+                    collapseBtn.classList.add('rotated');
+                }
+                console.log(`Restored round ${roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+            }
+        }
         
         // Restore open sections
         roundData.openSections.forEach(sectionId => {
