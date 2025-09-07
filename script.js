@@ -5306,6 +5306,7 @@ function addJapaneseCustomWordToRound(roundNumber) {
 }
 
 function saveJapaneseCustomRounds() {
+    console.log('=== SAVE JAPANESE CUSTOM ROUNDS CALLED ===');
     console.log('Saving Japanese custom rounds');
     
     try {
@@ -5366,9 +5367,8 @@ function saveJapaneseCustomRounds() {
             customData.rounds.push(roundData);
         });
         
-        // Save to localStorage
-        const storageKey = 'japaneseCustomRounds';
-        localStorage.setItem(storageKey, JSON.stringify(customData));
+        // Save to localStorage using the same system as English custom mode
+        saveToLocalStorage('japaneseCustomRounds', customData);
         
         console.log('Japanese custom rounds saved successfully:', customData);
         
@@ -5403,18 +5403,16 @@ function saveJapaneseCustomRounds() {
 }
 
 function loadJapaneseCustomRounds() {
+    console.log('=== LOAD JAPANESE CUSTOM ROUNDS CALLED ===');
     console.log('Loading Japanese custom rounds');
     
     try {
-        const storageKey = 'japaneseCustomRounds';
-        const savedData = localStorage.getItem(storageKey);
+        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
         
-        if (!savedData) {
+        if (!customData) {
             console.log('No saved Japanese custom rounds found');
             return false;
         }
-        
-        const customData = JSON.parse(savedData);
         
         // Validate data structure
         if (!customData.rounds || !Array.isArray(customData.rounds)) {
@@ -5476,15 +5474,12 @@ function restoreJapaneseCustomRoundsState() {
     console.log('Restoring Japanese custom rounds state');
     
     try {
-        const storageKey = 'japaneseCustomRounds';
-        const savedData = localStorage.getItem(storageKey);
+        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
         
-        if (!savedData) {
+        if (!customData) {
             console.log('No saved Japanese custom rounds state to restore');
             return;
         }
-        
-        const customData = JSON.parse(savedData);
         
         customData.rounds.forEach(roundData => {
             const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
@@ -7991,7 +7986,9 @@ function loadSettings() {
 }
 
 function saveCustomRounds() {
+    console.log('=== SAVE CUSTOM ROUNDS CALLED ===');
     const rounds = document.querySelectorAll('.custom-round');
+    console.log('Found rounds:', rounds.length);
     if (rounds.length === 0) {
         console.log('No custom rounds to save');
         return;
@@ -8076,7 +8073,9 @@ function saveCustomRounds() {
 }
 
 function loadCustomRounds() {
+    console.log('=== LOAD CUSTOM ROUNDS CALLED ===');
     const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+    console.log('Loaded custom data:', customData);
     
     // Handle legacy data format (old wordPools format)
     if (customData && typeof customData === 'object' && customData.wordPools && !customData.rounds) {
