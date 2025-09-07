@@ -5458,6 +5458,23 @@ function loadJapaneseCustomRounds() {
             }
         }
         
+        // Store the data in memory for later restoration (same as English mode)
+        window.savedJapaneseCustomRoundsData = customData;
+        console.log('Japanese custom rounds data stored in memory:', customData);
+        
+        // Clear existing rounds and create new ones from saved data
+        const container = document.getElementById('japanese-custom-rounds-container');
+        if (container) {
+            container.innerHTML = '';
+            
+            // Create round containers for each saved round
+            customData.rounds.forEach((roundData, index) => {
+                const roundNumber = index + 1;
+                console.log(`Creating Japanese round container ${roundNumber} from saved data`);
+                addJapaneseCustomRound(roundNumber);
+            });
+        }
+        
         // Load word pools for game play
         const wordPools = [];
         customData.rounds.forEach(roundData => {
@@ -5496,12 +5513,12 @@ function restoreJapaneseCustomRoundsState() {
     console.log('Restoring Japanese custom rounds state');
     
     try {
-        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
-        
-        if (!customData) {
-            console.log('No saved Japanese custom rounds state to restore');
+        if (!window.savedJapaneseCustomRoundsData || !window.savedJapaneseCustomRoundsData.rounds) {
+            console.log('No saved Japanese custom rounds data to restore');
             return;
         }
+        
+        const customData = window.savedJapaneseCustomRoundsData;
         
         customData.rounds.forEach(roundData => {
             const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
@@ -5568,6 +5585,9 @@ function restoreJapaneseCustomRoundsState() {
         });
         
         console.log('Japanese custom rounds state restored successfully');
+        
+        // Clear the saved data from memory (same as English mode)
+        delete window.savedJapaneseCustomRoundsData;
         
     } catch (error) {
         console.error('Error restoring Japanese custom rounds state:', error);
