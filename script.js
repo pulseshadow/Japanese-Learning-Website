@@ -3231,33 +3231,26 @@ function populateRoundSelector() {
 }
 
 function addRoundSelectorHoverEffects() {
-    console.log('Adding round selector hover effects');
-    
     // Since option elements don't support :hover in many browsers,
     // we'll use a different approach with focus and selection
     const options = roundSelector.querySelectorAll('option');
-    console.log('Found options:', options.length);
     
     // Add event listeners for mouse events on the select element
     roundSelector.addEventListener('mouseenter', () => {
-        console.log('Round selector mouseenter, setting background to:', getHoverBackgroundColor());
-        roundSelector.style.background = getHoverBackgroundColor() + ' !important';
+        roundSelector.style.background = getHoverBackgroundColor();
     });
     
     roundSelector.addEventListener('mouseleave', () => {
-        console.log('Round selector mouseleave, setting background to:', getDefaultBackgroundColor());
-        roundSelector.style.background = getDefaultBackgroundColor() + ' !important';
+        roundSelector.style.background = getDefaultBackgroundColor();
     });
     
     // Add focus/blur effects
     roundSelector.addEventListener('focus', () => {
-        console.log('Round selector focus, setting background to:', getHoverBackgroundColor());
-        roundSelector.style.background = getHoverBackgroundColor() + ' !important';
+        roundSelector.style.background = getHoverBackgroundColor();
     });
     
     roundSelector.addEventListener('blur', () => {
-        console.log('Round selector blur, setting background to:', getDefaultBackgroundColor());
-        roundSelector.style.background = getDefaultBackgroundColor() + ' !important';
+        roundSelector.style.background = getDefaultBackgroundColor();
     });
 }
 
