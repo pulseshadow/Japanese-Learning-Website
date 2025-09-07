@@ -886,12 +886,16 @@ body.dark-mode .round-selector {
     padding-right: 32px;
 }
 
-.round-selector:hover {
+.round-selector:hover,
+.round-selector:focus {
     border-color: #E75D38;
+    background: #b8391f !important;
 }
 
-body.dark-mode .round-selector:hover {
+body.dark-mode .round-selector:hover,
+body.dark-mode .round-selector:focus {
     border-color: #00bfff;
+    background: #66b3ff !important;
 }
 
 /* Round selector dropdown options */
