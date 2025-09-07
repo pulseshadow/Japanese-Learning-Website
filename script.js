@@ -3252,6 +3252,17 @@ function addRoundSelectorHoverEffects() {
     roundSelector.addEventListener('blur', () => {
         roundSelector.style.background = getDefaultBackgroundColor();
     });
+    
+    // Add hover effects to individual options
+    options.forEach((option, index) => {
+        option.addEventListener('mouseenter', () => {
+            option.style.background = getOptionHoverColor(index);
+        });
+        
+        option.addEventListener('mouseleave', () => {
+            option.style.background = getOptionDefaultColor(index);
+        });
+    });
 }
 
 function getDefaultBackgroundColor() {
@@ -3269,6 +3280,30 @@ function getHoverBackgroundColor() {
     } else {
         // Light mode: make it darker (darker red)
         return '#b8391f';
+    }
+}
+
+function getOptionDefaultColor(index) {
+    const isOdd = (index + 1) % 2 === 1; // nth-child is 1-based
+    
+    if (document.body.classList.contains('dark-mode')) {
+        // Dark mode colors
+        return isOdd ? '#0066cc' : '#40a0ff';
+    } else {
+        // Light mode colors
+        return isOdd ? '#f05000' : '#fc6f28';
+    }
+}
+
+function getOptionHoverColor(index) {
+    const isOdd = (index + 1) % 2 === 1; // nth-child is 1-based
+    
+    if (document.body.classList.contains('dark-mode')) {
+        // Dark mode: make colors lighter
+        return isOdd ? '#1a7ce6' : '#66b3ff'; // Lighter versions
+    } else {
+        // Light mode: make colors darker
+        return isOdd ? '#d63d00' : '#e55a1a'; // Darker versions
     }
 }
 

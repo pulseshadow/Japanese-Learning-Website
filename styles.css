@@ -925,6 +925,23 @@ body.dark-mode .round-selector option:nth-child(even) {
     background: #40a0ff;
 }
 
+/* Hover effects for individual round selector options */
+.round-selector option:nth-child(odd):hover {
+    background: #d63d00 !important; /* Darker orange for odd rounds in light mode */
+}
+
+.round-selector option:nth-child(even):hover {
+    background: #e55a1a !important; /* Darker orange for even rounds in light mode */
+}
+
+body.dark-mode .round-selector option:nth-child(odd):hover {
+    background: #1a7ce6 !important; /* Lighter blue for odd rounds in dark mode */
+}
+
+body.dark-mode .round-selector option:nth-child(even):hover {
+    background: #66b3ff !important; /* Lighter blue for even rounds in dark mode */
+}
+
 body.dark-mode .game-box {
     background: #25262B;
     border-color: #404040;
