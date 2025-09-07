@@ -3155,27 +3155,27 @@ function populateRoundSelector() {
             if (i % 2 === 1) {
                 // Introduction round
                 const roundNumber = Math.ceil(i / 2);
-                option.textContent = `Introduction Round ${roundNumber} (English→Japanese)`;
-                option.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
-                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
-                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
-                option.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
-                option.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
-                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
-                option.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
-                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+                option.textContent = `Introduction Round ${roundNumber}`;
+                option.setAttribute('data-en', `Introduction Round ${roundNumber}`);
+                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
+                option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
+                option.setAttribute('data-zh', `介绍轮次${roundNumber}`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
+                option.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
             } else {
                 // Practice round
                 const roundNumber = Math.floor(i / 2);
-                option.textContent = `Practice Round ${roundNumber} (English→Japanese)`;
-                option.setAttribute('data-en', `Practice Round ${roundNumber} (English→Japanese)`);
-                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber} (Inglés→Japonés)`);
-                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber} (Anglais→Japonais)`);
-                option.setAttribute('data-ja', `練習ラウンド${roundNumber} (英語→日本語)`);
-                option.setAttribute('data-zh', `练习轮次${roundNumber} (英语→日语)`);
-                option.setAttribute('data-id', `Ronde Latihan ${roundNumber} (Inggris→Jepang)`);
-                option.setAttribute('data-ko', `연습 라운드 ${roundNumber} (영어→일본어)`);
-                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
+                option.textContent = `Practice Round ${roundNumber}`;
+                option.setAttribute('data-en', `Practice Round ${roundNumber}`);
+                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
+                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
+                option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
+                option.setAttribute('data-zh', `练习轮次${roundNumber}`);
+                option.setAttribute('data-id', `Ronde Latihan ${roundNumber}`);
+                option.setAttribute('data-ko', `연습 라운드 ${roundNumber}`);
+                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
             }
             
             roundSelector.appendChild(option);
@@ -3222,6 +3222,9 @@ function populateRoundSelector() {
     
     // Set the round selector to match the current round
     roundSelector.value = currentRound;
+    
+    // Add hover effects to round selector options
+    addRoundSelectorHoverEffects();
     
     // Update language for new options
     updateAllText();
