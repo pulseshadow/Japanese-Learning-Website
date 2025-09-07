@@ -4630,45 +4630,45 @@ function nextJapaneseCustomRound() {
 // Japanese Custom Mode Functions
 function initializeJapaneseCustomMode() {
     console.log('=== INITIALIZE JAPANESE CUSTOM MODE CALLED ===');
-    console.log('Initializing Japanese custom mode');
     
-    // Try to load saved Japanese custom rounds first
-    const loaded = loadJapaneseCustomRounds();
-    console.log('Loaded Japanese custom rounds:', loaded);
+    // First, check if we have saved data
+    const hasSavedData = checkForSavedJapaneseCustomData();
+    console.log('Japanese custom mode has saved data:', hasSavedData);
     
-    // Check if we actually have meaningful data (rounds with words)
-    let hasMeaningfulData = false;
-    if (loaded && window.japaneseCustomWordPools) {
-        hasMeaningfulData = window.japaneseCustomWordPools.some(pool => pool.length > 0);
-        console.log('Has meaningful data:', hasMeaningfulData);
+    if (hasSavedData) {
+        // If we have saved data, load it first
+        console.log('Loading saved Japanese custom mode data...');
+        const loaded = loadJapaneseCustomRounds();
+        console.log('Japanese custom mode loaded result:', loaded);
+        
+        if (loaded) {
+            // Data was loaded successfully, restore state after a delay
+            console.log('Saved data loaded successfully, restoring state');
+            setTimeout(() => {
+                restoreJapaneseCustomRoundsState();
+            }, 100);
+            return; // Exit early since data was loaded and restored
+        }
     }
+    
+    // If no saved data or loading failed, set up default state
+    console.log('Setting up default Japanese custom mode state');
     
     // Always populate grids and setup buttons first
     populateJapaneseWordSelectionGrids();
     setupJapaneseCustomWordButtons();
     
-    if (!loaded || !hasMeaningfulData) {
-        // If no saved data or no meaningful data, ensure the first round is properly opened
-        console.log('No meaningful data, ensuring first round is opened');
-        
-        // Ensure the first round is properly opened (same as English custom mode)
-        const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
-        if (firstRound) {
-            const roundContent = firstRound.querySelector('.custom-round-content');
-            const collapseBtn = firstRound.querySelector('.collapse-btn');
-            if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
-                collapseBtn.textContent = '▼';
-                console.log('Round 1 opened and collapse button set to down arrow');
-            }
+    // Ensure the first round is properly opened (same as English custom mode)
+    console.log('Ensuring first round is opened');
+    const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
+    if (firstRound) {
+        const roundContent = firstRound.querySelector('.custom-round-content');
+        const collapseBtn = firstRound.querySelector('.collapse-btn');
+        if (roundContent && collapseBtn) {
+            roundContent.style.display = 'block';
+            collapseBtn.textContent = '▼';
+            console.log('Round 1 opened and collapse button set to down arrow');
         }
-    } else {
-        // If meaningful data was loaded, restore the saved state after grids are populated
-        console.log('Meaningful data was loaded, restoring state');
-        // Add a small delay to ensure DOM is fully ready
-        setTimeout(() => {
-            restoreJapaneseCustomRoundsState();
-        }, 100);
     }
     
     console.log('Japanese custom mode initialization complete');
@@ -6881,39 +6881,82 @@ function displayWordWithSound(word) {
 }
 
 // Custom Mode Functions
+function checkForSavedCustomData() {
+    console.log('Checking for saved custom mode data...');
+    try {
+        const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        if (customData && customData.rounds && Array.isArray(customData.rounds) && customData.rounds.length > 0) {
+            console.log('Found saved custom mode data with', customData.rounds.length, 'rounds');
+            return true;
+        }
+        console.log('No saved custom mode data found');
+        return false;
+    } catch (error) {
+        console.error('Error checking for saved custom data:', error);
+        return false;
+    }
+}
+
+function checkForSavedJapaneseCustomData() {
+    console.log('Checking for saved Japanese custom mode data...');
+    try {
+        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
+        if (customData && customData.rounds && Array.isArray(customData.rounds) && customData.rounds.length > 0) {
+            console.log('Found saved Japanese custom mode data with', customData.rounds.length, 'rounds');
+            return true;
+        }
+        console.log('No saved Japanese custom mode data found');
+        return false;
+    } catch (error) {
+        console.error('Error checking for saved Japanese custom data:', error);
+        return false;
+    }
+}
+
 function initializeCustomMode() {
     console.log('=== INITIALIZE CUSTOM MODE CALLED ===');
-    // Try to load saved custom rounds first
-    const loaded = loadCustomRounds();
-    console.log('Custom mode loaded result:', loaded);
+    
+    // First, check if we have saved data
+    const hasSavedData = checkForSavedCustomData();
+    console.log('Custom mode has saved data:', hasSavedData);
+    
+    if (hasSavedData) {
+        // If we have saved data, load it first
+        console.log('Loading saved custom mode data...');
+        const loaded = loadCustomRounds();
+        console.log('Custom mode loaded result:', loaded);
+        
+        if (loaded) {
+            // Data was loaded successfully, restore state after a delay
+            console.log('Saved data loaded successfully, restoring state');
+            setTimeout(() => {
+                restoreCustomRoundsState();
+            }, 100);
+            return; // Exit early since data was loaded and restored
+        }
+    }
+    
+    // If no saved data or loading failed, set up default state
+    console.log('Setting up default custom mode state');
     
     // Always populate grids and setup buttons first
     populateWordSelectionGrids();
     setupCustomWordButtons();
     
-    if (!loaded) {
-        // If no saved data, automatically add round 1 and open it
-        console.log('No saved data, creating default round 1');
-        addCustomRound();
-        
-        // Open the first round dropdown
-        const firstRound = document.querySelector('.custom-round[data-round="1"]');
-        if (firstRound) {
-            const roundContent = firstRound.querySelector('.custom-round-content');
-            const collapseBtn = firstRound.querySelector('.collapse-btn');
-            if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
-                collapseBtn.textContent = '▼';
-                collapseBtn.style.transform = 'rotate(180deg)';
-            }
+    // Add default round 1 and open it
+    console.log('Creating default round 1');
+    addCustomRound();
+    
+    // Open the first round dropdown
+    const firstRound = document.querySelector('.custom-round[data-round="1"]');
+    if (firstRound) {
+        const roundContent = firstRound.querySelector('.custom-round-content');
+        const collapseBtn = firstRound.querySelector('.collapse-btn');
+        if (roundContent && collapseBtn) {
+            roundContent.style.display = 'block';
+            collapseBtn.textContent = '▼';
+            collapseBtn.style.transform = 'rotate(180deg)';
         }
-    } else {
-        // If data was loaded, restore the saved state after grids are populated
-        console.log('Saved data found, restoring state');
-        // Add a small delay to ensure DOM is fully ready
-        setTimeout(() => {
-            restoreCustomRoundsState();
-        }, 100);
     }
 }
 
