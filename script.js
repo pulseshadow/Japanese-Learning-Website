@@ -2937,6 +2937,12 @@ function showPage(pageName) {
         customModePage.classList.add('active');
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
+        console.log('Current custom mode state:', {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: !!window.customWordPools,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: !!window.japaneseCustomWordPools
+        });
         initializeCustomMode();
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
@@ -2945,6 +2951,12 @@ function showPage(pageName) {
         japaneseCustomModePage.classList.add('active');
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
+        console.log('Current Japanese custom mode state:', {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: !!window.customWordPools,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: !!window.japaneseCustomWordPools
+        });
         initializeJapaneseCustomMode();
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
@@ -3155,27 +3167,27 @@ function populateRoundSelector() {
             if (i % 2 === 1) {
                 // Introduction round
                 const roundNumber = Math.ceil(i / 2);
-                option.textContent = `Introduction Round ${roundNumber}`;
-                option.setAttribute('data-en', `Introduction Round ${roundNumber}`);
-                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber}`);
-                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber}`);
-                option.setAttribute('data-ja', `導入ラウンド${roundNumber}`);
-                option.setAttribute('data-zh', `介绍轮次${roundNumber}`);
-                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber}`);
-                option.setAttribute('data-ko', `소개 라운드 ${roundNumber}`);
-                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber}`);
+                option.textContent = `Introduction Round ${roundNumber} (English→Japanese)`;
+                option.setAttribute('data-en', `Introduction Round ${roundNumber} (English→Japanese)`);
+                option.setAttribute('data-es', `Ronda de Introducción ${roundNumber} (Inglés→Japonés)`);
+                option.setAttribute('data-fr', `Ronde d'Introduction ${roundNumber} (Anglais→Japonais)`);
+                option.setAttribute('data-ja', `導入ラウンド${roundNumber} (英語→日本語)`);
+                option.setAttribute('data-zh', `介绍轮次${roundNumber} (英语→日语)`);
+                option.setAttribute('data-id', `Ronde Pengenalan ${roundNumber} (Inggris→Jepang)`);
+                option.setAttribute('data-ko', `소개 라운드 ${roundNumber} (영어→일본어)`);
+                option.setAttribute('data-vi', `Vòng Giới thiệu ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
             } else {
                 // Practice round
                 const roundNumber = Math.floor(i / 2);
-                option.textContent = `Practice Round ${roundNumber}`;
-                option.setAttribute('data-en', `Practice Round ${roundNumber}`);
-                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber}`);
-                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber}`);
-                option.setAttribute('data-ja', `練習ラウンド${roundNumber}`);
-                option.setAttribute('data-zh', `练习轮次${roundNumber}`);
-                option.setAttribute('data-id', `Ronde Latihan ${roundNumber}`);
-                option.setAttribute('data-ko', `연습 라운드 ${roundNumber}`);
-                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
+                option.textContent = `Practice Round ${roundNumber} (English→Japanese)`;
+                option.setAttribute('data-en', `Practice Round ${roundNumber} (English→Japanese)`);
+                option.setAttribute('data-es', `Ronda de Práctica ${roundNumber} (Inglés→Japonés)`);
+                option.setAttribute('data-fr', `Ronde de Pratique ${roundNumber} (Anglais→Japonais)`);
+                option.setAttribute('data-ja', `練習ラウンド${roundNumber} (英語→日本語)`);
+                option.setAttribute('data-zh', `练习轮次${roundNumber} (英语→日语)`);
+                option.setAttribute('data-id', `Ronde Latihan ${roundNumber} (Inggris→Jepang)`);
+                option.setAttribute('data-ko', `연습 라운드 ${roundNumber} (영어→일본어)`);
+                option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber} (Tiếng Anh→Tiếng Nhật)`);
             }
             
             roundSelector.appendChild(option);
@@ -3223,133 +3235,8 @@ function populateRoundSelector() {
     // Set the round selector to match the current round
     roundSelector.value = currentRound;
     
-    // Add hover effects to round selector options
-    addRoundSelectorHoverEffects();
-    
     // Update language for new options
     updateAllText();
-}
-
-function addRoundSelectorHoverEffects() {
-    const roundSelector = document.getElementById('round-selector');
-    if (!roundSelector) return;
-    
-    // Since option elements don't support :hover in many browsers,
-    // we'll use a different approach with focus and selection
-    const options = roundSelector.querySelectorAll('option');
-    if (options.length === 0) return;
-    
-    console.log('Setting up hover effects for', options.length, 'options');
-    
-    // Add event listeners for mouse events on the select element
-    roundSelector.addEventListener('mouseenter', () => {
-        roundSelector.style.background = getHoverBackgroundColor();
-    });
-    
-    roundSelector.addEventListener('mouseleave', () => {
-        roundSelector.style.background = getDefaultBackgroundColor();
-    });
-    
-    // Add focus/blur effects
-    roundSelector.addEventListener('focus', () => {
-        roundSelector.style.background = getHoverBackgroundColor();
-    });
-    
-    roundSelector.addEventListener('blur', () => {
-        roundSelector.style.background = getDefaultBackgroundColor();
-    });
-    
-    // Add hover effects to individual options
-    options.forEach((option, index) => {
-        option.addEventListener('mouseenter', () => {
-            console.log(`Mouse enter option ${index}, setting hover color:`, getOptionHoverColor(index));
-            option.style.setProperty('background', getOptionHoverColor(index), 'important');
-            option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
-            option.style.setProperty('color', '#ffffff', 'important');
-            // Force a reflow to ensure the style is applied
-            option.offsetHeight;
-        });
-        
-        option.addEventListener('mouseleave', () => {
-            console.log(`Mouse leave option ${index}, setting default color:`, getOptionDefaultColor(index));
-            option.style.setProperty('background', getOptionDefaultColor(index), 'important');
-            option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
-            option.style.setProperty('color', '#ffffff', 'important');
-            // Force a reflow to ensure the style is applied
-            option.offsetHeight;
-        });
-        
-        // Also add focus/blur events
-        option.addEventListener('focus', () => {
-            console.log(`Focus option ${index}, setting hover color:`, getOptionHoverColor(index));
-            option.style.setProperty('background', getOptionHoverColor(index), 'important');
-            option.style.setProperty('background-color', getOptionHoverColor(index), 'important');
-            option.style.setProperty('color', '#ffffff', 'important');
-        });
-        
-        option.addEventListener('blur', () => {
-            console.log(`Blur option ${index}, setting default color:`, getOptionDefaultColor(index));
-            option.style.setProperty('background', getOptionDefaultColor(index), 'important');
-            option.style.setProperty('background-color', getOptionDefaultColor(index), 'important');
-            option.style.setProperty('color', '#ffffff', 'important');
-        });
-        
-        // Add click event to test
-        option.addEventListener('click', () => {
-            console.log(`Click option ${index}`);
-        });
-        
-        // Add a temporary visual test - change border when hovered
-        option.addEventListener('mouseenter', () => {
-            option.style.setProperty('border', '2px solid red', 'important');
-        });
-        
-        option.addEventListener('mouseleave', () => {
-            option.style.setProperty('border', 'none', 'important');
-        });
-    });
-}
-
-function getDefaultBackgroundColor() {
-    if (document.body.classList.contains('dark-mode')) {
-        return '#40a0ff';
-    } else {
-        return '#d64a2a';
-    }
-}
-
-function getHoverBackgroundColor() {
-    if (document.body.classList.contains('dark-mode')) {
-        // Dark mode: make it lighter (brighter blue)
-        return '#66b3ff';
-    } else {
-        // Light mode: make it darker (darker red)
-        return '#b8391f';
-    }
-}
-
-function getOptionDefaultColor(index) {
-    const isOdd = (index + 1) % 2 === 1; // nth-child is 1-based
-    
-    if (document.body.classList.contains('dark-mode')) {
-        // Dark mode colors
-        return isOdd ? '#0066cc' : '#40a0ff';
-    } else {
-        // Light mode colors
-        return isOdd ? '#f05000' : '#fc6f28';
-    }
-}
-
-function getOptionHoverColor(index) {
-    const isOdd = (index + 1) % 2 === 1; // nth-child is 1-based
-    
-    if (document.body.classList.contains('dark-mode')) {
-        // Dark mode: make colors lighter
-        return isOdd ? '#1a7ce6' : '#66b3ff'; // Lighter versions
-    } else {
-        // Light mode: make colors darker
-        return isOdd ? '#d63d00' : '#e55a1a'; // Darker versions
-    }
 }
 
 // Auto-submit on input change with letter-by-letter checking
@@ -4816,10 +4703,10 @@ function initializeJapaneseCustomMode() {
     } else {
         // If meaningful data was loaded, restore the saved state after grids are populated
         console.log('Meaningful data was loaded, restoring state');
-        // Add a small delay to ensure DOM is fully ready
+        // Add a delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreJapaneseCustomRoundsState();
-        }, 100);
+        }, 200);
     }
     
     console.log('Japanese custom mode initialization complete');
@@ -7161,10 +7048,10 @@ function initializeCustomMode() {
     } else {
         // If data was loaded, restore the saved state after grids are populated
         console.log('Saved data found, restoring state');
-        // Add a small delay to ensure DOM is fully ready
+        // Add a delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreCustomRoundsState();
-        }, 100);
+        }, 200);
     }
 }
 
