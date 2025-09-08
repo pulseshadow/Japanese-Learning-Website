@@ -2941,15 +2941,47 @@ function showPage(pageName) {
         window.mirroredMode = false;
         window.japaneseCustomModeEnabled = false;
         
-        // Always initialize custom mode when entering the page
-        console.log('Entering custom mode page, initializing...');
-        console.log('Current custom mode state:', {
-            customModeEnabled: window.customModeEnabled,
-            customWordPools: !!window.customWordPools,
-            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
-            japaneseCustomWordPools: !!window.japaneseCustomWordPools
-        });
-        initializeCustomMode();
+        // Force load saved data every time the page is shown (same as normal flow)
+        console.log('Force loading custom mode saved data...');
+        const loaded = loadCustomRounds();
+        console.log('Force load result:', loaded);
+        console.log('Window savedCustomRoundsData:', window.savedCustomRoundsData);
+        
+        // Always populate grids and setup buttons
+        console.log('Populating word selection grids...');
+        populateWordSelectionGrids();
+        console.log('Setting up custom word buttons...');
+        setupCustomWordButtons();
+        
+        // If data was loaded, restore it after a delay
+        if (loaded && window.savedCustomRoundsData) {
+            console.log('Saved data found, force restoring state...');
+            console.log('Saved data details:', {
+                rounds: window.savedCustomRoundsData.rounds?.length,
+                hasRounds: !!window.savedCustomRoundsData.rounds,
+                firstRound: window.savedCustomRoundsData.rounds?.[0]
+            });
+            setTimeout(() => {
+                console.log('About to call restoreCustomRoundsState...');
+                restoreCustomRoundsState();
+                console.log('restoreCustomRoundsState completed');
+            }, 300);
+        } else {
+            console.log('No saved data, creating default round 1');
+            addCustomRound();
+            
+            // Open the first round dropdown
+            const firstRound = document.querySelector('.custom-round[data-round="1"]');
+            if (firstRound) {
+                const roundContent = firstRound.querySelector('.custom-round-content');
+                const collapseBtn = firstRound.querySelector('.collapse-btn');
+                if (roundContent && collapseBtn) {
+                    roundContent.style.display = 'block';
+                    collapseBtn.textContent = '▼';
+                    collapseBtn.style.transform = 'rotate(180deg)';
+                }
+            }
+        }
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -2961,15 +2993,53 @@ function showPage(pageName) {
         window.mirroredMode = true;
         window.customModeEnabled = false;
         
-        // Always initialize Japanese custom mode when entering the page
-        console.log('Entering Japanese custom mode page, initializing...');
-        console.log('Current Japanese custom mode state:', {
-            customModeEnabled: window.customModeEnabled,
-            customWordPools: !!window.customWordPools,
-            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
-            japaneseCustomWordPools: !!window.japaneseCustomWordPools
-        });
-        initializeJapaneseCustomMode();
+        // Force load saved data every time the page is shown (same as normal flow)
+        console.log('Force loading Japanese custom mode saved data...');
+        const loaded = loadJapaneseCustomRounds();
+        console.log('Force load result:', loaded);
+        console.log('Window savedJapaneseCustomRoundsData:', window.savedJapaneseCustomRoundsData);
+        
+        // Check if we actually have meaningful data (rounds with words)
+        let hasMeaningfulData = false;
+        if (loaded && window.japaneseCustomWordPools) {
+            hasMeaningfulData = window.japaneseCustomWordPools.some(pool => pool.length > 0);
+            console.log('Has meaningful data:', hasMeaningfulData);
+        }
+        
+        // Always populate grids and setup buttons
+        console.log('Populating Japanese word selection grids...');
+        populateJapaneseWordSelectionGrids();
+        console.log('Setting up Japanese custom word buttons...');
+        setupJapaneseCustomWordButtons();
+        
+        // If data was loaded, restore it after a delay
+        if (loaded && hasMeaningfulData && window.savedJapaneseCustomRoundsData) {
+            console.log('Saved data found, force restoring state...');
+            console.log('Saved data details:', {
+                rounds: window.savedJapaneseCustomRoundsData.rounds?.length,
+                hasRounds: !!window.savedJapaneseCustomRoundsData.rounds,
+                firstRound: window.savedJapaneseCustomRoundsData.rounds?.[0]
+            });
+            setTimeout(() => {
+                console.log('About to call restoreJapaneseCustomRoundsState...');
+                restoreJapaneseCustomRoundsState();
+                console.log('restoreJapaneseCustomRoundsState completed');
+            }, 300);
+        } else {
+            console.log('No meaningful data, ensuring first round is opened');
+            
+            // Ensure the first round is properly opened
+            const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
+            if (firstRound) {
+                const roundContent = firstRound.querySelector('.custom-round-content');
+                const collapseBtn = firstRound.querySelector('.collapse-btn');
+                if (roundContent && collapseBtn) {
+                    roundContent.style.display = 'block';
+                    collapseBtn.textContent = '▼';
+                    console.log('Round 1 opened and collapse button set to down arrow');
+                }
+            }
+        }
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
