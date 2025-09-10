@@ -10,6 +10,7 @@ let allLearnedWords = []; // All words from previous introduction rounds
 let wordsWithPendingPoints = new Set(); // Track words that have pending points from incorrect answers
 let currentQuestionFailed = false; // Track if current question was answered incorrectly
 let eliminationWords = []; // Words for elimination phase (no repetition)
+let selectedScriptMode = 'hiragana'; // Track which script mode was selected
 
 // Settings and language variables
 let currentLanguage = 'en';
@@ -2471,7 +2472,10 @@ userStatsBtn.addEventListener('click', () => {
     showPage('stats');
     updateStatsDisplay();
 });
-customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
+customHiraganaBtn.addEventListener('click', () => {
+    selectedScriptMode = 'hiragana';
+    showPage('custom-mode');
+});
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
@@ -2482,28 +2486,23 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 backToScriptBtn.addEventListener('click', () => {
-    // If in Japanese custom mode, go back to Japanese custom mode word selection
-    if (window.mirroredMode && window.japaneseCustomModeEnabled) {
-        showPage('japanese-custom-mode');
-        // Ensure data is loaded when returning to word selection
-        setTimeout(() => {
-            initializeJapaneseCustomMode();
-        }, 100);
-        return;
-    }
-    
-    // If in mirrored brute force mode, go back to Japanese script selection
+    // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
         showPage('japanese-script');
         return;
     }
     
-    // If in English custom mode, go back to word selection
+    // If in custom mode, go back to script selection page and auto-select mode
     if (window.customModeEnabled) {
-        showPage('custom-mode');
-        // Ensure data is loaded when returning to word selection
+        showPage('custom-script');
+        // Auto-select the appropriate script mode
         setTimeout(() => {
-            initializeCustomMode();
+            if (selectedScriptMode === 'hiragana') {
+                customHiraganaBtn.click();
+            } else if (selectedScriptMode === 'katakana') {
+                // When katakana is implemented, add: customKatakanaBtn.click();
+                customHiraganaBtn.click(); // Fallback to hiragana for now
+            }
         }, 100);
     } else {
         // Check if we came from word entry selection
@@ -2556,6 +2555,7 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
         console.log('Navigating to Japanese custom mode for mirrored custom mode');
+        selectedScriptMode = 'hiragana'; // Set default for Japanese custom mode
         showPage('japanese-custom-mode');
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
@@ -2588,6 +2588,7 @@ backToWordEntryBtn.addEventListener('click', () => {
 
 japaneseHiraganaBtn.addEventListener('click', () => {
     console.log('Starting mirrored brute force mode with Hiragana');
+    selectedScriptMode = 'hiragana';
     window.mirroredMode = true;
     startMirroredGame();
 });
@@ -2599,7 +2600,16 @@ japaneseKatakanaBtn.addEventListener('click', () => {
 
 // Japanese custom mode page event listeners
 backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
-    showPage('word-entry-selection');
+    showPage('japanese-script');
+    // Auto-select the appropriate script mode
+    setTimeout(() => {
+        if (selectedScriptMode === 'hiragana') {
+            japaneseHiraganaBtn.click();
+        } else if (selectedScriptMode === 'katakana') {
+            // When katakana is implemented, add: japaneseKatakanaBtn.click();
+            japaneseHiraganaBtn.click(); // Fallback to hiragana for now
+        }
+    }, 100);
 });
 
 japaneseAddRoundBtn.addEventListener('click', () => {
@@ -2945,10 +2955,7 @@ function showPage(pageName) {
         customModePage.classList.add('active');
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
-        // Add a small delay to ensure DOM is ready
-        setTimeout(() => {
-            initializeCustomMode();
-        }, 50);
+        initializeCustomMode();
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -2956,10 +2963,7 @@ function showPage(pageName) {
         japaneseCustomModePage.classList.add('active');
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
-        // Add a small delay to ensure DOM is ready
-        setTimeout(() => {
-            initializeJapaneseCustomMode();
-        }, 50);
+        initializeJapaneseCustomMode();
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -4670,131 +4674,48 @@ function nextJapaneseCustomRound() {
 // Japanese Custom Mode Functions
 function initializeJapaneseCustomMode() {
     console.log('=== INITIALIZE JAPANESE CUSTOM MODE CALLED ===');
+    console.log('Initializing Japanese custom mode');
     
-    // CRITICAL: Check for saved data first - page cannot load without this check
-    const hasSavedData = checkAndLoadJapaneseCustomData();
+    // Try to load saved Japanese custom rounds first
+    const loaded = loadJapaneseCustomRounds();
+    console.log('Loaded Japanese custom rounds:', loaded);
     
-    if (hasSavedData) {
-        console.log('Saved data found and loaded, restoring state');
-        // Data was loaded, restore the saved state
-        setTimeout(() => {
-            restoreJapaneseCustomRoundsState();
-        }, 100);
-    } else {
-        console.log('No saved data found, setting up default state');
-        // No saved data, set up default state
-        setupDefaultJapaneseCustomMode();
+    // Check if we actually have meaningful data (rounds with words)
+    let hasMeaningfulData = false;
+    if (loaded && window.japaneseCustomWordPools) {
+        hasMeaningfulData = window.japaneseCustomWordPools.some(pool => pool.length > 0);
+        console.log('Has meaningful data:', hasMeaningfulData);
     }
-    
-    console.log('Japanese custom mode initialization complete');
-}
-
-function checkAndLoadJapaneseCustomData() {
-    console.log('=== CHECKING FOR JAPANESE CUSTOM DATA ===');
-    
-    try {
-        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
-        
-        if (!customData) {
-            console.log('No saved Japanese custom rounds found');
-            return false;
-        }
-        
-        // Validate data structure
-        if (!customData.rounds || !Array.isArray(customData.rounds)) {
-            console.warn('Invalid Japanese custom rounds data structure');
-            return false;
-        }
-        
-        // Check data age (older than 30 days)
-        const dataAge = Date.now() - customData.timestamp;
-        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
-        if (dataAge > maxAge) {
-            console.warn('Japanese custom rounds data is too old, clearing');
-            localStorage.removeItem('japaneseCustomRounds');
-            return false;
-        }
-        
-        // Load settings
-        if (typeof customData.noPracticeRounds === 'boolean') {
-            window.japaneseCustomModeNoPracticeRounds = customData.noPracticeRounds;
-            if (japaneseDisablePracticeRoundsToggle) {
-                japaneseDisablePracticeRoundsToggle.checked = customData.noPracticeRounds;
-            }
-        }
-        
-        // Store the data in memory for later restoration
-        window.savedJapaneseCustomRoundsData = customData;
-        console.log('Japanese custom rounds data stored in memory:', customData);
-        
-        // Clear existing rounds and create new ones from saved data
-        const container = document.getElementById('japanese-custom-rounds-container');
-        if (container) {
-            container.innerHTML = '';
-            
-            // Create round containers for each saved round
-            customData.rounds.forEach((roundData, index) => {
-                const roundNumber = index + 1;
-                console.log(`Creating Japanese round container ${roundNumber} from saved data`);
-                addJapaneseCustomRound(roundNumber);
-            });
-        }
-        
-        // Load word pools for game play
-        const wordPools = [];
-        customData.rounds.forEach(roundData => {
-            const roundWords = [];
-            
-            // Add checked words from word pools
-            roundData.checkedWords.forEach(checkedWord => {
-                const wordGroup = getAllWordsByRound()[checkedWord.section];
-                const word = wordGroup.find(w => w.japanese === checkedWord.word);
-                if (word) {
-                    roundWords.push(word);
-                }
-            });
-            
-            // Add custom words (only checked ones)
-            roundData.customWords.forEach(customWord => {
-                // Only add custom words that are checked (checkbox items) or don't have a checked property (input rows)
-                if (customWord.checked === undefined || customWord.checked === true) {
-                    roundWords.push(customWord);
-                }
-            });
-            
-            wordPools.push(roundWords);
-        });
-        
-        window.japaneseCustomWordPools = wordPools;
-        console.log('Japanese custom word pools loaded:', wordPools);
-        
-        return true;
-        
-    } catch (error) {
-        console.error('Error checking Japanese custom data:', error);
-        return false;
-    }
-}
-
-function setupDefaultJapaneseCustomMode() {
-    console.log('Setting up default Japanese custom mode state');
     
     // Always populate grids and setup buttons first
     populateJapaneseWordSelectionGrids();
     setupJapaneseCustomWordButtons();
     
-    // Always ensure the first round is properly opened
-    console.log('Ensuring first round is opened');
-    const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
-    if (firstRound) {
-        const roundContent = firstRound.querySelector('.custom-round-content');
-        const collapseBtn = firstRound.querySelector('.collapse-btn');
-        if (roundContent && collapseBtn) {
-            roundContent.style.display = 'block';
-            collapseBtn.textContent = '▼';
-            console.log('Round 1 opened and collapse button set to down arrow');
+    if (!loaded || !hasMeaningfulData) {
+        // If no saved data or no meaningful data, ensure the first round is properly opened
+        console.log('No meaningful data, ensuring first round is opened');
+        
+        // Ensure the first round is properly opened (same as English custom mode)
+        const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
+        if (firstRound) {
+            const roundContent = firstRound.querySelector('.custom-round-content');
+            const collapseBtn = firstRound.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                roundContent.style.display = 'block';
+                collapseBtn.textContent = '▼';
+                console.log('Round 1 opened and collapse button set to down arrow');
+            }
         }
+    } else {
+        // If meaningful data was loaded, restore the saved state after grids are populated
+        console.log('Meaningful data was loaded, restoring state');
+        // Add a small delay to ensure DOM is fully ready
+        setTimeout(() => {
+            restoreJapaneseCustomRoundsState();
+        }, 100);
     }
+    
+    console.log('Japanese custom mode initialization complete');
 }
 
 function populateJapaneseWordSelectionGrids() {
@@ -5063,6 +4984,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
                 checkbox.checked = isChecked;
             });
             
+            saveJapaneseCustomRounds();
         });
         
         // Add words to the grid
@@ -5543,14 +5465,12 @@ function saveJapaneseCustomRounds() {
             };
             
             // Get checked words
-            const wordCheckboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+            const wordCheckboxes = round.querySelectorAll('.word-checkbox:checked');
             wordCheckboxes.forEach(checkbox => {
-                if (checkbox.dataset.japanese && checkbox.dataset.section) {
-                    roundData.checkedWords.push({
-                        word: checkbox.dataset.japanese,
-                        section: parseInt(checkbox.dataset.section)
-                    });
-                }
+                roundData.checkedWords.push({
+                    word: checkbox.dataset.word,
+                    section: parseInt(checkbox.dataset.section)
+                });
             });
             
             // Get custom words from input rows (unsubmitted)
@@ -5562,8 +5482,7 @@ function saveJapaneseCustomRounds() {
                 if (japaneseInput.value.trim() && englishInput.value.trim()) {
                     roundData.customWords.push({
                         japanese: japaneseInput.value.trim(),
-                        english: englishInput.value.trim(),
-                        isInputRow: true
+                        english: englishInput.value.trim()
                     });
                 }
             });
@@ -5575,8 +5494,7 @@ function saveJapaneseCustomRounds() {
                     roundData.customWords.push({
                         japanese: checkbox.dataset.japanese,
                         english: checkbox.dataset.english,
-                        checked: checkbox.checked,
-                        isInputRow: false
+                        checked: checkbox.checked
                     });
                 }
             });
@@ -5729,79 +5647,35 @@ function restoreJapaneseCustomRoundsState() {
         }
         
         const customData = window.savedJapaneseCustomRoundsData;
-        console.log('Restoring data:', customData);
         
-        // First, populate all the word grids
-        populateJapaneseWordSelectionGrids();
-        setupJapaneseCustomWordButtons();
-        
-        // Then restore each round's state
-        customData.rounds.forEach((roundData, index) => {
-            const roundNumber = index + 1;
-            console.log(`Restoring round ${roundNumber}:`, roundData);
+        customData.rounds.forEach(roundData => {
+            const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
+            if (!round) return;
             
-            const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`);
-            if (!round) {
-                console.error(`Round ${roundNumber} not found in DOM`);
-                return;
-            }
-            
-            // 1. Restore round dropdown state
-            const roundContent = round.querySelector('.custom-round-content');
-            const collapseBtn = round.querySelector('.collapse-btn');
-            if (roundContent && collapseBtn) {
-                if (roundData.isOpen) {
-                    console.log(`Opening round ${roundNumber} dropdown`);
-                    roundContent.style.display = 'block';
-                    roundContent.classList.remove('collapsed');
-                    collapseBtn.textContent = '▼';
-                    collapseBtn.classList.remove('rotated');
-                } else {
-                    console.log(`Keeping round ${roundNumber} dropdown closed`);
-                    roundContent.style.display = 'none';
-                    roundContent.classList.add('collapsed');
-                    collapseBtn.textContent = '▶';
-                    collapseBtn.classList.add('rotated');
-                }
-            }
-            
-            // 2. Restore word section states and selected words
+            // Restore checked words
             roundData.checkedWords.forEach(checkedWord => {
-                console.log(`Restoring checked word: section ${checkedWord.section}, word ${checkedWord.word}`);
-                
-                // First, make sure the section is open
-                const section = round.querySelector(`.word-section:nth-child(${checkedWord.section + 1})`);
-                if (section) {
-                    section.classList.remove('collapsed');
-                    const wordContent = section.querySelector('.word-section-content');
-                    const button = section.querySelector('.collapse-btn');
-                    if (wordContent && button) {
-                        wordContent.style.display = 'block';
-                        button.textContent = '▼';
-                    }
-                }
-                
-                // Then find and check the specific word
-                const checkbox = round.querySelector(`input[data-japanese="${checkedWord.word}"][data-section="${checkedWord.section}"]`);
+                const checkbox = round.querySelector(`#japanese-word-${roundData.roundNumber}-${checkedWord.section}-${checkedWord.word}`);
                 if (checkbox) {
-                    console.log(`Found and checking word: ${checkedWord.word}`);
                     checkbox.checked = true;
-                    updateJapaneseSelectAllState(roundNumber, checkedWord.section);
-                } else {
-                    console.warn(`Could not find checkbox for word: ${checkedWord.word} in section ${checkedWord.section}`);
+                    updateJapaneseSelectAllState(roundData.roundNumber, checkedWord.section);
                 }
             });
             
-            // 3. Restore custom words
+            // Restore custom words
             roundData.customWords.forEach(customWord => {
-                console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english}`);
-                
-                if (customWord.isInputRow) {
+                if (customWord.checked !== undefined) {
+                    // This is a checkbox item (submitted custom word)
+                    addJapaneseCustomWordToGrid(round, customWord.japanese, customWord.english);
+                    // Set the checkbox state
+                    const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
+                    if (customCheckbox) {
+                        customCheckbox.checked = customWord.checked;
+                    }
+                } else {
                     // This is an input row (unsubmitted custom word)
-                    console.log(`Creating input row for: ${customWord.japanese} - ${customWord.english}`);
-                    addJapaneseCustomWordToRound(roundNumber);
+                    addJapaneseCustomWordToRound(roundData.roundNumber);
                     
-                    // Set the values in the last created input row
+                    // Set the values
                     const customWordRows = round.querySelectorAll('.custom-word-input-row');
                     const lastRow = customWordRows[customWordRows.length - 1];
                     if (lastRow) {
@@ -5811,28 +5685,50 @@ function restoreJapaneseCustomRoundsState() {
                         if (japaneseInput && englishInput) {
                             japaneseInput.value = customWord.japanese;
                             englishInput.value = customWord.english;
-                            console.log(`Set input values: ${customWord.japanese} - ${customWord.english}`);
                         }
                     }
-                } else {
-                    // This is a checkbox item (submitted custom word)
-                    console.log(`Creating checkbox item for: ${customWord.japanese} - ${customWord.english}`);
-                    addJapaneseCustomWordToGrid(round, customWord.japanese, customWord.english);
+                }
+            });
+            
+            // Restore main round dropdown state
+            if (roundData.isOpen !== undefined) {
+                const roundContent = round.querySelector('.custom-round-content');
+                const collapseBtn = round.querySelector('.collapse-btn');
+                if (roundContent && collapseBtn) {
+                    if (roundData.isOpen) {
+                        roundContent.classList.remove('collapsed');
+                        collapseBtn.textContent = '▼';
+                        collapseBtn.classList.remove('rotated');
+                    } else {
+                        roundContent.classList.add('collapsed');
+                        collapseBtn.textContent = '▶';
+                        collapseBtn.classList.add('rotated');
+                    }
+                    console.log(`Restored Japanese round ${roundData.roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+                }
+            }
+            
+            // Restore open sections
+            roundData.openSections.forEach(sectionIndex => {
+                const section = round.querySelector(`.word-section-container:nth-child(${sectionIndex + 1})`);
+                if (section) {
+                    const grid = section.querySelector('.word-grid');
+                    const button = section.querySelector('.collapse-btn');
                     
-                    // Set the checkbox state
-                    const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
-                    if (customCheckbox) {
-                        customCheckbox.checked = customWord.checked || false;
-                        console.log(`Set checkbox state for ${customWord.japanese}: ${customCheckbox.checked}`);
+                    if (grid && button) {
+                        grid.style.display = 'block';
+                        section.classList.remove('collapsed');
+                        button.textContent = '▼';
+                        button.classList.remove('rotated');
                     }
                 }
             });
         });
         
-        // Clean up memory
-        delete window.savedJapaneseCustomRoundsData;
-        
         console.log('Japanese custom rounds state restored successfully');
+        
+        // Clear the saved data from memory (same as English mode)
+        delete window.savedJapaneseCustomRoundsData;
         
     } catch (error) {
         console.error('Error restoring Japanese custom rounds state:', error);
@@ -5877,9 +5773,6 @@ function startJapaneseCustomRun() {
     
     // Populate round selector with Japanese custom rounds
     populateRoundSelector();
-    
-    // Update back button text for Japanese custom mode
-    updateBackButtonText();
     
     // Show game page
     showPage('game');
@@ -6669,15 +6562,15 @@ function updateWordSelectionGrids() {
 function updateBackButtonText() {
     if (window.mirroredMode) {
         if (window.japaneseCustomModeEnabled) {
-            // Japanese custom mode - show "Back to Word Selection"
-            backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
-            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
-            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection de Mots');
-            backToScriptBtn.setAttribute('data-ja', '← 単語選択に戻る');
-            backToScriptBtn.setAttribute('data-zh', '← 返回单词选择');
-            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Kata');
-            backToScriptBtn.setAttribute('data-ko', '← 단어 선택으로 돌아가기');
-            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Từ');
+            // Japanese custom mode - show "Back to Japanese Custom Mode"
+            backToScriptBtn.setAttribute('data-en', '← Back to Japanese Custom Mode');
+            backToScriptBtn.setAttribute('data-es', '← Volver al Modo Personalizado Japonés');
+            backToScriptBtn.setAttribute('data-fr', '← Retour au Mode Personnalisé Japonais');
+            backToScriptBtn.setAttribute('data-ja', '← 日本語カスタムモードに戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回日语自定义模式');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Mode Kustom Jepang');
+            backToScriptBtn.setAttribute('data-ko', '← 일본어 맞춤형 모드로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Chế độ Tùy chỉnh Tiếng Nhật');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
         } else {
             // Mirrored brute force mode - show "Back to Japanese Script Selection"
@@ -7131,104 +7024,37 @@ function displayWordWithSound(word) {
 // Custom Mode Functions
 function initializeCustomMode() {
     console.log('=== INITIALIZE CUSTOM MODE CALLED ===');
-    
-    // CRITICAL: Check for saved data first - page cannot load without this check
-    const hasSavedData = checkAndLoadCustomData();
-    
-    if (hasSavedData) {
-        console.log('Saved data found and loaded, restoring state');
-        // Data was loaded, restore the saved state
-        setTimeout(() => {
-            restoreCustomRoundsState();
-        }, 100);
-    } else {
-        console.log('No saved data found, setting up default state');
-        // No saved data, set up default state
-        setupDefaultCustomMode();
-    }
-}
-
-function checkAndLoadCustomData() {
-    console.log('=== CHECKING FOR CUSTOM DATA ===');
-    
-    try {
-        const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-        console.log('Loaded custom data:', customData);
-        
-        // Handle legacy data format (old wordPools format)
-        if (customData && typeof customData === 'object' && customData.wordPools && !customData.rounds) {
-            console.log('Legacy custom rounds data detected, clearing old format');
-            localStorage.removeItem(STORAGE_KEYS.CUSTOM_ROUNDS);
-            return false;
-        }
-        
-        if (customData && typeof customData === 'object' && customData.rounds) {
-            // Validate the data structure
-            if (!Array.isArray(customData.rounds)) {
-                console.error('Invalid custom rounds data: rounds is not an array');
-                return false;
-            }
-            
-            // Check if data is too old (optional - can be removed if not needed)
-            if (customData.timestamp && Date.now() - customData.timestamp > 30 * 24 * 60 * 60 * 1000) { // 30 days
-                console.warn('Custom rounds data is over 30 days old');
-            }
-            
-            console.log('Loading custom rounds data:', customData);
-            console.log(`Data contains ${customData.rounds.length} rounds`);
-            
-            // Store the data in memory for later restoration
-            window.savedCustomRoundsData = customData;
-            
-            // Clear existing custom rounds
-            const existingRounds = document.querySelectorAll('.custom-round');
-            existingRounds.forEach(round => round.remove());
-            
-            // Create the round containers (without populating grids yet)
-            customData.rounds.forEach((roundData, index) => {
-                const roundNumber = index + 1;
-                console.log(`Creating round container ${roundNumber} from saved data`);
-                addCustomRound(roundNumber);
-            });
-            
-            // Load settings
-            if (typeof customData.noPracticeRounds === 'boolean') {
-                window.customModeNoPracticeRounds = customData.noPracticeRounds;
-                if (disablePracticeRoundsToggle) {
-                    disablePracticeRoundsToggle.checked = customData.noPracticeRounds;
-                }
-            }
-            
-            return true;
-        }
-        return false;
-    } catch (error) {
-        console.error('Error checking custom data:', error);
-        return false;
-    }
-}
-
-function setupDefaultCustomMode() {
-    console.log('Setting up default custom mode state');
+    // Try to load saved custom rounds first
+    const loaded = loadCustomRounds();
+    console.log('Custom mode loaded result:', loaded);
     
     // Always populate grids and setup buttons first
     populateWordSelectionGrids();
     setupCustomWordButtons();
     
-    // Always create default round 1 and open it
-    console.log('Creating default round 1');
-    addCustomRound();
-    
-    // Open the first round dropdown
-    const firstRound = document.querySelector('.custom-round[data-round="1"]');
-    if (firstRound) {
-        const roundContent = firstRound.querySelector('.custom-round-content');
-        const collapseBtn = firstRound.querySelector('.collapse-btn');
-        if (roundContent && collapseBtn) {
-            roundContent.style.display = 'block';
-            collapseBtn.textContent = '▼';
-            collapseBtn.style.transform = 'rotate(180deg)';
+    if (!loaded) {
+        // If no saved data, automatically add round 1 and open it
+        console.log('No saved data, creating default round 1');
+        addCustomRound();
+        
+        // Open the first round dropdown
+        const firstRound = document.querySelector('.custom-round[data-round="1"]');
+        if (firstRound) {
+            const roundContent = firstRound.querySelector('.custom-round-content');
+            const collapseBtn = firstRound.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                roundContent.style.display = 'block';
+                collapseBtn.textContent = '▼';
+                collapseBtn.style.transform = 'rotate(180deg)';
+            }
         }
+    } else {
+        // If data was loaded, restore the saved state after grids are populated
+        console.log('Saved data found, restoring state');
+        // Add a small delay to ensure DOM is fully ready
+        setTimeout(() => {
+            restoreCustomRoundsState();
+        }, 100);
     }
 }
 
@@ -7317,6 +7143,7 @@ function populateWordSelectionGrid(roundNumber) {
                 checkbox.checked = isChecked;
             });
             
+            saveCustomRounds();
         });
         
         // Add event listener to update select all state when individual checkboxes change
@@ -7690,8 +7517,6 @@ function removeSpecificRound(roundNumber) {
             
             // Save custom rounds to local storage
             saveCustomRounds();
-            
-            // Round removed
         }
     } else {
         alert(getTranslatedMessage('must-have-round'));
@@ -7828,14 +7653,14 @@ function startCustomRun() {
     // Populate round selector with custom rounds
     populateRoundSelector();
     
-    // Save custom rounds to local storage
-    saveCustomRounds();
-    
     // Update language for new elements
     updateAllText();
     
     // Update back button text for custom mode
     updateBackButtonText();
+    
+    // Save the final state before starting the game
+    saveCustomRounds();
     
     // Start the game with custom mode
     startCustomGame();
@@ -8376,8 +8201,8 @@ function saveCustomRounds() {
             isOpen: !round.querySelector('.custom-round-content').classList.contains('collapsed')
         };
         
-        // Save checked words (exclude select-all checkboxes)
-        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+        // Save checked words
+        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
         checkboxes.forEach(checkbox => {
             if (checkbox.dataset.japanese && checkbox.dataset.english) {
                 roundData.checkedWords.push({
@@ -8387,22 +8212,7 @@ function saveCustomRounds() {
             }
         });
         
-        // Save custom words from input rows (unsubmitted)
-        const customWordRows = round.querySelectorAll('.custom-word-input-row');
-        customWordRows.forEach(row => {
-            const japaneseInput = row.querySelector('.japanese-input');
-            const englishInput = row.querySelector('.english-input');
-            
-            if (japaneseInput && englishInput && japaneseInput.value.trim() && englishInput.value.trim()) {
-                roundData.customWords.push({
-                    japanese: japaneseInput.value.trim(),
-                    english: englishInput.value.trim(),
-                    isInputRow: true
-                });
-            }
-        });
-        
-        // Save custom words from checkbox items (submitted)
+        // Save custom words
         const customWordItems = round.querySelectorAll('.custom-word-item');
         customWordItems.forEach(item => {
             const checkbox = item.querySelector('input[type="checkbox"]');
@@ -8410,8 +8220,7 @@ function saveCustomRounds() {
                 roundData.customWords.push({
                     japanese: checkbox.dataset.japanese,
                     english: checkbox.dataset.english,
-                    checked: checkbox.checked,
-                    isInputRow: false
+                    checked: checkbox.checked
                 });
             }
         });
@@ -8548,102 +8357,72 @@ function restoreCustomRoundsState() {
         return;
     }
     
-    const customData = window.savedCustomRoundsData;
-    console.log('Restoring data:', customData);
+    console.log('Restoring custom rounds state:', window.savedCustomRoundsData);
     
-    // First, populate all the word grids
-    populateWordSelectionGrids();
-    setupCustomWordButtons();
-    
-    // Then restore each round's state
-    customData.rounds.forEach((roundData, index) => {
-        const roundNumber = index + 1;
-        console.log(`Restoring round ${roundNumber}:`, roundData);
-        
+    // Restore the state for each round
+    window.savedCustomRoundsData.rounds.forEach(roundData => {
+        const roundNumber = roundData.roundNumber;
         const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-        if (!round) {
-            console.error(`Round ${roundNumber} not found in DOM`);
-            return;
-        }
+        if (!round) return;
         
-        // 1. Restore round dropdown state
-        const roundContent = round.querySelector('.custom-round-content');
-        const collapseBtn = round.querySelector('.collapse-btn');
-        if (roundContent && collapseBtn) {
-            if (roundData.isOpen) {
-                console.log(`Opening round ${roundNumber} dropdown`);
-                roundContent.style.display = 'block';
-                roundContent.classList.remove('collapsed');
-                collapseBtn.textContent = '▼';
-                collapseBtn.classList.remove('rotated');
-            } else {
-                console.log(`Keeping round ${roundNumber} dropdown closed`);
-                roundContent.style.display = 'none';
-                roundContent.classList.add('collapsed');
-                collapseBtn.textContent = '▲';
-                collapseBtn.classList.add('rotated');
-            }
-        }
-        
-        // 2. Restore word section states and selected words
-        roundData.checkedWords.forEach(checkedWord => {
-            console.log(`Restoring checked word: ${checkedWord.japanese} - ${checkedWord.english}`);
-            
-            // Find and check the specific word
-            const checkbox = round.querySelector(`input[data-japanese="${checkedWord.japanese}"][data-english="${checkedWord.english}"]`);
+        // Restore checked words
+        roundData.checkedWords.forEach(word => {
+            const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
             if (checkbox) {
-                console.log(`Found and checking word: ${checkedWord.japanese} - ${checkedWord.english}`);
                 checkbox.checked = true;
-                
-                // Make sure the section containing this word is open
-                const section = checkbox.closest('.word-section');
-                if (section) {
-                    section.classList.remove('collapsed');
-                    const wordContent = section.querySelector('.word-section-content');
-                    const button = section.querySelector('.collapse-btn');
-                    if (wordContent && button) {
-                        wordContent.style.display = 'block';
-                        button.textContent = '▼';
-                    }
-                }
+                console.log(`Restored checkbox for: ${word.japanese} - ${word.english}`);
             } else {
-                console.warn(`Could not find checkbox for word: ${checkedWord.japanese} - ${checkedWord.english}`);
+                console.log(`Could not find checkbox for: ${word.japanese} - ${word.english}`);
             }
         });
         
-        // 3. Restore custom words
+        // Restore custom words
         roundData.customWords.forEach(customWord => {
-            console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english}`);
-            
-            if (customWord.isInputRow) {
-                // This is an input row (unsubmitted custom word)
-                console.log(`Creating input row for: ${customWord.japanese} - ${customWord.english}`);
-                addCustomWordToRound(round, customWord.japanese, customWord.english);
-                
-                // Set the values in the last created input row
-                const customWordRows = round.querySelectorAll('.custom-word-input-row');
-                const lastRow = customWordRows[customWordRows.length - 1];
-                if (lastRow) {
-                    const japaneseInput = lastRow.querySelector('.japanese-input');
-                    const englishInput = lastRow.querySelector('.english-input');
-                    
-                    if (japaneseInput && englishInput) {
-                        japaneseInput.value = customWord.japanese;
-                        englishInput.value = customWord.english;
-                        console.log(`Set input values: ${customWord.japanese} - ${customWord.english}`);
-                    }
+            console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english} (checked: ${customWord.checked})`);
+            addCustomWordToRound(round, customWord.japanese, customWord.english);
+            // Set the checkbox state for custom words
+            const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
+            if (customCheckbox) {
+                customCheckbox.checked = customWord.checked;
+                console.log(`Restored custom word checkbox: ${customWord.japanese} - ${customWord.english}`);
+            } else {
+                console.warn(`Could not find custom word checkbox for: ${customWord.japanese} - ${customWord.english}`);
+            }
+        });
+        
+        // Restore main round dropdown state
+        if (roundData.isOpen !== undefined) {
+            const roundContent = round.querySelector('.custom-round-content');
+            const collapseBtn = round.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                if (roundData.isOpen) {
+                    roundContent.classList.remove('collapsed');
+                    collapseBtn.textContent = '▼';
+                    collapseBtn.classList.remove('rotated');
+                } else {
+                    roundContent.classList.add('collapsed');
+                    collapseBtn.textContent = '▲';
+                    collapseBtn.classList.add('rotated');
+                }
+                console.log(`Restored round ${roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+            }
+        }
+        
+        // Restore open sections
+        roundData.openSections.forEach(sectionId => {
+            const section = round.querySelector(`#${sectionId}`);
+            if (section) {
+                section.classList.remove('collapsed');
+                const button = section.previousElementSibling.querySelector('.collapse-btn');
+                if (button) {
+                    button.textContent = '▲';
+                    button.classList.add('rotated');
+                    console.log(`Restored open section: ${sectionId}`);
+                } else {
+                    console.warn(`Could not find collapse button for section: ${sectionId}`);
                 }
             } else {
-                // This is a checkbox item (submitted custom word)
-                console.log(`Creating checkbox item for: ${customWord.japanese} - ${customWord.english}`);
-                addCustomWordToGrid(round, customWord.japanese, customWord.english);
-                
-                // Set the checkbox state
-                const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
-                if (customCheckbox) {
-                    customCheckbox.checked = customWord.checked || false;
-                    console.log(`Set checkbox state for ${customWord.japanese}: ${customCheckbox.checked}`);
-                }
+                console.warn(`Could not find section to restore: ${sectionId}`);
             }
         });
     });
@@ -8653,8 +8432,6 @@ function restoreCustomRoundsState() {
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
-    
-    console.log('Custom rounds state restored successfully');
 }
 
 // Debug function to help troubleshoot custom rounds issues
