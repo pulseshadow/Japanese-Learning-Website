@@ -2481,27 +2481,102 @@ const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry
 backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
+// Make the original back button invisible and intangible
+backToScriptBtn.style.display = 'none';
+backToScriptBtn.style.pointerEvents = 'none';
+backToScriptBtn.style.opacity = '0';
+backToScriptBtn.style.position = 'absolute';
+backToScriptBtn.style.left = '-9999px';
+
+// Disable the original event listener
+backToScriptBtn.removeEventListener('click', backToScriptBtn.onclick);
+
 backToScriptBtn.addEventListener('click', () => {
-    console.log('Back button clicked. Current state:', {
-        mirroredMode: window.mirroredMode,
-        customModeEnabled: window.customModeEnabled,
-        japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
-        customWordPools: !!window.customWordPools,
-        japaneseCustomWordPools: !!window.japaneseCustomWordPools,
-        cameFromWordEntry: window.cameFromWordEntry
-    });
+    console.log('ORIGINAL BACK BUTTON CLICKED - THIS SHOULD NOT HAPPEN');
+    // This should never be called since the button is hidden and disabled
+});
+
+// Create a new back button that guarantees proper data loading
+function createNewBackButton() {
+    console.log('Creating new back button with guaranteed data loading');
     
-    // If in mirrored mode, go back to Japanese script selection
-    if (window.mirroredMode) {
-        console.log('Going to Japanese script page');
-        showPage('japanese-script');
+    // Find the game page container
+    const gamePage = document.getElementById('game-page');
+    if (!gamePage) {
+        console.error('Game page not found, cannot create new back button');
         return;
     }
     
-    // AGGRESSIVE FIX: Always go to custom mode page directly (like customHiraganaBtn)
-    console.log('Going to custom mode page directly (bypassing mode checks)');
-    showPage('custom-mode');
-});
+    // Create the new back button
+    const newBackBtn = document.createElement('button');
+    newBackBtn.id = 'new-back-to-script-btn';
+    newBackBtn.className = 'back-btn';
+    newBackBtn.textContent = '← Back to Word Selection';
+    newBackBtn.style.position = 'absolute';
+    newBackBtn.style.top = '20px';
+    newBackBtn.style.left = '20px';
+    newBackBtn.style.zIndex = '1000';
+    newBackBtn.style.backgroundColor = '#007bff';
+    newBackBtn.style.color = 'white';
+    newBackBtn.style.border = 'none';
+    newBackBtn.style.padding = '10px 20px';
+    newBackBtn.style.borderRadius = '5px';
+    newBackBtn.style.cursor = 'pointer';
+    newBackBtn.style.fontSize = '16px';
+    newBackBtn.style.fontWeight = 'bold';
+    
+    // Add the button to the game page
+    gamePage.appendChild(newBackBtn);
+    
+    // Add event listener with guaranteed data loading
+    newBackBtn.addEventListener('click', () => {
+        console.log('NEW BACK BUTTON CLICKED - GUARANTEED DATA LOADING');
+        
+        // Force clear any existing custom mode state
+        console.log('Clearing existing custom mode state');
+        window.customModeEnabled = false;
+        window.customWordPools = null;
+        window.japaneseCustomModeEnabled = false;
+        window.japaneseCustomWordPools = null;
+        
+        // Force reload custom mode data
+        console.log('Force reloading custom mode data');
+        
+        // Clear any existing rounds
+        const existingRounds = document.querySelectorAll('.custom-round');
+        existingRounds.forEach(round => round.remove());
+        
+        // Force load and initialize custom mode
+        console.log('Calling initializeCustomMode with force reload');
+        showPage('custom-mode');
+        
+        // Add a small delay to ensure DOM is ready, then force reload
+        setTimeout(() => {
+            console.log('Force reloading after delay');
+            initializeCustomMode();
+        }, 100);
+    });
+    
+    // Initially hide the button
+    newBackBtn.style.display = 'none';
+    
+    // Function to show/hide the button based on game mode
+    window.updateNewBackButtonVisibility = function() {
+        if (currentPage === 'game' && (window.customModeEnabled || window.japaneseCustomModeEnabled)) {
+            newBackBtn.style.display = 'block';
+            console.log('New back button made visible for custom mode');
+        } else {
+            newBackBtn.style.display = 'none';
+            console.log('New back button hidden');
+        }
+    };
+    
+    console.log('New back button created and added to game page');
+}
+
+// Call the function to create the new button
+createNewBackButton();
+
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
     window.customModeEnabled = false;
@@ -5768,6 +5843,11 @@ function startJapaneseCustomRun() {
     
     // Initialize the first round
     initializeJapaneseCustomRound();
+    
+    // Show the new back button for Japanese custom mode
+    if (window.updateNewBackButtonVisibility) {
+        window.updateNewBackButtonVisibility();
+    }
 }
 
 function initializeJapaneseCustomRound() {
@@ -7699,6 +7779,11 @@ function startCustomGame() {
     
     // Update next round button visibility for English custom mode
     updateEnglishCustomNextRoundButtonVisibility();
+    
+    // Show the new back button for custom mode
+    if (window.updateNewBackButtonVisibility) {
+        window.updateNewBackButtonVisibility();
+    }
 }
 
 // Dedicated function to update next round button visibility for English custom mode
