@@ -2498,21 +2498,9 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
-    // If in custom mode, go back to word selection, otherwise go to word entry selection
-    if (window.customModeEnabled) {
-        console.log('Going to custom mode page');
-        showPage('custom-mode');
-    } else {
-        console.log('Not in custom mode, checking word entry flag');
-        // Check if we came from word entry selection
-        if (window.cameFromWordEntry) {
-            console.log('Going to word entry selection page');
-            showPage('word-entry-selection');
-        } else {
-            console.log('Going to start page');
-            showPage('start');
-        }
-    }
+    // AGGRESSIVE FIX: Always go to custom mode page directly (like customHiraganaBtn)
+    console.log('Going to custom mode page directly (bypassing mode checks)');
+    showPage('custom-mode');
 });
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
     // Reset custom mode variables when leaving custom mode
@@ -2951,6 +2939,7 @@ function showPage(pageName) {
             japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
             japaneseCustomWordPools: !!window.japaneseCustomWordPools
         });
+        console.log('Call stack for showPage custom-mode:', new Error().stack);
         initializeCustomMode();
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
