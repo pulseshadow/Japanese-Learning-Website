@@ -2498,10 +2498,13 @@ backToScriptBtn.addEventListener('click', () => {
         // Auto-select the appropriate script mode
         setTimeout(() => {
             if (selectedScriptMode === 'hiragana') {
-                customHiraganaBtn.click();
+                // Manually trigger the same action as clicking the hiragana button
+                selectedScriptMode = 'hiragana';
+                showPage('custom-mode');
             } else if (selectedScriptMode === 'katakana') {
-                // When katakana is implemented, add: customKatakanaBtn.click();
-                customHiraganaBtn.click(); // Fallback to hiragana for now
+                // When katakana is implemented, manually trigger katakana selection
+                selectedScriptMode = 'hiragana'; // Fallback to hiragana for now
+                showPage('custom-mode');
             }
         }, 100);
     } else {
@@ -2604,10 +2607,13 @@ backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
     // Auto-select the appropriate script mode
     setTimeout(() => {
         if (selectedScriptMode === 'hiragana') {
-            japaneseHiraganaBtn.click();
+            // Manually trigger the same action as clicking the hiragana button
+            selectedScriptMode = 'hiragana';
+            showPage('japanese-custom-mode');
         } else if (selectedScriptMode === 'katakana') {
-            // When katakana is implemented, add: japaneseKatakanaBtn.click();
-            japaneseHiraganaBtn.click(); // Fallback to hiragana for now
+            // When katakana is implemented, manually trigger katakana selection
+            selectedScriptMode = 'hiragana'; // Fallback to hiragana for now
+            showPage('japanese-custom-mode');
         }
     }, 100);
 });
