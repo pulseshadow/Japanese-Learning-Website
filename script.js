@@ -2482,20 +2482,34 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 backToScriptBtn.addEventListener('click', () => {
+    console.log('Back button clicked. Current state:', {
+        mirroredMode: window.mirroredMode,
+        customModeEnabled: window.customModeEnabled,
+        japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+        customWordPools: !!window.customWordPools,
+        japaneseCustomWordPools: !!window.japaneseCustomWordPools,
+        cameFromWordEntry: window.cameFromWordEntry
+    });
+    
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
+        console.log('Going to Japanese script page');
         showPage('japanese-script');
         return;
     }
     
     // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
+        console.log('Going to custom mode page');
         showPage('custom-mode');
     } else {
+        console.log('Not in custom mode, checking word entry flag');
         // Check if we came from word entry selection
         if (window.cameFromWordEntry) {
+            console.log('Going to word entry selection page');
             showPage('word-entry-selection');
         } else {
+            console.log('Going to start page');
             showPage('start');
         }
     }
@@ -2931,6 +2945,12 @@ function showPage(pageName) {
         customModePage.classList.add('active');
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
+        console.log('Custom mode state before initialization:', {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: !!window.customWordPools,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: !!window.japaneseCustomWordPools
+        });
         initializeCustomMode();
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
@@ -7045,7 +7065,10 @@ function populateWordSelectionGrid(roundNumber) {
     grid.innerHTML = '';
     
     // Get all words from the word pools, organized by introduction rounds
+    console.log(`Populating word selection grid for round ${roundNumber}`);
+    console.log('wordPools available:', !!wordPools);
     const allWords = getAllWordsByRound();
+    console.log(`Found ${allWords.length} word groups for round ${roundNumber}`);
     
     allWords.forEach((wordGroup, roundIndex) => {
         // Create collapsible section for each round
@@ -7209,13 +7232,20 @@ function populateWordSelectionGrids() {
 function getAllWordsByRound() {
     const wordsByRound = [];
     
+    console.log('getAllWordsByRound called, wordPools available:', !!wordPools);
+    if (wordPools) {
+        console.log('wordPools keys:', Object.keys(wordPools));
+    }
+    
     // Add words from each introduction round
     for (let i = 1; i <= 18; i += 2) { // Odd numbers are introduction rounds
         if (wordPools[i]) {
             wordsByRound.push(wordPools[i]);
+            console.log(`Added word group ${i} with ${wordPools[i].length} words`);
         }
     }
     
+    console.log(`getAllWordsByRound returning ${wordsByRound.length} word groups`);
     return wordsByRound;
 }
 
@@ -8240,6 +8270,7 @@ function saveCustomRounds() {
 
 function loadCustomRounds() {
     console.log('=== LOAD CUSTOM ROUNDS CALLED ===');
+    console.log('Call stack:', new Error().stack);
     const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
     console.log('Loaded custom data:', customData);
     
@@ -8353,6 +8384,10 @@ function loadCustomRounds() {
         window.customModeEnabled = true;
         
         console.log('Custom mode enabled with word pools:', customWordPools);
+        console.log('Custom mode variables set:', {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: !!window.customWordPools
+        });
         
         return true;
     }
@@ -8361,6 +8396,8 @@ function loadCustomRounds() {
 
 function restoreCustomRoundsState() {
     console.log('=== RESTORE CUSTOM ROUNDS STATE CALLED ===');
+    console.log('Call stack:', new Error().stack);
+    console.log('Saved data available:', !!window.savedCustomRoundsData);
     if (!window.savedCustomRoundsData || !window.savedCustomRoundsData.rounds) {
         console.log('No saved custom rounds data to restore');
         return;
@@ -8375,6 +8412,7 @@ function restoreCustomRoundsState() {
         if (!round) return;
         
         // Restore checked words
+        console.log(`Restoring ${roundData.checkedWords.length} checked words for round ${roundNumber}`);
         roundData.checkedWords.forEach(word => {
             const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
             if (checkbox) {
@@ -8382,6 +8420,7 @@ function restoreCustomRoundsState() {
                 console.log(`Restored checkbox for: ${word.japanese} - ${word.english}`);
             } else {
                 console.log(`Could not find checkbox for: ${word.japanese} - ${word.english}`);
+                console.log('Available checkboxes in round:', round.querySelectorAll('input[type="checkbox"]').length);
             }
         });
         
