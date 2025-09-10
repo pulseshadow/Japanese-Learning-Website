@@ -4670,7 +4670,6 @@ function nextJapaneseCustomRound() {
 // Japanese Custom Mode Functions
 function initializeJapaneseCustomMode() {
     console.log('=== INITIALIZE JAPANESE CUSTOM MODE CALLED ===');
-    console.log('Initializing Japanese custom mode');
     
     // CRITICAL: Check for saved data first - page cannot load without this check
     const hasSavedData = checkAndLoadJapaneseCustomData();
@@ -4962,6 +4961,9 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     // Set up custom word buttons for this round
     setupJapaneseCustomWordButtonsForRound(roundNumber);
+    
+    // Save the new structure
+    saveJapaneseCustomRounds();
     
     console.log(`Japanese custom round ${roundNumber} added successfully`);
 }
@@ -5813,6 +5815,9 @@ function restoreJapaneseCustomRoundsState() {
 
 function startJapaneseCustomRun() {
     console.log('Starting Japanese custom run');
+    
+    // Save current state before starting
+    saveJapaneseCustomRounds();
     
     // Check if we have any rounds with words
     if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
@@ -7502,6 +7507,9 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     
     // Add to the end of the grid
     grid.appendChild(wordItem);
+    
+    // Save custom rounds to local storage
+    saveCustomRounds();
 }
 
 function addCustomRound() {
