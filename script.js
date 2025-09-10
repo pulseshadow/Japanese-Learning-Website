@@ -2528,33 +2528,12 @@ function createNewBackButton() {
     // Add the button to the game page
     gamePage.appendChild(newBackBtn);
     
-    // Add event listener with guaranteed data loading
+    // Add event listener - TROUBLESHOOTING: Go to start page
     newBackBtn.addEventListener('click', () => {
-        console.log('NEW BACK BUTTON CLICKED - GUARANTEED DATA LOADING');
+        console.log('NEW BACK BUTTON CLICKED - TROUBLESHOOTING: Going to start page');
         
-        // Force clear any existing custom mode state
-        console.log('Clearing existing custom mode state');
-        window.customModeEnabled = false;
-        window.customWordPools = null;
-        window.japaneseCustomModeEnabled = false;
-        window.japaneseCustomWordPools = null;
-        
-        // Force reload custom mode data
-        console.log('Force reloading custom mode data');
-        
-        // Clear any existing rounds
-        const existingRounds = document.querySelectorAll('.custom-round');
-        existingRounds.forEach(round => round.remove());
-        
-        // Force load and initialize custom mode
-        console.log('Calling initializeCustomMode with force reload');
-        showPage('custom-mode');
-        
-        // Add a small delay to ensure DOM is ready, then force reload
-        setTimeout(() => {
-            console.log('Force reloading after delay');
-            initializeCustomMode();
-        }, 100);
+        // Simply go to start page for troubleshooting
+        showPage('start');
     });
     
     // Initially hide the button
