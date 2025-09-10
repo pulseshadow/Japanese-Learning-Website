@@ -2485,6 +2485,10 @@ backToScriptBtn.addEventListener('click', () => {
     // If in Japanese custom mode, go back to Japanese custom mode word selection
     if (window.mirroredMode && window.japaneseCustomModeEnabled) {
         showPage('japanese-custom-mode');
+        // Ensure data is loaded when returning to word selection
+        setTimeout(() => {
+            initializeJapaneseCustomMode();
+        }, 100);
         return;
     }
     
@@ -2497,6 +2501,10 @@ backToScriptBtn.addEventListener('click', () => {
     // If in English custom mode, go back to word selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
+        // Ensure data is loaded when returning to word selection
+        setTimeout(() => {
+            initializeCustomMode();
+        }, 100);
     } else {
         // Check if we came from word entry selection
         if (window.cameFromWordEntry) {
@@ -2937,7 +2945,10 @@ function showPage(pageName) {
         customModePage.classList.add('active');
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
-        initializeCustomMode();
+        // Add a small delay to ensure DOM is ready
+        setTimeout(() => {
+            initializeCustomMode();
+        }, 50);
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -2945,7 +2956,10 @@ function showPage(pageName) {
         japaneseCustomModePage.classList.add('active');
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
-        initializeJapaneseCustomMode();
+        // Add a small delay to ensure DOM is ready
+        setTimeout(() => {
+            initializeJapaneseCustomMode();
+        }, 50);
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
