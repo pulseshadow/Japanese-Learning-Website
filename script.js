@@ -5602,7 +5602,8 @@ function loadJapaneseCustomRounds() {
         });
         
         window.japaneseCustomWordPools = wordPools;
-        console.log('Japanese custom word pools loaded:', wordPools);
+        window.japaneseCustomModeEnabled = true;
+        console.log('Japanese custom mode enabled with word pools:', wordPools);
         
         return true;
         
@@ -8320,6 +8321,38 @@ function loadCustomRounds() {
                 disablePracticeRoundsToggle.checked = customData.noPracticeRounds;
             }
         }
+        
+        // Create word pools for game play (same as in startCustomRun)
+        const customWordPools = [];
+        customData.rounds.forEach(roundData => {
+            const selectedWords = [];
+            
+            // Add checked words from word pools
+            roundData.checkedWords.forEach(word => {
+                selectedWords.push({
+                    japanese: word.japanese,
+                    english: word.english
+                });
+            });
+            
+            // Add custom words
+            roundData.customWords.forEach(customWord => {
+                selectedWords.push({
+                    japanese: customWord.japanese,
+                    english: customWord.english
+                });
+            });
+            
+            if (selectedWords.length > 0) {
+                customWordPools.push(selectedWords);
+            }
+        });
+        
+        // Set the custom word pools and enable custom mode
+        window.customWordPools = customWordPools;
+        window.customModeEnabled = true;
+        
+        console.log('Custom mode enabled with word pools:', customWordPools);
         
         return true;
     }
