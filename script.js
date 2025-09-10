@@ -5543,12 +5543,14 @@ function saveJapaneseCustomRounds() {
             };
             
             // Get checked words
-            const wordCheckboxes = round.querySelectorAll('.word-checkbox:checked');
+            const wordCheckboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
             wordCheckboxes.forEach(checkbox => {
-                roundData.checkedWords.push({
-                    word: checkbox.dataset.word,
-                    section: parseInt(checkbox.dataset.section)
-                });
+                if (checkbox.dataset.japanese && checkbox.dataset.section) {
+                    roundData.checkedWords.push({
+                        word: checkbox.dataset.japanese,
+                        section: parseInt(checkbox.dataset.section)
+                    });
+                }
             });
             
             // Get custom words from input rows (unsubmitted)
@@ -5560,7 +5562,8 @@ function saveJapaneseCustomRounds() {
                 if (japaneseInput.value.trim() && englishInput.value.trim()) {
                     roundData.customWords.push({
                         japanese: japaneseInput.value.trim(),
-                        english: englishInput.value.trim()
+                        english: englishInput.value.trim(),
+                        isInputRow: true
                     });
                 }
             });
@@ -5572,7 +5575,8 @@ function saveJapaneseCustomRounds() {
                     roundData.customWords.push({
                         japanese: checkbox.dataset.japanese,
                         english: checkbox.dataset.english,
-                        checked: checkbox.checked
+                        checked: checkbox.checked,
+                        isInputRow: false
                     });
                 }
             });
@@ -5725,35 +5729,79 @@ function restoreJapaneseCustomRoundsState() {
         }
         
         const customData = window.savedJapaneseCustomRoundsData;
+        console.log('Restoring data:', customData);
         
-        customData.rounds.forEach(roundData => {
-            const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundData.roundNumber}"]`);
-            if (!round) return;
+        // First, populate all the word grids
+        populateJapaneseWordSelectionGrids();
+        setupJapaneseCustomWordButtons();
+        
+        // Then restore each round's state
+        customData.rounds.forEach((roundData, index) => {
+            const roundNumber = index + 1;
+            console.log(`Restoring round ${roundNumber}:`, roundData);
             
-            // Restore checked words
+            const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`);
+            if (!round) {
+                console.error(`Round ${roundNumber} not found in DOM`);
+                return;
+            }
+            
+            // 1. Restore round dropdown state
+            const roundContent = round.querySelector('.custom-round-content');
+            const collapseBtn = round.querySelector('.collapse-btn');
+            if (roundContent && collapseBtn) {
+                if (roundData.isOpen) {
+                    console.log(`Opening round ${roundNumber} dropdown`);
+                    roundContent.style.display = 'block';
+                    roundContent.classList.remove('collapsed');
+                    collapseBtn.textContent = '▼';
+                    collapseBtn.classList.remove('rotated');
+                } else {
+                    console.log(`Keeping round ${roundNumber} dropdown closed`);
+                    roundContent.style.display = 'none';
+                    roundContent.classList.add('collapsed');
+                    collapseBtn.textContent = '▶';
+                    collapseBtn.classList.add('rotated');
+                }
+            }
+            
+            // 2. Restore word section states and selected words
             roundData.checkedWords.forEach(checkedWord => {
-                const checkbox = round.querySelector(`#japanese-word-${roundData.roundNumber}-${checkedWord.section}-${checkedWord.word}`);
+                console.log(`Restoring checked word: section ${checkedWord.section}, word ${checkedWord.word}`);
+                
+                // First, make sure the section is open
+                const section = round.querySelector(`.word-section:nth-child(${checkedWord.section + 1})`);
+                if (section) {
+                    section.classList.remove('collapsed');
+                    const wordContent = section.querySelector('.word-section-content');
+                    const button = section.querySelector('.collapse-btn');
+                    if (wordContent && button) {
+                        wordContent.style.display = 'block';
+                        button.textContent = '▼';
+                    }
+                }
+                
+                // Then find and check the specific word
+                const checkbox = round.querySelector(`input[data-japanese="${checkedWord.word}"][data-section="${checkedWord.section}"]`);
                 if (checkbox) {
+                    console.log(`Found and checking word: ${checkedWord.word}`);
                     checkbox.checked = true;
-                    updateJapaneseSelectAllState(roundData.roundNumber, checkedWord.section);
+                    updateJapaneseSelectAllState(roundNumber, checkedWord.section);
+                } else {
+                    console.warn(`Could not find checkbox for word: ${checkedWord.word} in section ${checkedWord.section}`);
                 }
             });
             
-            // Restore custom words
+            // 3. Restore custom words
             roundData.customWords.forEach(customWord => {
-                if (customWord.checked !== undefined) {
-                    // This is a checkbox item (submitted custom word)
-                    addJapaneseCustomWordToGrid(round, customWord.japanese, customWord.english);
-                    // Set the checkbox state
-                    const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
-                    if (customCheckbox) {
-                        customCheckbox.checked = customWord.checked;
-                    }
-                } else {
+                console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english}`);
+                
+                if (customWord.isInputRow) {
                     // This is an input row (unsubmitted custom word)
-                    addJapaneseCustomWordToRound(roundData.roundNumber);
+                    console.log(`Creating input row for: ${customWord.japanese} - ${customWord.english}`);
+                    addJapaneseCustomWordToRound(roundNumber);
                     
-                    // Set the values
+                    // Set the values in the last created input row
                     const customWordRows = round.querySelectorAll('.custom-word-input-row');
                     const lastRow = customWordRows[customWordRows.length - 1];
                     if (lastRow) {
@@ -5763,50 +5811,28 @@ function restoreJapaneseCustomRoundsState() {
                         if (japaneseInput && englishInput) {
                             japaneseInput.value = customWord.japanese;
                             englishInput.value = customWord.english;
+                            console.log(`Set input values: ${customWord.japanese} - ${customWord.english}`);
                         }
                     }
-                }
-            });
-            
-            // Restore main round dropdown state
-            if (roundData.isOpen !== undefined) {
-                const roundContent = round.querySelector('.custom-round-content');
-                const collapseBtn = round.querySelector('.collapse-btn');
-                if (roundContent && collapseBtn) {
-                    if (roundData.isOpen) {
-                        roundContent.classList.remove('collapsed');
-                        collapseBtn.textContent = '▼';
-                        collapseBtn.classList.remove('rotated');
-                    } else {
-                        roundContent.classList.add('collapsed');
-                        collapseBtn.textContent = '▶';
-                        collapseBtn.classList.add('rotated');
-                    }
-                    console.log(`Restored Japanese round ${roundData.roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
-                }
-            }
-            
-            // Restore open sections
-            roundData.openSections.forEach(sectionIndex => {
-                const section = round.querySelector(`.word-section-container:nth-child(${sectionIndex + 1})`);
-                if (section) {
-                    const grid = section.querySelector('.word-grid');
-                    const button = section.querySelector('.collapse-btn');
+                } else {
+                    // This is a checkbox item (submitted custom word)
+                    console.log(`Creating checkbox item for: ${customWord.japanese} - ${customWord.english}`);
+                    addJapaneseCustomWordToGrid(round, customWord.japanese, customWord.english);
                     
-                    if (grid && button) {
-                        grid.style.display = 'block';
-                        section.classList.remove('collapsed');
-                        button.textContent = '▼';
-                        button.classList.remove('rotated');
+                    // Set the checkbox state
+                    const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
+                    if (customCheckbox) {
+                        customCheckbox.checked = customWord.checked || false;
+                        console.log(`Set checkbox state for ${customWord.japanese}: ${customCheckbox.checked}`);
                     }
                 }
             });
         });
         
-        console.log('Japanese custom rounds state restored successfully');
-        
-        // Clear the saved data from memory (same as English mode)
+        // Clean up memory
         delete window.savedJapaneseCustomRoundsData;
+        
+        console.log('Japanese custom rounds state restored successfully');
         
     } catch (error) {
         console.error('Error restoring Japanese custom rounds state:', error);
@@ -8350,8 +8376,8 @@ function saveCustomRounds() {
             isOpen: !round.querySelector('.custom-round-content').classList.contains('collapsed')
         };
         
-        // Save checked words
-        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
+        // Save checked words (exclude select-all checkboxes)
+        const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
         checkboxes.forEach(checkbox => {
             if (checkbox.dataset.japanese && checkbox.dataset.english) {
                 roundData.checkedWords.push({
@@ -8361,7 +8387,22 @@ function saveCustomRounds() {
             }
         });
         
-        // Save custom words
+        // Save custom words from input rows (unsubmitted)
+        const customWordRows = round.querySelectorAll('.custom-word-input-row');
+        customWordRows.forEach(row => {
+            const japaneseInput = row.querySelector('.japanese-input');
+            const englishInput = row.querySelector('.english-input');
+            
+            if (japaneseInput && englishInput && japaneseInput.value.trim() && englishInput.value.trim()) {
+                roundData.customWords.push({
+                    japanese: japaneseInput.value.trim(),
+                    english: englishInput.value.trim(),
+                    isInputRow: true
+                });
+            }
+        });
+        
+        // Save custom words from checkbox items (submitted)
         const customWordItems = round.querySelectorAll('.custom-word-item');
         customWordItems.forEach(item => {
             const checkbox = item.querySelector('input[type="checkbox"]');
@@ -8369,7 +8410,8 @@ function saveCustomRounds() {
                 roundData.customWords.push({
                     japanese: checkbox.dataset.japanese,
                     english: checkbox.dataset.english,
-                    checked: checkbox.checked
+                    checked: checkbox.checked,
+                    isInputRow: false
                 });
             }
         });
@@ -8506,72 +8548,102 @@ function restoreCustomRoundsState() {
         return;
     }
     
-    console.log('Restoring custom rounds state:', window.savedCustomRoundsData);
+    const customData = window.savedCustomRoundsData;
+    console.log('Restoring data:', customData);
     
-    // Restore the state for each round
-    window.savedCustomRoundsData.rounds.forEach(roundData => {
-        const roundNumber = roundData.roundNumber;
+    // First, populate all the word grids
+    populateWordSelectionGrids();
+    setupCustomWordButtons();
+    
+    // Then restore each round's state
+    customData.rounds.forEach((roundData, index) => {
+        const roundNumber = index + 1;
+        console.log(`Restoring round ${roundNumber}:`, roundData);
+        
         const round = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-        if (!round) return;
+        if (!round) {
+            console.error(`Round ${roundNumber} not found in DOM`);
+            return;
+        }
         
-        // Restore checked words
-        roundData.checkedWords.forEach(word => {
-            const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
-            if (checkbox) {
-                checkbox.checked = true;
-                console.log(`Restored checkbox for: ${word.japanese} - ${word.english}`);
+        // 1. Restore round dropdown state
+        const roundContent = round.querySelector('.custom-round-content');
+        const collapseBtn = round.querySelector('.collapse-btn');
+        if (roundContent && collapseBtn) {
+            if (roundData.isOpen) {
+                console.log(`Opening round ${roundNumber} dropdown`);
+                roundContent.style.display = 'block';
+                roundContent.classList.remove('collapsed');
+                collapseBtn.textContent = '▼';
+                collapseBtn.classList.remove('rotated');
             } else {
-                console.log(`Could not find checkbox for: ${word.japanese} - ${word.english}`);
-            }
-        });
-        
-        // Restore custom words
-        roundData.customWords.forEach(customWord => {
-            console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english} (checked: ${customWord.checked})`);
-            addCustomWordToRound(round, customWord.japanese, customWord.english);
-            // Set the checkbox state for custom words
-            const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
-            if (customCheckbox) {
-                customCheckbox.checked = customWord.checked;
-                console.log(`Restored custom word checkbox: ${customWord.japanese} - ${customWord.english}`);
-            } else {
-                console.warn(`Could not find custom word checkbox for: ${customWord.japanese} - ${customWord.english}`);
-            }
-        });
-        
-        // Restore main round dropdown state
-        if (roundData.isOpen !== undefined) {
-            const roundContent = round.querySelector('.custom-round-content');
-            const collapseBtn = round.querySelector('.collapse-btn');
-            if (roundContent && collapseBtn) {
-                if (roundData.isOpen) {
-                    roundContent.classList.remove('collapsed');
-                    collapseBtn.textContent = '▼';
-                    collapseBtn.classList.remove('rotated');
-                } else {
-                    roundContent.classList.add('collapsed');
-                    collapseBtn.textContent = '▲';
-                    collapseBtn.classList.add('rotated');
-                }
-                console.log(`Restored round ${roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
+                console.log(`Keeping round ${roundNumber} dropdown closed`);
+                roundContent.style.display = 'none';
+                roundContent.classList.add('collapsed');
+                collapseBtn.textContent = '▲';
+                collapseBtn.classList.add('rotated');
             }
         }
         
-        // Restore open sections
-        roundData.openSections.forEach(sectionId => {
-            const section = round.querySelector(`#${sectionId}`);
-            if (section) {
-                section.classList.remove('collapsed');
-                const button = section.previousElementSibling.querySelector('.collapse-btn');
-                if (button) {
-                    button.textContent = '▲';
-                    button.classList.add('rotated');
-                    console.log(`Restored open section: ${sectionId}`);
-                } else {
-                    console.warn(`Could not find collapse button for section: ${sectionId}`);
+        // 2. Restore word section states and selected words
+        roundData.checkedWords.forEach(checkedWord => {
+            console.log(`Restoring checked word: ${checkedWord.japanese} - ${checkedWord.english}`);
+            
+            // Find and check the specific word
+            const checkbox = round.querySelector(`input[data-japanese="${checkedWord.japanese}"][data-english="${checkedWord.english}"]`);
+            if (checkbox) {
+                console.log(`Found and checking word: ${checkedWord.japanese} - ${checkedWord.english}`);
+                checkbox.checked = true;
+                
+                // Make sure the section containing this word is open
+                const section = checkbox.closest('.word-section');
+                if (section) {
+                    section.classList.remove('collapsed');
+                    const wordContent = section.querySelector('.word-section-content');
+                    const button = section.querySelector('.collapse-btn');
+                    if (wordContent && button) {
+                        wordContent.style.display = 'block';
+                        button.textContent = '▼';
+                    }
                 }
             } else {
-                console.warn(`Could not find section to restore: ${sectionId}`);
+                console.warn(`Could not find checkbox for word: ${checkedWord.japanese} - ${checkedWord.english}`);
+            }
+        });
+        
+        // 3. Restore custom words
+        roundData.customWords.forEach(customWord => {
+            console.log(`Restoring custom word: ${customWord.japanese} - ${customWord.english}`);
+            
+            if (customWord.isInputRow) {
+                // This is an input row (unsubmitted custom word)
+                console.log(`Creating input row for: ${customWord.japanese} - ${customWord.english}`);
+                addCustomWordToRound(round, customWord.japanese, customWord.english);
+                
+                // Set the values in the last created input row
+                const customWordRows = round.querySelectorAll('.custom-word-input-row');
+                const lastRow = customWordRows[customWordRows.length - 1];
+                if (lastRow) {
+                    const japaneseInput = lastRow.querySelector('.japanese-input');
+                    const englishInput = lastRow.querySelector('.english-input');
+                    
+                    if (japaneseInput && englishInput) {
+                        japaneseInput.value = customWord.japanese;
+                        englishInput.value = customWord.english;
+                        console.log(`Set input values: ${customWord.japanese} - ${customWord.english}`);
+                    }
+                }
+            } else {
+                // This is a checkbox item (submitted custom word)
+                console.log(`Creating checkbox item for: ${customWord.japanese} - ${customWord.english}`);
+                addCustomWordToGrid(round, customWord.japanese, customWord.english);
+                
+                // Set the checkbox state
+                const customCheckbox = round.querySelector(`input[data-japanese="${customWord.japanese}"][data-english="${customWord.english}"]`);
+                if (customCheckbox) {
+                    customCheckbox.checked = customWord.checked || false;
+                    console.log(`Set checkbox state for ${customWord.japanese}: ${customCheckbox.checked}`);
+                }
             }
         });
     });
@@ -8581,6 +8653,8 @@ function restoreCustomRoundsState() {
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
+    
+    console.log('Custom rounds state restored successfully');
 }
 
 // Debug function to help troubleshoot custom rounds issues
