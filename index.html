@@ -8,9 +8,20 @@
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
      crossorigin="anonymous"></script>
 </head>
-<body>
-    <div id="app">
-        <!-- Settings and Language Controls -->
+  <body>
+      <div id="app">
+          <!-- PERSISTENT DEBUG POPUP -->
+          <div id="persistent-debug-popup" style="position: fixed; top: 10px; right: 10px; width: 400px; max-height: 80vh; background: #ffeb3b; color: #000; padding: 15px; border: 3px solid #f57f17; font-family: monospace; font-size: 11px; white-space: pre-wrap; overflow-y: auto; z-index: 10000; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #f57f17; padding-bottom: 5px;">
+                  <strong style="font-size: 14px;">🔍 DEBUG PANEL</strong>
+                  <button id="toggle-debug-popup" style="background: #f57f17; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;">HIDE</button>
+              </div>
+              <div id="debug-content">
+                  Loading debug info...
+              </div>
+          </div>
+          
+          <!-- Settings and Language Controls -->
         <div class="top-controls">
             <div class="settings-container">
                 <button id="settings-btn" class="settings-btn" title="Settings">
@@ -579,10 +590,6 @@
                 <div class="text-box-header">
                     <h2 class="subtitle" data-en="Custom Mode (Japanese→English)" data-es="Modo Personalizado (Japonés→Inglés)" data-fr="Mode Personnalisé (Japonais→Anglais)" data-ja="カスタムモード (日本語→英語)" data-zh="自定义模式 (日语→英语)" data-id="Mode Kustom (Jepang→Inggris)" data-ko="사용자 정의 모드 (일본어→영어)" data-vi="Chế độ Tùy chỉnh (Tiếng Nhật→Tiếng Anh)">Custom Mode (Japanese→English)</h2>
                 </div>
-                <!-- DEBUG DISPLAY -->
-                <div id="custom-mode-debug" style="background: #ffeb3b; color: #000; padding: 10px; margin: 10px 0; border: 2px solid #f57f17; font-family: monospace; font-size: 12px; white-space: pre-wrap;">
-                    DEBUG: Loading...
-                </div>
                 <div class="text-box-content">
                     <p class="body-text" data-en="Create your own custom rounds by selecting words from the word pools and adding your own custom words.<br>In this mode, you'll see Japanese words as questions and need to type English words as answers." data-es="Crea tus propias rondas personalizadas seleccionando palabras de los grupos de palabras y agregando tus propias palabras personalizadas.<br>En este modo, verás palabras japonesas como preguntas y necesitarás escribir palabras en inglés como respuestas." data-fr="Créez vos propres rounds personnalisés en sélectionnant des mots dans les groupes de mots et en ajoutant vos propres mots personnalisés.<br>Dans ce mode, vous verrez des mots japonais comme questions et devrez taper des mots anglais comme réponses." data-ja="単語プールから単語を選択し、独自のカスタム単語を追加して、独自のカスタムラウンドを作成します。<br>このモードでは、日本語の単語が質問として表示され、英語の単語を答えとして入力する必要があります。" data-zh="通过从单词池中选择单词并添加您自己的自定义单词来创建您自己的自定义轮次。<br>在此模式下，您将看到日语单词作为问题，需要输入英语单词作为答案。" data-id="Buat ronde kustom Anda sendiri dengan memilih kata-kata dari kolom kata dan menambahkan kata-kata kustom Anda sendiri.<br>Dalam mode ini, Anda akan melihat kata-kata dalam bahasa Jepang sebagai pertanyaan dan perlu mengetik kata-kata dalam bahasa Inggris sebagai jawaban." data-ko="단어 풀에서 단어를 선택하고 자신만의 맞춤형 단어를 추가하여 자신만의 맞춤형 라운드를 만드세요.<br>이 모드에서는 일본어 단어가 질문으로 표시되고 영어 단어를 답으로 입력해야 합니다." data-vi="Tạo các vòng tùy chỉnh của riêng bạn bằng cách chọn từ từ các nhóm từ và thêm từ tùy chỉnh của riêng bạn.<br>Trong chế độ này, bạn sẽ thấy từ tiếng Nhật làm câu hỏi và cần nhập từ tiếng Anh làm câu trả lời.">
                         Create your own custom rounds by selecting words from the word pools and adding your own custom words.<br>In this mode, you'll see Japanese words as questions and need to type English words as answers.
@@ -662,10 +669,6 @@
             <div class="text-box">
                 <div class="text-box-header">
                     <h2 class="subtitle" data-en="Custom Mode (English→Japanese)" data-es="Modo Personalizado (Inglés→Japonés)" data-fr="Mode Personnalisé (Anglais→Japonais)" data-ja="カスタムモード (英語→日本語)" data-zh="自定义模式 (英语→日语)" data-id="Mode Kustom (Inggris→Jepang)" data-ko="사용자 정의 모드 (영어→일본어)" data-vi="Chế độ Tùy chỉnh (Tiếng Anh→Tiếng Nhật)">Custom Mode (English→Japanese)</h2>
-                </div>
-                <!-- DEBUG DISPLAY -->
-                <div id="japanese-custom-mode-debug" style="background: #ffeb3b; color: #000; padding: 10px; margin: 10px 0; border: 2px solid #f57f17; font-family: monospace; font-size: 12px; white-space: pre-wrap;">
-                    DEBUG: Loading...
                 </div>
                 <div class="text-box-content">
                     <p class="body-text" data-en="Create your own custom rounds by selecting words from the word pools and adding your own custom words.<br>In this mode, you'll see English words as questions and need to type Japanese characters as answers." data-es="Crea tus propias rondas personalizadas seleccionando palabras de los grupos de palabras y agregando tus propias palabras personalizadas.<br>En este modo, verás palabras en inglés como preguntas y necesitarás escribir caracteres japoneses como respuestas." data-fr="Créez vos propres rounds personnalisés en sélectionnant des mots dans les groupes de mots et en ajoutant vos propres mots personnalisés.<br>Dans ce mode, vous verrez des mots anglais comme questions et devrez taper des caractères japonais comme réponses." data-ja="単語プールから単語を選択し、独自のカスタム単語を追加して、独自のカスタムラウンドを作成します。<br>このモードでは、英語の単語が質問として表示され、日本語の文字を答えとして入力する必要があります。" data-zh="通过从单词池中选择单词并添加您自己的自定义单词来创建您自己的自定义轮次。<br>在此模式下，您将看到英语单词作为问题，需要输入日语字符作为答案。" data-id="Buat ronde kustom Anda sendiri dengan memilih kata-kata dari kolom kata dan menambahkan kata-kata kustom Anda sendiri.<br>Dalam mode ini, Anda akan melihat kata-kata dalam bahasa Inggris sebagai pertanyaan dan perlu mengetik karakter Jepang sebagai jawaban." data-ko="단어 풀에서 단語를 선택하고 자신만의 맞춤형 단어를 추가하여 자신만의 맞춤형 라운드를 만드세요.<br>이 모드에서는 영어 단어가 질문으로 표시되고 일본어 문자를 답으로 입력해야 합니다." data-vi="Tạo các vòng tùy chỉnh của riêng bạn bằng cách chọn từ từ các nhóm từ và thêm từ tùy chỉnh của riêng bạn.<br>Trong chế độ này, bạn sẽ thấy từ tiếng Anh làm câu hỏi và cần nhập ký tự tiếng Nhật làm câu trả lời.">
