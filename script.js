@@ -2919,11 +2919,21 @@ function showPage(pageName) {
         japaneseScriptPage.style.display = 'block';
         japaneseScriptPage.classList.add('active');
         console.log('Showing Japanese script page for mirrored mode');
+        // Clear debug interval when leaving Japanese custom mode
+        if (window.japaneseCustomModeDebugInterval) {
+            clearInterval(window.japaneseCustomModeDebugInterval);
+            window.japaneseCustomModeDebugInterval = null;
+        }
     } else if (pageName === 'custom-script') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
         customScriptPage.style.display = 'block';
         customScriptPage.classList.add('active');
+        // Clear debug interval when leaving custom mode
+        if (window.customModeDebugInterval) {
+            clearInterval(window.customModeDebugInterval);
+            window.customModeDebugInterval = null;
+        }
     } else if (pageName === 'custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -2932,6 +2942,15 @@ function showPage(pageName) {
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
         initializeCustomMode();
+        // Update debug display
+        setTimeout(() => {
+            updateCustomModeDebug();
+            // Set up periodic updates every 2 seconds
+            if (window.customModeDebugInterval) {
+                clearInterval(window.customModeDebugInterval);
+            }
+            window.customModeDebugInterval = setInterval(updateCustomModeDebug, 2000);
+        }, 200);
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -2940,6 +2959,15 @@ function showPage(pageName) {
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
         initializeJapaneseCustomMode();
+        // Update debug display
+        setTimeout(() => {
+            updateJapaneseCustomModeDebug();
+            // Set up periodic updates every 2 seconds
+            if (window.japaneseCustomModeDebugInterval) {
+                clearInterval(window.japaneseCustomModeDebugInterval);
+            }
+            window.japaneseCustomModeDebugInterval = setInterval(updateJapaneseCustomModeDebug, 2000);
+        }, 200);
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -5491,6 +5519,11 @@ function saveJapaneseCustomRounds() {
         
         console.log('Japanese custom rounds saved successfully:', customData);
         
+        // Update debug display after saving
+        setTimeout(() => {
+            updateJapaneseCustomModeDebug();
+        }, 100);
+        
         // Also save the word pools for game play
         const wordPools = [];
         customData.rounds.forEach(roundData => {
@@ -5703,6 +5736,11 @@ function restoreJapaneseCustomRoundsState() {
         });
         
         console.log('Japanese custom rounds state restored successfully');
+        
+        // Update debug display after restoring
+        setTimeout(() => {
+            updateJapaneseCustomModeDebug();
+        }, 100);
         
         // Clear the saved data from memory (same as English mode)
         delete window.savedJapaneseCustomRoundsData;
@@ -6950,6 +6988,119 @@ function setupAutoPlayToggle() {
             console.log('Auto-play toggle changed to:', autoPlaySound);
             saveSettings();
         });
+    }
+}
+
+// Debug display functions
+function updateCustomModeDebug() {
+    const debugElement = document.getElementById('custom-mode-debug');
+    if (!debugElement) return;
+    
+    try {
+        // Get saved data from localStorage
+        const customData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        
+        // Get current DOM state
+        const rounds = document.querySelectorAll('.custom-round');
+        const checkedWords = document.querySelectorAll('.custom-round input[type="checkbox"]:checked');
+        const customWords = document.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
+        
+        // Get dropdown states
+        const openDropdowns = document.querySelectorAll('.custom-round-content:not(.collapsed)');
+        const closedDropdowns = document.querySelectorAll('.custom-round-content.collapsed');
+        
+        let debugInfo = `ENGLISH CUSTOM MODE DEBUG:
+=== SAVED DATA (localStorage) ===
+Rounds in localStorage: ${customData ? customData.rounds?.length || 0 : 0}
+Total checked words saved: ${customData ? customData.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) : 0}
+Total custom words saved: ${customData ? customData.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) : 0}
+No practice rounds: ${customData?.noPracticeRounds || false}
+Timestamp: ${customData?.timestamp ? new Date(customData.timestamp).toLocaleString() : 'N/A'}
+
+=== CURRENT DOM STATE ===
+Rounds in DOM: ${rounds.length}
+Checked words in DOM: ${checkedWords.length}
+Custom words checked in DOM: ${customWords.length}
+Open dropdowns: ${openDropdowns.length}
+Closed dropdowns: ${closedDropdowns.length}
+
+=== WINDOW VARIABLES ===
+customModeEnabled: ${window.customModeEnabled}
+customWordPools: ${window.customWordPools ? window.customWordPools.length + ' pools' : 'null'}
+customModeNoPracticeRounds: ${window.customModeNoPracticeRounds}
+
+=== ROUND DETAILS ===`;
+        
+        if (customData && customData.rounds) {
+            customData.rounds.forEach((round, index) => {
+                debugInfo += `
+Round ${round.roundNumber}:
+  - Checked words: ${round.checkedWords?.length || 0}
+  - Custom words: ${round.customWords?.length || 0}
+  - Is open: ${round.isOpen}
+  - Open sections: ${round.openSections?.length || 0}`;
+            });
+        }
+        
+        debugElement.textContent = debugInfo;
+    } catch (error) {
+        debugElement.textContent = `DEBUG ERROR: ${error.message}`;
+    }
+}
+
+function updateJapaneseCustomModeDebug() {
+    const debugElement = document.getElementById('japanese-custom-mode-debug');
+    if (!debugElement) return;
+    
+    try {
+        // Get saved data from localStorage
+        const customData = loadFromLocalStorage('japaneseCustomRounds', null);
+        
+        // Get current DOM state
+        const rounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+        const checkedWords = document.querySelectorAll('#japanese-custom-rounds-container input[type="checkbox"]:checked');
+        const customWords = document.querySelectorAll('#japanese-custom-rounds-container .custom-word-item input[type="checkbox"]:checked');
+        
+        // Get dropdown states
+        const openDropdowns = document.querySelectorAll('#japanese-custom-rounds-container .custom-round-content:not(.collapsed)');
+        const closedDropdowns = document.querySelectorAll('#japanese-custom-rounds-container .custom-round-content.collapsed');
+        
+        let debugInfo = `JAPANESE CUSTOM MODE DEBUG:
+=== SAVED DATA (localStorage) ===
+Rounds in localStorage: ${customData ? customData.rounds?.length || 0 : 0}
+Total checked words saved: ${customData ? customData.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) : 0}
+Total custom words saved: ${customData ? customData.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) : 0}
+No practice rounds: ${customData?.noPracticeRounds || false}
+Timestamp: ${customData?.timestamp ? new Date(customData.timestamp).toLocaleString() : 'N/A'}
+
+=== CURRENT DOM STATE ===
+Rounds in DOM: ${rounds.length}
+Checked words in DOM: ${checkedWords.length}
+Custom words checked in DOM: ${customWords.length}
+Open dropdowns: ${openDropdowns.length}
+Closed dropdowns: ${closedDropdowns.length}
+
+=== WINDOW VARIABLES ===
+japaneseCustomModeEnabled: ${window.japaneseCustomModeEnabled}
+japaneseCustomWordPools: ${window.japaneseCustomWordPools ? window.japaneseCustomWordPools.length + ' pools' : 'null'}
+japaneseCustomModeNoPracticeRounds: ${window.japaneseCustomModeNoPracticeRounds}
+
+=== ROUND DETAILS ===`;
+        
+        if (customData && customData.rounds) {
+            customData.rounds.forEach((round, index) => {
+                debugInfo += `
+Round ${round.roundNumber}:
+  - Checked words: ${round.checkedWords?.length || 0}
+  - Custom words: ${round.customWords?.length || 0}
+  - Is open: ${round.isOpen}
+  - Open sections: ${round.openSections?.length || 0}`;
+            });
+        }
+        
+        debugElement.textContent = debugInfo;
+    } catch (error) {
+        debugElement.textContent = `DEBUG ERROR: ${error.message}`;
     }
 }
 
@@ -8215,6 +8366,11 @@ function saveCustomRounds() {
         saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
         console.log('Custom rounds saved successfully:', customData);
         console.log(`Total data size: ${JSON.stringify(customData).length} characters`);
+        
+        // Update debug display after saving
+        setTimeout(() => {
+            updateCustomModeDebug();
+        }, 100);
     } catch (error) {
         console.error('Error saving custom rounds:', error);
         // Try to save a minimal version if the full save fails
@@ -8438,6 +8594,11 @@ function restoreCustomRoundsState() {
     
     // Update all select all states after restoration
     updateSelectAllState();
+    
+    // Update debug display after restoring
+    setTimeout(() => {
+        updateCustomModeDebug();
+    }, 100);
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
