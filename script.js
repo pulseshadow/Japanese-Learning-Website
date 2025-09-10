@@ -2482,10 +2482,8 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 backToScriptBtn.addEventListener('click', () => {
-    // If in Japanese custom mode, save data and go back to Japanese custom mode word selection
+    // If in Japanese custom mode, go back to Japanese custom mode word selection
     if (window.mirroredMode && window.japaneseCustomModeEnabled) {
-        console.log('Saving Japanese custom mode data before navigating back to word selection');
-        saveJapaneseCustomRounds();
         showPage('japanese-custom-mode');
         return;
     }
@@ -2496,10 +2494,8 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
-    // If in English custom mode, save data and go back to word selection
+    // If in English custom mode, go back to word selection
     if (window.customModeEnabled) {
-        console.log('Saving English custom mode data before navigating back to word selection');
-        saveCustomRounds();
         showPage('custom-mode');
     } else {
         // Check if we came from word entry selection
@@ -4661,11 +4657,6 @@ function nextJapaneseCustomRound() {
 function initializeJapaneseCustomMode() {
     console.log('=== INITIALIZE JAPANESE CUSTOM MODE CALLED ===');
     console.log('Initializing Japanese custom mode');
-    console.log('Current Japanese custom mode state:', {
-        japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
-        japaneseCustomWordPools: !!window.japaneseCustomWordPools,
-        savedJapaneseCustomRoundsData: !!window.savedJapaneseCustomRoundsData
-    });
     
     // Try to load saved Japanese custom rounds first
     const loaded = loadJapaneseCustomRounds();
@@ -7018,12 +7009,6 @@ function displayWordWithSound(word) {
 // Custom Mode Functions
 function initializeCustomMode() {
     console.log('=== INITIALIZE CUSTOM MODE CALLED ===');
-    console.log('Current custom mode state:', {
-        customModeEnabled: window.customModeEnabled,
-        customWordPools: !!window.customWordPools,
-        savedCustomRoundsData: !!window.savedCustomRoundsData
-    });
-    
     // Try to load saved custom rounds first
     const loaded = loadCustomRounds();
     console.log('Custom mode loaded result:', loaded);
@@ -7051,7 +7036,6 @@ function initializeCustomMode() {
     } else {
         // If data was loaded, restore the saved state after grids are populated
         console.log('Saved data found, restoring state');
-        console.log('Saved data details:', window.savedCustomRoundsData);
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreCustomRoundsState();
@@ -8353,11 +8337,6 @@ function loadCustomRounds() {
 
 function restoreCustomRoundsState() {
     console.log('=== RESTORE CUSTOM ROUNDS STATE CALLED ===');
-    console.log('Saved data available:', !!window.savedCustomRoundsData);
-    if (window.savedCustomRoundsData) {
-        console.log('Saved data rounds count:', window.savedCustomRoundsData.rounds ? window.savedCustomRoundsData.rounds.length : 'no rounds property');
-    }
-    
     if (!window.savedCustomRoundsData || !window.savedCustomRoundsData.rounds) {
         console.log('No saved custom rounds data to restore');
         return;
