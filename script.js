@@ -2482,12 +2482,6 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 backToScriptBtn.addEventListener('click', () => {
-    console.log('Back to script button clicked. Current state:', {
-        customModeEnabled: window.customModeEnabled,
-        mirroredMode: window.mirroredMode,
-        cameFromWordEntry: window.cameFromWordEntry
-    });
-    
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
         showPage('japanese-script');
@@ -2496,7 +2490,6 @@ backToScriptBtn.addEventListener('click', () => {
     
     // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
-        console.log('Going back to custom mode word selection');
         showPage('custom-mode');
     } else {
         // Check if we came from word entry selection
@@ -4670,11 +4663,13 @@ function initializeJapaneseCustomMode() {
         console.log('Has meaningful data:', hasMeaningfulData);
     }
     
+    // Always populate grids and setup buttons first
+    populateJapaneseWordSelectionGrids();
+    setupJapaneseCustomWordButtons();
+    
     if (!loaded || !hasMeaningfulData) {
-        // If no saved data or no meaningful data, populate grids and setup buttons first
+        // If no saved data or no meaningful data, ensure the first round is properly opened
         console.log('No meaningful data, ensuring first round is opened');
-        populateJapaneseWordSelectionGrids();
-        setupJapaneseCustomWordButtons();
         
         // Ensure the first round is properly opened (same as English custom mode)
         const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
@@ -4688,14 +4683,11 @@ function initializeJapaneseCustomMode() {
             }
         }
     } else {
-        // If meaningful data was loaded, restore the saved state first, then populate grids
+        // If meaningful data was loaded, restore the saved state after grids are populated
         console.log('Meaningful data was loaded, restoring state');
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreJapaneseCustomRoundsState();
-            // Populate grids after restoring state to avoid clearing custom words
-            populateJapaneseWordSelectionGrids();
-            setupJapaneseCustomWordButtons();
         }, 100);
     }
     
@@ -7012,11 +7004,13 @@ function initializeCustomMode() {
     const loaded = loadCustomRounds();
     console.log('Custom mode loaded result:', loaded);
     
+    // Always populate grids and setup buttons first
+    populateWordSelectionGrids();
+    setupCustomWordButtons();
+    
     if (!loaded) {
-        // If no saved data, populate grids and setup buttons, then create default round
+        // If no saved data, automatically add round 1 and open it
         console.log('No saved data, creating default round 1');
-        populateWordSelectionGrids();
-        setupCustomWordButtons();
         addCustomRound();
         
         // Open the first round dropdown
@@ -7031,14 +7025,11 @@ function initializeCustomMode() {
             }
         }
     } else {
-        // If data was loaded, restore the saved state first, then populate grids
+        // If data was loaded, restore the saved state after grids are populated
         console.log('Saved data found, restoring state');
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreCustomRoundsState();
-            // Populate grids after restoring state to avoid clearing custom words
-            populateWordSelectionGrids();
-            setupCustomWordButtons();
         }, 100);
     }
 }
