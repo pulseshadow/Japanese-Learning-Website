@@ -10,7 +10,6 @@ let allLearnedWords = []; // All words from previous introduction rounds
 let wordsWithPendingPoints = new Set(); // Track words that have pending points from incorrect answers
 let currentQuestionFailed = false; // Track if current question was answered incorrectly
 let eliminationWords = []; // Words for elimination phase (no repetition)
-let selectedScriptMode = 'hiragana'; // Track which script mode was selected
 
 // Settings and language variables
 let currentLanguage = 'en';
@@ -2472,10 +2471,7 @@ userStatsBtn.addEventListener('click', () => {
     showPage('stats');
     updateStatsDisplay();
 });
-customHiraganaBtn.addEventListener('click', () => {
-    selectedScriptMode = 'hiragana';
-    showPage('custom-mode');
-});
+customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => showPage('start'));
@@ -2486,27 +2482,22 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 backToScriptBtn.addEventListener('click', () => {
+    console.log('Back to script button clicked. Current state:', {
+        customModeEnabled: window.customModeEnabled,
+        mirroredMode: window.mirroredMode,
+        cameFromWordEntry: window.cameFromWordEntry
+    });
+    
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
         showPage('japanese-script');
         return;
     }
     
-    // If in custom mode, go back to script selection page and auto-select mode
+    // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
-        showPage('custom-script');
-        // Auto-select the appropriate script mode
-        setTimeout(() => {
-            if (selectedScriptMode === 'hiragana') {
-                // Manually trigger the same action as clicking the hiragana button
-                selectedScriptMode = 'hiragana';
-                showPage('custom-mode');
-            } else if (selectedScriptMode === 'katakana') {
-                // When katakana is implemented, manually trigger katakana selection
-                selectedScriptMode = 'hiragana'; // Fallback to hiragana for now
-                showPage('custom-mode');
-            }
-        }, 100);
+        console.log('Going back to custom mode word selection');
+        showPage('custom-mode');
     } else {
         // Check if we came from word entry selection
         if (window.cameFromWordEntry) {
@@ -2558,7 +2549,6 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
         console.log('Navigating to Japanese custom mode for mirrored custom mode');
-        selectedScriptMode = 'hiragana'; // Set default for Japanese custom mode
         showPage('japanese-custom-mode');
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
@@ -2591,7 +2581,6 @@ backToWordEntryBtn.addEventListener('click', () => {
 
 japaneseHiraganaBtn.addEventListener('click', () => {
     console.log('Starting mirrored brute force mode with Hiragana');
-    selectedScriptMode = 'hiragana';
     window.mirroredMode = true;
     startMirroredGame();
 });
@@ -2603,19 +2592,7 @@ japaneseKatakanaBtn.addEventListener('click', () => {
 
 // Japanese custom mode page event listeners
 backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
-    showPage('japanese-script');
-    // Auto-select the appropriate script mode
-    setTimeout(() => {
-        if (selectedScriptMode === 'hiragana') {
-            // Manually trigger the same action as clicking the hiragana button
-            selectedScriptMode = 'hiragana';
-            showPage('japanese-custom-mode');
-        } else if (selectedScriptMode === 'katakana') {
-            // When katakana is implemented, manually trigger katakana selection
-            selectedScriptMode = 'hiragana'; // Fallback to hiragana for now
-            showPage('japanese-custom-mode');
-        }
-    }, 100);
+    showPage('word-entry-selection');
 });
 
 japaneseAddRoundBtn.addEventListener('click', () => {
@@ -4693,13 +4670,11 @@ function initializeJapaneseCustomMode() {
         console.log('Has meaningful data:', hasMeaningfulData);
     }
     
-    // Always populate grids and setup buttons first
-    populateJapaneseWordSelectionGrids();
-    setupJapaneseCustomWordButtons();
-    
     if (!loaded || !hasMeaningfulData) {
-        // If no saved data or no meaningful data, ensure the first round is properly opened
+        // If no saved data or no meaningful data, populate grids and setup buttons first
         console.log('No meaningful data, ensuring first round is opened');
+        populateJapaneseWordSelectionGrids();
+        setupJapaneseCustomWordButtons();
         
         // Ensure the first round is properly opened (same as English custom mode)
         const firstRound = document.querySelector('#japanese-custom-rounds-container .custom-round[data-round="1"]');
@@ -4713,11 +4688,14 @@ function initializeJapaneseCustomMode() {
             }
         }
     } else {
-        // If meaningful data was loaded, restore the saved state after grids are populated
+        // If meaningful data was loaded, restore the saved state first, then populate grids
         console.log('Meaningful data was loaded, restoring state');
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreJapaneseCustomRoundsState();
+            // Populate grids after restoring state to avoid clearing custom words
+            populateJapaneseWordSelectionGrids();
+            setupJapaneseCustomWordButtons();
         }, 100);
     }
     
@@ -7034,13 +7012,11 @@ function initializeCustomMode() {
     const loaded = loadCustomRounds();
     console.log('Custom mode loaded result:', loaded);
     
-    // Always populate grids and setup buttons first
-    populateWordSelectionGrids();
-    setupCustomWordButtons();
-    
     if (!loaded) {
-        // If no saved data, automatically add round 1 and open it
+        // If no saved data, populate grids and setup buttons, then create default round
         console.log('No saved data, creating default round 1');
+        populateWordSelectionGrids();
+        setupCustomWordButtons();
         addCustomRound();
         
         // Open the first round dropdown
@@ -7055,11 +7031,14 @@ function initializeCustomMode() {
             }
         }
     } else {
-        // If data was loaded, restore the saved state after grids are populated
+        // If data was loaded, restore the saved state first, then populate grids
         console.log('Saved data found, restoring state');
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreCustomRoundsState();
+            // Populate grids after restoring state to avoid clearing custom words
+            populateWordSelectionGrids();
+            setupCustomWordButtons();
         }, 100);
     }
 }
