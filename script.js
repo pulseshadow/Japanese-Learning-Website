@@ -8409,24 +8409,32 @@ function loadCustomRounds() {
         
         // Create word pools for game play (same as in startCustomRun)
         const customWordPools = [];
-        customData.rounds.forEach(roundData => {
+        customData.rounds.forEach((roundData, index) => {
+            showDebugInfo(`ROUND ${index + 1}`, `Checked words: ${roundData.checkedWords?.length || 0}, Custom words: ${roundData.customWords?.length || 0}`);
+            
             const selectedWords = [];
             
             // Add checked words from word pools
-            roundData.checkedWords.forEach(word => {
-                selectedWords.push({
-                    japanese: word.japanese,
-                    english: word.english
+            if (roundData.checkedWords) {
+                roundData.checkedWords.forEach(word => {
+                    selectedWords.push({
+                        japanese: word.japanese,
+                        english: word.english
+                    });
                 });
-            });
+            }
             
             // Add custom words
-            roundData.customWords.forEach(customWord => {
-                selectedWords.push({
-                    japanese: customWord.japanese,
-                    english: customWord.english
+            if (roundData.customWords) {
+                roundData.customWords.forEach(customWord => {
+                    selectedWords.push({
+                        japanese: customWord.japanese,
+                        english: customWord.english
+                    });
                 });
-            });
+            }
+            
+            showDebugInfo(`ROUND ${index + 1} WORDS`, `Total selected: ${selectedWords.length}`);
             
             if (selectedWords.length > 0) {
                 customWordPools.push(selectedWords);
@@ -8471,16 +8479,22 @@ function restoreCustomRoundsState() {
         
         // Restore checked words
         console.log(`Restoring ${roundData.checkedWords.length} checked words for round ${roundNumber}`);
+        showDebugInfo(`RESTORING ROUND ${roundNumber}`, `Trying to restore ${roundData.checkedWords.length} words`);
+        
+        let restoredCount = 0;
         roundData.checkedWords.forEach(word => {
             const checkbox = round.querySelector(`input[data-japanese="${word.japanese}"][data-english="${word.english}"]`);
             if (checkbox) {
                 checkbox.checked = true;
+                restoredCount++;
                 console.log(`Restored checkbox for: ${word.japanese} - ${word.english}`);
             } else {
                 console.log(`Could not find checkbox for: ${word.japanese} - ${word.english}`);
                 console.log('Available checkboxes in round:', round.querySelectorAll('input[type="checkbox"]').length);
             }
         });
+        
+        showDebugInfo(`RESTORED ROUND ${roundNumber}`, `Successfully restored ${restoredCount}/${roundData.checkedWords.length} words`);
         
         // Restore custom words
         roundData.customWords.forEach(customWord => {
