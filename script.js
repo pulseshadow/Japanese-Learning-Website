@@ -5026,6 +5026,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         // Add event listener for select all functionality
         selectAllCheckbox.addEventListener('change', (e) => {
+            showDebugInfo('JAPANESE SELECT ALL CHANGED', `Round ${roundNumber}, Section ${roundIndex}`);
             const isChecked = e.target.checked;
             const wordCheckboxes = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
             
@@ -5060,6 +5061,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
             
             // Add event listener for checkbox
             checkbox.addEventListener('change', () => {
+                showDebugInfo('JAPANESE CHECKBOX CHANGED', `Round ${roundNumber}, Section ${roundIndex}`);
                 updateJapaneseSelectAllState(roundNumber, roundIndex);
                 saveJapaneseCustomRounds();
             });
@@ -5471,6 +5473,7 @@ function addJapaneseCustomWordToGrid(roundContainer, japanese, english) {
     
     // Add event listener for checkbox
     checkbox.addEventListener('change', () => {
+        showDebugInfo('JAPANESE CUSTOM WORD CHECKBOX CHANGED', 'Japanese custom word');
         saveJapaneseCustomRounds();
     });
     
@@ -5487,6 +5490,7 @@ function addJapaneseCustomWordToGrid(roundContainer, japanese, english) {
 
 function saveJapaneseCustomRounds() {
     console.log('=== SAVE JAPANESE CUSTOM ROUNDS CALLED ===');
+    showDebugInfo('JAPANESE SAVE CALLED', 'saveJapaneseCustomRounds() triggered');
     console.log('Saving Japanese custom rounds');
     
     try {
@@ -7191,6 +7195,7 @@ function populateWordSelectionGrid(roundNumber) {
         
         // Add event listener for select all functionality
         selectAllCheckbox.addEventListener('change', (e) => {
+            showDebugInfo('ENGLISH SELECT ALL CHANGED', `Round ${roundNumber}, Section ${roundIndex}`);
             const isChecked = e.target.checked;
             const wordCheckboxes = wordContent.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
             
@@ -7253,6 +7258,7 @@ function populateWordSelectionGrid(roundNumber) {
             
             // Add event listener to save custom rounds when checkbox changes
             checkbox.addEventListener('change', () => {
+                showDebugInfo('ENGLISH CHECKBOX CHANGED', `Round ${roundNumber}, Section ${roundIndex}`);
                 updateSelectAllState();
                 saveCustomRounds();
             });
@@ -7401,6 +7407,12 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     checkbox.dataset.japanese = japanese;
     checkbox.dataset.english = english;
     checkbox.checked = true; // Auto-check custom words
+    
+    // Add event listener for checkbox changes
+    checkbox.addEventListener('change', () => {
+        showDebugInfo('CUSTOM WORD CHECKBOX CHANGED', 'English custom word');
+        saveCustomRounds();
+    });
     
     const label = document.createElement('label');
     label.htmlFor = checkbox.id;
@@ -8238,6 +8250,7 @@ function loadSettings() {
 
 function saveCustomRounds() {
     console.log('=== SAVE CUSTOM ROUNDS CALLED ===');
+    showDebugInfo('SAVE CALLED', 'saveCustomRounds() triggered');
     const rounds = document.querySelectorAll('.custom-round');
     console.log('Found rounds:', rounds.length);
     if (rounds.length === 0) {
