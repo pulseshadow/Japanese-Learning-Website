@@ -2478,7 +2478,12 @@ userStatsBtn.addEventListener('click', () => {
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
-backToStartBtn.addEventListener('click', () => showPage('start'));
+backToStartBtn.addEventListener('click', () => {
+    // AIRLOCK: Clear backups when returning to start
+    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
+    clearCustomModeBackups();
+    showPage('start');
+});
 
 // Add event listener for the new back button in script selection
 const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
@@ -2500,6 +2505,9 @@ backToScriptBtn.addEventListener('click', () => {
         if (window.cameFromWordEntry) {
             showPage('word-entry-selection');
         } else {
+            // AIRLOCK: Clear backups when returning to start
+            console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
+            clearCustomModeBackups();
             showPage('start');
         }
     }
@@ -2513,6 +2521,9 @@ backToStartFromCustomScriptBtn.addEventListener('click', () => {
     if (window.cameFromWordEntry) {
         showPage('word-entry-selection');
     } else {
+        // AIRLOCK: Clear backups when returning to start
+        console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
+        clearCustomModeBackups();
         showPage('start');
     }
 });
@@ -2528,6 +2539,9 @@ backToStartFromCustomBtn.addEventListener('click', () => {
 backToStartFromWordEntryBtn.addEventListener('click', () => {
     // Clear the flag when going back to start
     window.cameFromWordEntry = false;
+    // AIRLOCK: Clear backups when returning to start
+    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
+    clearCustomModeBackups();
     showPage('start');
 });
 
@@ -2814,7 +2828,12 @@ function showMirroredRepeatingQuestion() {
 
 // Stats page event listeners - clearStatsBtn removed
 
-backToStartFromStatsBtn.addEventListener('click', () => showPage('start'));
+backToStartFromStatsBtn.addEventListener('click', () => {
+    // AIRLOCK: Clear backups when returning to start
+    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
+    clearCustomModeBackups();
+    showPage('start');
+});
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
 addRoundBtn.addEventListener('click', addCustomRound);
 removeRoundBtn.addEventListener('click', removeCustomRound);
@@ -2859,6 +2878,7 @@ document.addEventListener('click', (e) => {
 // Page navigation
 function showPage(pageName) {
     currentPage = pageName;
+    window.currentPage = pageName; // Also set on window for debug panel
     
     // Hide all pages
     startPage.style.display = 'none';
@@ -5737,6 +5757,10 @@ function restoreJapaneseCustomRoundsState() {
 function startJapaneseCustomRun() {
     console.log('Starting Japanese custom run');
     
+    // AIRLOCK: Backup custom mode data before starting
+    console.log('=== JAPANESE CUSTOM GAME START - APPLYING AIRLOCK ===');
+    backupCustomModeData();
+    
     // Save current state before starting
     saveJapaneseCustomRounds();
     
@@ -5775,6 +5799,10 @@ function startJapaneseCustomRun() {
     
     // Show game page
     showPage('game');
+    
+    // AIRLOCK: Restore custom mode data after game starts
+    console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
+    restoreCustomModeData();
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
@@ -7077,6 +7105,102 @@ function initializePersistentDebug() {
     console.log('Persistent debug system initialized');
 }
 
+// Airlock system for custom mode data protection
+function backupCustomModeData() {
+    console.log('=== BACKING UP CUSTOM MODE DATA ===');
+    
+    try {
+        // Backup English custom mode data
+        const englishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        if (englishData) {
+            saveToLocalStorage('customModeBackup', englishData);
+            console.log('English custom mode data backed up:', englishData);
+        }
+        
+        // Backup Japanese custom mode data
+        const japaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+        if (japaneseData) {
+            saveToLocalStorage('japaneseCustomModeBackup', japaneseData);
+            console.log('Japanese custom mode data backed up:', japaneseData);
+        }
+        
+        // Backup window variables
+        const windowBackup = {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: window.customWordPools,
+            customModeNoPracticeRounds: window.customModeNoPracticeRounds,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: window.japaneseCustomWordPools,
+            japaneseCustomModeNoPracticeRounds: window.japaneseCustomModeNoPracticeRounds,
+            timestamp: Date.now()
+        };
+        saveToLocalStorage('customModeWindowBackup', windowBackup);
+        console.log('Window variables backed up:', windowBackup);
+        
+        return true;
+    } catch (error) {
+        console.error('Error backing up custom mode data:', error);
+        return false;
+    }
+}
+
+function restoreCustomModeData() {
+    console.log('=== RESTORING CUSTOM MODE DATA ===');
+    
+    try {
+        // Restore English custom mode data
+        const englishBackup = loadFromLocalStorage('customModeBackup', null);
+        if (englishBackup) {
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishBackup);
+            console.log('English custom mode data restored:', englishBackup);
+        }
+        
+        // Restore Japanese custom mode data
+        const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
+        if (japaneseBackup) {
+            saveToLocalStorage('japaneseCustomRounds', japaneseBackup);
+            console.log('Japanese custom mode data restored:', japaneseBackup);
+        }
+        
+        // Restore window variables
+        const windowBackup = loadFromLocalStorage('customModeWindowBackup', null);
+        if (windowBackup) {
+            window.customModeEnabled = windowBackup.customModeEnabled;
+            window.customWordPools = windowBackup.customWordPools;
+            window.customModeNoPracticeRounds = windowBackup.customModeNoPracticeRounds;
+            window.japaneseCustomModeEnabled = windowBackup.japaneseCustomModeEnabled;
+            window.japaneseCustomWordPools = windowBackup.japaneseCustomWordPools;
+            window.japaneseCustomModeNoPracticeRounds = windowBackup.japaneseCustomModeNoPracticeRounds;
+            console.log('Window variables restored:', windowBackup);
+        }
+        
+        // Update debug display
+        setTimeout(() => {
+            updatePersistentDebug();
+        }, 100);
+        
+        return true;
+    } catch (error) {
+        console.error('Error restoring custom mode data:', error);
+        return false;
+    }
+}
+
+function clearCustomModeBackups() {
+    console.log('=== CLEARING CUSTOM MODE BACKUPS ===');
+    
+    try {
+        localStorage.removeItem('customModeBackup');
+        localStorage.removeItem('japaneseCustomModeBackup');
+        localStorage.removeItem('customModeWindowBackup');
+        console.log('Custom mode backups cleared');
+        return true;
+    } catch (error) {
+        console.error('Error clearing custom mode backups:', error);
+        return false;
+    }
+}
+
 // Debug display functions (legacy - keeping for compatibility)
 function updateCustomModeDebug() {
     updatePersistentDebug();
@@ -7777,6 +7901,10 @@ function startCustomRun() {
 }
 
 function startCustomGame() {
+    // AIRLOCK: Backup custom mode data before starting
+    console.log('=== CUSTOM GAME START - APPLYING AIRLOCK ===');
+    backupCustomModeData();
+    
     // Always start fresh - users can use round selector to jump to any round
     currentRound = 1;
     currentPhase = 'learning';
@@ -7809,6 +7937,11 @@ function startCustomGame() {
     populateRoundSelector();
     
     showPage('game');
+    
+    // AIRLOCK: Restore custom mode data after game starts
+    console.log('=== CUSTOM GAME START - RESTORING DATA ===');
+    restoreCustomModeData();
+    
     initializeCustomRound();
     
     // Update next round button visibility for English custom mode
