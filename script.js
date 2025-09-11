@@ -5799,18 +5799,56 @@ function startJapaneseCustomRun() {
     // Populate round selector with Japanese custom rounds
     populateRoundSelector();
     
-    // AIRLOCK: Restore custom mode data BEFORE showing game
-    console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
-    restoreCustomModeData();
+    // AIRLOCK: Verify airlock is filled before starting game
+    console.log('=== JAPANESE CUSTOM GAME START - VERIFYING AIRLOCK ===');
     
-    // Only show game page after airlock process is complete
-    showPage('game');
+    // First, try to fill the airlock
+    backupCustomModeData();
     
-    // Show hiragana keyboard for Japanese custom mode
-    showHiraganaKeyboard();
-    
-    // Initialize the first round
-    initializeJapaneseCustomRound();
+    // Verify airlock is filled
+    if (verifyAirlockFilled()) {
+        console.log('✅ AIRLOCK VERIFIED - Proceeding with game start');
+        
+        // Restore custom mode data BEFORE showing game
+        console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
+        restoreCustomModeData();
+        
+        // Only show game page after airlock process is complete
+        showPage('game');
+        
+        // Show hiragana keyboard for Japanese custom mode
+        showHiraganaKeyboard();
+        
+        // Initialize the first round
+        initializeJapaneseCustomRound();
+    } else {
+        console.log('❌ AIRLOCK VERIFICATION FAILED - Retrying...');
+        
+        // Retry filling the airlock
+        backupCustomModeData();
+        
+        // Verify again
+        if (verifyAirlockFilled()) {
+            console.log('✅ AIRLOCK VERIFIED ON RETRY - Proceeding with game start');
+            
+            // Restore custom mode data BEFORE showing game
+            console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
+            restoreCustomModeData();
+            
+            // Only show game page after airlock process is complete
+            showPage('game');
+            
+            // Show hiragana keyboard for Japanese custom mode
+            showHiraganaKeyboard();
+            
+            // Initialize the first round
+            initializeJapaneseCustomRound();
+        } else {
+            console.log('❌ AIRLOCK VERIFICATION FAILED TWICE - Cannot start game');
+            alert('Error: Unable to backup custom mode data. Please try again.');
+            return;
+        }
+    }
 }
 
 function initializeJapaneseCustomRound() {
@@ -7322,6 +7360,35 @@ function copyFromAirlockToMainSave() {
     }
 }
 
+function verifyAirlockFilled() {
+    console.log('=== VERIFYING AIRLOCK IS FILLED ===');
+    
+    try {
+        const englishBackup = loadFromLocalStorage('customModeBackup', null);
+        const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
+        const windowBackup = loadFromLocalStorage('customModeWindowBackup', null);
+        
+        console.log('Airlock verification:');
+        console.log('- English backup exists:', !!englishBackup);
+        console.log('- Japanese backup exists:', !!japaneseBackup);
+        console.log('- Window backup exists:', !!windowBackup);
+        
+        // Check if at least one backup exists
+        const hasAnyBackup = englishBackup || japaneseBackup || windowBackup;
+        
+        if (hasAnyBackup) {
+            console.log('✅ AIRLOCK VERIFICATION PASSED - Data found in airlock');
+            return true;
+        } else {
+            console.log('❌ AIRLOCK VERIFICATION FAILED - No data found in airlock');
+            return false;
+        }
+    } catch (error) {
+        console.error('Error verifying airlock:', error);
+        return false;
+    }
+}
+
 function clearCustomModeBackups() {
     console.log('=== CLEARING CUSTOM MODE BACKUPS ===');
     
@@ -8086,13 +8153,46 @@ function startCustomGame() {
     // Populate round selector with custom rounds
     populateRoundSelector();
     
-    // AIRLOCK: Restore custom mode data BEFORE showing game
-    console.log('=== CUSTOM GAME START - RESTORING DATA ===');
-    restoreCustomModeData();
+    // AIRLOCK: Verify airlock is filled before starting game
+    console.log('=== CUSTOM GAME START - VERIFYING AIRLOCK ===');
     
-    // Only show game page after airlock process is complete
-    showPage('game');
-    initializeCustomRound();
+    // First, try to fill the airlock
+    backupCustomModeData();
+    
+    // Verify airlock is filled
+    if (verifyAirlockFilled()) {
+        console.log('✅ AIRLOCK VERIFIED - Proceeding with game start');
+        
+        // Restore custom mode data BEFORE showing game
+        console.log('=== CUSTOM GAME START - RESTORING DATA ===');
+        restoreCustomModeData();
+        
+        // Only show game page after airlock process is complete
+        showPage('game');
+        initializeCustomRound();
+    } else {
+        console.log('❌ AIRLOCK VERIFICATION FAILED - Retrying...');
+        
+        // Retry filling the airlock
+        backupCustomModeData();
+        
+        // Verify again
+        if (verifyAirlockFilled()) {
+            console.log('✅ AIRLOCK VERIFIED ON RETRY - Proceeding with game start');
+            
+            // Restore custom mode data BEFORE showing game
+            console.log('=== CUSTOM GAME START - RESTORING DATA ===');
+            restoreCustomModeData();
+            
+            // Only show game page after airlock process is complete
+            showPage('game');
+            initializeCustomRound();
+        } else {
+            console.log('❌ AIRLOCK VERIFICATION FAILED TWICE - Cannot start game');
+            alert('Error: Unable to backup custom mode data. Please try again.');
+            return;
+        }
+    }
     
     // Update next round button visibility for English custom mode
     updateEnglishCustomNextRoundButtonVisibility();
