@@ -2355,6 +2355,8 @@ const startPage = document.getElementById('start-page');
 // Debug popup elements
 const persistentDebugPopup = document.getElementById('persistent-debug-popup');
 const toggleDebugPopup = document.getElementById('toggle-debug-popup');
+const airlockDebugIndicator = document.getElementById('airlock-debug-indicator');
+const toggleAirlockDebug = document.getElementById('toggle-airlock-debug');
 const scriptPage = document.getElementById('script-page');
 const gamePage = document.getElementById('game-page');
 const customScriptPage = document.getElementById('custom-script-page');
@@ -6173,6 +6175,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize persistent debug system
         initializePersistentDebug();
         
+        // Initialize airlock debug system
+        initializeAirlockDebug();
+        
         // Initialize AdSense after page load
     setTimeout(() => {
         console.log('=== Initializing AdSense ===');
@@ -7105,14 +7110,93 @@ function initializePersistentDebug() {
     console.log('Persistent debug system initialized');
 }
 
+// Airlock debug system
+function updateAirlockDebug() {
+    const airlockElement = document.getElementById('airlock-content');
+    if (!airlockElement) return;
+    
+    try {
+        const currentTime = new Date().toLocaleTimeString();
+        const englishBackup = loadFromLocalStorage('customModeBackup', null);
+        const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
+        const windowBackup = loadFromLocalStorage('customModeWindowBackup', null);
+        
+        let airlockInfo = `🕐 ${currentTime}
+
+📦 BACKUP STATUS:
+├─ English Backup: ${englishBackup ? '✅ EXISTS' : '❌ EMPTY'}
+├─ Japanese Backup: ${japaneseBackup ? '✅ EXISTS' : '❌ EMPTY'}
+└─ Window Backup: ${windowBackup ? '✅ EXISTS' : '❌ EMPTY'}
+
+🔍 BACKUP DETAILS:`;
+
+        if (englishBackup) {
+            airlockInfo += `\n\n🇬🇧 ENGLISH BACKUP:
+├─ Rounds: ${englishBackup.rounds?.length || 0}
+├─ Total Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
+├─ Custom Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
+└─ Created: ${new Date(englishBackup.backupTimestamp || englishBackup.timestamp || 0).toLocaleTimeString()}`;
+        }
+
+        if (japaneseBackup) {
+            airlockInfo += `\n\n🇯🇵 JAPANESE BACKUP:
+├─ Rounds: ${japaneseBackup.rounds?.length || 0}
+├─ Total Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
+├─ Custom Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
+└─ Created: ${new Date(japaneseBackup.backupTimestamp || japaneseBackup.timestamp || 0).toLocaleTimeString()}`;
+        }
+
+        if (windowBackup) {
+            airlockInfo += `\n\n⚙️ WINDOW BACKUP:
+├─ Custom Mode: ${windowBackup.customModeEnabled ? 'ON' : 'OFF'}
+├─ Japanese Custom: ${windowBackup.japaneseCustomModeEnabled ? 'ON' : 'OFF'}
+├─ Word Pools: ${windowBackup.customWordPools ? windowBackup.customWordPools.length + ' pools' : 'null'}
+├─ Japanese Pools: ${windowBackup.japaneseCustomWordPools ? windowBackup.japaneseCustomWordPools.length + ' pools' : 'null'}
+└─ Created: ${new Date(windowBackup.timestamp || 0).toLocaleTimeString()}`;
+        }
+
+        if (!englishBackup && !japaneseBackup && !windowBackup) {
+            airlockInfo += `\n\n❌ NO BACKUPS FOUND
+The airlock is currently empty.`;
+        }
+
+        airlockElement.textContent = airlockInfo;
+    } catch (error) {
+        airlockElement.textContent = `AIRLOCK ERROR: ${error.message}`;
+    }
+}
+
+function initializeAirlockDebug() {
+    if (!airlockDebugIndicator || !toggleAirlockDebug) {
+        console.warn('Airlock debug elements not found');
+        return;
+    }
+    
+    toggleAirlockDebug.addEventListener('click', () => {
+        const isHidden = airlockDebugIndicator.style.display === 'none';
+        airlockDebugIndicator.style.display = isHidden ? 'block' : 'none';
+        toggleAirlockDebug.textContent = isHidden ? 'HIDE' : 'SHOW';
+    });
+    
+    if (window.airlockDebugInterval) {
+        clearInterval(window.airlockDebugInterval);
+    }
+    window.airlockDebugInterval = setInterval(updateAirlockDebug, 1000);
+    updateAirlockDebug();
+    console.log('Airlock debug system initialized');
+}
+
 // Airlock system for custom mode data protection
 function backupCustomModeData() {
     console.log('=== BACKING UP CUSTOM MODE DATA ===');
     
     try {
+        const backupTimestamp = Date.now();
+        
         // Backup English custom mode data
         const englishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
         if (englishData) {
+            englishData.backupTimestamp = backupTimestamp;
             saveToLocalStorage('customModeBackup', englishData);
             console.log('English custom mode data backed up:', englishData);
         }
@@ -7120,6 +7204,7 @@ function backupCustomModeData() {
         // Backup Japanese custom mode data
         const japaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
         if (japaneseData) {
+            japaneseData.backupTimestamp = backupTimestamp;
             saveToLocalStorage('japaneseCustomModeBackup', japaneseData);
             console.log('Japanese custom mode data backed up:', japaneseData);
         }
@@ -7132,10 +7217,13 @@ function backupCustomModeData() {
             japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
             japaneseCustomWordPools: window.japaneseCustomWordPools,
             japaneseCustomModeNoPracticeRounds: window.japaneseCustomModeNoPracticeRounds,
-            timestamp: Date.now()
+            timestamp: backupTimestamp
         };
         saveToLocalStorage('customModeWindowBackup', windowBackup);
         console.log('Window variables backed up:', windowBackup);
+        
+        // Update airlock debug immediately
+        updateAirlockDebug();
         
         return true;
     } catch (error) {
@@ -7174,10 +7262,17 @@ function restoreCustomModeData() {
             console.log('Window variables restored:', windowBackup);
         }
         
-        // Update debug display
+        // Update debug displays
+        updateAirlockDebug();
         setTimeout(() => {
             updatePersistentDebug();
         }, 100);
+        
+        // Clear backups after 1 second delay
+        setTimeout(() => {
+            console.log('=== CLEARING BACKUPS AFTER RESTORE ===');
+            clearCustomModeBackups();
+        }, 1000);
         
         return true;
     } catch (error) {
@@ -7194,6 +7289,10 @@ function clearCustomModeBackups() {
         localStorage.removeItem('japaneseCustomModeBackup');
         localStorage.removeItem('customModeWindowBackup');
         console.log('Custom mode backups cleared');
+        
+        // Update airlock debug to show cleared state
+        updateAirlockDebug();
+        
         return true;
     } catch (error) {
         console.error('Error clearing custom mode backups:', error);
