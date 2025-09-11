@@ -5799,12 +5799,12 @@ function startJapaneseCustomRun() {
     // Populate round selector with Japanese custom rounds
     populateRoundSelector();
     
-    // Show game page
-    showPage('game');
-    
-    // AIRLOCK: Restore custom mode data after game starts
+    // AIRLOCK: Restore custom mode data BEFORE showing game
     console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
     restoreCustomModeData();
+    
+    // Only show game page after airlock process is complete
+    showPage('game');
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
@@ -7233,20 +7233,15 @@ function backupCustomModeData() {
 }
 
 function restoreCustomModeData() {
-    console.log('=== AIRLOCK DATA READY FOR COPYING ===');
+    console.log('=== STEP 1: AIRLOCK DATA READY FOR COPYING ===');
     
     try {
-        // Don't restore immediately - just make data available in airlock
-        // The main save system will copy from airlock when needed
-        
         // Update debug displays to show airlock status
         updateAirlockDebug();
         
-        // Schedule the main save system to copy from airlock after a short delay
-        setTimeout(() => {
-            console.log('=== MAIN SAVE SYSTEM COPYING FROM AIRLOCK ===');
-            copyFromAirlockToMainSave();
-        }, 200);
+        // Immediately proceed to copy phase (synchronous)
+        console.log('=== STEP 2: MAIN SAVE SYSTEM COPYING FROM AIRLOCK ===');
+        copyFromAirlockToMainSave();
         
         return true;
     } catch (error) {
@@ -7302,27 +7297,23 @@ function copyFromAirlockToMainSave() {
             console.log('Window variables copied from airlock:', windowBackup);
         }
         
-        // Update debug displays
+        // Update debug displays immediately
+        console.log('=== UPDATING DEBUG PANEL AFTER COPY ===');
+        const debugEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        const debugJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+        console.log('Debug panel reading English data:', debugEnglishData);
+        console.log('Debug panel reading Japanese data:', debugJapaneseData);
         updateAirlockDebug();
-        setTimeout(() => {
-            console.log('=== UPDATING DEBUG PANEL AFTER COPY ===');
-            const debugEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            const debugJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('Debug panel reading English data:', debugEnglishData);
-            console.log('Debug panel reading Japanese data:', debugJapaneseData);
-            updatePersistentDebug();
-        }, 100);
+        updatePersistentDebug();
         
-        // Clear airlock after 1 second delay
-        setTimeout(() => {
-            console.log('=== CLEARING AIRLOCK AFTER COPY ===');
-            console.log('Final verification before clearing airlock:');
-            const finalEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            const finalJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('Final English data in main save:', finalEnglishData);
-            console.log('Final Japanese data in main save:', finalJapaneseData);
-            clearCustomModeBackups();
-        }, 1000);
+        // Immediately proceed to clear phase (synchronous)
+        console.log('=== STEP 3: CLEARING AIRLOCK AFTER COPY ===');
+        console.log('Final verification before clearing airlock:');
+        const finalEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        const finalJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+        console.log('Final English data in main save:', finalEnglishData);
+        console.log('Final Japanese data in main save:', finalJapaneseData);
+        clearCustomModeBackups();
         
         return true;
     } catch (error) {
@@ -8095,12 +8086,12 @@ function startCustomGame() {
     // Populate round selector with custom rounds
     populateRoundSelector();
     
-    showPage('game');
-    
-    // AIRLOCK: Restore custom mode data after game starts
+    // AIRLOCK: Restore custom mode data BEFORE showing game
     console.log('=== CUSTOM GAME START - RESTORING DATA ===');
     restoreCustomModeData();
     
+    // Only show game page after airlock process is complete
+    showPage('game');
     initializeCustomRound();
     
     // Update next round button visibility for English custom mode
