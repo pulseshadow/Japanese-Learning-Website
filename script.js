@@ -5526,15 +5526,18 @@ function saveJapaneseCustomRounds() {
             customData.rounds.push(roundData);
         });
         
-        // Save to localStorage using the same system as English custom mode
-        saveToLocalStorage('japaneseCustomRounds', customData);
+        // Save to both functional storage and airlock
+        const windowData = {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: window.customWordPools,
+            customModeNoPracticeRounds: window.customModeNoPracticeRounds,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: window.japaneseCustomWordPools,
+            japaneseCustomModeNoPracticeRounds: window.japaneseCustomModeNoPracticeRounds
+        };
         
-        console.log('Japanese custom rounds saved successfully:', customData);
-        
-        // Update debug display after saving
-        setTimeout(() => {
-            updatePersistentDebug();
-        }, 100);
+        saveToBothStorages(null, customData, windowData);
+        console.log('Japanese custom rounds saved successfully to both storages:', customData);
         
         // Also save the word pools for game play
         const wordPools = [];
@@ -5765,10 +5768,6 @@ function restoreJapaneseCustomRoundsState() {
 function startJapaneseCustomRun() {
     console.log('Starting Japanese custom run');
     
-    // AIRLOCK: Backup custom mode data before starting
-    console.log('=== JAPANESE CUSTOM GAME START - APPLYING AIRLOCK ===');
-    backupCustomModeData();
-    
     // Save current state before starting
     saveJapaneseCustomRounds();
     
@@ -5807,10 +5806,6 @@ function startJapaneseCustomRun() {
     
     // Show game page
     showPage('game');
-    
-    // AIRLOCK: Restore custom mode data after game starts
-    console.log('=== JAPANESE CUSTOM GAME START - RESTORING DATA ===');
-    restoreCustomModeData();
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
@@ -7141,7 +7136,8 @@ function updateAirlockDebug() {
 ├─ Rounds: ${englishBackup.rounds?.length || 0}
 ├─ Total Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
 ├─ Custom Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
-└─ Created: ${new Date(englishBackup.backupTimestamp || englishBackup.timestamp || 0).toLocaleTimeString()}`;
+├─ Last Saved: ${new Date(englishBackup.lastSaved || englishBackup.timestamp || 0).toLocaleTimeString()}
+└─ Status: ${englishBackup.lastSaved ? 'REAL-TIME SYNC' : 'LEGACY BACKUP'}`;
         }
 
         if (japaneseBackup) {
@@ -7149,7 +7145,8 @@ function updateAirlockDebug() {
 ├─ Rounds: ${japaneseBackup.rounds?.length || 0}
 ├─ Total Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
 ├─ Custom Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
-└─ Created: ${new Date(japaneseBackup.backupTimestamp || japaneseBackup.timestamp || 0).toLocaleTimeString()}`;
+├─ Last Saved: ${new Date(japaneseBackup.lastSaved || japaneseBackup.timestamp || 0).toLocaleTimeString()}
+└─ Status: ${japaneseBackup.lastSaved ? 'REAL-TIME SYNC' : 'LEGACY BACKUP'}`;
         }
 
         if (windowBackup) {
@@ -7196,6 +7193,62 @@ function initializeAirlockDebug() {
 function deepCopyCustomModeData(data) {
     if (!data) return null;
     return JSON.parse(JSON.stringify(data));
+}
+
+// Save data to both functional save and airlock simultaneously
+function saveToBothStorages(englishData, japaneseData, windowData) {
+    console.log('=== SAVING TO BOTH FUNCTIONAL SAVE AND AIRLOCK ===');
+    
+    try {
+        const timestamp = Date.now();
+        
+        // Save English data to both storages
+        if (englishData) {
+            const englishWithTimestamp = deepCopyCustomModeData(englishData);
+            englishWithTimestamp.lastSaved = timestamp;
+            
+            // Save to functional storage
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishWithTimestamp);
+            console.log('English data saved to functional storage');
+            
+            // Save to airlock storage
+            saveToLocalStorage('customModeBackup', englishWithTimestamp);
+            console.log('English data saved to airlock storage');
+        }
+        
+        // Save Japanese data to both storages
+        if (japaneseData) {
+            const japaneseWithTimestamp = deepCopyCustomModeData(japaneseData);
+            japaneseWithTimestamp.lastSaved = timestamp;
+            
+            // Save to functional storage
+            saveToLocalStorage('japaneseCustomRounds', japaneseWithTimestamp);
+            console.log('Japanese data saved to functional storage');
+            
+            // Save to airlock storage
+            saveToLocalStorage('japaneseCustomModeBackup', japaneseWithTimestamp);
+            console.log('Japanese data saved to airlock storage');
+        }
+        
+        // Save window data to airlock
+        if (windowData) {
+            const windowWithTimestamp = deepCopyCustomModeData(windowData);
+            windowWithTimestamp.timestamp = timestamp;
+            
+            saveToLocalStorage('customModeWindowBackup', windowWithTimestamp);
+            console.log('Window data saved to airlock storage');
+        }
+        
+        // Update debug panels
+        updatePersistentDebug();
+        updateAirlockDebug();
+        
+        console.log('✅ Data saved to both functional and airlock storage');
+        return true;
+    } catch (error) {
+        console.error('Error saving to both storages:', error);
+        return false;
+    }
 }
 
 // Comprehensive verification system to compare airlock vs functional save
@@ -8313,10 +8366,6 @@ function startCustomRun() {
 }
 
 function startCustomGame() {
-    // AIRLOCK: Backup custom mode data before starting
-    console.log('=== CUSTOM GAME START - APPLYING AIRLOCK ===');
-    backupCustomModeData();
-    
     // Always start fresh - users can use round selector to jump to any round
     currentRound = 1;
     currentPhase = 'learning';
@@ -8349,11 +8398,6 @@ function startCustomGame() {
     populateRoundSelector();
     
     showPage('game');
-    
-    // AIRLOCK: Restore custom mode data after game starts
-    console.log('=== CUSTOM GAME START - RESTORING DATA ===');
-    restoreCustomModeData();
-    
     initializeCustomRound();
     
     // Update next round button visibility for English custom mode
@@ -8890,14 +8934,19 @@ function saveCustomRounds() {
     });
     
     try {
-        saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, customData);
-        console.log('Custom rounds saved successfully:', customData);
-        console.log(`Total data size: ${JSON.stringify(customData).length} characters`);
+        // Save to both functional storage and airlock
+        const windowData = {
+            customModeEnabled: window.customModeEnabled,
+            customWordPools: window.customWordPools,
+            customModeNoPracticeRounds: window.customModeNoPracticeRounds,
+            japaneseCustomModeEnabled: window.japaneseCustomModeEnabled,
+            japaneseCustomWordPools: window.japaneseCustomWordPools,
+            japaneseCustomModeNoPracticeRounds: window.japaneseCustomModeNoPracticeRounds
+        };
         
-        // Update debug display after saving
-        setTimeout(() => {
-            updatePersistentDebug();
-        }, 100);
+        saveToBothStorages(customData, null, windowData);
+        console.log('Custom rounds saved successfully to both storages:', customData);
+        console.log(`Total data size: ${JSON.stringify(customData).length} characters`);
     } catch (error) {
         console.error('Error saving custom rounds:', error);
         // Try to save a minimal version if the full save fails
