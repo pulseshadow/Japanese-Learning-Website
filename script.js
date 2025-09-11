@@ -7233,55 +7233,79 @@ function backupCustomModeData() {
 }
 
 function restoreCustomModeData() {
-    console.log('=== RESTORING CUSTOM MODE DATA ===');
+    console.log('=== AIRLOCK DATA READY FOR COPYING ===');
     
     try {
-        // Restore English custom mode data
+        // Don't restore immediately - just make data available in airlock
+        // The main save system will copy from airlock when needed
+        
+        // Update debug displays to show airlock status
+        updateAirlockDebug();
+        
+        // Schedule the main save system to copy from airlock after a short delay
+        setTimeout(() => {
+            console.log('=== MAIN SAVE SYSTEM COPYING FROM AIRLOCK ===');
+            copyFromAirlockToMainSave();
+        }, 200);
+        
+        return true;
+    } catch (error) {
+        console.error('Error preparing airlock data:', error);
+        return false;
+    }
+}
+
+function copyFromAirlockToMainSave() {
+    console.log('=== COPYING DATA FROM AIRLOCK TO MAIN SAVE ===');
+    
+    try {
+        // Copy English custom mode data from airlock to main save
         const englishBackup = loadFromLocalStorage('customModeBackup', null);
         if (englishBackup) {
-            console.log('=== RESTORING ENGLISH DATA ===');
-            console.log('English backup data:', englishBackup);
+            console.log('=== COPYING ENGLISH DATA FROM AIRLOCK ===');
+            console.log('English airlock data:', englishBackup);
             saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishBackup);
-            console.log('English custom mode data restored to:', STORAGE_KEYS.CUSTOM_ROUNDS);
+            console.log('English data copied to main save:', STORAGE_KEYS.CUSTOM_ROUNDS);
             
-            // Verify the restoration worked
+            // Verify the copy worked
             const verifyEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            console.log('Verification - English data after restore:', verifyEnglish);
+            console.log('Verification - English data after copy:', verifyEnglish);
         } else {
-            console.log('No English backup data found to restore');
+            console.log('No English airlock data found to copy');
         }
         
-        // Restore Japanese custom mode data
+        // Copy Japanese custom mode data from airlock to main save
         const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
         if (japaneseBackup) {
-            console.log('=== RESTORING JAPANESE DATA ===');
-            console.log('Japanese backup data:', japaneseBackup);
+            console.log('=== COPYING JAPANESE DATA FROM AIRLOCK ===');
+            console.log('Japanese airlock data:', japaneseBackup);
             saveToLocalStorage('japaneseCustomRounds', japaneseBackup);
-            console.log('Japanese custom mode data restored to: japaneseCustomRounds');
+            console.log('Japanese data copied to main save: japaneseCustomRounds');
             
-            // Verify the restoration worked
+            // Verify the copy worked
             const verifyJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('Verification - Japanese data after restore:', verifyJapanese);
+            console.log('Verification - Japanese data after copy:', verifyJapanese);
         } else {
-            console.log('No Japanese backup data found to restore');
+            console.log('No Japanese airlock data found to copy');
         }
         
-        // Restore window variables
+        // Copy window variables from airlock to main save
         const windowBackup = loadFromLocalStorage('customModeWindowBackup', null);
         if (windowBackup) {
+            console.log('=== COPYING WINDOW VARIABLES FROM AIRLOCK ===');
             window.customModeEnabled = windowBackup.customModeEnabled;
             window.customWordPools = windowBackup.customWordPools;
             window.customModeNoPracticeRounds = windowBackup.customModeNoPracticeRounds;
             window.japaneseCustomModeEnabled = windowBackup.japaneseCustomModeEnabled;
             window.japaneseCustomWordPools = windowBackup.japaneseCustomWordPools;
             window.japaneseCustomModeNoPracticeRounds = windowBackup.japaneseCustomModeNoPracticeRounds;
-            console.log('Window variables restored:', windowBackup);
+            console.log('Window variables copied from airlock:', windowBackup);
         }
         
         // Update debug displays
         updateAirlockDebug();
         setTimeout(() => {
-            console.log('=== UPDATING DEBUG PANEL AFTER RESTORE ===');
+            console.log('=== UPDATING DEBUG PANEL AFTER COPY ===');
             const debugEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
             const debugJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
             console.log('Debug panel reading English data:', debugEnglishData);
@@ -7289,20 +7313,20 @@ function restoreCustomModeData() {
             updatePersistentDebug();
         }, 100);
         
-        // Clear backups after 1 second delay
+        // Clear airlock after 1 second delay
         setTimeout(() => {
-            console.log('=== CLEARING BACKUPS AFTER RESTORE ===');
-            console.log('Final verification before clearing backups:');
+            console.log('=== CLEARING AIRLOCK AFTER COPY ===');
+            console.log('Final verification before clearing airlock:');
             const finalEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
             const finalJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('Final English data:', finalEnglishData);
-            console.log('Final Japanese data:', finalJapaneseData);
+            console.log('Final English data in main save:', finalEnglishData);
+            console.log('Final Japanese data in main save:', finalJapaneseData);
             clearCustomModeBackups();
         }, 1000);
         
         return true;
     } catch (error) {
-        console.error('Error restoring custom mode data:', error);
+        console.error('Error copying from airlock to main save:', error);
         return false;
     }
 }
