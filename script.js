@@ -2955,9 +2955,9 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
-        // Finalize data restoration from airlock before initializing
-        console.log('Entering custom mode page, finalizing data restoration...');
-        finalizeCustomModeDataRestoration();
+        // Check for airlock fallback before initializing
+        console.log('Entering custom mode page, checking for airlock fallback...');
+        checkAirlockFallback();
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
         initializeCustomMode();
@@ -2970,9 +2970,9 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         japaneseCustomModePage.style.display = 'block';
         japaneseCustomModePage.classList.add('active');
-        // Finalize data restoration from airlock before initializing
-        console.log('Entering Japanese custom mode page, finalizing data restoration...');
-        finalizeCustomModeDataRestoration();
+        // Check for airlock fallback before initializing
+        console.log('Entering Japanese custom mode page, checking for airlock fallback...');
+        checkAirlockFallback();
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
         initializeJapaneseCustomMode();
@@ -7198,9 +7198,9 @@ function deepCopyCustomModeData(data) {
     return JSON.parse(JSON.stringify(data));
 }
 
-// Verification function to compare airlock vs functional save
-function verifyCustomModeDataIntegrity() {
-    console.log('=== VERIFYING CUSTOM MODE DATA INTEGRITY ===');
+// Comprehensive verification system to compare airlock vs functional save
+function verifyAndRestoreCustomModeData() {
+    console.log('=== COMPREHENSIVE CUSTOM MODE DATA VERIFICATION ===');
     
     try {
         // Get current functional save data
@@ -7216,51 +7216,138 @@ function verifyCustomModeDataIntegrity() {
         console.log('Functional Japanese data:', functionalJapanese);
         console.log('Airlock Japanese data:', airlockJapanese);
         
-        let needsRestoration = false;
+        let restorationNeeded = false;
+        let restorationDetails = [];
         
-        // Compare English data
-        if (airlockEnglish && functionalEnglish) {
-            const englishMatch = JSON.stringify(airlockEnglish) === JSON.stringify(functionalEnglish);
-            console.log('English data match:', englishMatch);
-            if (!englishMatch) {
-                console.log('❌ English data mismatch detected - restoring from airlock');
+        // Compare English data in detail
+        if (airlockEnglish) {
+            if (!functionalEnglish) {
+                console.log('❌ English functional save is empty - restoring from airlock');
                 saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
-                needsRestoration = true;
+                restorationNeeded = true;
+                restorationDetails.push('English data restored from airlock (functional was empty)');
             } else {
-                console.log('✅ English data matches perfectly');
+                // Compare rounds
+                const functionalRounds = functionalEnglish.rounds || [];
+                const airlockRounds = airlockEnglish.rounds || [];
+                
+                if (functionalRounds.length !== airlockRounds.length) {
+                    console.log(`❌ English rounds count mismatch: functional=${functionalRounds.length}, airlock=${airlockRounds.length}`);
+                    saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+                    restorationNeeded = true;
+                    restorationDetails.push(`English rounds restored: ${functionalRounds.length} → ${airlockRounds.length}`);
+                } else {
+                    // Compare each round's selected words
+                    for (let i = 0; i < airlockRounds.length; i++) {
+                        const functionalRound = functionalRounds[i];
+                        const airlockRound = airlockRounds[i];
+                        
+                        if (!functionalRound || !airlockRound) {
+                            console.log(`❌ English round ${i + 1} missing in functional save`);
+                            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+                            restorationNeeded = true;
+                            restorationDetails.push(`English round ${i + 1} restored from airlock`);
+                            break;
+                        }
+                        
+                        const functionalWords = functionalRound.checkedWords || [];
+                        const airlockWords = airlockRound.checkedWords || [];
+                        
+                        if (functionalWords.length !== airlockWords.length) {
+                            console.log(`❌ English round ${i + 1} word count mismatch: functional=${functionalWords.length}, airlock=${airlockWords.length}`);
+                            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+                            restorationNeeded = true;
+                            restorationDetails.push(`English round ${i + 1} words restored: ${functionalWords.length} → ${airlockWords.length}`);
+                            break;
+                        }
+                        
+                        // Compare individual words
+                        for (let j = 0; j < airlockWords.length; j++) {
+                            if (functionalWords[j] !== airlockWords[j]) {
+                                console.log(`❌ English round ${i + 1} word ${j + 1} mismatch: functional="${functionalWords[j]}", airlock="${airlockWords[j]}"`);
+                                saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+                                restorationNeeded = true;
+                                restorationDetails.push(`English round ${i + 1} word ${j + 1} restored: "${functionalWords[j]}" → "${airlockWords[j]}"`);
+                                break;
+                            }
+                        }
+                        
+                        if (restorationNeeded) break;
+                    }
+                }
             }
-        } else if (airlockEnglish && !functionalEnglish) {
-            console.log('❌ English data missing in functional save - restoring from airlock');
-            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
-            needsRestoration = true;
         }
         
-        // Compare Japanese data
-        if (airlockJapanese && functionalJapanese) {
-            const japaneseMatch = JSON.stringify(airlockJapanese) === JSON.stringify(functionalJapanese);
-            console.log('Japanese data match:', japaneseMatch);
-            if (!japaneseMatch) {
-                console.log('❌ Japanese data mismatch detected - restoring from airlock');
+        // Compare Japanese data in detail
+        if (airlockJapanese) {
+            if (!functionalJapanese) {
+                console.log('❌ Japanese functional save is empty - restoring from airlock');
                 saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
-                needsRestoration = true;
+                restorationNeeded = true;
+                restorationDetails.push('Japanese data restored from airlock (functional was empty)');
             } else {
-                console.log('✅ Japanese data matches perfectly');
+                // Compare rounds
+                const functionalRounds = functionalJapanese.rounds || [];
+                const airlockRounds = airlockJapanese.rounds || [];
+                
+                if (functionalRounds.length !== airlockRounds.length) {
+                    console.log(`❌ Japanese rounds count mismatch: functional=${functionalRounds.length}, airlock=${airlockRounds.length}`);
+                    saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+                    restorationNeeded = true;
+                    restorationDetails.push(`Japanese rounds restored: ${functionalRounds.length} → ${airlockRounds.length}`);
+                } else {
+                    // Compare each round's selected words
+                    for (let i = 0; i < airlockRounds.length; i++) {
+                        const functionalRound = functionalRounds[i];
+                        const airlockRound = airlockRounds[i];
+                        
+                        if (!functionalRound || !airlockRound) {
+                            console.log(`❌ Japanese round ${i + 1} missing in functional save`);
+                            saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+                            restorationNeeded = true;
+                            restorationDetails.push(`Japanese round ${i + 1} restored from airlock`);
+                            break;
+                        }
+                        
+                        const functionalWords = functionalRound.checkedWords || [];
+                        const airlockWords = airlockRound.checkedWords || [];
+                        
+                        if (functionalWords.length !== airlockWords.length) {
+                            console.log(`❌ Japanese round ${i + 1} word count mismatch: functional=${functionalWords.length}, airlock=${airlockWords.length}`);
+                            saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+                            restorationNeeded = true;
+                            restorationDetails.push(`Japanese round ${i + 1} words restored: ${functionalWords.length} → ${airlockWords.length}`);
+                            break;
+                        }
+                        
+                        // Compare individual words
+                        for (let j = 0; j < airlockWords.length; j++) {
+                            if (functionalWords[j] !== airlockWords[j]) {
+                                console.log(`❌ Japanese round ${i + 1} word ${j + 1} mismatch: functional="${functionalWords[j]}", airlock="${airlockWords[j]}"`);
+                                saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+                                restorationNeeded = true;
+                                restorationDetails.push(`Japanese round ${i + 1} word ${j + 1} restored: "${functionalWords[j]}" → "${airlockWords[j]}"`);
+                                break;
+                            }
+                        }
+                        
+                        if (restorationNeeded) break;
+                    }
+                }
             }
-        } else if (airlockJapanese && !functionalJapanese) {
-            console.log('❌ Japanese data missing in functional save - restoring from airlock');
-            saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
-            needsRestoration = true;
         }
         
-        if (needsRestoration) {
-            console.log('🔄 Data restoration completed - updating debug panels');
+        if (restorationNeeded) {
+            console.log('🔄 Data restoration completed:');
+            restorationDetails.forEach(detail => console.log(`  - ${detail}`));
+            console.log('🔄 Updating debug panels after restoration');
             updatePersistentDebug();
             updateAirlockDebug();
         } else {
-            console.log('✅ All data integrity checks passed');
+            console.log('✅ All data integrity checks passed - no restoration needed');
         }
         
-        return !needsRestoration; // Return true if no restoration was needed
+        return restorationNeeded;
     } catch (error) {
         console.error('Error verifying custom mode data integrity:', error);
         return false;
@@ -7394,7 +7481,7 @@ function restoreCustomModeData() {
         setTimeout(() => {
             // Verify data integrity and restore if needed
             console.log('=== FINAL VERIFICATION BEFORE AIRLOCK CLEAR ===');
-            const integrityCheck = verifyCustomModeDataIntegrity();
+            const integrityCheck = verifyAndRestoreCustomModeData();
             
             if (integrityCheck) {
                 console.log('✅ Data integrity verified - proceeding to clear airlock');
@@ -7418,7 +7505,7 @@ function finalizeCustomModeDataRestoration() {
     
     try {
         // Use the verification system to ensure exact data integrity
-        const integrityCheck = verifyCustomModeDataIntegrity();
+        const integrityCheck = verifyAndRestoreCustomModeData();
         
         if (integrityCheck) {
             console.log('✅ Data integrity verified during finalization');
@@ -7436,31 +7523,92 @@ function finalizeCustomModeDataRestoration() {
     }
 }
 
-function clearCustomModeBackups() {
-    console.log('=== CLEARING CUSTOM MODE BACKUPS ===');
+function checkAirlockFallback() {
+    console.log('=== CHECKING AIRLOCK FALLBACK ===');
     
     try {
-        localStorage.removeItem('customModeBackup');
-        localStorage.removeItem('japaneseCustomModeBackup');
-        localStorage.removeItem('customModeWindowBackup');
-        console.log('Custom mode backups cleared');
+        // Check if functional save has data
+        const functionalEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        const functionalJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
         
-        // Update airlock debug to show cleared state
+        // Check if airlock has data
+        const airlockEnglish = loadFromLocalStorage('customModeBackup', null);
+        const airlockJapanese = loadFromLocalStorage('japaneseCustomModeBackup', null);
+        
+        console.log('Functional English data:', functionalEnglish ? 'EXISTS' : 'EMPTY');
+        console.log('Functional Japanese data:', functionalJapanese ? 'EXISTS' : 'EMPTY');
+        console.log('Airlock English data:', airlockEnglish ? 'EXISTS' : 'EMPTY');
+        console.log('Airlock Japanese data:', airlockJapanese ? 'EXISTS' : 'EMPTY');
+        
+        let fallbackUsed = false;
+        
+        // If functional save is empty but airlock has data, restore from airlock
+        if (!functionalEnglish && airlockEnglish) {
+            console.log('🔄 English functional save is empty - restoring from airlock fallback');
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+            fallbackUsed = true;
+        }
+        
+        if (!functionalJapanese && airlockJapanese) {
+            console.log('🔄 Japanese functional save is empty - restoring from airlock fallback');
+            saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+            fallbackUsed = true;
+        }
+        
+        // Restore window variables if needed
+        const airlockWindow = loadFromLocalStorage('customModeWindowBackup', null);
+        if (airlockWindow && (!window.customModeEnabled && !window.japaneseCustomModeEnabled)) {
+            console.log('🔄 Window variables missing - restoring from airlock fallback');
+            window.customModeEnabled = airlockWindow.customModeEnabled;
+            window.customWordPools = airlockWindow.customWordPools;
+            window.customModeNoPracticeRounds = airlockWindow.customModeNoPracticeRounds;
+            window.japaneseCustomModeEnabled = airlockWindow.japaneseCustomModeEnabled;
+            window.japaneseCustomWordPools = airlockWindow.japaneseCustomWordPools;
+            window.japaneseCustomModeNoPracticeRounds = airlockWindow.japaneseCustomModeNoPracticeRounds;
+            fallbackUsed = true;
+        }
+        
+        if (fallbackUsed) {
+            console.log('✅ Airlock fallback restoration completed');
+            updatePersistentDebug();
+            updateAirlockDebug();
+        } else {
+            console.log('✅ No fallback needed - functional save has data');
+        }
+        
+        return fallbackUsed;
+    } catch (error) {
+        console.error('Error checking airlock fallback:', error);
+        return false;
+    }
+}
+
+function clearCustomModeBackups() {
+    console.log('=== FINALIZING AIRLOCK AS PERMANENT BACKUP ===');
+    
+    try {
+        // Keep airlock data as permanent backup - DO NOT DELETE
+        console.log('✅ Airlock data preserved as permanent backup');
+        console.log('✅ English backup preserved:', loadFromLocalStorage('customModeBackup', null) ? 'EXISTS' : 'EMPTY');
+        console.log('✅ Japanese backup preserved:', loadFromLocalStorage('japaneseCustomModeBackup', null) ? 'EXISTS' : 'EMPTY');
+        console.log('✅ Window backup preserved:', loadFromLocalStorage('customModeWindowBackup', null) ? 'EXISTS' : 'EMPTY');
+        
+        // Update airlock debug to show permanent backup state
         updateAirlockDebug();
         
-        // Final debug panel update after clearing
+        // Final debug panel update
         setTimeout(() => {
-            console.log('=== DEBUG PANEL UPDATE AFTER AIRLOCK CLEAR ===');
-            const afterClearEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            const afterClearJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('After airlock clear - English data:', afterClearEnglishData);
-            console.log('After airlock clear - Japanese data:', afterClearJapaneseData);
+            console.log('=== DEBUG PANEL UPDATE AFTER AIRLOCK FINALIZATION ===');
+            const afterFinalizeEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+            const afterFinalizeJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+            console.log('After airlock finalization - English data:', afterFinalizeEnglishData);
+            console.log('After airlock finalization - Japanese data:', afterFinalizeJapaneseData);
             updatePersistentDebug();
         }, 100);
         
         return true;
     } catch (error) {
-        console.error('Error clearing custom mode backups:', error);
+        console.error('Error finalizing airlock as permanent backup:', error);
         return false;
     }
 }
