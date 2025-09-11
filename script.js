@@ -7192,6 +7192,81 @@ function initializeAirlockDebug() {
     console.log('Airlock debug system initialized');
 }
 
+// Deep copy function for exact data replication
+function deepCopyCustomModeData(data) {
+    if (!data) return null;
+    return JSON.parse(JSON.stringify(data));
+}
+
+// Verification function to compare airlock vs functional save
+function verifyCustomModeDataIntegrity() {
+    console.log('=== VERIFYING CUSTOM MODE DATA INTEGRITY ===');
+    
+    try {
+        // Get current functional save data
+        const functionalEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+        const functionalJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
+        
+        // Get airlock backup data
+        const airlockEnglish = loadFromLocalStorage('customModeBackup', null);
+        const airlockJapanese = loadFromLocalStorage('japaneseCustomModeBackup', null);
+        
+        console.log('Functional English data:', functionalEnglish);
+        console.log('Airlock English data:', airlockEnglish);
+        console.log('Functional Japanese data:', functionalJapanese);
+        console.log('Airlock Japanese data:', airlockJapanese);
+        
+        let needsRestoration = false;
+        
+        // Compare English data
+        if (airlockEnglish && functionalEnglish) {
+            const englishMatch = JSON.stringify(airlockEnglish) === JSON.stringify(functionalEnglish);
+            console.log('English data match:', englishMatch);
+            if (!englishMatch) {
+                console.log('❌ English data mismatch detected - restoring from airlock');
+                saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+                needsRestoration = true;
+            } else {
+                console.log('✅ English data matches perfectly');
+            }
+        } else if (airlockEnglish && !functionalEnglish) {
+            console.log('❌ English data missing in functional save - restoring from airlock');
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(airlockEnglish));
+            needsRestoration = true;
+        }
+        
+        // Compare Japanese data
+        if (airlockJapanese && functionalJapanese) {
+            const japaneseMatch = JSON.stringify(airlockJapanese) === JSON.stringify(functionalJapanese);
+            console.log('Japanese data match:', japaneseMatch);
+            if (!japaneseMatch) {
+                console.log('❌ Japanese data mismatch detected - restoring from airlock');
+                saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+                needsRestoration = true;
+            } else {
+                console.log('✅ Japanese data matches perfectly');
+            }
+        } else if (airlockJapanese && !functionalJapanese) {
+            console.log('❌ Japanese data missing in functional save - restoring from airlock');
+            saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(airlockJapanese));
+            needsRestoration = true;
+        }
+        
+        if (needsRestoration) {
+            console.log('🔄 Data restoration completed - updating debug panels');
+            updatePersistentDebug();
+            updateAirlockDebug();
+        } else {
+            console.log('✅ All data integrity checks passed');
+        }
+        
+        return !needsRestoration; // Return true if no restoration was needed
+    } catch (error) {
+        console.error('Error verifying custom mode data integrity:', error);
+        return false;
+    }
+}
+
 // Airlock system for custom mode data protection
 function backupCustomModeData() {
     console.log('=== BACKING UP CUSTOM MODE DATA ===');
@@ -7199,20 +7274,26 @@ function backupCustomModeData() {
     try {
         const backupTimestamp = Date.now();
         
-        // Backup English custom mode data
+        // Backup English custom mode data with exact deep copy
         const englishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
         if (englishData) {
-            englishData.backupTimestamp = backupTimestamp;
-            saveToLocalStorage('customModeBackup', englishData);
-            console.log('English custom mode data backed up:', englishData);
+            const englishBackup = deepCopyCustomModeData(englishData);
+            englishBackup.backupTimestamp = backupTimestamp;
+            saveToLocalStorage('customModeBackup', englishBackup);
+            console.log('English custom mode data backed up (exact copy):', englishBackup);
+            console.log('Original English data:', englishData);
+            console.log('Backup matches original:', JSON.stringify(englishData) === JSON.stringify(englishBackup));
         }
         
-        // Backup Japanese custom mode data
+        // Backup Japanese custom mode data with exact deep copy
         const japaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
         if (japaneseData) {
-            japaneseData.backupTimestamp = backupTimestamp;
-            saveToLocalStorage('japaneseCustomModeBackup', japaneseData);
-            console.log('Japanese custom mode data backed up:', japaneseData);
+            const japaneseBackup = deepCopyCustomModeData(japaneseData);
+            japaneseBackup.backupTimestamp = backupTimestamp;
+            saveToLocalStorage('japaneseCustomModeBackup', japaneseBackup);
+            console.log('Japanese custom mode data backed up (exact copy):', japaneseBackup);
+            console.log('Original Japanese data:', japaneseData);
+            console.log('Backup matches original:', JSON.stringify(japaneseData) === JSON.stringify(japaneseBackup));
         }
         
         // Backup window variables
@@ -7242,32 +7323,46 @@ function restoreCustomModeData() {
     console.log('=== RESTORING CUSTOM MODE DATA ===');
     
     try {
-        // Restore English custom mode data
+        // Restore English custom mode data with exact deep copy
         const englishBackup = loadFromLocalStorage('customModeBackup', null);
         if (englishBackup) {
             console.log('=== RESTORING ENGLISH DATA ===');
             console.log('English backup data:', englishBackup);
-            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishBackup);
+            const englishRestore = deepCopyCustomModeData(englishBackup);
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishRestore);
             console.log('English custom mode data restored to:', STORAGE_KEYS.CUSTOM_ROUNDS);
             
-            // Verify the restoration worked
+            // Verify the restoration worked with exact match check
             const verifyEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
             console.log('Verification - English data after restore:', verifyEnglish);
+            const exactMatch = JSON.stringify(englishBackup) === JSON.stringify(verifyEnglish);
+            console.log('English restore exact match:', exactMatch);
+            if (!exactMatch) {
+                console.log('❌ English restore failed - attempting correction');
+                saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, deepCopyCustomModeData(englishBackup));
+            }
         } else {
             console.log('No English backup data found to restore');
         }
         
-        // Restore Japanese custom mode data
+        // Restore Japanese custom mode data with exact deep copy
         const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
         if (japaneseBackup) {
             console.log('=== RESTORING JAPANESE DATA ===');
             console.log('Japanese backup data:', japaneseBackup);
-            saveToLocalStorage('japaneseCustomRounds', japaneseBackup);
+            const japaneseRestore = deepCopyCustomModeData(japaneseBackup);
+            saveToLocalStorage('japaneseCustomRounds', japaneseRestore);
             console.log('Japanese custom mode data restored to: japaneseCustomRounds');
             
-            // Verify the restoration worked
+            // Verify the restoration worked with exact match check
             const verifyJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
             console.log('Verification - Japanese data after restore:', verifyJapanese);
+            const exactMatch = JSON.stringify(japaneseBackup) === JSON.stringify(verifyJapanese);
+            console.log('Japanese restore exact match:', exactMatch);
+            if (!exactMatch) {
+                console.log('❌ Japanese restore failed - attempting correction');
+                saveToLocalStorage('japaneseCustomRounds', deepCopyCustomModeData(japaneseBackup));
+            }
         } else {
             console.log('No Japanese backup data found to restore');
         }
@@ -7297,8 +7392,15 @@ function restoreCustomModeData() {
         
         // Finalize data restoration and clear airlock after 1 second delay
         setTimeout(() => {
-            // Finalize the data restoration from airlock to main save
-            finalizeCustomModeDataRestoration();
+            // Verify data integrity and restore if needed
+            console.log('=== FINAL VERIFICATION BEFORE AIRLOCK CLEAR ===');
+            const integrityCheck = verifyCustomModeDataIntegrity();
+            
+            if (integrityCheck) {
+                console.log('✅ Data integrity verified - proceeding to clear airlock');
+            } else {
+                console.log('🔄 Data integrity issues found and corrected - proceeding to clear airlock');
+            }
             
             // Now clear the airlock
             clearCustomModeBackups();
@@ -7315,39 +7417,14 @@ function finalizeCustomModeDataRestoration() {
     console.log('=== FINALIZING CUSTOM MODE DATA RESTORATION ===');
     
     try {
-        // Re-read airlock data and copy it back to main save one final time
-        const finalEnglishBackup = loadFromLocalStorage('customModeBackup', null);
-        const finalJapaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
-        const finalWindowBackup = loadFromLocalStorage('customModeWindowBackup', null);
+        // Use the verification system to ensure exact data integrity
+        const integrityCheck = verifyCustomModeDataIntegrity();
         
-        if (finalEnglishBackup) {
-            console.log('Finalizing - English backup data:', finalEnglishBackup);
-            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, finalEnglishBackup);
-            console.log('Finalizing - English data written to main save');
+        if (integrityCheck) {
+            console.log('✅ Data integrity verified during finalization');
+        } else {
+            console.log('🔄 Data integrity issues found and corrected during finalization');
         }
-        
-        if (finalJapaneseBackup) {
-            console.log('Finalizing - Japanese backup data:', finalJapaneseBackup);
-            saveToLocalStorage('japaneseCustomRounds', finalJapaneseBackup);
-            console.log('Finalizing - Japanese data written to main save');
-        }
-        
-        if (finalWindowBackup) {
-            console.log('Finalizing - Window backup data:', finalWindowBackup);
-            window.customModeEnabled = finalWindowBackup.customModeEnabled;
-            window.customWordPools = finalWindowBackup.customWordPools;
-            window.customModeNoPracticeRounds = finalWindowBackup.customModeNoPracticeRounds;
-            window.japaneseCustomModeEnabled = finalWindowBackup.japaneseCustomModeEnabled;
-            window.japaneseCustomWordPools = finalWindowBackup.japaneseCustomWordPools;
-            window.japaneseCustomModeNoPracticeRounds = finalWindowBackup.japaneseCustomModeNoPracticeRounds;
-            console.log('Finalizing - Window variables restored');
-        }
-        
-        // Verify the final restoration worked
-        const verifyFinalEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-        const verifyFinalJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
-        console.log('Final verification - English data after finalization:', verifyFinalEnglish);
-        console.log('Final verification - Japanese data after finalization:', verifyFinalJapanese);
         
         // Update debug panel to show the final restored data
         updatePersistentDebug();
