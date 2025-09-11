@@ -7239,15 +7239,31 @@ function restoreCustomModeData() {
         // Restore English custom mode data
         const englishBackup = loadFromLocalStorage('customModeBackup', null);
         if (englishBackup) {
+            console.log('=== RESTORING ENGLISH DATA ===');
+            console.log('English backup data:', englishBackup);
             saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishBackup);
-            console.log('English custom mode data restored:', englishBackup);
+            console.log('English custom mode data restored to:', STORAGE_KEYS.CUSTOM_ROUNDS);
+            
+            // Verify the restoration worked
+            const verifyEnglish = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+            console.log('Verification - English data after restore:', verifyEnglish);
+        } else {
+            console.log('No English backup data found to restore');
         }
         
         // Restore Japanese custom mode data
         const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
         if (japaneseBackup) {
+            console.log('=== RESTORING JAPANESE DATA ===');
+            console.log('Japanese backup data:', japaneseBackup);
             saveToLocalStorage('japaneseCustomRounds', japaneseBackup);
-            console.log('Japanese custom mode data restored:', japaneseBackup);
+            console.log('Japanese custom mode data restored to: japaneseCustomRounds');
+            
+            // Verify the restoration worked
+            const verifyJapanese = loadFromLocalStorage('japaneseCustomRounds', null);
+            console.log('Verification - Japanese data after restore:', verifyJapanese);
+        } else {
+            console.log('No Japanese backup data found to restore');
         }
         
         // Restore window variables
@@ -7265,12 +7281,22 @@ function restoreCustomModeData() {
         // Update debug displays
         updateAirlockDebug();
         setTimeout(() => {
+            console.log('=== UPDATING DEBUG PANEL AFTER RESTORE ===');
+            const debugEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+            const debugJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+            console.log('Debug panel reading English data:', debugEnglishData);
+            console.log('Debug panel reading Japanese data:', debugJapaneseData);
             updatePersistentDebug();
         }, 100);
         
         // Clear backups after 1 second delay
         setTimeout(() => {
             console.log('=== CLEARING BACKUPS AFTER RESTORE ===');
+            console.log('Final verification before clearing backups:');
+            const finalEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+            const finalJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+            console.log('Final English data:', finalEnglishData);
+            console.log('Final Japanese data:', finalJapaneseData);
             clearCustomModeBackups();
         }, 1000);
         
@@ -7292,6 +7318,16 @@ function clearCustomModeBackups() {
         
         // Update airlock debug to show cleared state
         updateAirlockDebug();
+        
+        // Final debug panel update after clearing
+        setTimeout(() => {
+            console.log('=== DEBUG PANEL UPDATE AFTER AIRLOCK CLEAR ===');
+            const afterClearEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
+            const afterClearJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
+            console.log('After airlock clear - English data:', afterClearEnglishData);
+            console.log('After airlock clear - Japanese data:', afterClearJapaneseData);
+            updatePersistentDebug();
+        }, 100);
         
         return true;
     } catch (error) {
