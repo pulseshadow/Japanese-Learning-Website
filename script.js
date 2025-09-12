@@ -2481,9 +2481,9 @@ customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => {
-    // AIRLOCK: Clear backups when returning to start
-    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
-    clearCustomModeBackups();
+    // UNFREEZE AIRLOCK when returning to start
+    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
+    unfreezeAirlock();
     showPage('start');
 });
 
@@ -2507,9 +2507,9 @@ backToScriptBtn.addEventListener('click', () => {
         if (window.cameFromWordEntry) {
             showPage('word-entry-selection');
         } else {
-            // AIRLOCK: Clear backups when returning to start
-            console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
-            clearCustomModeBackups();
+            // UNFREEZE AIRLOCK when returning to start
+            console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
+            unfreezeAirlock();
             showPage('start');
         }
     }
@@ -2523,9 +2523,9 @@ backToStartFromCustomScriptBtn.addEventListener('click', () => {
     if (window.cameFromWordEntry) {
         showPage('word-entry-selection');
     } else {
-        // AIRLOCK: Clear backups when returning to start
-        console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
-        clearCustomModeBackups();
+        // UNFREEZE AIRLOCK when returning to start
+        console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
+        unfreezeAirlock();
         showPage('start');
     }
 });
@@ -2541,9 +2541,9 @@ backToStartFromCustomBtn.addEventListener('click', () => {
 backToStartFromWordEntryBtn.addEventListener('click', () => {
     // Clear the flag when going back to start
     window.cameFromWordEntry = false;
-    // AIRLOCK: Clear backups when returning to start
-    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
-    clearCustomModeBackups();
+    // UNFREEZE AIRLOCK when returning to start
+    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
+    unfreezeAirlock();
     showPage('start');
 });
 
@@ -2831,9 +2831,9 @@ function showMirroredRepeatingQuestion() {
 // Stats page event listeners - clearStatsBtn removed
 
 backToStartFromStatsBtn.addEventListener('click', () => {
-    // AIRLOCK: Clear backups when returning to start
-    console.log('=== RETURNING TO START - CLEARING BACKUPS ===');
-    clearCustomModeBackups();
+    // UNFREEZE AIRLOCK when returning to start
+    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
+    unfreezeAirlock();
     showPage('start');
 });
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
@@ -2955,6 +2955,10 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
+        // UNFREEZE AIRLOCK when entering custom mode page
+        console.log('Entering custom mode page, unfreezing airlock...');
+        unfreezeAirlock();
+        
         // Check for airlock fallback before initializing
         console.log('Entering custom mode page, checking for airlock fallback...');
         checkAirlockFallback();
@@ -2970,6 +2974,10 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         japaneseCustomModePage.style.display = 'block';
         japaneseCustomModePage.classList.add('active');
+        // UNFREEZE AIRLOCK when entering Japanese custom mode page
+        console.log('Entering Japanese custom mode page, unfreezing airlock...');
+        unfreezeAirlock();
+        
         // Check for airlock fallback before initializing
         console.log('Entering Japanese custom mode page, checking for airlock fallback...');
         checkAirlockFallback();
@@ -5768,6 +5776,10 @@ function restoreJapaneseCustomRoundsState() {
 function startJapaneseCustomRun() {
     console.log('Starting Japanese custom run');
     
+    // FREEZE AIRLOCK before starting game
+    console.log('=== JAPANESE CUSTOM GAME START - FREEZING AIRLOCK ===');
+    freezeAirlock();
+    
     // Save current state before starting
     saveJapaneseCustomRounds();
     
@@ -6178,6 +6190,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Initialize airlock debug system
         initializeAirlockDebug();
+        
+        // Unfreeze airlock on page reload
+        console.log('=== PAGE RELOAD DETECTED - UNFREEZING AIRLOCK ===');
+        unfreezeAirlock();
         
         // Initialize AdSense after page load
     setTimeout(() => {
@@ -7124,6 +7140,10 @@ function updateAirlockDebug() {
         
         let airlockInfo = `🕐 ${currentTime}
 
+🔒 AIRLOCK STATUS: ${airlockFrozen ? 'FROZEN' : 'ACTIVE'}
+${airlockFrozen ? `├─ Frozen At: ${new Date(frozenAirlockData?.frozenAt || 0).toLocaleTimeString()}` : ''}
+${airlockFrozen ? '└─ Data is IMMUTABLE and protected' : ''}
+
 📦 BACKUP STATUS:
 ├─ English Backup: ${englishBackup ? '✅ EXISTS' : '❌ EMPTY'}
 ├─ Japanese Backup: ${japaneseBackup ? '✅ EXISTS' : '❌ EMPTY'}
@@ -7195,9 +7215,99 @@ function deepCopyCustomModeData(data) {
     return JSON.parse(JSON.stringify(data));
 }
 
+// Frozen airlock system - prevents airlock from being modified during games
+let airlockFrozen = false;
+let frozenAirlockData = null;
+
+function freezeAirlock() {
+    console.log('=== FREEZING AIRLOCK - CREATING IMMUTABLE BACKUP ===');
+    
+    try {
+        // Create immutable backup of current airlock data
+        frozenAirlockData = {
+            english: deepCopyCustomModeData(loadFromLocalStorage('customModeBackup', null)),
+            japanese: deepCopyCustomModeData(loadFromLocalStorage('japaneseCustomModeBackup', null)),
+            window: deepCopyCustomModeData(loadFromLocalStorage('customModeWindowBackup', null)),
+            frozenAt: Date.now()
+        };
+        
+        airlockFrozen = true;
+        console.log('✅ Airlock frozen with data:', frozenAirlockData);
+        console.log('🔒 Airlock is now immutable and cannot be modified');
+        
+        // Update debug panels to show frozen state
+        updateAirlockDebug();
+        
+        return true;
+    } catch (error) {
+        console.error('Error freezing airlock:', error);
+        return false;
+    }
+}
+
+function unfreezeAirlock() {
+    console.log('=== UNFREEZING AIRLOCK - RESTORING ACCESS ===');
+    
+    try {
+        airlockFrozen = false;
+        frozenAirlockData = null;
+        
+        console.log('✅ Airlock unfrozen - modifications now allowed');
+        
+        // Update debug panels
+        updateAirlockDebug();
+        
+        return true;
+    } catch (error) {
+        console.error('Error unfreezing airlock:', error);
+        return false;
+    }
+}
+
+function getFrozenAirlockData() {
+    if (airlockFrozen && frozenAirlockData) {
+        console.log('🔒 Returning frozen airlock data (immutable)');
+        return frozenAirlockData;
+    }
+    
+    // Return live data if not frozen
+    return {
+        english: loadFromLocalStorage('customModeBackup', null),
+        japanese: loadFromLocalStorage('japaneseCustomModeBackup', null),
+        window: loadFromLocalStorage('customModeWindowBackup', null)
+    };
+}
+
 // Save data to both functional save and airlock simultaneously
 function saveToBothStorages(englishData, japaneseData, windowData) {
     console.log('=== SAVING TO BOTH FUNCTIONAL SAVE AND AIRLOCK ===');
+    
+    // Check if airlock is frozen
+    if (airlockFrozen) {
+        console.log('🔒 AIRLOCK IS FROZEN - Only saving to functional storage');
+        console.log('🔒 Airlock data is protected and cannot be modified');
+        
+        // Only save to functional storage when airlock is frozen
+        if (englishData) {
+            const englishWithTimestamp = deepCopyCustomModeData(englishData);
+            englishWithTimestamp.lastSaved = Date.now();
+            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishWithTimestamp);
+            console.log('English data saved to functional storage only (airlock frozen)');
+        }
+        
+        if (japaneseData) {
+            const japaneseWithTimestamp = deepCopyCustomModeData(japaneseData);
+            japaneseWithTimestamp.lastSaved = Date.now();
+            saveToLocalStorage('japaneseCustomRounds', japaneseWithTimestamp);
+            console.log('Japanese data saved to functional storage only (airlock frozen)');
+        }
+        
+        // Update debug panels
+        updatePersistentDebug();
+        updateAirlockDebug();
+        
+        return true;
+    }
     
     try {
         const timestamp = Date.now();
@@ -8366,6 +8476,10 @@ function startCustomRun() {
 }
 
 function startCustomGame() {
+    // FREEZE AIRLOCK before starting game
+    console.log('=== CUSTOM GAME START - FREEZING AIRLOCK ===');
+    freezeAirlock();
+    
     // Always start fresh - users can use round selector to jump to any round
     currentRound = 1;
     currentPhase = 'learning';
