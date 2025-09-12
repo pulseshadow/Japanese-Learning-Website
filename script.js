@@ -4814,6 +4814,10 @@ function initializeJapaneseCustomMode() {
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreJapaneseCustomRoundsState();
+            // Fix dropdown states after data is loaded
+            setTimeout(() => {
+                fixDropdownStates();
+            }, 50);
         }, 100);
     }
     
@@ -5838,7 +5842,8 @@ function restoreJapaneseCustomRoundsState() {
         
         console.log('Japanese custom rounds state restored successfully');
         
-        // Update debug display after restoring
+        // Fix dropdown states after restoration
+        fixDropdownStates();
         
         // Clear the saved data from memory (same as English mode)
         delete window.savedJapaneseCustomRoundsData;
@@ -7119,6 +7124,55 @@ function deepCopyCustomModeData(data) {
     return JSON.parse(JSON.stringify(data));
 }
 
+// Fix dropdown state by checking for selected words and forcing open
+function fixDropdownStates() {
+    console.log('=== FIXING DROPDOWN STATES BASED ON SELECTED WORDS ===');
+    
+    // Fix English custom mode dropdowns
+    const englishRounds = document.querySelectorAll('.custom-round');
+    englishRounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked');
+        const customWords = round.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
+        const totalSelected = checkedWords.length + customWords.length;
+        
+        if (totalSelected > 0) {
+            console.log(`English Round ${roundNumber}: Found ${totalSelected} selected words, forcing dropdown open`);
+            const dropdown = round.querySelector('.round-header');
+            if (dropdown) {
+                dropdown.classList.remove('collapsed');
+                const arrow = dropdown.querySelector('.round-arrow');
+                if (arrow) {
+                    arrow.textContent = '▼';
+                }
+            }
+        }
+    });
+    
+    // Fix Japanese custom mode dropdowns
+    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+    japaneseRounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked');
+        const customWords = round.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
+        const totalSelected = checkedWords.length + customWords.length;
+        
+        if (totalSelected > 0) {
+            console.log(`Japanese Round ${roundNumber}: Found ${totalSelected} selected words, forcing dropdown open`);
+            const dropdown = round.querySelector('.round-header');
+            if (dropdown) {
+                dropdown.classList.remove('collapsed');
+                const arrow = dropdown.querySelector('.round-arrow');
+                if (arrow) {
+                    arrow.textContent = '▼';
+                }
+            }
+        }
+    });
+    
+    console.log('✅ Dropdown state fix completed');
+}
+
 // Frozen airlock system - prevents airlock from being modified during games
 let airlockFrozen = false;
 let frozenAirlockData = null;
@@ -7637,6 +7691,10 @@ function checkAirlockFallback() {
         
         if (fallbackUsed) {
             console.log('✅ Airlock fallback restoration completed');
+            // Fix dropdown states after fallback restoration
+            setTimeout(() => {
+                fixDropdownStates();
+            }, 100);
         } else {
             console.log('✅ No fallback needed - functional save has data');
         }
@@ -7747,6 +7805,10 @@ function initializeCustomMode() {
         // Add a small delay to ensure DOM is fully ready
         setTimeout(() => {
             restoreCustomRoundsState();
+            // Fix dropdown states after data is loaded
+            setTimeout(() => {
+                fixDropdownStates();
+            }, 50);
         }, 100);
     }
 }
@@ -9165,7 +9227,8 @@ function restoreCustomRoundsState() {
     // Update all select all states after restoration
     updateSelectAllState();
     
-    // Update debug display after restoring
+    // Fix dropdown states after restoration
+    fixDropdownStates();
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
