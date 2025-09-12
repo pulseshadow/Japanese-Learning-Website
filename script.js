@@ -2423,6 +2423,103 @@ const addRoundBtn = document.getElementById('add-round-btn');
 const removeRoundBtn = document.getElementById('remove-round-btn');
 const startCustomRunBtn = document.getElementById('start-custom-run-btn');
 const disablePracticeRoundsToggle = document.getElementById('disable-practice-rounds');
+
+// Create overlay buttons for two-step start process
+function createOverlayButtons() {
+    console.log('=== CREATING OVERLAY BUTTONS FOR TWO-STEP START PROCESS ===');
+    
+    // Create English custom mode overlay button
+    if (startCustomRunBtn) {
+        // Disable original button
+        startCustomRunBtn.style.pointerEvents = 'none';
+        startCustomRunBtn.style.opacity = '0.7';
+        
+        // Create overlay button
+        const englishOverlayBtn = document.createElement('button');
+        englishOverlayBtn.id = 'english-custom-overlay-btn';
+        englishOverlayBtn.style.position = 'absolute';
+        englishOverlayBtn.style.top = startCustomRunBtn.offsetTop + 'px';
+        englishOverlayBtn.style.left = startCustomRunBtn.offsetLeft + 'px';
+        englishOverlayBtn.style.width = startCustomRunBtn.offsetWidth + 'px';
+        englishOverlayBtn.style.height = startCustomRunBtn.offsetHeight + 'px';
+        englishOverlayBtn.style.backgroundColor = 'transparent';
+        englishOverlayBtn.style.border = 'none';
+        englishOverlayBtn.style.cursor = 'pointer';
+        englishOverlayBtn.style.zIndex = '1000';
+        englishOverlayBtn.style.opacity = '0';
+        
+        // Add click handler for two-step process
+        englishOverlayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('=== ENGLISH CUSTOM OVERLAY BUTTON CLICKED ===');
+            
+            // Step 1: Freeze airlock
+            console.log('Step 1: Freezing airlock...');
+            freezeAirlock();
+            
+            // Step 2: Wait 0.1 seconds then simulate original button click
+            setTimeout(() => {
+                console.log('Step 2: Simulating original button click...');
+                startCustomRunBtn.style.pointerEvents = 'auto';
+                startCustomRunBtn.click();
+                startCustomRunBtn.style.pointerEvents = 'none';
+            }, 100);
+        });
+        
+        // Add overlay button to parent
+        startCustomRunBtn.parentNode.style.position = 'relative';
+        startCustomRunBtn.parentNode.appendChild(englishOverlayBtn);
+        
+        console.log('✅ English custom overlay button created');
+    }
+    
+    // Create Japanese custom mode overlay button
+    if (japaneseStartCustomRunBtn) {
+        // Disable original button
+        japaneseStartCustomRunBtn.style.pointerEvents = 'none';
+        japaneseStartCustomRunBtn.style.opacity = '0.7';
+        
+        // Create overlay button
+        const japaneseOverlayBtn = document.createElement('button');
+        japaneseOverlayBtn.id = 'japanese-custom-overlay-btn';
+        japaneseOverlayBtn.style.position = 'absolute';
+        japaneseOverlayBtn.style.top = japaneseStartCustomRunBtn.offsetTop + 'px';
+        japaneseOverlayBtn.style.left = japaneseStartCustomRunBtn.offsetLeft + 'px';
+        japaneseOverlayBtn.style.width = japaneseStartCustomRunBtn.offsetWidth + 'px';
+        japaneseOverlayBtn.style.height = japaneseStartCustomRunBtn.offsetHeight + 'px';
+        japaneseOverlayBtn.style.backgroundColor = 'transparent';
+        japaneseOverlayBtn.style.border = 'none';
+        japaneseOverlayBtn.style.cursor = 'pointer';
+        japaneseOverlayBtn.style.zIndex = '1000';
+        japaneseOverlayBtn.style.opacity = '0';
+        
+        // Add click handler for two-step process
+        japaneseOverlayBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('=== JAPANESE CUSTOM OVERLAY BUTTON CLICKED ===');
+            
+            // Step 1: Freeze airlock
+            console.log('Step 1: Freezing airlock...');
+            freezeAirlock();
+            
+            // Step 2: Wait 0.1 seconds then simulate original button click
+            setTimeout(() => {
+                console.log('Step 2: Simulating original button click...');
+                japaneseStartCustomRunBtn.style.pointerEvents = 'auto';
+                japaneseStartCustomRunBtn.click();
+                japaneseStartCustomRunBtn.style.pointerEvents = 'none';
+            }, 100);
+        });
+        
+        // Add overlay button to parent
+        japaneseStartCustomRunBtn.parentNode.style.position = 'relative';
+        japaneseStartCustomRunBtn.parentNode.appendChild(japaneseOverlayBtn);
+        
+        console.log('✅ Japanese custom overlay button created');
+    }
+}
 const customRoundsContainer = document.getElementById('custom-rounds-container');
 
 // Stats page DOM elements
@@ -2481,10 +2578,8 @@ customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
 hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => {
-    // UNFREEZE AIRLOCK when returning to start
-    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
-    unfreezeAirlock();
-    showPage('start');
+    // Use enhanced page navigation with exit detection
+    showPageWithExitDetection('start');
 });
 
 // Add event listener for the new back button in script selection
@@ -2507,10 +2602,8 @@ backToScriptBtn.addEventListener('click', () => {
         if (window.cameFromWordEntry) {
             showPage('word-entry-selection');
         } else {
-            // UNFREEZE AIRLOCK when returning to start
-            console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
-            unfreezeAirlock();
-            showPage('start');
+            // Use enhanced page navigation with exit detection
+            showPageWithExitDetection('start');
         }
     }
 });
@@ -2523,10 +2616,8 @@ backToStartFromCustomScriptBtn.addEventListener('click', () => {
     if (window.cameFromWordEntry) {
         showPage('word-entry-selection');
     } else {
-        // UNFREEZE AIRLOCK when returning to start
-        console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
-        unfreezeAirlock();
-        showPage('start');
+        // Use enhanced page navigation with exit detection
+        showPageWithExitDetection('start');
     }
 });
 
@@ -2541,10 +2632,8 @@ backToStartFromCustomBtn.addEventListener('click', () => {
 backToStartFromWordEntryBtn.addEventListener('click', () => {
     // Clear the flag when going back to start
     window.cameFromWordEntry = false;
-    // UNFREEZE AIRLOCK when returning to start
-    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
-    unfreezeAirlock();
-    showPage('start');
+    // Use enhanced page navigation with exit detection
+    showPageWithExitDetection('start');
 });
 
 enterJapaneseWordsBtn.addEventListener('click', () => {
@@ -2831,10 +2920,8 @@ function showMirroredRepeatingQuestion() {
 // Stats page event listeners - clearStatsBtn removed
 
 backToStartFromStatsBtn.addEventListener('click', () => {
-    // UNFREEZE AIRLOCK when returning to start
-    console.log('=== RETURNING TO START - UNFREEZING AIRLOCK ===');
-    unfreezeAirlock();
-    showPage('start');
+    // Use enhanced page navigation with exit detection
+    showPageWithExitDetection('start');
 });
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
 addRoundBtn.addEventListener('click', addCustomRound);
@@ -2881,6 +2968,9 @@ document.addEventListener('click', (e) => {
 function showPage(pageName) {
     currentPage = pageName;
     window.currentPage = pageName; // Also set on window for debug panel
+    
+    // Detect game exit before processing page change
+    detectGameExit();
     
     // Hide all pages
     startPage.style.display = 'none';
@@ -2955,9 +3045,10 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         customModePage.style.display = 'block';
         customModePage.classList.add('active');
-        // UNFREEZE AIRLOCK when entering custom mode page
-        console.log('Entering custom mode page, unfreezing airlock...');
-        unfreezeAirlock();
+        // Recreate overlay buttons in case they need repositioning
+        setTimeout(() => {
+            createOverlayButtons();
+        }, 100);
         
         // Check for airlock fallback before initializing
         console.log('Entering custom mode page, checking for airlock fallback...');
@@ -2974,9 +3065,10 @@ function showPage(pageName) {
         hideHiraganaKeyboard();
         japaneseCustomModePage.style.display = 'block';
         japaneseCustomModePage.classList.add('active');
-        // UNFREEZE AIRLOCK when entering Japanese custom mode page
-        console.log('Entering Japanese custom mode page, unfreezing airlock...');
-        unfreezeAirlock();
+        // Recreate overlay buttons in case they need repositioning
+        setTimeout(() => {
+            createOverlayButtons();
+        }, 100);
         
         // Check for airlock fallback before initializing
         console.log('Entering Japanese custom mode page, checking for airlock fallback...');
@@ -5776,10 +5868,6 @@ function restoreJapaneseCustomRoundsState() {
 function startJapaneseCustomRun() {
     console.log('Starting Japanese custom run');
     
-    // FREEZE AIRLOCK before starting game
-    console.log('=== JAPANESE CUSTOM GAME START - FREEZING AIRLOCK ===');
-    freezeAirlock();
-    
     // Save current state before starting
     saveJapaneseCustomRounds();
     
@@ -6194,6 +6282,21 @@ document.addEventListener('DOMContentLoaded', () => {
         // Unfreeze airlock on page reload
         console.log('=== PAGE RELOAD DETECTED - UNFREEZING AIRLOCK ===');
         unfreezeAirlock();
+        
+        // Create overlay buttons for two-step start process
+        setTimeout(() => {
+            createOverlayButtons();
+        }, 500); // Wait for DOM to be fully ready
+        
+        // Periodic check to ensure airlock stays frozen during games
+        setInterval(() => {
+            if (airlockFrozen && currentPage === 'game') {
+                console.log('🔒 Airlock status check: FROZEN during game - OK');
+            } else if (airlockFrozen && currentPage !== 'game') {
+                console.log('🔒 Airlock status check: FROZEN but not in game - unfreezing');
+                unfreezeAirlock();
+            }
+        }, 2000); // Check every 2 seconds
         
         // Initialize AdSense after page load
     setTimeout(() => {
@@ -7253,6 +7356,7 @@ function unfreezeAirlock() {
         frozenAirlockData = null;
         
         console.log('✅ Airlock unfrozen - modifications now allowed');
+        console.log('✅ Sync system re-enabled');
         
         // Update debug panels
         updateAirlockDebug();
@@ -7262,6 +7366,41 @@ function unfreezeAirlock() {
         console.error('Error unfreezing airlock:', error);
         return false;
     }
+}
+
+// Game exit detection system
+let gamePageActive = false;
+let lastPage = '';
+
+function detectGameExit() {
+    console.log('=== GAME EXIT DETECTION SYSTEM ===');
+    
+    // Check if we're leaving the game page
+    if (gamePageActive && currentPage !== 'game') {
+        console.log('🎮 User left game page - unfreezing airlock');
+        console.log(`Previous page: game, Current page: ${currentPage}`);
+        unfreezeAirlock();
+        gamePageActive = false;
+    }
+    
+    // Check if we're entering the game page
+    if (currentPage === 'game' && !gamePageActive) {
+        console.log('🎮 User entered game page - airlock should be frozen');
+        gamePageActive = true;
+    }
+    
+    lastPage = currentPage;
+}
+
+// Enhanced page navigation with exit detection
+function showPageWithExitDetection(pageName) {
+    console.log(`=== PAGE NAVIGATION: ${lastPage} → ${pageName} ===`);
+    
+    // Detect game exit before changing page
+    detectGameExit();
+    
+    // Call original showPage function
+    showPage(pageName);
 }
 
 function getFrozenAirlockData() {
@@ -7284,26 +7423,14 @@ function saveToBothStorages(englishData, japaneseData, windowData) {
     
     // Check if airlock is frozen
     if (airlockFrozen) {
-        console.log('🔒 AIRLOCK IS FROZEN - Only saving to functional storage');
+        console.log('🔒 AIRLOCK IS FROZEN - SYNC COMPLETELY DISABLED');
         console.log('🔒 Airlock data is protected and cannot be modified');
+        console.log('🔒 No data will be saved to prevent airlock corruption');
         
-        // Only save to functional storage when airlock is frozen
-        if (englishData) {
-            const englishWithTimestamp = deepCopyCustomModeData(englishData);
-            englishWithTimestamp.lastSaved = Date.now();
-            saveToLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, englishWithTimestamp);
-            console.log('English data saved to functional storage only (airlock frozen)');
-        }
+        // DO NOTHING when airlock is frozen - completely disable sync
+        console.log('🚫 Sync system disabled - no data saved');
         
-        if (japaneseData) {
-            const japaneseWithTimestamp = deepCopyCustomModeData(japaneseData);
-            japaneseWithTimestamp.lastSaved = Date.now();
-            saveToLocalStorage('japaneseCustomRounds', japaneseWithTimestamp);
-            console.log('Japanese data saved to functional storage only (airlock frozen)');
-        }
-        
-        // Update debug panels
-        updatePersistentDebug();
+        // Update debug panels to show frozen state
         updateAirlockDebug();
         
         return true;
@@ -8476,10 +8603,6 @@ function startCustomRun() {
 }
 
 function startCustomGame() {
-    // FREEZE AIRLOCK before starting game
-    console.log('=== CUSTOM GAME START - FREEZING AIRLOCK ===');
-    freezeAirlock();
-    
     // Always start fresh - users can use round selector to jump to any round
     currentRound = 1;
     currentPhase = 'learning';
