@@ -2672,13 +2672,23 @@ enterEnglishWordsBtn.addEventListener('click', () => {
 
 // Japanese script page event listeners
 backToWordEntryBtn.addEventListener('click', () => {
+    // Reset Japanese custom mode flag when going back
+    if (window.japaneseCustomModeEnabled) {
+        window.japaneseCustomModeEnabled = false;
+        console.log('Japanese custom mode reset when going back to word entry selection');
+    }
     showPage('word-entry-selection');
 });
 
 japaneseHiraganaBtn.addEventListener('click', () => {
-    console.log('Starting mirrored brute force mode with Hiragana');
-    window.mirroredMode = true;
-    startMirroredGame();
+    if (window.japaneseCustomModeEnabled) {
+        console.log('Starting Japanese custom mode with Hiragana');
+        startJapaneseCustomGame();
+    } else {
+        console.log('Starting mirrored brute force mode with Hiragana');
+        window.mirroredMode = true;
+        startMirroredGame();
+    }
 });
 
 japaneseKatakanaBtn.addEventListener('click', () => {
@@ -5880,7 +5890,7 @@ function restoreJapaneseCustomRoundsState() {
 }
 
 function startJapaneseCustomRun() {
-    console.log('Starting Japanese custom run');
+    console.log('Starting Japanese custom run - going to script selection');
     
     // Save current state before starting
     saveJapaneseCustomRounds();
@@ -5890,6 +5900,16 @@ function startJapaneseCustomRun() {
         console.warn('No Japanese custom rounds with words found');
         return;
     }
+    
+    // Set Japanese custom mode flag (but not mirrored mode yet)
+    window.japaneseCustomModeEnabled = true;
+    
+    // Navigate to script selection page
+    showPage('japanese-script');
+}
+
+function startJapaneseCustomGame() {
+    console.log('Starting Japanese custom game');
     
     // Reset game state for Japanese custom mode
     currentPage = 'game';
