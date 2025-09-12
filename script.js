@@ -6277,6 +6277,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     detectBrowserLanguage();
     
+    // Ensure text is updated after everything loads
+    setTimeout(() => {
+        updateAllText();
+    }, 100);
+    
     // Initialize text-to-speech system
     initializeTTS();
     
@@ -6562,6 +6567,7 @@ function updateAllText() {
                 updateTextWithPreservedLinks(element, text);
             } else if (text.includes('<br>') || text.includes('<br/>') || text.includes('<br />')) {
                 // Text contains HTML line breaks, use innerHTML
+                console.log('Using innerHTML for element with <br> tag:', element, text);
                 element.innerHTML = text;
             } else {
                 // No links or HTML to preserve, use simple textContent
