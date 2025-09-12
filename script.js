@@ -2680,16 +2680,16 @@ backToWordEntryBtn.addEventListener('click', () => {
     showPage('word-entry-selection');
 });
 
-japaneseHiraganaBtn.addEventListener('click', () => {
+  japaneseHiraganaBtn.addEventListener('click', () => {
     if (window.japaneseCustomModeEnabled) {
-        console.log('Starting Japanese custom mode with Hiragana');
-        startJapaneseCustomGame();
+      console.log('Starting Japanese custom mode with Hiragana');
+      startJapaneseCustomGame();
     } else {
-        console.log('Starting mirrored brute force mode with Hiragana');
-        window.mirroredMode = true;
-        startMirroredGame();
+      console.log('Starting mirrored brute force mode with Hiragana');
+      window.mirroredMode = true;
+      startMirroredGame();
     }
-});
+  });
 
 japaneseKatakanaBtn.addEventListener('click', () => {
     console.log('Katakana not yet implemented for mirrored mode');
@@ -6297,11 +6297,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     detectBrowserLanguage();
     
-    // Update all text to ensure proper rendering
-    setTimeout(() => {
-        updateAllText();
-    }, 100);
-    
     // Initialize text-to-speech system
     initializeTTS();
     
@@ -9202,6 +9197,7 @@ function loadCustomRounds() {
             
             newRound.innerHTML = `
                 <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
+                    <div class="selection-indicator" style="display: none;"></div>
                     <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
                     <div class="round-header-controls">
                         <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
