@@ -2353,10 +2353,6 @@ function getDisplayText(word) {
 const startPage = document.getElementById('start-page');
 
 // Debug popup elements
-const persistentDebugPopup = document.getElementById('persistent-debug-popup');
-const toggleDebugPopup = document.getElementById('toggle-debug-popup');
-const airlockDebugIndicator = document.getElementById('airlock-debug-indicator');
-const toggleAirlockDebug = document.getElementById('toggle-airlock-debug');
 const scriptPage = document.getElementById('script-page');
 const gamePage = document.getElementById('game-page');
 const customScriptPage = document.getElementById('custom-script-page');
@@ -2432,7 +2428,6 @@ function createOverlayButtons() {
     if (startCustomRunBtn) {
         // Disable original button
         startCustomRunBtn.style.pointerEvents = 'none';
-        startCustomRunBtn.style.opacity = '0.7';
         
         // Create overlay button
         const englishOverlayBtn = document.createElement('button');
@@ -2478,7 +2473,6 @@ function createOverlayButtons() {
     if (japaneseStartCustomRunBtn) {
         // Disable original button
         japaneseStartCustomRunBtn.style.pointerEvents = 'none';
-        japaneseStartCustomRunBtn.style.opacity = '0.7';
         
         // Create overlay button
         const japaneseOverlayBtn = document.createElement('button');
@@ -3056,10 +3050,6 @@ function showPage(pageName) {
         // Always initialize custom mode when entering the page
         console.log('Entering custom mode page, initializing...');
         initializeCustomMode();
-        // Update debug display
-        setTimeout(() => {
-            updatePersistentDebug();
-        }, 200);
     } else if (pageName === 'japanese-custom-mode') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -3076,10 +3066,6 @@ function showPage(pageName) {
         // Always initialize Japanese custom mode when entering the page
         console.log('Entering Japanese custom mode page, initializing...');
         initializeJapaneseCustomMode();
-        // Update debug display
-        setTimeout(() => {
-            updatePersistentDebug();
-        }, 200);
     } else if (pageName === 'stats') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -5853,9 +5839,6 @@ function restoreJapaneseCustomRoundsState() {
         console.log('Japanese custom rounds state restored successfully');
         
         // Update debug display after restoring
-        setTimeout(() => {
-            updatePersistentDebug();
-        }, 100);
         
         // Clear the saved data from memory (same as English mode)
         delete window.savedJapaneseCustomRoundsData;
@@ -6273,11 +6256,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize hiragana keyboard
         setupHiraganaKeyboard();
         
-        // Initialize persistent debug system
-        initializePersistentDebug();
-        
-        // Initialize airlock debug system
-        initializeAirlockDebug();
         
         // Unfreeze airlock on page reload
         console.log('=== PAGE RELOAD DETECTED - UNFREEZING AIRLOCK ===');
@@ -7131,186 +7109,9 @@ function setupAutoPlayToggle() {
     }
 }
 
-// Persistent debug display function
-function updatePersistentDebug() {
-    const debugElement = document.getElementById('debug-content');
-    if (!debugElement) return;
-    
-    try {
-        // Get current page info
-        const currentPage = window.currentPage || 'unknown';
-        
-        // Get English custom mode data
-        const englishCustomData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-        
-        // Get Japanese custom mode data
-        const japaneseCustomData = loadFromLocalStorage('japaneseCustomRounds', null);
-        
-        // Get current DOM state for both modes
-        const englishRounds = document.querySelectorAll('.custom-round');
-        const englishCheckedWords = document.querySelectorAll('.custom-round input[type="checkbox"]:checked');
-        const englishCustomWords = document.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
-        
-        const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
-        const japaneseCheckedWords = document.querySelectorAll('#japanese-custom-rounds-container input[type="checkbox"]:checked');
-        const japaneseCustomWords = document.querySelectorAll('#japanese-custom-rounds-container .custom-word-item input[type="checkbox"]:checked');
-        
-        let debugInfo = `🌐 CURRENT PAGE: ${currentPage.toUpperCase()}
-⏰ ${new Date().toLocaleTimeString()}
 
-📊 ENGLISH CUSTOM MODE:
-├─ Saved Rounds: ${englishCustomData ? englishCustomData.rounds?.length || 0 : 0}
-├─ Saved Words: ${englishCustomData ? englishCustomData.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) : 0}
-├─ Saved Custom Words: ${englishCustomData ? englishCustomData.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) : 0}
-├─ DOM Rounds: ${englishRounds.length}
-├─ DOM Checked: ${englishCheckedWords.length}
-├─ DOM Custom: ${englishCustomWords.length}
-├─ Mode Enabled: ${window.customModeEnabled}
-└─ Word Pools: ${window.customWordPools ? window.customWordPools.length + ' pools' : 'null'}
 
-🇯🇵 JAPANESE CUSTOM MODE:
-├─ Saved Rounds: ${japaneseCustomData ? japaneseCustomData.rounds?.length || 0 : 0}
-├─ Saved Words: ${japaneseCustomData ? japaneseCustomData.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) : 0}
-├─ Saved Custom Words: ${japaneseCustomData ? japaneseCustomData.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) : 0}
-├─ DOM Rounds: ${japaneseRounds.length}
-├─ DOM Checked: ${japaneseCheckedWords.length}
-├─ DOM Custom: ${japaneseCustomWords.length}
-├─ Mode Enabled: ${window.japaneseCustomModeEnabled}
-└─ Word Pools: ${window.japaneseCustomWordPools ? window.japaneseCustomWordPools.length + ' pools' : 'null'}
 
-🔧 WINDOW VARIABLES:
-├─ mirroredMode: ${window.mirroredMode}
-├─ customModeNoPracticeRounds: ${window.customModeNoPracticeRounds}
-└─ japaneseCustomModeNoPracticeRounds: ${window.japaneseCustomModeNoPracticeRounds}`;
-
-        // Add round details if we have data
-        if (englishCustomData && englishCustomData.rounds && englishCustomData.rounds.length > 0) {
-            debugInfo += `\n\n📋 ENGLISH ROUND DETAILS:`;
-            englishCustomData.rounds.forEach((round, index) => {
-                debugInfo += `\nRound ${round.roundNumber}: ${round.checkedWords?.length || 0} words, ${round.customWords?.length || 0} custom, open: ${round.isOpen}`;
-            });
-        }
-        
-        if (japaneseCustomData && japaneseCustomData.rounds && japaneseCustomData.rounds.length > 0) {
-            debugInfo += `\n\n📋 JAPANESE ROUND DETAILS:`;
-            japaneseCustomData.rounds.forEach((round, index) => {
-                debugInfo += `\nRound ${round.roundNumber}: ${round.checkedWords?.length || 0} words, ${round.customWords?.length || 0} custom, open: ${round.isOpen}`;
-            });
-        }
-        
-        debugElement.textContent = debugInfo;
-    } catch (error) {
-        debugElement.textContent = `DEBUG ERROR: ${error.message}`;
-    }
-}
-
-// Initialize persistent debug system
-function initializePersistentDebug() {
-    if (!persistentDebugPopup || !toggleDebugPopup) {
-        console.warn('Debug popup elements not found');
-        return;
-    }
-    
-    // Set up toggle functionality
-    toggleDebugPopup.addEventListener('click', () => {
-        const isHidden = persistentDebugPopup.style.display === 'none';
-        persistentDebugPopup.style.display = isHidden ? 'block' : 'none';
-        toggleDebugPopup.textContent = isHidden ? 'HIDE' : 'SHOW';
-    });
-    
-    // Start periodic updates every 2 seconds
-    if (window.persistentDebugInterval) {
-        clearInterval(window.persistentDebugInterval);
-    }
-    window.persistentDebugInterval = setInterval(updatePersistentDebug, 2000);
-    
-    // Initial update
-    updatePersistentDebug();
-    
-    console.log('Persistent debug system initialized');
-}
-
-// Airlock debug system
-function updateAirlockDebug() {
-    const airlockElement = document.getElementById('airlock-content');
-    if (!airlockElement) return;
-    
-    try {
-        const currentTime = new Date().toLocaleTimeString();
-        const englishBackup = loadFromLocalStorage('customModeBackup', null);
-        const japaneseBackup = loadFromLocalStorage('japaneseCustomModeBackup', null);
-        const windowBackup = loadFromLocalStorage('customModeWindowBackup', null);
-        
-        let airlockInfo = `🕐 ${currentTime}
-
-🔒 AIRLOCK STATUS: ${airlockFrozen ? 'FROZEN' : 'ACTIVE'}
-${airlockFrozen ? `├─ Frozen At: ${new Date(frozenAirlockData?.frozenAt || 0).toLocaleTimeString()}` : ''}
-${airlockFrozen ? '└─ Data is IMMUTABLE and protected' : ''}
-
-📦 BACKUP STATUS:
-├─ English Backup: ${englishBackup ? '✅ EXISTS' : '❌ EMPTY'}
-├─ Japanese Backup: ${japaneseBackup ? '✅ EXISTS' : '❌ EMPTY'}
-└─ Window Backup: ${windowBackup ? '✅ EXISTS' : '❌ EMPTY'}
-
-🔍 BACKUP DETAILS:`;
-
-        if (englishBackup) {
-            airlockInfo += `\n\n🇬🇧 ENGLISH BACKUP:
-├─ Rounds: ${englishBackup.rounds?.length || 0}
-├─ Total Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
-├─ Custom Words: ${englishBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
-├─ Last Saved: ${new Date(englishBackup.lastSaved || englishBackup.timestamp || 0).toLocaleTimeString()}
-└─ Status: ${englishBackup.lastSaved ? 'REAL-TIME SYNC' : 'LEGACY BACKUP'}`;
-        }
-
-        if (japaneseBackup) {
-            airlockInfo += `\n\n🇯🇵 JAPANESE BACKUP:
-├─ Rounds: ${japaneseBackup.rounds?.length || 0}
-├─ Total Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.checkedWords?.length || 0), 0) || 0}
-├─ Custom Words: ${japaneseBackup.rounds?.reduce((sum, round) => sum + (round.customWords?.length || 0), 0) || 0}
-├─ Last Saved: ${new Date(japaneseBackup.lastSaved || japaneseBackup.timestamp || 0).toLocaleTimeString()}
-└─ Status: ${japaneseBackup.lastSaved ? 'REAL-TIME SYNC' : 'LEGACY BACKUP'}`;
-        }
-
-        if (windowBackup) {
-            airlockInfo += `\n\n⚙️ WINDOW BACKUP:
-├─ Custom Mode: ${windowBackup.customModeEnabled ? 'ON' : 'OFF'}
-├─ Japanese Custom: ${windowBackup.japaneseCustomModeEnabled ? 'ON' : 'OFF'}
-├─ Word Pools: ${windowBackup.customWordPools ? windowBackup.customWordPools.length + ' pools' : 'null'}
-├─ Japanese Pools: ${windowBackup.japaneseCustomWordPools ? windowBackup.japaneseCustomWordPools.length + ' pools' : 'null'}
-└─ Created: ${new Date(windowBackup.timestamp || 0).toLocaleTimeString()}`;
-        }
-
-        if (!englishBackup && !japaneseBackup && !windowBackup) {
-            airlockInfo += `\n\n❌ NO BACKUPS FOUND
-The airlock is currently empty.`;
-        }
-
-        airlockElement.textContent = airlockInfo;
-    } catch (error) {
-        airlockElement.textContent = `AIRLOCK ERROR: ${error.message}`;
-    }
-}
-
-function initializeAirlockDebug() {
-    if (!airlockDebugIndicator || !toggleAirlockDebug) {
-        console.warn('Airlock debug elements not found');
-        return;
-    }
-    
-    toggleAirlockDebug.addEventListener('click', () => {
-        const isHidden = airlockDebugIndicator.style.display === 'none';
-        airlockDebugIndicator.style.display = isHidden ? 'block' : 'none';
-        toggleAirlockDebug.textContent = isHidden ? 'HIDE' : 'SHOW';
-    });
-    
-    if (window.airlockDebugInterval) {
-        clearInterval(window.airlockDebugInterval);
-    }
-    window.airlockDebugInterval = setInterval(updateAirlockDebug, 1000);
-    updateAirlockDebug();
-    console.log('Airlock debug system initialized');
-}
 
 // Deep copy function for exact data replication
 function deepCopyCustomModeData(data) {
@@ -7338,8 +7139,6 @@ function freezeAirlock() {
         console.log('✅ Airlock frozen with data:', frozenAirlockData);
         console.log('🔒 Airlock is now immutable and cannot be modified');
         
-        // Update debug panels to show frozen state
-        updateAirlockDebug();
         
         return true;
     } catch (error) {
@@ -7358,8 +7157,6 @@ function unfreezeAirlock() {
         console.log('✅ Airlock unfrozen - modifications now allowed');
         console.log('✅ Sync system re-enabled');
         
-        // Update debug panels
-        updateAirlockDebug();
         
         return true;
     } catch (error) {
@@ -7430,8 +7227,6 @@ function saveToBothStorages(englishData, japaneseData, windowData) {
         // DO NOTHING when airlock is frozen - completely disable sync
         console.log('🚫 Sync system disabled - no data saved');
         
-        // Update debug panels to show frozen state
-        updateAirlockDebug();
         
         return true;
     }
@@ -7476,9 +7271,6 @@ function saveToBothStorages(englishData, japaneseData, windowData) {
             console.log('Window data saved to airlock storage');
         }
         
-        // Update debug panels
-        updatePersistentDebug();
-        updateAirlockDebug();
         
         console.log('✅ Data saved to both functional and airlock storage');
         return true;
@@ -7630,9 +7422,7 @@ function verifyAndRestoreCustomModeData() {
         if (restorationNeeded) {
             console.log('🔄 Data restoration completed:');
             restorationDetails.forEach(detail => console.log(`  - ${detail}`));
-            console.log('🔄 Updating debug panels after restoration');
-            updatePersistentDebug();
-            updateAirlockDebug();
+            console.log('🔄 Restoration completed');
         } else {
             console.log('✅ All data integrity checks passed - no restoration needed');
         }
@@ -7686,8 +7476,6 @@ function backupCustomModeData() {
         saveToLocalStorage('customModeWindowBackup', windowBackup);
         console.log('Window variables backed up:', windowBackup);
         
-        // Update airlock debug immediately
-        updateAirlockDebug();
         
         return true;
     } catch (error) {
@@ -7756,16 +7544,7 @@ function restoreCustomModeData() {
             console.log('Window variables restored:', windowBackup);
         }
         
-        // Update debug displays
-        updateAirlockDebug();
-        setTimeout(() => {
-            console.log('=== UPDATING DEBUG PANEL AFTER RESTORE ===');
-            const debugEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            const debugJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('Debug panel reading English data:', debugEnglishData);
-            console.log('Debug panel reading Japanese data:', debugJapaneseData);
-            updatePersistentDebug();
-        }, 100);
+        console.log('=== RESTORE COMPLETED ===');
         
         // Finalize data restoration and clear airlock after 1 second delay
         setTimeout(() => {
@@ -7803,8 +7582,6 @@ function finalizeCustomModeDataRestoration() {
             console.log('🔄 Data integrity issues found and corrected during finalization');
         }
         
-        // Update debug panel to show the final restored data
-        updatePersistentDebug();
         
         return true;
     } catch (error) {
@@ -7860,8 +7637,6 @@ function checkAirlockFallback() {
         
         if (fallbackUsed) {
             console.log('✅ Airlock fallback restoration completed');
-            updatePersistentDebug();
-            updateAirlockDebug();
         } else {
             console.log('✅ No fallback needed - functional save has data');
         }
@@ -7883,18 +7658,8 @@ function clearCustomModeBackups() {
         console.log('✅ Japanese backup preserved:', loadFromLocalStorage('japaneseCustomModeBackup', null) ? 'EXISTS' : 'EMPTY');
         console.log('✅ Window backup preserved:', loadFromLocalStorage('customModeWindowBackup', null) ? 'EXISTS' : 'EMPTY');
         
-        // Update airlock debug to show permanent backup state
-        updateAirlockDebug();
         
-        // Final debug panel update
-        setTimeout(() => {
-            console.log('=== DEBUG PANEL UPDATE AFTER AIRLOCK FINALIZATION ===');
-            const afterFinalizeEnglishData = loadFromLocalStorage(STORAGE_KEYS.CUSTOM_ROUNDS, null);
-            const afterFinalizeJapaneseData = loadFromLocalStorage('japaneseCustomRounds', null);
-            console.log('After airlock finalization - English data:', afterFinalizeEnglishData);
-            console.log('After airlock finalization - Japanese data:', afterFinalizeJapaneseData);
-            updatePersistentDebug();
-        }, 100);
+        console.log('=== AIRLOCK FINALIZATION COMPLETED ===');
         
         return true;
     } catch (error) {
@@ -7903,14 +7668,6 @@ function clearCustomModeBackups() {
     }
 }
 
-// Debug display functions (legacy - keeping for compatibility)
-function updateCustomModeDebug() {
-    updatePersistentDebug();
-}
-
-function updateJapaneseCustomModeDebug() {
-    updatePersistentDebug();
-}
 
 function displayWordWithSound(word) {
     console.log('displayWordWithSound called with word:', word);
@@ -9409,9 +9166,6 @@ function restoreCustomRoundsState() {
     updateSelectAllState();
     
     // Update debug display after restoring
-    setTimeout(() => {
-        updatePersistentDebug();
-    }, 100);
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;

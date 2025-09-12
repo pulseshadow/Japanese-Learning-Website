@@ -10,27 +10,6 @@
 </head>
   <body>
       <div id="app">
-        <!-- PERSISTENT DEBUG POPUP -->
-        <div id="persistent-debug-popup" style="position: fixed; top: 10px; right: 10px; width: 400px; max-height: 80vh; background: #ffeb3b; color: #000; padding: 15px; border: 3px solid #f57f17; font-family: monospace; font-size: 11px; white-space: pre-wrap; overflow-y: auto; z-index: 10000; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #f57f17; padding-bottom: 5px;">
-                <strong style="font-size: 14px;">🔍 DEBUG PANEL</strong>
-                <button id="toggle-debug-popup" style="background: #f57f17; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;">HIDE</button>
-            </div>
-            <div id="debug-content">
-                Loading debug info...
-            </div>
-        </div>
-
-        <!-- AIRLOCK DEBUG INDICATOR -->
-        <div id="airlock-debug-indicator" style="position: fixed; top: 10px; left: 10px; width: 300px; background: #e3f2fd; color: #000; padding: 15px; border: 3px solid #2196f3; font-family: monospace; font-size: 11px; white-space: pre-wrap; z-index: 10000; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 2px solid #2196f3; padding-bottom: 5px;">
-                <strong style="font-size: 14px;">🔒 AIRLOCK STATUS</strong>
-                <button id="toggle-airlock-debug" style="background: #2196f3; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 10px;">HIDE</button>
-            </div>
-            <div id="airlock-content">
-                Loading airlock status...
-            </div>
-        </div>
           
           <!-- Settings and Language Controls -->
         <div class="top-controls">
