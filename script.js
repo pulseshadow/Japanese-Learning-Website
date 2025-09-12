@@ -4817,6 +4817,9 @@ function initializeJapaneseCustomMode() {
         }, 100);
     }
     
+    // Update selection indicators
+    updateAllSelectionIndicators();
+    
     console.log('Japanese custom mode initialization complete');
 }
 
@@ -5011,6 +5014,9 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         sectionHeader.className = 'word-section-header';
         sectionHeader.onclick = () => toggleJapaneseWordSection(roundNumber, roundIndex);
         
+        const indicator = createSelectionIndicator();
+        indicator.style.display = 'none';
+        
         const headerText = document.createElement('h4');
         headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
         headerText.setAttribute('data-es', `Ronda ${roundIndex + 1} Palabras`);
@@ -5037,6 +5043,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         collapseBtn.style.padding = '0';
         collapseBtn.style.marginLeft = 'auto';
         
+        sectionHeader.appendChild(indicator);
         sectionHeader.appendChild(headerText);
         sectionHeader.appendChild(collapseBtn);
         
@@ -5103,18 +5110,15 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
             checkbox.dataset.section = roundIndex;
             
             const label = document.createElement('label');
-            label.setAttribute('for', `japanese-word-${roundNumber}-${roundIndex}-${word.japanese}`);
+            // Remove for attribute to prevent label from handling clicks
             // In Japanese custom mode, show English word as label (capitalized)
             label.textContent = capitalizeWords(word.english);
             
             // Make the entire word container clickable
             wordContainer.addEventListener('click', (e) => {
-                // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
-                if (e.target !== checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    // Trigger the change event manually
-                    checkbox.dispatchEvent(new Event('change'));
-                }
+                checkbox.checked = !checkbox.checked;
+                // Trigger the change event manually
+                checkbox.dispatchEvent(new Event('change'));
             });
             
             wordContainer.appendChild(checkbox);
@@ -5518,7 +5522,7 @@ function addJapaneseCustomWordToGrid(roundContainer, japanese, english) {
     checkbox.checked = true; // Auto-check custom words
     
     const label = document.createElement('label');
-    label.setAttribute('for', `japanese-custom-word-${Date.now()}`);
+    // Remove for attribute to prevent label from handling clicks
     // In Japanese custom mode, show English word as label (capitalized)
     label.textContent = capitalizeWords(english);
     
@@ -5528,8 +5532,8 @@ function addJapaneseCustomWordToGrid(roundContainer, japanese, english) {
     
     // Make the entire word item clickable (except for the remove button)
     wordItem.addEventListener('click', (e) => {
-        // Don't trigger if clicking on the remove button or directly on the checkbox
-        if (e.target !== removeBtn && e.target !== checkbox) {
+        // Don't trigger if clicking on the remove button
+        if (e.target !== removeBtn) {
             checkbox.checked = !checkbox.checked;
             // Trigger the change event manually
             checkbox.dispatchEvent(new Event('change'));
@@ -5673,6 +5677,9 @@ function saveJapaneseCustomRounds() {
         
         window.japaneseCustomWordPools = wordPools;
         console.log('Japanese custom word pools created:', wordPools);
+        
+        // Update selection indicators
+        updateAllSelectionIndicators();
         
     } catch (error) {
         console.error('Error saving Japanese custom rounds:', error);
@@ -5858,6 +5865,9 @@ function restoreJapaneseCustomRoundsState() {
         });
         
         console.log('Japanese custom rounds state restored successfully');
+        
+        // Update selection indicators
+        updateAllSelectionIndicators();
         
         // Update debug display after restoring
         
@@ -7140,6 +7150,115 @@ function deepCopyCustomModeData(data) {
     return JSON.parse(JSON.stringify(data));
 }
 
+// Selection indicator functions
+function createSelectionIndicator() {
+    const indicator = document.createElement('div');
+    indicator.className = 'selection-indicator';
+    return indicator;
+}
+
+function updateSelectionIndicator(indicator, selectedCount, totalCount) {
+    if (!indicator) return;
+    
+    if (selectedCount === 0) {
+        // No selection - hide indicator
+        indicator.style.display = 'none';
+    } else if (selectedCount === totalCount) {
+        // Full selection - solid circle
+        indicator.style.display = 'block';
+        indicator.className = 'selection-indicator full';
+    } else {
+        // Partial selection - hollow circle
+        indicator.style.display = 'block';
+        indicator.className = 'selection-indicator partial';
+    }
+}
+
+function updateRoundSelectionIndicator(roundNumber, isJapanese = false) {
+    const container = isJapanese ? 
+        document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`) :
+        document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+    
+    if (!container) return;
+    
+    const header = container.querySelector('.custom-round-header');
+    if (!header) return;
+    
+    // Get or create the indicator
+    let indicator = header.querySelector('.selection-indicator');
+    if (!indicator) {
+        indicator = createSelectionIndicator();
+        // Insert before the h3 title
+        const title = header.querySelector('h3');
+        header.insertBefore(indicator, title);
+    }
+    
+    // Count selected words in this round
+    const wordCheckboxes = container.querySelectorAll('.word-selection-grid input[type="checkbox"]:not(.select-all-checkbox)');
+    const selectedCount = container.querySelectorAll('.word-selection-grid input[type="checkbox"]:not(.select-all-checkbox):checked').length;
+    const totalCount = wordCheckboxes.length;
+    
+    updateSelectionIndicator(indicator, selectedCount, totalCount);
+}
+
+function updateWordSectionSelectionIndicator(roundNumber, sectionIndex, isJapanese = false) {
+    const container = isJapanese ? 
+        document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`) :
+        document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
+    
+    if (!container) return;
+    
+    const section = container.querySelector(`.word-section-container:nth-child(${sectionIndex + 1})`);
+    if (!section) return;
+    
+    const header = section.querySelector('.word-section-header');
+    if (!header) return;
+    
+    // Get or create the indicator
+    let indicator = header.querySelector('.selection-indicator');
+    if (!indicator) {
+        indicator = createSelectionIndicator();
+        // Insert before the h4 title
+        const title = header.querySelector('h4');
+        header.insertBefore(indicator, title);
+    }
+    
+    // Count selected words in this section
+    const wordCheckboxes = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox)');
+    const selectedCount = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox):checked').length;
+    const totalCount = wordCheckboxes.length;
+    
+    updateSelectionIndicator(indicator, selectedCount, totalCount);
+}
+
+function updateAllSelectionIndicators() {
+    // Update English custom mode indicators
+    const englishRounds = document.querySelectorAll('#custom-rounds-container .custom-round');
+    englishRounds.forEach(round => {
+        const roundNumber = parseInt(round.dataset.round);
+        updateRoundSelectionIndicator(roundNumber, false);
+        
+        // Update word section indicators
+        const sections = round.querySelectorAll('.word-section-container');
+        sections.forEach((section, sectionIndex) => {
+            updateWordSectionSelectionIndicator(roundNumber, sectionIndex, false);
+        });
+    });
+    
+    // Update Japanese custom mode indicators
+    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+    japaneseRounds.forEach(round => {
+        const roundNumber = parseInt(round.dataset.round);
+        updateRoundSelectionIndicator(roundNumber, true);
+        
+        // Update word section indicators
+        const sections = round.querySelectorAll('.word-section-container');
+        sections.forEach((section, sectionIndex) => {
+            updateWordSectionSelectionIndicator(roundNumber, sectionIndex, true);
+        });
+    });
+}
+
 // Frozen airlock system - prevents airlock from being modified during games
 let airlockFrozen = false;
 let frozenAirlockData = null;
@@ -7793,6 +7912,9 @@ function populateWordSelectionGrid(roundNumber) {
         sectionHeader.className = 'word-section-header';
         sectionHeader.onclick = () => toggleWordSection(roundNumber - 1, roundIndex);
         
+        const indicator = createSelectionIndicator();
+        indicator.style.display = 'none';
+        
         const headerText = document.createElement('h4');
         headerText.setAttribute('data-en', `Round ${roundIndex + 1} Words`);
         headerText.setAttribute('data-es', `Ronda ${roundIndex + 1} Palabras`);
@@ -7817,6 +7939,7 @@ function populateWordSelectionGrid(roundNumber) {
         collapseBtn.style.fontSize = '0.8rem';
         collapseBtn.style.color = '#ffffff';
         
+        sectionHeader.appendChild(indicator);
         sectionHeader.appendChild(headerText);
         sectionHeader.appendChild(collapseBtn);
         sectionContainer.appendChild(sectionHeader);
@@ -7917,18 +8040,15 @@ function populateWordSelectionGrid(roundNumber) {
             });
             
             const label = document.createElement('label');
-            label.htmlFor = `word-${roundNumber - 1}-${word.japanese}`;
+            // Remove htmlFor to prevent label from handling clicks
             // In English custom mode, always show English word as label (capitalized)
             label.textContent = capitalizeWords(word.english);
             
             // Make the entire word item clickable
             wordItem.addEventListener('click', (e) => {
-                // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
-                if (e.target !== checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    // Trigger the change event manually
-                    checkbox.dispatchEvent(new Event('change'));
-                }
+                checkbox.checked = !checkbox.checked;
+                // Trigger the change event manually
+                checkbox.dispatchEvent(new Event('change'));
             });
             
             wordItem.appendChild(checkbox);
@@ -8065,7 +8185,7 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     checkbox.checked = true; // Auto-check custom words
     
     const label = document.createElement('label');
-    label.htmlFor = checkbox.id;
+    // Remove htmlFor to prevent label from handling clicks
     label.textContent = capitalizeWords(english);
     
     const removeBtn = document.createElement('button');
@@ -8074,8 +8194,8 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     
     // Make the entire word item clickable (except for the remove button)
     wordItem.addEventListener('click', (e) => {
-        // Don't trigger if clicking on the remove button or directly on the checkbox
-        if (e.target !== removeBtn && e.target !== checkbox) {
+        // Don't trigger if clicking on the remove button
+        if (e.target !== removeBtn) {
             checkbox.checked = !checkbox.checked;
             // Trigger the change event manually
             checkbox.dispatchEvent(new Event('change'));
@@ -8988,6 +9108,9 @@ function saveCustomRounds() {
         saveToBothStorages(customData, null, windowData);
         console.log('Custom rounds saved successfully to both storages:', customData);
         console.log(`Total data size: ${JSON.stringify(customData).length} characters`);
+        
+        // Update selection indicators
+        updateAllSelectionIndicators();
     } catch (error) {
         console.error('Error saving custom rounds:', error);
         // Try to save a minimal version if the full save fails
@@ -9054,6 +9177,7 @@ function loadCustomRounds() {
             
             newRound.innerHTML = `
                 <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
+                    <div class="selection-indicator" style="display: none;"></div>
                     <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
                     <div class="round-header-controls">
                         <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
@@ -9211,6 +9335,9 @@ function restoreCustomRoundsState() {
     
     // Update all select all states after restoration
     updateSelectAllState();
+    
+    // Update selection indicators
+    updateAllSelectionIndicators();
     
     // Update debug display after restoring
     

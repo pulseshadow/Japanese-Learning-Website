@@ -1124,6 +1124,35 @@ body.dark-mode .word-section-content {
     height: auto;
 }
 
+/* Selection indicator circles */
+.selection-indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.selection-indicator.partial {
+    background: transparent;
+    border: 2px solid #ffffff;
+}
+
+.selection-indicator.full {
+    background: #ffffff;
+    border: 2px solid #ffffff;
+}
+
+body.dark-mode .selection-indicator.partial {
+    border-color: #ffffff;
+}
+
+body.dark-mode .selection-indicator.full {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
 body.dark-mode .custom-round {
     background: transparent;
     border: none;
