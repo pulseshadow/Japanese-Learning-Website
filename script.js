@@ -4817,6 +4817,7 @@ function initializeJapaneseCustomMode() {
             // Fix dropdown states after data is loaded
             setTimeout(() => {
                 fixDropdownStates();
+                fixSelectAllStates();
             }, 50);
         }, 100);
     }
@@ -4991,6 +4992,11 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     // Save the new structure
     saveJapaneseCustomRounds();
+    
+    // Fix dropdown state after round is created and populated
+    setTimeout(() => {
+        fixDropdownStates();
+    }, 100);
     
     console.log(`Japanese custom round ${roundNumber} added successfully`);
 }
@@ -5170,6 +5176,11 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         grid.appendChild(sectionContainer);
     });
+    
+    // Fix dropdown state after grid is populated
+    setTimeout(() => {
+        fixDropdownStates();
+    }, 50);
     
     console.log(`Japanese word selection grid populated for round ${roundNumber}`);
 }
@@ -5844,6 +5855,7 @@ function restoreJapaneseCustomRoundsState() {
         
         // Fix dropdown states after restoration
         fixDropdownStates();
+        fixSelectAllStates();
         
         // Clear the saved data from memory (same as English mode)
         delete window.savedJapaneseCustomRoundsData;
@@ -7132,20 +7144,45 @@ function fixDropdownStates() {
     const englishRounds = document.querySelectorAll('.custom-round');
     englishRounds.forEach((round, index) => {
         const roundNumber = index + 1;
-        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked');
-        const customWords = round.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
-        const totalSelected = checkedWords.length + customWords.length;
+        
+        // Check for any selected words in this round (excluding select all checkbox)
+        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+        const totalSelected = checkedWords.length;
+        
+        console.log(`English Round ${roundNumber}: Checking for selected words...`);
+        console.log(`  - Found ${totalSelected} selected words`);
         
         if (totalSelected > 0) {
             console.log(`English Round ${roundNumber}: Found ${totalSelected} selected words, forcing dropdown open`);
+            
+            // Force the dropdown to be open
             const dropdown = round.querySelector('.round-header');
+            const roundContent = round.querySelector('.custom-round-content');
+            const collapseBtn = round.querySelector('.collapse-btn');
+            const arrow = round.querySelector('.round-arrow');
+            
             if (dropdown) {
                 dropdown.classList.remove('collapsed');
-                const arrow = dropdown.querySelector('.round-arrow');
-                if (arrow) {
-                    arrow.textContent = '▼';
-                }
+                console.log(`  - Removed 'collapsed' class from dropdown`);
             }
+            
+            if (roundContent) {
+                roundContent.style.display = 'block';
+                console.log(`  - Set round content to display: block`);
+            }
+            
+            if (collapseBtn) {
+                collapseBtn.textContent = '▼';
+                collapseBtn.style.transform = 'rotate(180deg)';
+                console.log(`  - Set collapse button to down arrow`);
+            }
+            
+            if (arrow) {
+                arrow.textContent = '▼';
+                console.log(`  - Set arrow to down arrow`);
+            }
+        } else {
+            console.log(`English Round ${roundNumber}: No selected words, leaving dropdown closed`);
         }
     });
     
@@ -7153,24 +7190,118 @@ function fixDropdownStates() {
     const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
     japaneseRounds.forEach((round, index) => {
         const roundNumber = index + 1;
-        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked');
-        const customWords = round.querySelectorAll('.custom-word-item input[type="checkbox"]:checked');
-        const totalSelected = checkedWords.length + customWords.length;
+        
+        // Check for any selected words in this round (excluding select all checkbox)
+        const checkedWords = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+        const totalSelected = checkedWords.length;
+        
+        console.log(`Japanese Round ${roundNumber}: Checking for selected words...`);
+        console.log(`  - Found ${totalSelected} selected words`);
         
         if (totalSelected > 0) {
             console.log(`Japanese Round ${roundNumber}: Found ${totalSelected} selected words, forcing dropdown open`);
+            
+            // Force the dropdown to be open
             const dropdown = round.querySelector('.round-header');
+            const roundContent = round.querySelector('.custom-round-content');
+            const collapseBtn = round.querySelector('.collapse-btn');
+            const arrow = round.querySelector('.round-arrow');
+            
             if (dropdown) {
                 dropdown.classList.remove('collapsed');
-                const arrow = dropdown.querySelector('.round-arrow');
-                if (arrow) {
-                    arrow.textContent = '▼';
-                }
+                console.log(`  - Removed 'collapsed' class from dropdown`);
             }
+            
+            if (roundContent) {
+                roundContent.style.display = 'block';
+                console.log(`  - Set round content to display: block`);
+            }
+            
+            if (collapseBtn) {
+                collapseBtn.textContent = '▼';
+                collapseBtn.style.transform = 'rotate(180deg)';
+                console.log(`  - Set collapse button to down arrow`);
+            }
+            
+            if (arrow) {
+                arrow.textContent = '▼';
+                console.log(`  - Set arrow to down arrow`);
+            }
+        } else {
+            console.log(`Japanese Round ${roundNumber}: No selected words, leaving dropdown closed`);
         }
     });
     
     console.log('✅ Dropdown state fix completed');
+}
+
+// Fix select all state by checking if ALL words in each round are actually selected
+function fixSelectAllStates() {
+    console.log('=== FIXING SELECT ALL STATES BASED ON ACTUAL WORD SELECTIONS ===');
+    
+    // Fix English custom mode select all checkboxes
+    const englishRounds = document.querySelectorAll('.custom-round');
+    englishRounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        
+        // Get all word checkboxes (excluding select all checkbox)
+        const allWordCheckboxes = round.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+        const selectedWordCheckboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+        
+        // Get the select all checkbox for this round
+        const selectAllCheckbox = round.querySelector('.select-all-checkbox');
+        
+        if (selectAllCheckbox && allWordCheckboxes.length > 0) {
+            const totalWords = allWordCheckboxes.length;
+            const selectedWords = selectedWordCheckboxes.length;
+            const allSelected = selectedWords === totalWords;
+            
+            console.log(`English Round ${roundNumber}: ${selectedWords}/${totalWords} words selected, select all should be ${allSelected ? 'checked' : 'unchecked'}`);
+            
+            // Update select all checkbox state
+            selectAllCheckbox.checked = allSelected;
+            
+            // Update visual state if needed
+            if (allSelected) {
+                selectAllCheckbox.classList.add('checked');
+            } else {
+                selectAllCheckbox.classList.remove('checked');
+            }
+        }
+    });
+    
+    // Fix Japanese custom mode select all checkboxes
+    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+    japaneseRounds.forEach((round, index) => {
+        const roundNumber = index + 1;
+        
+        // Get all word checkboxes (excluding select all checkbox)
+        const allWordCheckboxes = round.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
+        const selectedWordCheckboxes = round.querySelectorAll('input[type="checkbox"]:checked:not(.select-all-checkbox)');
+        
+        // Get the select all checkbox for this round
+        const selectAllCheckbox = round.querySelector('.select-all-checkbox');
+        
+        if (selectAllCheckbox && allWordCheckboxes.length > 0) {
+            const totalWords = allWordCheckboxes.length;
+            const selectedWords = selectedWordCheckboxes.length;
+            const allSelected = selectedWords === totalWords;
+            
+            console.log(`Japanese Round ${roundNumber}: ${selectedWords}/${totalWords} words selected, select all should be ${allSelected ? 'checked' : 'unchecked'}`);
+            
+            // Update select all checkbox state
+            selectAllCheckbox.checked = allSelected;
+            
+            // Update visual state if needed
+            if (allSelected) {
+                selectAllCheckbox.classList.add('checked');
+            } else {
+                selectAllCheckbox.classList.remove('checked');
+            }
+        }
+    });
+    
+    console.log('✅ Select all state fix completed');
 }
 
 // Frozen airlock system - prevents airlock from being modified during games
@@ -7694,6 +7825,7 @@ function checkAirlockFallback() {
             // Fix dropdown states after fallback restoration
             setTimeout(() => {
                 fixDropdownStates();
+                fixSelectAllStates();
             }, 100);
         } else {
             console.log('✅ No fallback needed - functional save has data');
@@ -7808,6 +7940,7 @@ function initializeCustomMode() {
             // Fix dropdown states after data is loaded
             setTimeout(() => {
                 fixDropdownStates();
+                fixSelectAllStates();
             }, 50);
         }, 100);
     }
@@ -7973,6 +8106,11 @@ function populateWordSelectionGrid(roundNumber) {
         sectionContainer.appendChild(wordContent);
         grid.appendChild(sectionContainer);
     });
+    
+    // Fix dropdown state after grid is populated
+    setTimeout(() => {
+        fixDropdownStates();
+    }, 50);
 }
 
 function populateWordSelectionGrids() {
@@ -8169,6 +8307,11 @@ function addCustomRound() {
     
     // Save custom rounds to local storage
     saveCustomRounds();
+    
+    // Fix dropdown state after round is created and populated
+    setTimeout(() => {
+        fixDropdownStates();
+    }, 100);
     
     // Update language for new elements
     updateAllText();
@@ -9229,6 +9372,7 @@ function restoreCustomRoundsState() {
     
     // Fix dropdown states after restoration
     fixDropdownStates();
+    fixSelectAllStates();
     
     // Clear the saved data from memory
     delete window.savedCustomRoundsData;
