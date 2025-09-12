@@ -6297,7 +6297,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initializeSettings();
     detectBrowserLanguage();
     
-    // Ensure text is updated after everything loads
+    // Update all text to ensure proper rendering
     setTimeout(() => {
         updateAllText();
     }, 100);
@@ -6587,7 +6587,6 @@ function updateAllText() {
                 updateTextWithPreservedLinks(element, text);
             } else if (text.includes('<br>') || text.includes('<br/>') || text.includes('<br />')) {
                 // Text contains HTML line breaks, use innerHTML
-                console.log('Using innerHTML for element with <br> tag:', element, text);
                 element.innerHTML = text;
             } else {
                 // No links or HTML to preserve, use simple textContent
@@ -9203,7 +9202,6 @@ function loadCustomRounds() {
             
             newRound.innerHTML = `
                 <div class="custom-round-header" onclick="toggleCustomRound(${roundNumber})">
-                    <div class="selection-indicator" style="display: none;"></div>
                     <h3 data-en="Introduction Round ${roundNumber}" data-es="Ronda de Introducción ${roundNumber}" data-fr="Ronde d'Introduction ${roundNumber}" data-ja="導入ラウンド${roundNumber}" data-zh="介绍轮次${roundNumber}" data-id="Ronde Pengenalan ${roundNumber}" data-ko="소개 라운드 ${roundNumber}" data-vi="Vòng Giới thiệu ${roundNumber}">Introduction Round ${roundNumber}</h3>
                     <div class="round-header-controls">
                         <button class="remove-round-btn" onclick="removeSpecificRound(${roundNumber})">Remove Round</button>
