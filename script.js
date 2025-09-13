@@ -2644,8 +2644,8 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         console.log('Navigating to Japanese script page for mirrored brute force mode');
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
-        console.log('Navigating to Japanese custom mode - going to script selection first');
-        navigateToJapaneseCustomMode();
+        console.log('Navigating to Japanese script page for custom mode (will go to word selection after script selection)');
+        showPage('japanese-script');
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
         showPage('japanese-script');
@@ -5374,12 +5374,35 @@ function removeJapaneseSpecificRound(roundNumber) {
     const roundToRemove = container.querySelector(`[data-round="${roundNumber}"]`);
     
     if (roundToRemove) {
+        // Preserve state of ALL remaining rounds before removal
+        const stateToPreserve = {};
+        const remainingRounds = container.querySelectorAll('.custom-round');
+        remainingRounds.forEach((round, index) => {
+            const currentRoundNumber = parseInt(round.dataset.round);
+            // Preserve state for all rounds except the one being removed
+            if (currentRoundNumber !== roundNumber) {
+                const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
+                const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
+                const customWords = round.querySelectorAll('.custom-word-item');
+                
+                stateToPreserve[currentRoundNumber] = {
+                    checkedWords: Array.from(checkboxes).map(cb => cb.dataset.word),
+                    openSections: Array.from(openSections).map(section => section.id),
+                    customWords: Array.from(customWords).map(item => ({
+                        japanese: item.querySelector('.japanese-word').textContent,
+                        english: item.querySelector('.english-word').textContent
+                    }))
+                };
+            }
+        });
+        
         roundToRemove.remove();
         
         // Renumber remaining rounds
-        const remainingRounds = container.querySelectorAll('.custom-round');
-        remainingRounds.forEach((round, index) => {
+        const newRemainingRounds = container.querySelectorAll('.custom-round');
+        newRemainingRounds.forEach((round, index) => {
             const newRoundNumber = index + 1;
+            const oldRoundNumber = parseInt(round.dataset.round) || (index + 1);
             round.setAttribute('data-round', newRoundNumber);
             
             // Update IDs and references (same logic as removeJapaneseCustomRound)
@@ -5445,6 +5468,29 @@ function removeJapaneseSpecificRound(roundNumber) {
                     checkbox.dataset.section = sectionIndex;
                 });
             });
+            
+            // Restore state for this round
+            if (stateToPreserve[oldRoundNumber]) {
+                const preservedState = stateToPreserve[oldRoundNumber];
+                
+                // Restore checked checkboxes
+                preservedState.checkedWords.forEach(word => {
+                    const checkbox = round.querySelector(`input[data-word="${word}"]`);
+                    if (checkbox) checkbox.checked = true;
+                });
+                
+                // Restore open sections
+                preservedState.openSections.forEach(sectionId => {
+                    const newSectionId = sectionId.replace(`-${oldRoundNumber}-`, `-${newRoundNumber}-`);
+                    const section = round.querySelector(`#${newSectionId}`);
+                    if (section) section.classList.remove('collapsed');
+                });
+                
+                // Restore custom words
+                preservedState.customWords.forEach(customWord => {
+                    addJapaneseCustomWordToGrid(round, customWord.japanese, customWord.english);
+                });
+            }
         });
         
         saveJapaneseCustomRounds();
@@ -5939,25 +5985,6 @@ function startJapaneseCustomRun() {
     
     // Initialize the first round
     initializeJapaneseCustomRound();
-}
-
-function navigateToJapaneseCustomMode() {
-    console.log('Navigating to Japanese custom mode - going to script selection');
-    
-    // Save current state before starting
-    saveJapaneseCustomRounds();
-    
-    // Check if we have any rounds with words
-    if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
-        console.warn('No Japanese custom rounds with words found');
-        return;
-    }
-    
-    // Set Japanese custom mode flag (but not mirrored mode yet)
-    window.japaneseCustomModeEnabled = true;
-    
-    // Navigate to script selection page
-    showPage('japanese-script');
 }
 
 function startJapaneseCustomGame() {
@@ -8358,13 +8385,13 @@ function removeSpecificRound(roundNumber) {
         // Find the round to remove
         const roundToRemove = document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
         if (roundToRemove) {
-            // Preserve state of remaining rounds before removal
+            // Preserve state of ALL remaining rounds before removal
             const stateToPreserve = {};
             const remainingRounds = document.querySelectorAll('.custom-round');
             remainingRounds.forEach((round, index) => {
                 const currentRoundNumber = parseInt(round.dataset.round);
-                if (currentRoundNumber > roundNumber) {
-                    // This round will be renumbered, preserve its state
+                // Preserve state for all rounds except the one being removed
+                if (currentRoundNumber !== roundNumber) {
                     const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
                     const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
                     const customWords = round.querySelectorAll('.custom-word-item');
@@ -8414,8 +8441,8 @@ function removeSpecificRound(roundNumber) {
                 header.setAttribute('data-ko', `소개 라운드 ${newRoundNumber}`);
                 header.setAttribute('data-vi', `Vòng Giới thiệu ${newRoundNumber}`);
                 
-                // Restore state if this round was renumbered
-                if (oldRoundNumber > roundNumber && stateToPreserve[oldRoundNumber]) {
+                // Restore state for this round
+                if (stateToPreserve[oldRoundNumber]) {
                     const preservedState = stateToPreserve[oldRoundNumber];
                     
                     // Restore checked checkboxes
