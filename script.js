@@ -4935,7 +4935,7 @@ function addJapaneseCustomRound(roundNumber = null) {
     
     const collapseBtn = document.createElement('button');
     collapseBtn.className = 'collapse-btn';
-    collapseBtn.textContent = '▼'; // Show down arrow since content is open by default
+    // Arrow direction will be set based on actual content state after creation
     
     controlsDiv.appendChild(collapseBtn);
     
@@ -5001,6 +5001,13 @@ function addJapaneseCustomRound(roundNumber = null) {
     // Add to container
     container.appendChild(roundDiv);
     console.log('Round appended to container, roundDiv:', roundDiv);
+    
+    // Set correct arrow direction based on content state
+    if (contentDiv.classList.contains('collapsed')) {
+        collapseBtn.textContent = '▶';
+    } else {
+        collapseBtn.textContent = '▼';
+    }
     
     // Populate the word grid
     populateJapaneseWordSelectionGrid(roundNumber);
@@ -8328,8 +8335,18 @@ function addCustomRound() {
     
     // Ensure content starts open (not collapsed)
     const content = newRound.querySelector('.custom-round-content');
+    const collapseBtn = newRound.querySelector('.collapse-btn');
     if (content) {
         content.classList.remove('collapsed');
+    }
+    
+    // Set correct arrow direction based on content state
+    if (collapseBtn) {
+        if (content.classList.contains('collapsed')) {
+            collapseBtn.textContent = '▶';
+        } else {
+            collapseBtn.textContent = '▼';
+        }
     }
     
     // Populate only the new round's word selection grid
