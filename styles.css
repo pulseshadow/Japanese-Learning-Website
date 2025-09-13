@@ -570,6 +570,10 @@ body.dark-mode .text-box-header {
     background: #f0f0f0;
 }
 
+#user-profile-content .body-text {
+    text-align: center;
+}
+
 body.dark-mode .text-box-content {
     background: #25262B;
 }
