@@ -2644,8 +2644,8 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         console.log('Navigating to Japanese script page for mirrored brute force mode');
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
-        console.log('Navigating to Japanese script page for custom mode (will go to word selection after script selection)');
-        showPage('japanese-script');
+        console.log('Navigating to Japanese custom mode - going to script selection first');
+        navigateToJapaneseCustomMode();
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
         showPage('japanese-script');
@@ -5893,7 +5893,56 @@ function restoreJapaneseCustomRoundsState() {
 }
 
 function startJapaneseCustomRun() {
-    console.log('Starting Japanese custom run - going to script selection');
+    console.log('Starting Japanese custom run');
+    
+    // Save current state before starting
+    saveJapaneseCustomRounds();
+    
+    // Check if we have any rounds with words
+    if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
+        console.warn('No Japanese custom rounds with words found');
+        return;
+    }
+    
+    // Reset game state for Japanese custom mode
+    currentPage = 'game';
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    currentWord = null;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Set Japanese custom mode flags
+    window.mirroredMode = true;
+    window.japaneseCustomModeEnabled = true;
+    
+    // Reset next round button visibility
+    nextRoundBtn.style.visibility = 'visible';
+    nextRoundBtn.classList.add('disabled');
+    
+    // Don't clear the word entry flag when starting a Japanese custom game
+    // This allows users to go back to word entry selection from script pages
+    
+    // Populate round selector with Japanese custom rounds
+    populateRoundSelector();
+    
+    // Show game page
+    showPage('game');
+    
+    // Show hiragana keyboard for Japanese custom mode
+    showHiraganaKeyboard();
+    
+    // Initialize the first round
+    initializeJapaneseCustomRound();
+}
+
+function navigateToJapaneseCustomMode() {
+    console.log('Navigating to Japanese custom mode - going to script selection');
     
     // Save current state before starting
     saveJapaneseCustomRounds();
