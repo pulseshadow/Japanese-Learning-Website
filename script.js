@@ -4822,7 +4822,7 @@ function initializeJapaneseCustomMode() {
             const roundContent = firstRound.querySelector('.custom-round-content');
             const collapseBtn = firstRound.querySelector('.collapse-btn');
             if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
+                roundContent.classList.remove('collapsed');
                 collapseBtn.textContent = '▼';
                 console.log('Round 1 opened and collapse button set to down arrow');
             }
@@ -4946,7 +4946,8 @@ function addJapaneseCustomRound(roundNumber = null) {
     const contentDiv = document.createElement('div');
     contentDiv.className = 'custom-round-content';
     contentDiv.id = `japanese-round-content-${roundNumber}`;
-    contentDiv.style.display = 'block'; // Ensure content is visible by default
+    // Ensure content starts open (not collapsed)
+    contentDiv.classList.remove('collapsed');
     
     const descriptionP = document.createElement('p');
     descriptionP.setAttribute('data-en', 'Please select the words you\'d like to include in this round.');
@@ -5273,9 +5274,7 @@ function setupJapaneseCustomWordButtonsForRound(roundNumber) {
 }
 
 function toggleJapaneseCustomRound(roundNumber) {
-    console.log(`toggleJapaneseCustomRound called for round ${roundNumber}`);
     const content = document.getElementById(`japanese-round-content-${roundNumber}`);
-    console.log('Content element:', content);
     if (!content) {
         console.error(`Content element not found for Japanese round ${roundNumber}`);
         return;
@@ -5283,30 +5282,25 @@ function toggleJapaneseCustomRound(roundNumber) {
     
     // Find the round container and then the collapse button
     const round = content.closest('.custom-round');
-    console.log('Round container:', round);
     if (!round) {
         console.error(`Round container not found for Japanese round ${roundNumber}`);
         return;
     }
     
     const button = round.querySelector('.collapse-btn');
-    console.log('Collapse button:', button);
     if (!button) {
         console.error(`Collapse button not found for Japanese round ${roundNumber}`);
         return;
     }
     
-    console.log('Current collapsed state:', content.classList.contains('collapsed'));
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
         button.textContent = '▼';
         button.classList.remove('rotated');
-        console.log('Round opened');
     } else {
         content.classList.add('collapsed');
         button.textContent = '▶';
         button.classList.add('rotated');
-        console.log('Round closed');
     }
     
     // Save the state when toggling
@@ -7933,7 +7927,7 @@ function initializeCustomMode() {
             const roundContent = firstRound.querySelector('.custom-round-content');
             const collapseBtn = firstRound.querySelector('.collapse-btn');
             if (roundContent && collapseBtn) {
-                roundContent.style.display = 'block';
+                roundContent.classList.remove('collapsed');
                 collapseBtn.textContent = '▼';
                 collapseBtn.style.transform = 'rotate(180deg)';
             }
@@ -8498,9 +8492,7 @@ function removeCustomRound() {
 }
 
 function toggleCustomRound(roundNumber) {
-    console.log(`toggleCustomRound called for round ${roundNumber}`);
     const content = document.getElementById(`round-content-${roundNumber}`);
-    console.log('Content element:', content);
     if (!content) {
         console.error(`Content element not found for round ${roundNumber}`);
         return;
@@ -8508,30 +8500,25 @@ function toggleCustomRound(roundNumber) {
     
     // Find the round container and then the collapse button
     const round = content.closest('.custom-round');
-    console.log('Round container:', round);
     if (!round) {
         console.error(`Round container not found for round ${roundNumber}`);
         return;
     }
     
     const button = round.querySelector('.collapse-btn');
-    console.log('Collapse button:', button);
     if (!button) {
         console.error(`Collapse button not found for round ${roundNumber}`);
         return;
     }
     
-    console.log('Current collapsed state:', content.classList.contains('collapsed'));
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
         button.textContent = '▼';
         button.classList.remove('rotated');
-        console.log('Round opened');
     } else {
         content.classList.add('collapsed');
         button.textContent = '▲';
         button.classList.add('rotated');
-        console.log('Round closed');
     }
     
     // Save the state when toggling
