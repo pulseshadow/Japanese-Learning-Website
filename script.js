@@ -5274,7 +5274,16 @@ function setupJapaneseCustomWordButtonsForRound(roundNumber) {
 
 function toggleJapaneseCustomRound(roundNumber) {
     const content = document.getElementById(`japanese-round-content-${roundNumber}`);
+    if (!content) {
+        console.error(`Content element not found for Japanese round ${roundNumber}`);
+        return;
+    }
+    
     const button = content.previousElementSibling.querySelector('.collapse-btn');
+    if (!button) {
+        console.error(`Collapse button not found for Japanese round ${roundNumber}`);
+        return;
+    }
     
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
@@ -7236,32 +7245,6 @@ function updateSelectionIndicator(indicator, selectedCount, totalCount) {
     }
 }
 
-function updateRoundSelectionIndicator(roundNumber, isJapanese = false) {
-    const container = isJapanese ? 
-        document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`) :
-        document.querySelector(`.custom-round[data-round="${roundNumber}"]`);
-    
-    if (!container) return;
-    
-    const header = container.querySelector('.custom-round-header');
-    if (!header) return;
-    
-    // Get or create the indicator
-    let indicator = header.querySelector('.selection-indicator');
-    if (!indicator) {
-        indicator = createSelectionIndicator();
-        // Insert before the h3 title
-        const title = header.querySelector('h3');
-        header.insertBefore(indicator, title);
-    }
-    
-    // Count selected words in this round
-    const wordCheckboxes = container.querySelectorAll('.word-selection-grid input[type="checkbox"]:not(.select-all-checkbox)');
-    const selectedCount = container.querySelectorAll('.word-selection-grid input[type="checkbox"]:not(.select-all-checkbox):checked').length;
-    const totalCount = wordCheckboxes.length;
-    
-    updateSelectionIndicator(indicator, selectedCount, totalCount);
-}
 
 function updateWordSectionSelectionIndicator(roundNumber, sectionIndex, isJapanese = false) {
     const container = isJapanese ? 
@@ -7298,9 +7281,8 @@ function updateAllSelectionIndicators() {
     const englishRounds = document.querySelectorAll('#custom-rounds-container .custom-round');
     englishRounds.forEach(round => {
         const roundNumber = parseInt(round.dataset.round);
-        updateRoundSelectionIndicator(roundNumber, false);
         
-        // Update word section indicators
+        // Update word section indicators only (not main round indicators)
         const sections = round.querySelectorAll('.word-section-container');
         sections.forEach((section, sectionIndex) => {
             updateWordSectionSelectionIndicator(roundNumber, sectionIndex, false);
@@ -7311,9 +7293,8 @@ function updateAllSelectionIndicators() {
     const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
     japaneseRounds.forEach(round => {
         const roundNumber = parseInt(round.dataset.round);
-        updateRoundSelectionIndicator(roundNumber, true);
         
-        // Update word section indicators
+        // Update word section indicators only (not main round indicators)
         const sections = round.querySelectorAll('.word-section-container');
         sections.forEach((section, sectionIndex) => {
             updateWordSectionSelectionIndicator(roundNumber, sectionIndex, true);
@@ -8504,7 +8485,16 @@ function removeCustomRound() {
 
 function toggleCustomRound(roundNumber) {
     const content = document.getElementById(`round-content-${roundNumber}`);
+    if (!content) {
+        console.error(`Content element not found for round ${roundNumber}`);
+        return;
+    }
+    
     const button = content.previousElementSibling.querySelector('.collapse-btn');
+    if (!button) {
+        console.error(`Collapse button not found for round ${roundNumber}`);
+        return;
+    }
     
     if (content.classList.contains('collapsed')) {
         content.classList.remove('collapsed');
