@@ -2644,8 +2644,8 @@ enterJapaneseWordsBtn.addEventListener('click', () => {
         console.log('Navigating to Japanese script page for mirrored brute force mode');
         showPage('japanese-script');
     } else if (window.selectedMode === 'custom') {
-        console.log('Navigating to Japanese custom mode for mirrored custom mode');
-        showPage('japanese-custom-mode');
+        console.log('Navigating to Japanese script page for custom mode (will go to word selection after script selection)');
+        showPage('japanese-script');
     } else {
         console.warn('No mode selected, defaulting to Japanese script');
         showPage('japanese-script');
@@ -2681,7 +2681,10 @@ backToWordEntryBtn.addEventListener('click', () => {
 });
 
   japaneseHiraganaBtn.addEventListener('click', () => {
-    if (window.japaneseCustomModeEnabled) {
+    if (window.selectedMode === 'custom') {
+      console.log('Navigating to Japanese custom mode word selection');
+      showPage('japanese-custom-mode');
+    } else if (window.japaneseCustomModeEnabled) {
       console.log('Starting Japanese custom mode with Hiragana');
       startJapaneseCustomGame();
     } else {
