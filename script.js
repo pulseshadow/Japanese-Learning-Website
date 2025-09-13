@@ -5157,6 +5157,8 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         
         // Set up "Select All" functionality
         const updateSelectAllState = () => {
+            if (isManualToggle) return; // Skip if this is a manual toggle
+            
             const wordCheckboxes = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox)');
             const checkedCount = wordGrid.querySelectorAll('input[type="checkbox"]:not(.select-all-checkbox):checked').length;
             
@@ -5180,10 +5182,16 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         });
         
         // Add click handler for the select all container
+        let isManualToggle = false;
         selectAllContainer.addEventListener('click', (e) => {
             if (e.target !== selectAllCheckbox) {
+                console.log('Select All container clicked, toggling checkbox from', selectAllCheckbox.checked, 'to', !selectAllCheckbox.checked);
+                isManualToggle = true;
                 selectAllCheckbox.checked = !selectAllCheckbox.checked;
+                // Trigger the change event manually
                 selectAllCheckbox.dispatchEvent(new Event('change'));
+                // Reset the flag after a short delay
+                setTimeout(() => { isManualToggle = false; }, 100);
             }
         });
         
