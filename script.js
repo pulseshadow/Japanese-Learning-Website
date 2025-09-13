@@ -2579,7 +2579,13 @@ backToStartBtn.addEventListener('click', () => {
 // Add event listener for the new back button in script selection
 const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
 backToWordEntryFromScriptBtn.addEventListener('click', () => {
-    showPage('word-entry-selection');
+    // If in custom mode, go back to Japanese custom mode word selection
+    if (window.selectedMode === 'custom') {
+        showPage('japanese-custom-mode');
+    } else {
+        // Otherwise go back to word entry selection
+        showPage('word-entry-selection');
+    }
 });
 backToScriptBtn.addEventListener('click', () => {
     // If in mirrored mode, go back to Japanese script selection
@@ -5127,11 +5133,14 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
             // In Japanese custom mode, show English word as label (capitalized)
             label.textContent = capitalizeWords(word.english);
             
-            // Make the entire word container clickable
+            // Make the entire word container clickable (except when clicking directly on the checkbox)
             wordContainer.addEventListener('click', (e) => {
-                checkbox.checked = !checkbox.checked;
-                // Trigger the change event manually
-                checkbox.dispatchEvent(new Event('change'));
+                // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    // Trigger the change event manually
+                    checkbox.dispatchEvent(new Event('change'));
+                }
             });
             
             wordContainer.appendChild(checkbox);
@@ -8097,11 +8106,14 @@ function populateWordSelectionGrid(roundNumber) {
             // In English custom mode, always show English word as label (capitalized)
             label.textContent = capitalizeWords(word.english);
             
-            // Make the entire word item clickable
+            // Make the entire word item clickable (except when clicking directly on the checkbox)
             wordItem.addEventListener('click', (e) => {
-                checkbox.checked = !checkbox.checked;
-                // Trigger the change event manually
-                checkbox.dispatchEvent(new Event('change'));
+                // Don't trigger if clicking directly on the checkbox (to avoid double-triggering)
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    // Trigger the change event manually
+                    checkbox.dispatchEvent(new Event('change'));
+                }
             });
             
             wordItem.appendChild(checkbox);
