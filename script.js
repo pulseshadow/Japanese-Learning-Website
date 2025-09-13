@@ -8314,6 +8314,12 @@ function addCustomRound() {
     
     customRoundsContainer.appendChild(newRound);
     
+    // Ensure content starts open (not collapsed)
+    const content = newRound.querySelector('.custom-round-content');
+    if (content) {
+        content.classList.remove('collapsed');
+    }
+    
     // Populate only the new round's word selection grid
     populateWordSelectionGrid(roundNumber);
     
