@@ -5889,7 +5889,7 @@ function restoreJapaneseCustomRoundsState() {
                     } else {
                         roundContent.classList.add('collapsed');
                         collapseBtn.textContent = '▶';
-                        collapseBtn.classList.add('rotated');
+                        collapseBtn.classList.remove('rotated');
                     }
                     console.log(`Restored Japanese round ${roundData.roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
                 }
@@ -9393,8 +9393,8 @@ function restoreCustomRoundsState() {
                     collapseBtn.classList.remove('rotated');
                 } else {
                     roundContent.classList.add('collapsed');
-                    collapseBtn.textContent = '▲';
-                    collapseBtn.classList.add('rotated');
+                    collapseBtn.textContent = '▶';
+                    collapseBtn.classList.remove('rotated');
                 }
                 console.log(`Restored round ${roundNumber} dropdown state: ${roundData.isOpen ? 'open' : 'closed'}`);
             }
