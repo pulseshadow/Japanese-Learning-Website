@@ -5300,7 +5300,8 @@ function toggleJapaneseCustomRound(roundNumber) {
     } else {
         content.classList.add('collapsed');
         button.textContent = '▶';
-        button.classList.add('rotated');
+        // Remove rotation class to prevent spinning
+        button.classList.remove('rotated');
     }
     
     // Save the state when toggling
@@ -8524,7 +8525,8 @@ function toggleCustomRound(roundNumber) {
     } else {
         content.classList.add('collapsed');
         button.textContent = '▶';
-        button.classList.add('rotated');
+        // Remove rotation class to prevent spinning
+        button.classList.remove('rotated');
     }
     
     // Save the state when toggling
