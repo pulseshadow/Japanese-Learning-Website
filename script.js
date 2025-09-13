@@ -5081,7 +5081,7 @@ function populateJapaneseWordSelectionGrid(roundNumber) {
         selectAllCheckbox.id = `japanese-select-all-${roundNumber}-${roundIndex}`;
         
         const selectAllLabel = document.createElement('label');
-        selectAllLabel.setAttribute('for', `japanese-select-all-${roundNumber}-${roundIndex}`);
+        // Remove for attribute to prevent label from handling clicks
         selectAllLabel.setAttribute('data-en', 'Select All');
         selectAllLabel.setAttribute('data-es', 'Seleccionar Todo');
         selectAllLabel.setAttribute('data-fr', 'Tout Sélectionner');
@@ -8021,7 +8021,7 @@ function populateWordSelectionGrid(roundNumber) {
         selectAllCheckbox.className = 'select-all-checkbox';
         
         const selectAllLabel = document.createElement('label');
-        selectAllLabel.htmlFor = `select-all-${roundNumber - 1}-${roundIndex}`;
+        // Remove htmlFor to prevent label from handling clicks
         selectAllLabel.setAttribute('data-en', 'Select All');
         selectAllLabel.setAttribute('data-es', 'Seleccionar Todo');
         selectAllLabel.setAttribute('data-fr', 'Tout Sélectionner');
