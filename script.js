@@ -8523,7 +8523,7 @@ function toggleCustomRound(roundNumber) {
         button.classList.remove('rotated');
     } else {
         content.classList.add('collapsed');
-        button.textContent = '▲';
+        button.textContent = '▶';
         button.classList.add('rotated');
     }
     
