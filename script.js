@@ -5893,7 +5893,7 @@ function restoreJapaneseCustomRoundsState() {
 }
 
 function startJapaneseCustomRun() {
-    console.log('Starting Japanese custom run - going to script selection');
+    console.log('Starting Japanese custom run');
     
     // Save current state before starting
     saveJapaneseCustomRounds();
@@ -5904,11 +5904,41 @@ function startJapaneseCustomRun() {
         return;
     }
     
-    // Set Japanese custom mode flag (but not mirrored mode yet)
+    // Reset game state for Japanese custom mode
+    currentPage = 'game';
+    currentRound = 1;
+    currentPhase = 'learning';
+    currentQuestionIndex = 0;
+    currentWord = null;
+    correctAnswers = {};
+    questionQueue = [];
+    allLearnedWords = [];
+    wordsWithPendingPoints = new Set();
+    currentQuestionFailed = false;
+    eliminationWords = [];
+    
+    // Set Japanese custom mode flags
+    window.mirroredMode = true;
     window.japaneseCustomModeEnabled = true;
     
-    // Navigate to script selection page
-    showPage('japanese-script');
+    // Reset next round button visibility
+    nextRoundBtn.style.visibility = 'visible';
+    nextRoundBtn.classList.add('disabled');
+    
+    // Don't clear the word entry flag when starting a Japanese custom game
+    // This allows users to go back to word entry selection from script pages
+    
+    // Populate round selector with Japanese custom rounds
+    populateRoundSelector();
+    
+    // Show game page
+    showPage('game');
+    
+    // Show hiragana keyboard for Japanese custom mode
+    showHiraganaKeyboard();
+    
+    // Initialize the first round
+    initializeJapaneseCustomRound();
 }
 
 function startJapaneseCustomGame() {
