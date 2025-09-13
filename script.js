@@ -5279,7 +5279,14 @@ function toggleJapaneseCustomRound(roundNumber) {
         return;
     }
     
-    const button = content.previousElementSibling.querySelector('.collapse-btn');
+    // Find the round container and then the collapse button
+    const round = content.closest('.custom-round');
+    if (!round) {
+        console.error(`Round container not found for Japanese round ${roundNumber}`);
+        return;
+    }
+    
+    const button = round.querySelector('.collapse-btn');
     if (!button) {
         console.error(`Collapse button not found for Japanese round ${roundNumber}`);
         return;
@@ -8490,7 +8497,14 @@ function toggleCustomRound(roundNumber) {
         return;
     }
     
-    const button = content.previousElementSibling.querySelector('.collapse-btn');
+    // Find the round container and then the collapse button
+    const round = content.closest('.custom-round');
+    if (!round) {
+        console.error(`Round container not found for round ${roundNumber}`);
+        return;
+    }
+    
+    const button = round.querySelector('.collapse-btn');
     if (!button) {
         console.error(`Collapse button not found for round ${roundNumber}`);
         return;
