@@ -6668,7 +6668,7 @@ function getCurrentLanguageName() {
             'fr': 'Indonésien', 
             'ja': 'インドネシア語', 
             'zh': '印尼语', 
-            'id': 'Bahasa Indonesia', 
+            'id': 'Indonesia', 
             'ko': '인도네시아어', 
             'vi': 'Tiếng Indonesia' 
         },
@@ -7012,15 +7012,15 @@ function updateBackButtonText() {
             backToWordEntryBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
             backToWordEntryBtn.textContent = backToWordEntryBtn.getAttribute(`data-${currentLanguage}`);
         } else {
-            // Mirrored brute force mode - show "Back to Japanese Script Selection"
-            backToScriptBtn.setAttribute('data-en', '← Back to Japanese Script Selection');
-            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura Japonesa');
-            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture Japonaise');
-            backToScriptBtn.setAttribute('data-ja', '← 日本語文字選択に戻る');
-            backToScriptBtn.setAttribute('data-zh', '← 返回日语文字选择');
-            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip Jepang');
-            backToScriptBtn.setAttribute('data-ko', '← 일본어 문자 선택으로 돌아가기');
-            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản Tiếng Nhật');
+            // Mirrored brute force mode - show "Back to Script Selection"
+            backToScriptBtn.setAttribute('data-en', '← Back to Script Selection');
+            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura');
+            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture');
+            backToScriptBtn.setAttribute('data-ja', '← 文字選択に戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回文字选择');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip');
+            backToScriptBtn.setAttribute('data-ko', '← 스크립트 선택으로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
             
             // Reset the back button on Japanese script page to default
@@ -8652,7 +8652,7 @@ function removeSpecificRound(roundNumber) {
             remainingRounds.forEach((round, index) => {
                 const currentRoundNumber = parseInt(round.dataset.round);
                 if (currentRoundNumber > roundNumber) {
-                    // This round will be renumbered, preserve its state
+                    // This round will be renumbered, preserve it's state
                     const checkboxes = round.querySelectorAll('input[type="checkbox"]:checked');
                     const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
                     const customWords = round.querySelectorAll('.custom-word-item');
