@@ -2594,12 +2594,6 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
-    // If in Japanese custom mode, go back to script selection
-    if (window.japaneseCustomModeEnabled) {
-        showPage('japanese-script');
-        return;
-    }
-    
     // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
@@ -2684,11 +2678,13 @@ enterEnglishWordsBtn.addEventListener('click', () => {
 
 // Japanese script page event listeners
 backToWordEntryBtn.addEventListener('click', () => {
-    // Reset Japanese custom mode flag when going back
+    // If in Japanese custom mode, go back to script selection
     if (window.japaneseCustomModeEnabled) {
-        window.japaneseCustomModeEnabled = false;
-        console.log('Japanese custom mode reset when going back to word entry selection');
+        showPage('japanese-script');
+        return;
     }
+    
+    // Otherwise go back to word entry selection
     showPage('word-entry-selection');
 });
 
@@ -6075,6 +6071,9 @@ function startJapaneseCustomGame() {
     window.mirroredMode = true;
     window.japaneseCustomModeEnabled = true;
     
+    // Update back button text for Japanese custom mode
+    updateBackButtonText();
+    
     // Reset next round button visibility
     nextRoundBtn.style.visibility = 'visible';
     nextRoundBtn.classList.add('disabled');
@@ -6903,6 +6902,17 @@ function updateBackButtonText() {
             backToScriptBtn.setAttribute('data-ko', '← 일본어 맞춤형 모드로 돌아가기');
             backToScriptBtn.setAttribute('data-vi', '← Quay lại Chế độ Tùy chỉnh Tiếng Nhật');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+            
+            // Update the back button on Japanese script page to go to script selection
+            backToWordEntryBtn.setAttribute('data-en', '← Back to Script Selection');
+            backToWordEntryBtn.setAttribute('data-es', '← Volver a Selección de Escritura');
+            backToWordEntryBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture');
+            backToWordEntryBtn.setAttribute('data-ja', '← 文字選択に戻る');
+            backToWordEntryBtn.setAttribute('data-zh', '← 返回文字选择');
+            backToWordEntryBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip');
+            backToWordEntryBtn.setAttribute('data-ko', '← 스크립트 선택으로 돌아가기');
+            backToWordEntryBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
+            backToWordEntryBtn.textContent = backToWordEntryBtn.getAttribute(`data-${currentLanguage}`);
         } else {
             // Mirrored brute force mode - show "Back to Japanese Script Selection"
             backToScriptBtn.setAttribute('data-en', '← Back to Japanese Script Selection');
@@ -6914,6 +6924,17 @@ function updateBackButtonText() {
             backToScriptBtn.setAttribute('data-ko', '← 일본어 문자 선택으로 돌아가기');
             backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản Tiếng Nhật');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+            
+            // Reset the back button on Japanese script page to default
+            backToWordEntryBtn.setAttribute('data-en', '← Back to Word Entry Selection');
+            backToWordEntryBtn.setAttribute('data-es', '← Volver a Selección de Entrada de Palabras');
+            backToWordEntryBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Entrée des Mots');
+            backToWordEntryBtn.setAttribute('data-ja', '← 単語入力選択に戻る');
+            backToWordEntryBtn.setAttribute('data-zh', '← 返回单词输入选择');
+            backToWordEntryBtn.setAttribute('data-id', '← Kembali ke Pemilihan Masukan Kata');
+            backToWordEntryBtn.setAttribute('data-ko', '← 단어 입력 선택으로 돌아가기');
+            backToWordEntryBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Nhập Từ');
+            backToWordEntryBtn.textContent = backToWordEntryBtn.getAttribute(`data-${currentLanguage}`);
         }
     } else if (window.customModeEnabled) {
         // Custom mode - show "Back to Word Selection"
@@ -6926,6 +6947,17 @@ function updateBackButtonText() {
         backToScriptBtn.setAttribute('data-ko', '← 단어 선택으로 돌아가기');
         backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Từ');
         backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+        
+        // Reset the back button on Japanese script page to default
+        backToWordEntryBtn.setAttribute('data-en', '← Back to Word Entry Selection');
+        backToWordEntryBtn.setAttribute('data-es', '← Volver a Selección de Entrada de Palabras');
+        backToWordEntryBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Entrée des Mots');
+        backToWordEntryBtn.setAttribute('data-ja', '← 単語入力選択に戻る');
+        backToWordEntryBtn.setAttribute('data-zh', '← 返回单词输入选择');
+        backToWordEntryBtn.setAttribute('data-id', '← Kembali ke Pemilihan Masukan Kata');
+        backToWordEntryBtn.setAttribute('data-ko', '← 단어 입력 선택으로 돌아가기');
+        backToWordEntryBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Nhập Từ');
+        backToWordEntryBtn.textContent = backToWordEntryBtn.getAttribute(`data-${currentLanguage}`);
     } else {
         // Brute force mode - show "Back to Script Selection"
         backToScriptBtn.setAttribute('data-en', '← Back to Script Selection');
@@ -6937,6 +6969,17 @@ function updateBackButtonText() {
         backToScriptBtn.setAttribute('data-ko', '← 스크립트 선택으로 돌아가기');
         backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
         backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
+        
+        // Reset the back button on Japanese script page to default
+        backToWordEntryBtn.setAttribute('data-en', '← Back to Word Entry Selection');
+        backToWordEntryBtn.setAttribute('data-es', '← Volver a Selección de Entrada de Palabras');
+        backToWordEntryBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Entrée des Mots');
+        backToWordEntryBtn.setAttribute('data-ja', '← 単語入力選択に戻る');
+        backToWordEntryBtn.setAttribute('data-zh', '← 返回单词输入选择');
+        backToWordEntryBtn.setAttribute('data-id', '← Kembali ke Pemilihan Masukan Kata');
+        backToWordEntryBtn.setAttribute('data-ko', '← 단어 입력 선택으로 돌아가기');
+        backToWordEntryBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Nhập Từ');
+        backToWordEntryBtn.textContent = backToWordEntryBtn.getAttribute(`data-${currentLanguage}`);
     }
 }
 
