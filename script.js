@@ -8072,12 +8072,6 @@ function initializeCustomMode() {
         }, 100);
     }
     
-    // Update selection indicators
-    updateAllSelectionIndicators();
-    
-    // Synchronize dropdown states with arrow directions
-    synchronizeDropdownStatesWithArrows();
-    
     // Ensure word sections start closed
     ensureEnglishCustomSectionsStartClosed();
 }
@@ -8191,6 +8185,8 @@ function populateWordSelectionGrid(roundNumber) {
                 checkbox.checked = isChecked;
             });
             
+            updateSelectAllState();
+            updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
             saveCustomRounds();
         });
         
@@ -8247,6 +8243,7 @@ function populateWordSelectionGrid(roundNumber) {
             // Add event listener to save custom rounds when checkbox changes
             checkbox.addEventListener('change', () => {
                 updateSelectAllState();
+                updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
                 saveCustomRounds();
             });
             
@@ -8434,6 +8431,13 @@ function addCustomWordToRound(roundContainer, japanese, english) {
     
     // Add event listener for checkbox
     checkbox.addEventListener('change', () => {
+        // Find the round number and section index for this custom word
+        const roundContainer = checkbox.closest('.custom-round');
+        const roundNumber = parseInt(roundContainer.dataset.round);
+        const sectionContainer = checkbox.closest('.word-section-container');
+        const sectionIndex = Array.from(roundContainer.querySelectorAll('.word-section-container')).indexOf(sectionContainer);
+        
+        updateWordSectionSelectionIndicator(roundNumber, sectionIndex, false);
         saveCustomRounds();
     });
     
