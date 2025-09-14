@@ -2594,6 +2594,12 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
+    // If in Japanese custom mode, go back to script selection
+    if (window.japaneseCustomModeEnabled) {
+        showPage('japanese-script');
+        return;
+    }
+    
     // If in custom mode, go back to word selection, otherwise go to word entry selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
