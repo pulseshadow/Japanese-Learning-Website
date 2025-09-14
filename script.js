@@ -4839,6 +4839,9 @@ function initializeJapaneseCustomMode() {
     // Update selection indicators
     updateAllSelectionIndicators();
     
+    // Synchronize dropdown states with arrow directions
+    synchronizeDropdownStatesWithArrows();
+    
     console.log('Japanese custom mode initialization complete');
 }
 
@@ -7335,6 +7338,88 @@ function updateAllSelectionIndicators() {
     });
 }
 
+function synchronizeDropdownStatesWithArrows() {
+    console.log('Synchronizing dropdown states with arrow directions');
+    
+    // Synchronize English custom mode dropdowns
+    const englishRounds = document.querySelectorAll('#custom-rounds-container .custom-round');
+    englishRounds.forEach(round => {
+        const roundContent = round.querySelector('.custom-round-content');
+        const collapseBtn = round.querySelector('.collapse-btn');
+        
+        if (roundContent && collapseBtn) {
+            if (collapseBtn.textContent === '▼') {
+                // Arrow points down, content should be open
+                roundContent.classList.remove('collapsed');
+                console.log('Forced English round content open based on arrow direction');
+            } else if (collapseBtn.textContent === '▶') {
+                // Arrow points right, content should be closed
+                roundContent.classList.add('collapsed');
+                console.log('Forced English round content closed based on arrow direction');
+            }
+        }
+        
+        // Also synchronize word sections within each round
+        const wordSections = round.querySelectorAll('.word-section-container');
+        wordSections.forEach(section => {
+            const wordContent = section.querySelector('.word-section-content');
+            const sectionCollapseBtn = section.querySelector('.collapse-btn');
+            
+            if (wordContent && sectionCollapseBtn) {
+                if (sectionCollapseBtn.textContent === '▼') {
+                    // Arrow points down, content should be open
+                    wordContent.classList.remove('collapsed');
+                    console.log('Forced English word section open based on arrow direction');
+                } else if (sectionCollapseBtn.textContent === '▶') {
+                    // Arrow points right, content should be closed
+                    wordContent.classList.add('collapsed');
+                    console.log('Forced English word section closed based on arrow direction');
+                }
+            }
+        });
+    });
+    
+    // Synchronize Japanese custom mode dropdowns
+    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+    japaneseRounds.forEach(round => {
+        const roundContent = round.querySelector('.custom-round-content');
+        const collapseBtn = round.querySelector('.collapse-btn');
+        
+        if (roundContent && collapseBtn) {
+            if (collapseBtn.textContent === '▼') {
+                // Arrow points down, content should be open
+                roundContent.classList.remove('collapsed');
+                console.log('Forced Japanese round content open based on arrow direction');
+            } else if (collapseBtn.textContent === '▶') {
+                // Arrow points right, content should be closed
+                roundContent.classList.add('collapsed');
+                console.log('Forced Japanese round content closed based on arrow direction');
+            }
+        }
+        
+        // Also synchronize word sections within each round
+        const wordSections = round.querySelectorAll('.word-section-container');
+        wordSections.forEach(section => {
+            const wordContent = section.querySelector('.word-section-content');
+            const sectionCollapseBtn = section.querySelector('.collapse-btn');
+            
+            if (wordContent && sectionCollapseBtn) {
+                if (sectionCollapseBtn.textContent === '▼') {
+                    // Arrow points down, content should be open
+                    wordContent.classList.remove('collapsed');
+                    console.log('Forced Japanese word section open based on arrow direction');
+                } else if (sectionCollapseBtn.textContent === '▶') {
+                    // Arrow points right, content should be closed
+                    wordContent.classList.add('collapsed');
+                    console.log('Forced Japanese word section closed based on arrow direction');
+                }
+            }
+        });
+    });
+    
+    console.log('Dropdown state synchronization complete');
+}
+
 // Frozen airlock system - prevents airlock from being modified during games
 let airlockFrozen = false;
 let frozenAirlockData = null;
@@ -7965,6 +8050,9 @@ function initializeCustomMode() {
             restoreCustomRoundsState();
         }, 100);
     }
+    
+    // Synchronize dropdown states with arrow directions
+    synchronizeDropdownStatesWithArrows();
 }
 
 function populateWordSelectionGrid(roundNumber) {
