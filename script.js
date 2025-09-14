@@ -8186,12 +8186,12 @@ function populateWordSelectionGrid(roundNumber) {
             
             wordCheckboxes.forEach(checkbox => {
                 checkbox.checked = isChecked;
-              });
-              
-              updateSelectAllState();
-              updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
-              saveCustomRounds();
-          });
+            });
+            
+            updateSelectAllState();
+            updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
+            saveCustomRounds();
+        });
         
         // Add event listener to update select all state when individual checkboxes change
         let isManualToggle = false;
@@ -8244,11 +8244,11 @@ function populateWordSelectionGrid(roundNumber) {
             checkbox.dataset.english = word.english;
             
             // Add event listener to save custom rounds when checkbox changes
-              checkbox.addEventListener('change', () => {
-                  updateSelectAllState();
-                  updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
-                  saveCustomRounds();
-              });
+            checkbox.addEventListener('change', () => {
+                updateSelectAllState();
+                updateWordSectionSelectionIndicator(roundNumber, roundIndex, false);
+                saveCustomRounds();
+            });
             
             const label = document.createElement('label');
             // Remove htmlFor to prevent label from handling clicks
@@ -8432,17 +8432,17 @@ function addCustomWordToRound(roundContainer, japanese, english) {
         saveCustomRounds();
     });
     
-      // Add event listener for checkbox
-      checkbox.addEventListener('change', () => {
-          // Find the round number and section index for this custom word
-          const roundContainer = checkbox.closest('.custom-round');
-          const roundNumber = parseInt(roundContainer.dataset.round);
-          const sectionContainer = checkbox.closest('.word-section-container');
-          const sectionIndex = Array.from(roundContainer.querySelectorAll('.word-section-container')).indexOf(sectionContainer);
-          
-          updateWordSectionSelectionIndicator(roundNumber, sectionIndex, false);
-          saveCustomRounds();
-      });
+    // Add event listener for checkbox
+    checkbox.addEventListener('change', () => {
+        // Find the round number and section index for this custom word
+        const roundContainer = checkbox.closest('.custom-round');
+        const roundNumber = parseInt(roundContainer.dataset.round);
+        const sectionContainer = checkbox.closest('.word-section-container');
+        const sectionIndex = Array.from(roundContainer.querySelectorAll('.word-section-container')).indexOf(sectionContainer);
+        
+        updateWordSectionSelectionIndicator(roundNumber, sectionIndex, false);
+        saveCustomRounds();
+    });
     
     wordItem.appendChild(checkbox);
     wordItem.appendChild(label);
@@ -9615,6 +9615,9 @@ function restoreCustomRoundsState() {
     
     // Update selection indicators
     updateAllSelectionIndicators();
+    
+    // Ensure word sections start closed after restoration
+    ensureEnglishCustomSectionsStartClosed();
     
     // Synchronize dropdown states with arrow directions
     synchronizeDropdownStatesWithArrows();
