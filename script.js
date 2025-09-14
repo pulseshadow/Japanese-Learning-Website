@@ -2588,9 +2588,9 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     }
 });
 backToScriptBtn.addEventListener('click', () => {
-    // If in Japanese custom mode, go back to script selection
+    // If in Japanese custom mode, go back to word selection
     if (window.japaneseCustomModeEnabled) {
-        showPage('japanese-script');
+        showPage('japanese-custom-mode');
         return;
     }
     
@@ -6892,15 +6892,15 @@ function updateWordSelectionGrids() {
 function updateBackButtonText() {
     if (window.mirroredMode) {
         if (window.japaneseCustomModeEnabled) {
-            // Japanese custom mode - show "Back to Script Selection"
-            backToScriptBtn.setAttribute('data-en', '← Back to Script Selection');
-            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Escritura');
-            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection d\'Écriture');
-            backToScriptBtn.setAttribute('data-ja', '← 文字選択に戻る');
-            backToScriptBtn.setAttribute('data-zh', '← 返回文字选择');
-            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Skrip');
-            backToScriptBtn.setAttribute('data-ko', '← 스크립트 선택으로 돌아가기');
-            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Kịch bản');
+            // Japanese custom mode - show "Back to Word Selection"
+            backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
+            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
+            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection de Mots');
+            backToScriptBtn.setAttribute('data-ja', '← 単語選択に戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回单词选择');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Kata');
+            backToScriptBtn.setAttribute('data-ko', '← 단어 선택으로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Từ');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
             
             // Update the back button on Japanese script page to go to script selection
