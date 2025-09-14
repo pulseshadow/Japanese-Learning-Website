@@ -5297,7 +5297,7 @@ function setupJapaneseCustomWordButtonsForRound(roundNumber) {
             // Add initial input row if container is empty
             const container = inputs.querySelector('.custom-word-inputs-container');
             if (container.children.length === 0) {
-                addJapaneseCustomWordInputRow(container, roundNumber);
+                addCustomWordInputRow(container);
             }
         });
         console.log(`Set up custom word button for round ${roundNumber}`);
@@ -5397,7 +5397,7 @@ function removeJapaneseCustomRound() {
                     // Add initial input row if container is empty
                     const container = inputs.querySelector('.custom-word-inputs-container');
                     if (container.children.length === 0) {
-                        addJapaneseCustomWordInputRow(container, roundNumber);
+                        addCustomWordInputRow(container);
                     }
                 });
             }
@@ -5499,7 +5499,7 @@ function removeJapaneseSpecificRound(roundNumber) {
                     // Add initial input row if container is empty
                     const container = inputs.querySelector('.custom-word-inputs-container');
                     if (container.children.length === 0) {
-                        addJapaneseCustomWordInputRow(container, newRoundNumber);
+                        addCustomWordInputRow(container);
                     }
                 });
             }
@@ -5541,48 +5541,6 @@ function removeJapaneseSpecificRound(roundNumber) {
 }
 
 
-function addJapaneseCustomWordInputRow(container, roundNumber) {
-    const inputRow = document.createElement('div');
-    inputRow.className = 'input-row';
-    inputRow.style.marginBottom = '10px';
-    
-    const japaneseInput = document.createElement('input');
-    japaneseInput.type = 'text';
-    japaneseInput.className = 'japanese-word-input';
-    japaneseInput.placeholder = 'Japanese Word';
-    japaneseInput.style.marginRight = '10px';
-    
-    const englishInput = document.createElement('input');
-    englishInput.type = 'text';
-    englishInput.className = 'english-translation-input';
-    englishInput.placeholder = 'English Translation (Correct Answer)';
-    englishInput.style.marginRight = '10px';
-    
-    const addBtn = document.createElement('button');
-    addBtn.className = 'add-word-btn';
-    addBtn.textContent = 'Add';
-    
-    // Add event listener
-    addBtn.addEventListener('click', () => {
-        const japanese = japaneseInput.value.trim();
-        const english = englishInput.value.trim();
-        
-        if (japanese && english) {
-            const roundContainer = container.closest('.custom-round');
-            addJapaneseCustomWordToGrid(roundContainer, japanese, english);
-            japaneseInput.value = '';
-            englishInput.value = '';
-        } else {
-            alert(getTranslatedMessage('enter-both-words'));
-        }
-    });
-    
-    inputRow.appendChild(japaneseInput);
-    inputRow.appendChild(englishInput);
-    inputRow.appendChild(addBtn);
-    
-    container.appendChild(inputRow);
-}
 
 function synchronizeDropdownStatesWithArrows() {
     console.log('Synchronizing dropdown states with arrow directions');
@@ -8339,7 +8297,16 @@ function addCustomWordInputRow(container) {
         
         if (japanese && english) {
             const roundContainer = container.closest('.custom-round');
-            addCustomWordToRound(roundContainer, japanese, english);
+            
+            // Check if this is Japanese custom mode or English custom mode
+            const isJapaneseMode = roundContainer.closest('#japanese-custom-rounds-container') !== null;
+            
+            if (isJapaneseMode) {
+                addJapaneseCustomWordToGrid(roundContainer, japanese, english);
+            } else {
+                addCustomWordToRound(roundContainer, japanese, english);
+            }
+            
             japaneseInput.value = '';
             englishInput.value = '';
         } else {
