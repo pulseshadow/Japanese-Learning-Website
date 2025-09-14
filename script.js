@@ -8071,6 +8071,35 @@ function initializeCustomMode() {
             restoreCustomRoundsState();
         }, 100);
     }
+    
+    // Update selection indicators
+    updateAllSelectionIndicators();
+    
+    // Synchronize dropdown states with arrow directions
+    synchronizeDropdownStatesWithArrows();
+    
+    // Ensure word sections start closed
+    ensureEnglishCustomSectionsStartClosed();
+}
+
+function ensureEnglishCustomSectionsStartClosed() {
+    console.log('Ensuring English custom mode sections start closed');
+    
+    const rounds = document.querySelectorAll('#custom-rounds-container .custom-round');
+    rounds.forEach(round => {
+        const sections = round.querySelectorAll('.word-section-container');
+        sections.forEach(section => {
+            const wordContent = section.querySelector('.word-section-content');
+            const collapseBtn = section.querySelector('.collapse-btn');
+            
+            if (wordContent && collapseBtn) {
+                // Ensure section is closed
+                wordContent.classList.add('collapsed');
+                collapseBtn.textContent = '▶';
+                collapseBtn.classList.remove('rotated');
+            }
+        });
+    });
 }
 
 function populateWordSelectionGrid(roundNumber) {
