@@ -2588,6 +2588,12 @@ backToWordEntryFromScriptBtn.addEventListener('click', () => {
     }
 });
 backToScriptBtn.addEventListener('click', () => {
+    // If in Japanese custom mode, go back to word selection
+    if (window.japaneseCustomModeEnabled) {
+        showPage('japanese-custom-mode');
+        return;
+    }
+    
     // If in mirrored mode, go back to Japanese script selection
     if (window.mirroredMode) {
         showPage('japanese-script');
@@ -2709,7 +2715,7 @@ japaneseKatakanaBtn.addEventListener('click', () => {
 
 // Japanese custom mode page event listeners
 backToWordEntryFromJapaneseCustomBtn.addEventListener('click', () => {
-    showPage('word-entry-selection');
+    showPage('japanese-script');
 });
 
 japaneseAddRoundBtn.addEventListener('click', () => {
@@ -6892,15 +6898,15 @@ function updateWordSelectionGrids() {
 function updateBackButtonText() {
     if (window.mirroredMode) {
         if (window.japaneseCustomModeEnabled) {
-            // Japanese custom mode - show "Back to Japanese Custom Mode"
-            backToScriptBtn.setAttribute('data-en', '← Back to Japanese Custom Mode');
-            backToScriptBtn.setAttribute('data-es', '← Volver al Modo Personalizado Japonés');
-            backToScriptBtn.setAttribute('data-fr', '← Retour au Mode Personnalisé Japonais');
-            backToScriptBtn.setAttribute('data-ja', '← 日本語カスタムモードに戻る');
-            backToScriptBtn.setAttribute('data-zh', '← 返回日语自定义模式');
-            backToScriptBtn.setAttribute('data-id', '← Kembali ke Mode Kustom Jepang');
-            backToScriptBtn.setAttribute('data-ko', '← 일본어 맞춤형 모드로 돌아가기');
-            backToScriptBtn.setAttribute('data-vi', '← Quay lại Chế độ Tùy chỉnh Tiếng Nhật');
+            // Japanese custom mode - show "Back to Word Selection"
+            backToScriptBtn.setAttribute('data-en', '← Back to Word Selection');
+            backToScriptBtn.setAttribute('data-es', '← Volver a Selección de Palabras');
+            backToScriptBtn.setAttribute('data-fr', '← Retour à la Sélection de Mots');
+            backToScriptBtn.setAttribute('data-ja', '← 単語選択に戻る');
+            backToScriptBtn.setAttribute('data-zh', '← 返回单词选择');
+            backToScriptBtn.setAttribute('data-id', '← Kembali ke Pemilihan Kata');
+            backToScriptBtn.setAttribute('data-ko', '← 단어 선택으로 돌아가기');
+            backToScriptBtn.setAttribute('data-vi', '← Quay lại Lựa chọn Từ');
             backToScriptBtn.textContent = backToScriptBtn.getAttribute(`data-${currentLanguage}`);
             
             // Update the back button on Japanese script page to go to script selection
