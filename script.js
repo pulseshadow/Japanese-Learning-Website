@@ -5682,10 +5682,16 @@ function saveJapaneseCustomRounds() {
             });
             
             // Get open sections
-            const sections = round.querySelectorAll('.word-section-container');
-            sections.forEach((section, sectionIndex) => {
-                if (!section.classList.contains('collapsed')) {
-                    roundData.openSections.push(sectionIndex);
+            const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
+            openSections.forEach(section => {
+                // Find the section index by looking at the parent container
+                const sectionContainer = section.closest('.word-section-container');
+                if (sectionContainer) {
+                    const allSections = round.querySelectorAll('.word-section-container');
+                    const sectionIndex = Array.from(allSections).indexOf(sectionContainer);
+                    if (sectionIndex !== -1) {
+                        roundData.openSections.push(sectionIndex);
+                    }
                 }
             });
             
