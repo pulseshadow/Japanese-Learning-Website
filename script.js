@@ -2579,8 +2579,13 @@ backToStartBtn.addEventListener('click', () => {
 // Add event listener for the new back button in script selection
 const backToWordEntryFromScriptBtn = document.getElementById('back-to-word-entry-from-script');
 backToWordEntryFromScriptBtn.addEventListener('click', () => {
-    // Always go back to word entry selection from script selection page
-    showPage('word-entry-selection');
+    // If in custom mode, go back to Japanese custom mode word selection
+    if (window.selectedMode === 'custom') {
+        showPage('japanese-custom-mode');
+    } else {
+        // Otherwise go back to word entry selection
+        showPage('word-entry-selection');
+    }
 });
 backToScriptBtn.addEventListener('click', () => {
     // If in Japanese custom mode, go back to script selection
@@ -2679,13 +2684,7 @@ enterEnglishWordsBtn.addEventListener('click', () => {
 
 // Japanese script page event listeners
 backToWordEntryBtn.addEventListener('click', () => {
-    // If in Japanese custom mode, go back to script selection
-    if (window.japaneseCustomModeEnabled) {
-        showPage('japanese-script');
-        return;
-    }
-    
-    // Otherwise go back to word entry selection
+    // Always go back to word entry selection from script selection page
     showPage('word-entry-selection');
 });
 
