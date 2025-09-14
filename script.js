@@ -5286,7 +5286,20 @@ function setupJapaneseCustomWordButtonsForRound(roundNumber) {
     // Set up the "Add Custom Word" button
     const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
     if (addCustomWordBtn) {
-        addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(roundNumber);
+        // Remove existing event listeners
+        const newBtn = addCustomWordBtn.cloneNode(true);
+        addCustomWordBtn.parentNode.replaceChild(newBtn, addCustomWordBtn);
+        
+        newBtn.addEventListener('click', () => {
+            const inputs = newBtn.parentElement.querySelector('.custom-word-inputs');
+            inputs.classList.toggle('hidden');
+            
+            // Add initial input row if container is empty
+            const container = inputs.querySelector('.custom-word-inputs-container');
+            if (container.children.length === 0) {
+                addJapaneseCustomWordInputRow(container, roundNumber);
+            }
+        });
         console.log(`Set up custom word button for round ${roundNumber}`);
     }
 }
@@ -5372,7 +5385,22 @@ function removeJapaneseCustomRound() {
             
             // Update custom word button onclick
             const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
-            addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(roundNumber);
+            if (addCustomWordBtn) {
+                // Remove existing event listeners
+                const newBtn = addCustomWordBtn.cloneNode(true);
+                addCustomWordBtn.parentNode.replaceChild(newBtn, addCustomWordBtn);
+                
+                newBtn.addEventListener('click', () => {
+                    const inputs = newBtn.parentElement.querySelector('.custom-word-inputs');
+                    inputs.classList.toggle('hidden');
+                    
+                    // Add initial input row if container is empty
+                    const container = inputs.querySelector('.custom-word-inputs-container');
+                    if (container.children.length === 0) {
+                        addJapaneseCustomWordInputRow(container, roundNumber);
+                    }
+                });
+            }
             
             // Update word grid IDs and references
             const roundWordGrid = round.querySelector('.word-selection-grid');
@@ -5459,7 +5487,22 @@ function removeJapaneseSpecificRound(roundNumber) {
             
             // Update custom word button onclick
             const addCustomWordBtn = round.querySelector('.add-custom-word-btn');
-            addCustomWordBtn.onclick = () => addJapaneseCustomWordToRound(newRoundNumber);
+            if (addCustomWordBtn) {
+                // Remove existing event listeners
+                const newBtn = addCustomWordBtn.cloneNode(true);
+                addCustomWordBtn.parentNode.replaceChild(newBtn, addCustomWordBtn);
+                
+                newBtn.addEventListener('click', () => {
+                    const inputs = newBtn.parentElement.querySelector('.custom-word-inputs');
+                    inputs.classList.toggle('hidden');
+                    
+                    // Add initial input row if container is empty
+                    const container = inputs.querySelector('.custom-word-inputs-container');
+                    if (container.children.length === 0) {
+                        addJapaneseCustomWordInputRow(container, newRoundNumber);
+                    }
+                });
+            }
             
             // Update word grid IDs and references
             const roundWordGrid = round.querySelector('.word-selection-grid');
@@ -5497,50 +5540,36 @@ function removeJapaneseSpecificRound(roundNumber) {
     }
 }
 
-function addJapaneseCustomWordToRound(roundNumber) {
-    console.log('Adding Japanese custom word to round:', roundNumber);
-    
-    const round = document.querySelector(`#japanese-custom-rounds-container .custom-round[data-round="${roundNumber}"]`);
-    if (!round) return;
-    
-    const customWordInputs = round.querySelector('.custom-word-inputs');
-    const container = customWordInputs.querySelector('.custom-word-inputs-container');
-    
-    // Create custom word input row
+
+function addJapaneseCustomWordInputRow(container, roundNumber) {
     const inputRow = document.createElement('div');
-    inputRow.className = 'custom-word-input-row';
+    inputRow.className = 'input-row';
+    inputRow.style.marginBottom = '10px';
     
     const japaneseInput = document.createElement('input');
     japaneseInput.type = 'text';
-    japaneseInput.placeholder = 'Japanese characters';
-    japaneseInput.className = 'custom-word-input japanese-input';
+    japaneseInput.className = 'japanese-word-input';
+    japaneseInput.placeholder = 'Japanese Word';
+    japaneseInput.style.marginRight = '10px';
     
     const englishInput = document.createElement('input');
     englishInput.type = 'text';
-    englishInput.placeholder = 'English word';
-    englishInput.className = 'custom-word-input english-input';
+    englishInput.className = 'english-translation-input';
+    englishInput.placeholder = 'English Translation (Correct Answer)';
+    englishInput.style.marginRight = '10px';
     
     const addBtn = document.createElement('button');
-    addBtn.textContent = 'Add';
     addBtn.className = 'add-word-btn';
+    addBtn.textContent = 'Add';
     
-    const removeBtn = document.createElement('button');
-    removeBtn.textContent = '×';
-    removeBtn.className = 'remove-custom-word-btn';
-    removeBtn.onclick = () => {
-        inputRow.remove();
-        saveJapaneseCustomRounds();
-    };
-    
-    // Add event listener for the Add button
+    // Add event listener
     addBtn.addEventListener('click', () => {
         const japanese = japaneseInput.value.trim();
         const english = englishInput.value.trim();
         
         if (japanese && english) {
-            // Add the custom word as a checkbox item to the word selection grid
-            addJapaneseCustomWordToGrid(round, japanese, english);
-            // Clear the inputs
+            const roundContainer = container.closest('.custom-round');
+            addJapaneseCustomWordToGrid(roundContainer, japanese, english);
             japaneseInput.value = '';
             englishInput.value = '';
         } else {
@@ -5551,17 +5580,90 @@ function addJapaneseCustomWordToRound(roundNumber) {
     inputRow.appendChild(japaneseInput);
     inputRow.appendChild(englishInput);
     inputRow.appendChild(addBtn);
-    inputRow.appendChild(removeBtn);
     
     container.appendChild(inputRow);
+}
+
+function synchronizeDropdownStatesWithArrows() {
+    console.log('Synchronizing dropdown states with arrow directions');
     
-    // Show the inputs
-    customWordInputs.classList.remove('hidden');
+    // Synchronize English custom mode dropdowns
+    const englishRounds = document.querySelectorAll('#custom-rounds-container .custom-round');
+    englishRounds.forEach(round => {
+        const roundContent = round.querySelector('.custom-round-content');
+        const collapseBtn = round.querySelector('.collapse-btn');
+        
+        if (roundContent && collapseBtn) {
+            if (collapseBtn.textContent === '▼') {
+                // Arrow points down, content should be open
+                roundContent.classList.remove('collapsed');
+                console.log('Forced English round content open based on arrow direction');
+            } else if (collapseBtn.textContent === '▶') {
+                // Arrow points right, content should be closed
+                roundContent.classList.add('collapsed');
+                console.log('Forced English round content closed based on arrow direction');
+            }
+        }
+        
+        // Also synchronize word sections within each round
+        const wordSections = round.querySelectorAll('.word-section-container');
+        wordSections.forEach(section => {
+            const wordContent = section.querySelector('.word-section-content');
+            const sectionCollapseBtn = section.querySelector('.collapse-btn');
+            
+            if (wordContent && sectionCollapseBtn) {
+                if (sectionCollapseBtn.textContent === '▼') {
+                    // Arrow points down, content should be open
+                    wordContent.classList.remove('collapsed');
+                    console.log('Forced English word section open based on arrow direction');
+                } else if (sectionCollapseBtn.textContent === '▶') {
+                    // Arrow points right, content should be closed
+                    wordContent.classList.add('collapsed');
+                    console.log('Forced English word section closed based on arrow direction');
+                }
+            }
+        });
+    });
     
-    // Save the new structure
-    saveJapaneseCustomRounds();
+    // Synchronize Japanese custom mode dropdowns
+    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
+    japaneseRounds.forEach(round => {
+        const roundContent = round.querySelector('.custom-round-content');
+        const collapseBtn = round.querySelector('.collapse-btn');
+        
+        if (roundContent && collapseBtn) {
+            if (collapseBtn.textContent === '▼') {
+                // Arrow points down, content should be open
+                roundContent.classList.remove('collapsed');
+                console.log('Forced Japanese round content open based on arrow direction');
+            } else if (collapseBtn.textContent === '▶') {
+                // Arrow points right, content should be closed
+                roundContent.classList.add('collapsed');
+                console.log('Forced Japanese round content closed based on arrow direction');
+            }
+        }
+        
+        // Also synchronize word sections within each round
+        const wordSections = round.querySelectorAll('.word-section-container');
+        wordSections.forEach(section => {
+            const wordContent = section.querySelector('.word-section-content');
+            const sectionCollapseBtn = section.querySelector('.collapse-btn');
+            
+            if (wordContent && sectionCollapseBtn) {
+                if (sectionCollapseBtn.textContent === '▼') {
+                    // Arrow points down, content should be open
+                    wordContent.classList.remove('collapsed');
+                    console.log('Forced Japanese word section open based on arrow direction');
+                } else if (sectionCollapseBtn.textContent === '▶') {
+                    // Arrow points right, content should be closed
+                    wordContent.classList.add('collapsed');
+                    console.log('Forced Japanese word section closed based on arrow direction');
+                }
+            }
+        });
+    });
     
-    console.log(`Japanese custom word input added to round ${roundNumber}`);
+    console.log('Dropdown state synchronization complete');
 }
 
 function addJapaneseCustomWordToGrid(roundContainer, japanese, english) {
@@ -7338,88 +7440,6 @@ function updateAllSelectionIndicators() {
     });
 }
 
-function synchronizeDropdownStatesWithArrows() {
-    console.log('Synchronizing dropdown states with arrow directions');
-    
-    // Synchronize English custom mode dropdowns
-    const englishRounds = document.querySelectorAll('#custom-rounds-container .custom-round');
-    englishRounds.forEach(round => {
-        const roundContent = round.querySelector('.custom-round-content');
-        const collapseBtn = round.querySelector('.collapse-btn');
-        
-        if (roundContent && collapseBtn) {
-            if (collapseBtn.textContent === '▼') {
-                // Arrow points down, content should be open
-                roundContent.classList.remove('collapsed');
-                console.log('Forced English round content open based on arrow direction');
-            } else if (collapseBtn.textContent === '▶') {
-                // Arrow points right, content should be closed
-                roundContent.classList.add('collapsed');
-                console.log('Forced English round content closed based on arrow direction');
-            }
-        }
-        
-        // Also synchronize word sections within each round
-        const wordSections = round.querySelectorAll('.word-section-container');
-        wordSections.forEach(section => {
-            const wordContent = section.querySelector('.word-section-content');
-            const sectionCollapseBtn = section.querySelector('.collapse-btn');
-            
-            if (wordContent && sectionCollapseBtn) {
-                if (sectionCollapseBtn.textContent === '▼') {
-                    // Arrow points down, content should be open
-                    wordContent.classList.remove('collapsed');
-                    console.log('Forced English word section open based on arrow direction');
-                } else if (sectionCollapseBtn.textContent === '▶') {
-                    // Arrow points right, content should be closed
-                    wordContent.classList.add('collapsed');
-                    console.log('Forced English word section closed based on arrow direction');
-                }
-            }
-        });
-    });
-    
-    // Synchronize Japanese custom mode dropdowns
-    const japaneseRounds = document.querySelectorAll('#japanese-custom-rounds-container .custom-round');
-    japaneseRounds.forEach(round => {
-        const roundContent = round.querySelector('.custom-round-content');
-        const collapseBtn = round.querySelector('.collapse-btn');
-        
-        if (roundContent && collapseBtn) {
-            if (collapseBtn.textContent === '▼') {
-                // Arrow points down, content should be open
-                roundContent.classList.remove('collapsed');
-                console.log('Forced Japanese round content open based on arrow direction');
-            } else if (collapseBtn.textContent === '▶') {
-                // Arrow points right, content should be closed
-                roundContent.classList.add('collapsed');
-                console.log('Forced Japanese round content closed based on arrow direction');
-            }
-        }
-        
-        // Also synchronize word sections within each round
-        const wordSections = round.querySelectorAll('.word-section-container');
-        wordSections.forEach(section => {
-            const wordContent = section.querySelector('.word-section-content');
-            const sectionCollapseBtn = section.querySelector('.collapse-btn');
-            
-            if (wordContent && sectionCollapseBtn) {
-                if (sectionCollapseBtn.textContent === '▼') {
-                    // Arrow points down, content should be open
-                    wordContent.classList.remove('collapsed');
-                    console.log('Forced Japanese word section open based on arrow direction');
-                } else if (sectionCollapseBtn.textContent === '▶') {
-                    // Arrow points right, content should be closed
-                    wordContent.classList.add('collapsed');
-                    console.log('Forced Japanese word section closed based on arrow direction');
-                }
-            }
-        });
-    });
-    
-    console.log('Dropdown state synchronization complete');
-}
-
 // Frozen airlock system - prevents airlock from being modified during games
 let airlockFrozen = false;
 let frozenAirlockData = null;
@@ -8050,9 +8070,6 @@ function initializeCustomMode() {
             restoreCustomRoundsState();
         }, 100);
     }
-    
-    // Synchronize dropdown states with arrow directions
-    synchronizeDropdownStatesWithArrows();
 }
 
 function populateWordSelectionGrid(roundNumber) {
@@ -9538,6 +9555,9 @@ function restoreCustomRoundsState() {
     
     // Update selection indicators
     updateAllSelectionIndicators();
+    
+    // Synchronize dropdown states with arrow directions
+    synchronizeDropdownStatesWithArrows();
     
     // Update debug display after restoring
     
