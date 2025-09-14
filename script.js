@@ -5747,15 +5747,7 @@ function saveJapaneseCustomRounds() {
             // Get open sections
             const openSections = round.querySelectorAll('.word-section-content:not(.collapsed)');
             openSections.forEach(section => {
-                // Find the section index by looking at the parent container
-                const sectionContainer = section.closest('.word-section-container');
-                if (sectionContainer) {
-                    const allSections = round.querySelectorAll('.word-section-container');
-                    const sectionIndex = Array.from(allSections).indexOf(sectionContainer);
-                    if (sectionIndex !== -1) {
-                        roundData.openSections.push(sectionIndex);
-                    }
-                }
+                roundData.openSections.push(section.id);
             });
             
             customData.rounds.push(roundData);
@@ -5972,21 +5964,20 @@ function restoreJapaneseCustomRoundsState() {
             }
             
             // Restore open sections
-            roundData.openSections.forEach(sectionIndex => {
-                const section = round.querySelector(`.word-section-container:nth-child(${sectionIndex + 1})`);
+            roundData.openSections.forEach(sectionId => {
+                const section = round.querySelector(`#${sectionId}`);
                 if (section) {
-                    const wordContent = section.querySelector('.word-section-content');
-                    const button = section.querySelector('.collapse-btn');
-                    
-                    if (wordContent && button) {
-                        // Use the proper toggle function to ensure consistent state
-                        if (wordContent.classList.contains('collapsed')) {
-                            wordContent.classList.remove('collapsed');
-                            button.textContent = '▼';
-                            button.classList.remove('rotated');
-                        }
-                        console.log(`Restored Japanese word section ${sectionIndex} to open state`);
+                    section.classList.remove('collapsed');
+                    const button = section.previousElementSibling.querySelector('.collapse-btn');
+                    if (button) {
+                        button.textContent = '▼';
+                        button.classList.remove('rotated');
+                        console.log(`Restored Japanese open section: ${sectionId}`);
+                    } else {
+                        console.warn(`Could not find collapse button for Japanese section: ${sectionId}`);
                     }
+                } else {
+                    console.warn(`Could not find Japanese section to restore: ${sectionId}`);
                 }
             });
         });
@@ -5995,6 +5986,9 @@ function restoreJapaneseCustomRoundsState() {
         
         // Update selection indicators
         updateAllSelectionIndicators();
+        
+        // Synchronize dropdown states with arrow directions
+        synchronizeDropdownStatesWithArrows();
         
         // Update debug display after restoring
         
