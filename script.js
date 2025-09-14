@@ -7408,8 +7408,9 @@ function updateWordSectionSelectionIndicator(roundNumber, sectionIndex, isJapane
     }
     
     // Count selected words in this section
-    const wordCheckboxes = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox)');
-    const selectedCount = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox):checked').length;
+    // Handle both Japanese mode (.word-grid) and English mode (direct in .word-section-content)
+    const wordCheckboxes = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox), .word-section-content input[type="checkbox"]:not(.select-all-checkbox)');
+    const selectedCount = section.querySelectorAll('.word-grid input[type="checkbox"]:not(.select-all-checkbox):checked, .word-section-content input[type="checkbox"]:not(.select-all-checkbox):checked').length;
     const totalCount = wordCheckboxes.length;
     
     updateSelectionIndicator(indicator, selectedCount, totalCount);
