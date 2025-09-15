@@ -6,8 +6,25 @@
     <title>Japanese Learning - Brute Force Mode</title>
     <link rel="stylesheet" href="styles.css">
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
-     crossorigin="anonymous"></script>
-</head>
+       crossorigin="anonymous"></script>
+    <script>
+        // Prevent FOUC by applying dark mode immediately
+        (function() {
+            try {
+                const settings = localStorage.getItem('japaneseLearningSettings');
+                if (settings) {
+                    const parsed = JSON.parse(settings);
+                    if (parsed.darkMode === true) {
+                        document.documentElement.classList.add('dark-mode');
+                        document.body.classList.add('dark-mode');
+                    }
+                }
+            } catch (e) {
+                // Ignore errors if localStorage is not available
+            }
+        })();
+    </script>
+  </head>
   <body>
       <div id="app">
           
@@ -86,7 +103,7 @@
                          If you are using this website in a language other than english, the translations will most likely be inaccurate. I suggest using "Custom Mode", then "Add Custom Word" to create your own questions for a better experience.
                      </p>
                      <p class="body-text language-warning" data-en="Through this, one might theoretically use this website to learn words from any language, by simply inserting the desired foreign language into &quot;Japanese Word&quot;. and one's native tongue into &quot;English Translation&quot;. Please research the direct translation carefully before adding it." data-es="A través de esto, uno podría teóricamente usar este sitio web para aprender palabras de cualquier idioma, simplemente insertando el idioma extranjero deseado en &quot;Palabra Japonesa&quot; y su lengua materna en &quot;Traducción al Inglés&quot;. Por favor, investiga la traducción directa cuidadosamente antes de agregarla." data-fr="Grâce à cela, on pourrait théoriquement utiliser ce site web pour apprendre des mots de n'importe quelle langue, en insérant simplement la langue étrangère désirée dans &quot;Mot Japonais&quot; et sa langue maternelle dans &quot;Traduction Anglaise&quot;. Veuillez rechercher attentivement la traduction directe avant de l'ajouter." data-ja="これを通じて、理論的には、このウェブサイトを使用して任意の言語の単語を学ぶことができ、単に「日本語の単語」に希望する外国語を挿入し、「英語の翻訳」に母国語を挿入するだけです。追加する前に、直接翻訳を慎重に調査してください。" data-zh="通过这种方式，理论上可以使用本网站学习任何语言的单词，只需在&quot;日语单词&quot;中插入所需的外语，在&quot;英语翻译&quot;中插入母语即可。在添加之前，请仔细研究直接翻译。" data-id="Melalui ini, seseorang secara teoritis dapat menggunakan situs web ini untuk mempelajari kata-kata dari bahasa apa pun, hanya dengan memasukkan bahasa asing yang diinginkan ke dalam &quot;Kata Jepang&quot; dan bahasa ibu mereka ke dalam &quot;Terjemahan Inggris&quot;. Silakan teliti terjemahan langsung dengan hati-hati sebelum menambahkannya." data-ko="이를 통해, 이론적으로는 원하는 외국어를 &quot;일본어 단어&quot;에 삽입하고 모국어를 &quot;영어 번역&quot;에 삽입하기만 하면 이 웹사이트를 사용하여 모든 언어의 단어를 배울 수 있습니다. 추가하기 전에 직접 번역을 신중하게 조사하세요." data-vi="Thông qua điều này, một người có thể về mặt lý thuyết sử dụng trang web này để học từ của bất kỳ ngôn ngữ nào, chỉ cần chèn ngôn ngữ nước ngoài mong muốn vào &quot;Từ tiếng Nhật&quot; và tiếng mẹ đẻ của họ vào &quot;Bản dịch tiếng Anh&quot;. Vui lòng nghiên cứu cẩn thận bản dịch trực tiếp trước khi thêm vào.">
-                         Through this, one might theoretically use this website to learn words from any language, by simply inserting the desired foreign language into "Japanese Word". and one's native tongue into "English Translation". Please research the direct translation carefully before adding it.
+                         Through this, one might theoretically use this website to learn words from any language, by simply inserting the desired foreign language into "Japanese Word". and one's native tongue into "<span class="current-language-name">English</span> Translation". Please research the direct translation carefully before adding it.
                      </p>
                      <p class="body-text" data-en="This website aims to teach you the meaning of Japanese words through brute force learning (Repetition)." data-es="Este sitio web tiene como objetivo enseñarte el significado de las palabras japonesas a través del aprendizaje de fuerza bruta (Repetición)." data-fr="Ce site web vise à vous enseigner le sens des mots japonais grâce à l'apprentissage par force brute (Répétition)." data-ja="このウェブサイトは、ブルートフォース学習（繰り返し）を通じて日本語の単語の意味を教えることを目的としています。" data-zh="本网站旨在通过暴力学习（重复）来教授您日语单词的含义。" data-id="Situs web ini bertujuan untuk mengajarkan Anda arti kata-kata Jepang melalui pembelajaran brute force (Pengulangan)." data-ko="이 웹사이트는 무차별 대입 학습(반복)을 통해 일본어 단어의 의미를 가르치는 것을 목표로 합니다." data-vi="Trang web này nhằm mục đích dạy bạn ý nghĩa của các từ tiếng Nhật thông qua việc học tập bằng vũ lực (Lặp lại).">
                          This website aims to teach you the meaning of Japanese words through brute force learning (Repetition). 
@@ -232,6 +249,9 @@
                     <h2 class="subtitle" data-en="Choose Script" data-es="Elegir Escritura" data-fr="Choisir l'Écriture" data-ja="文字を選択" data-zh="选择文字" data-id="Pilih Skrip" data-ko="문자 선택" data-vi="Chọn Kịch bản">Choose Script</h2>
                 </div>
                 <div class="text-box-content">
+                    <p class="body-text" data-en="In this mode, you'll see Japanese characters and need to type the English words as answers." data-es="En este modo, verás caracteres japoneses y necesitarás escribir las palabras en inglés como respuestas." data-fr="Dans ce mode, vous verrez des caractères japonais et devrez taper les mots en anglais comme réponses." data-ja="このモードでは、日本語の文字が表示され、英語の単語を答えとして入力する必要があります。" data-zh="在此模式下，您将看到日语字符，需要输入英语单词作为答案。" data-id="Dalam mode ini, Anda akan melihat karakter Jepang dan perlu mengetik kata-kata dalam bahasa Inggris sebagai jawaban." data-ko="이 모드에서는 일본어 문자를 보고 영어 단어를 답으로 입력해야 합니다." data-vi="Trong chế độ này, bạn sẽ thấy ký tự tiếng Nhật và cần nhập từ tiếng Anh làm câu trả lời.">
+                        In this mode, you'll see Japanese characters and need to type the English words as answers.
+                    </p>
                     <div class="button-container">
                         <button id="hiragana-btn" class="script-btn" data-en="Hiragana" data-es="Hiragana" data-fr="Hiragana" data-ja="ひらがな" data-zh="平假名" data-id="Hiragana" data-ko="히라가나" data-vi="Hiragana">Hiragana</button>
                         <button id="katakana-btn" class="script-btn disabled" data-en="Katakana" data-es="Katakana" data-fr="Katakana" data-ja="カタカナ" data-zh="片假名" data-id="Katakana" data-ko="카타카나" data-vi="Katakana">Katakana</button>

@@ -6437,6 +6437,17 @@ function hideHiraganaKeyboard() {
     }
 }
 
+// Show body immediately if DOM is already loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showBody);
+} else {
+    showBody();
+}
+
+function showBody() {
+    document.body.classList.add('loaded');
+}
+
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
     showPage('start');
@@ -6855,6 +6866,9 @@ function updateAllText() {
     
     // Update custom word input placeholders
     updateCustomWordInputPlaceholders();
+    
+    // Update start page language text
+    updateStartPageLanguageText();
 }
 
 function updateCustomWordInputPlaceholders() {
@@ -6863,6 +6877,25 @@ function updateCustomWordInputPlaceholders() {
     englishInputs.forEach(input => {
         input.placeholder = `${currentLangName} Translation (Correct Answer)`;
     });
+}
+
+function updateStartPageLanguageText() {
+    const currentLangName = getCurrentLanguageName();
+    const languageNameSpans = document.querySelectorAll('.current-language-name');
+    languageNameSpans.forEach(span => {
+        span.textContent = currentLangName;
+    });
+    
+    // Update data attributes for the start page text
+    const startPageText = document.querySelector('.body-text.language-warning[data-en*="English Translation"]');
+    if (startPageText) {
+        // Update the data-en attribute to use current language
+        const originalText = startPageText.getAttribute('data-en');
+        if (originalText) {
+            const updatedText = originalText.replace('English Translation', `${currentLangName} Translation`);
+            startPageText.setAttribute('data-en', updatedText);
+        }
+    }
 }
 
 function updateAllTextWithoutGrids() {
