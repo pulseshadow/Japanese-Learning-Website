@@ -4333,20 +4333,20 @@ function updatePhaseLabel() {
         if (window.japaneseCustomModeEnabled) {
             // Japanese custom mode
             if (currentPhase === 'learning') {
-                phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
+                phaseLabel.textContent = 'Words To Learn';
             } else if (currentPhase === 'elimination') {
-                phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+                phaseLabel.textContent = 'Words To Eliminate';
             } else {
-                phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+                phaseLabel.textContent = 'Words To Practice';
             }
         } else {
             // Mirrored brute force mode
             if (currentPhase === 'learning') {
-                phaseLabel.textContent = 'English Words To Learn (Type Japanese)';
+                phaseLabel.textContent = 'Words To Learn';
             } else if (currentPhase === 'elimination') {
-                phaseLabel.textContent = 'English Words To Eliminate (Type Japanese)';
+                phaseLabel.textContent = 'Words To Eliminate';
             } else {
-                phaseLabel.textContent = 'English Words To Practice (Type Japanese)';
+                phaseLabel.textContent = 'Words To Practice';
             }
         }
         return;
