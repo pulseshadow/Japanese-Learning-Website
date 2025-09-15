@@ -1,11 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" style="background: #d0d0d0; color: #333333;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Japanese Learning - Brute Force Mode</title>
+    <link rel="stylesheet" href="styles.css">
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
+       crossorigin="anonymous"></script>
     <script>
-        // Prevent FOUC by applying dark mode immediately - MUST run before CSS
+        // Prevent FOUC by applying dark mode immediately
         (function() {
             try {
                 const settings = localStorage.getItem('japaneseLearningSettings');
@@ -13,10 +16,7 @@
                     const parsed = JSON.parse(settings);
                     if (parsed.darkMode === true) {
                         document.documentElement.classList.add('dark-mode');
-                        document.documentElement.style.background = '#1A1B1F';
-                        document.documentElement.style.color = '#ffffff';
-                        document.body.style.background = '#1A1B1F';
-                        document.body.style.color = '#ffffff';
+                        document.body.classList.add('dark-mode');
                     }
                 }
             } catch (e) {
@@ -24,9 +24,6 @@
             }
         })();
     </script>
-    <link rel="stylesheet" href="styles.css">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891"
-       crossorigin="anonymous"></script>
   </head>
   <body>
       <div id="app">
