@@ -2600,17 +2600,12 @@ backToScriptBtn.addEventListener('click', () => {
         return;
     }
     
-    // If in custom mode, go back to word selection, otherwise go to word entry selection
+    // If in custom mode, go back to word selection, otherwise go to script selection
     if (window.customModeEnabled) {
         showPage('custom-mode');
     } else {
-        // Check if we came from word entry selection
-        if (window.cameFromWordEntry) {
-            showPage('word-entry-selection');
-        } else {
-            // Use enhanced page navigation with exit detection
-            showPageWithExitDetection('start');
-        }
+        // Go to script selection for brute force mode
+        showPage('script-page');
     }
 });
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
