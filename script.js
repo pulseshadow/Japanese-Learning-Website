@@ -2605,7 +2605,7 @@ backToScriptBtn.addEventListener('click', () => {
         showPage('custom-mode');
     } else {
         // Go to script selection for brute force mode
-        showPage('script-page');
+        showPage('script');
     }
 });
 backToStartFromCustomScriptBtn.addEventListener('click', () => {
