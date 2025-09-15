@@ -4,6 +4,17 @@
     box-sizing: border-box;
 }
 
+html {
+    background: #d0d0d0;
+    color: #333333;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+html.dark-mode {
+    background: #1A1B1F;
+    color: #ffffff;
+}
+
 body {
     margin: 0;
     padding: 0;
