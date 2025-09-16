@@ -3591,13 +3591,17 @@ function initializeRound() {
     nextRoundBtn.classList.add('disabled');
     
     if (isIntroductionRound) {
-        roundTitle.textContent = roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round';
+        // Add direction arrow based on mode
+        const directionArrow = window.mirroredMode ? ' (English→Japanese)' : ' (Japanese→English)';
+        roundTitle.textContent = (roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round') + directionArrow;
         currentPhase = 'learning';
         // In learning phase, show each word once with answer
         currentQuestionIndex = 0;
         showLearningQuestion();
     } else {
-        roundTitle.textContent = roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round';
+        // Add direction arrow based on mode
+        const directionArrow = window.mirroredMode ? ' (English→Japanese)' : ' (Japanese→English)';
+        roundTitle.textContent = (roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round') + directionArrow;
         currentPhase = 'elimination';
         // Start with elimination phase (no repetition)
         eliminationWords = [...roundWords]; // Copy array
@@ -9013,14 +9017,18 @@ function initializeCustomRound() {
     if (isIntroductionRound) {
         // Calculate the introduction round number
         const introRoundNumber = noPracticeRounds ? currentRound : Math.ceil(currentRound / 2);
-        roundTitle.textContent = `${roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round'} ${introRoundNumber}`;
+        // Add direction arrow based on mode
+        const directionArrow = window.mirroredMode ? ' (English→Japanese)' : ' (Japanese→English)';
+        roundTitle.textContent = `${roundTitle.getAttribute(`data-${currentLanguage}`) || 'Introduction Round'} ${introRoundNumber}${directionArrow}`;
         currentPhase = 'learning';
         currentQuestionIndex = 0;
         showCustomLearningQuestion();
     } else {
         // Calculate the practice round number
         const practiceRoundNumber = Math.floor(currentRound / 2);
-        roundTitle.textContent = `${roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round'} ${practiceRoundNumber}`;
+        // Add direction arrow based on mode
+        const directionArrow = window.mirroredMode ? ' (English→Japanese)' : ' (Japanese→English)';
+        roundTitle.textContent = `${roundTitle.getAttribute(`data-practice-${currentLanguage}`) || 'Practice Round'} ${practiceRoundNumber}${directionArrow}`;
         currentPhase = 'elimination';
         // For practice rounds, use accumulated words from all previous introduction rounds
         eliminationWords = getAllCustomWordsUpToRound(currentRound);
