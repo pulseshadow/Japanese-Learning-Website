@@ -3167,56 +3167,51 @@ function clearCustomModeVariables() {
 }
 
 
-// Custom dropdown functionality
+// Simple manual dropdown functionality
 function initializeCustomDropdown() {
     if (!roundSelectorTrigger || !roundSelectorOptions) return;
     
-    // Toggle dropdown on trigger click
+    // Show/hide dropdown on button click
     roundSelectorTrigger.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleDropdown();
-    });
-    
-    // Close dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!customRoundSelector.contains(e.target)) {
-            closeDropdown();
+        if (roundSelectorOptions.classList.contains('show')) {
+            // Hide dropdown
+            roundSelectorOptions.classList.remove('show');
+            roundSelectorTrigger.classList.remove('active');
+        } else {
+            // Show dropdown
+            roundSelectorOptions.classList.add('show');
+            roundSelectorTrigger.classList.add('active');
         }
     });
     
-    // Handle option selection
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!customRoundSelector.contains(e.target)) {
+            roundSelectorOptions.classList.remove('show');
+            roundSelectorTrigger.classList.remove('active');
+        }
+    });
+    
+    // Handle option clicks
     roundSelectorOptions.addEventListener('click', (e) => {
         if (e.target.classList.contains('custom-select-option')) {
             const roundNumber = parseInt(e.target.dataset.value);
-            selectRound(roundNumber);
-            closeDropdown();
+            
+            // Set current round
+            currentRound = roundNumber;
+            
+            // Update the displayed text
+            selectedRoundText.textContent = e.target.textContent;
+            
+            // Hide dropdown
+            roundSelectorOptions.classList.remove('show');
+            roundSelectorTrigger.classList.remove('active');
+            
+            // Call the existing changeRound function
+            changeRound(roundNumber);
         }
     });
-}
-
-function toggleDropdown() {
-    const isOpen = roundSelectorOptions.classList.contains('show');
-    if (isOpen) {
-        closeDropdown();
-    } else {
-        openDropdown();
-    }
-}
-
-function openDropdown() {
-    roundSelectorOptions.classList.add('show');
-    roundSelectorTrigger.classList.add('active');
-}
-
-function closeDropdown() {
-    roundSelectorOptions.classList.remove('show');
-    roundSelectorTrigger.classList.remove('active');
-}
-
-function selectRound(roundNumber) {
-    currentRound = roundNumber;
-    changeRound(roundNumber);
-    updateSelectedText();
 }
 
 function updateSelectedText() {
