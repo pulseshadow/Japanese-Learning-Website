@@ -2937,35 +2937,6 @@ backToStartFromStatsBtn.addEventListener('click', () => {
     showPageWithExitDetection('start');
 });
 roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
-
-// Round selector hover effects
-roundSelector.addEventListener('mouseover', (e) => {
-    if (e.target.tagName === 'OPTION') {
-        const option = e.target;
-        const isOdd = Array.from(roundSelector.options).indexOf(option) % 2 === 0; // 0-indexed, so even index = odd child
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        
-        if (isDarkMode) {
-            option.style.backgroundColor = isOdd ? '#2676c7' : '#5eafff';
-        } else {
-            option.style.backgroundColor = isOdd ? '#d44700' : '#fa6920';
-        }
-    }
-});
-
-roundSelector.addEventListener('mouseout', (e) => {
-    if (e.target.tagName === 'OPTION') {
-        const option = e.target;
-        const isOdd = Array.from(roundSelector.options).indexOf(option) % 2 === 0; // 0-indexed, so even index = odd child
-        const isDarkMode = document.body.classList.contains('dark-mode');
-        
-        if (isDarkMode) {
-            option.style.backgroundColor = isOdd ? '#0066cc' : '#40a0ff';
-        } else {
-            option.style.backgroundColor = isOdd ? '#f05000' : '#fc6f28';
-        }
-    }
-});
 addRoundBtn.addEventListener('click', addCustomRound);
 removeRoundBtn.addEventListener('click', removeCustomRound);
 startCustomRunBtn.addEventListener('click', startCustomRun);

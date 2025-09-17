@@ -910,6 +910,7 @@ body.dark-mode .round-selector:hover {
 .round-selector option {
     background: #fc6f28;
     color: #ffffff;
+    transition: background-color 0.2s ease;
 }
 
 .round-selector option:nth-child(odd) {
@@ -920,7 +921,8 @@ body.dark-mode .round-selector:hover {
     background: #fc6f28;
 }
 
-.round-selector option:hover {
+/* Light mode hover effects */
+.round-selector option:nth-child(even):hover {
     background: #fa6920;
 }
 
@@ -928,13 +930,10 @@ body.dark-mode .round-selector:hover {
     background: #d44700;
 }
 
-.round-selector option:nth-child(even):hover {
-    background: #fa6920;
-}
-
 body.dark-mode .round-selector option {
     background: #40a0ff;
     color: #ffffff;
+    transition: background-color 0.2s ease;
 }
 
 body.dark-mode .round-selector option:nth-child(odd) {
@@ -945,16 +944,13 @@ body.dark-mode .round-selector option:nth-child(even) {
     background: #40a0ff;
 }
 
-body.dark-mode .round-selector option:hover {
+/* Dark mode hover effects */
+body.dark-mode .round-selector option:nth-child(even):hover {
     background: #5eafff;
 }
 
 body.dark-mode .round-selector option:nth-child(odd):hover {
     background: #2676c7;
-}
-
-body.dark-mode .round-selector option:nth-child(even):hover {
-    background: #5eafff;
 }
 
 body.dark-mode .game-box {
