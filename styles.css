@@ -898,19 +898,11 @@ body.dark-mode .round-selector {
     padding-right: 32px;
 }
 
-.round-selector:hover {
-    border-color: #E75D38;
-}
-
-body.dark-mode .round-selector:hover {
-    border-color: #00bfff;
-}
 
 /* Round selector dropdown options */
 .round-selector option {
     background: #fc6f28;
     color: #ffffff;
-    transition: background-color 0.2s ease;
 }
 
 .round-selector option:nth-child(odd) {
@@ -924,7 +916,6 @@ body.dark-mode .round-selector:hover {
 body.dark-mode .round-selector option {
     background: #40a0ff;
     color: #ffffff;
-    transition: background-color 0.2s ease;
 }
 
 body.dark-mode .round-selector option:nth-child(odd) {

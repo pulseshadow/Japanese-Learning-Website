@@ -3163,69 +3163,6 @@ function clearCustomModeVariables() {
     console.log('Custom mode variables cleared');
 }
 
-function setupRoundSelectorHoverEffects() {
-    const roundSelector = document.getElementById('round-selector');
-    if (!roundSelector) return;
-    
-    // Define hover colors
-    const lightModeColors = {
-        even: '#fa6920',      // lighter orange
-        odd: '#d44700',       // darker orange
-        evenDefault: '#fc6f28', // default orange
-        oddDefault: '#f05000'   // default darker orange
-    };
-    
-    const darkModeColors = {
-        even: '#5eafff',      // lighter blue
-        odd: '#2676c7',       // darker blue
-        evenDefault: '#40a0ff', // default blue
-        oddDefault: '#0066cc'   // default darker blue
-    };
-    
-    // Function to get current colors based on theme
-    function getCurrentColors() {
-        return document.body.classList.contains('dark-mode') ? darkModeColors : lightModeColors;
-    }
-    
-    // Function to reset all options to default colors
-    function resetAllOptions() {
-        const colors = getCurrentColors();
-        const options = roundSelector.querySelectorAll('option');
-        options.forEach((option, index) => {
-            const isEven = (index + 1) % 2 === 0;
-            option.style.backgroundColor = isEven ? colors.evenDefault : colors.oddDefault;
-        });
-    }
-    
-    // Function to set hover color for specific option
-    function setHoverColor(option, index) {
-        const colors = getCurrentColors();
-        const isEven = (index + 1) % 2 === 0;
-        option.style.backgroundColor = isEven ? colors.even : colors.odd;
-    }
-    
-    // Add mouseover event listener
-    roundSelector.addEventListener('mouseover', (e) => {
-        if (e.target.tagName === 'OPTION') {
-            const options = Array.from(roundSelector.querySelectorAll('option'));
-            const index = options.indexOf(e.target);
-            if (index !== -1) {
-                resetAllOptions();
-                setHoverColor(e.target, index);
-            }
-        }
-    });
-    
-    // Add mouseout event listener to reset colors
-    roundSelector.addEventListener('mouseout', () => {
-        resetAllOptions();
-    });
-    
-    // Add change event listener to reset colors when selection changes
-    roundSelector.addEventListener('change', () => {
-        resetAllOptions();
-    });
-}
 
 function populateRoundSelector() {
     // Clear existing options
@@ -3439,9 +3376,6 @@ function populateRoundSelector() {
     
     // Update language for new options
     updateAllText();
-    
-    // Setup hover effects for the round selector
-    setupRoundSelectorHoverEffects();
 }
 
 // Auto-submit on input change with letter-by-letter checking
