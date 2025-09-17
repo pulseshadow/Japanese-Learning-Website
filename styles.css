@@ -899,55 +899,109 @@ body.dark-mode .round-selector {
 }
 
 
-/* Round selector dropdown options */
-.round-selector option {
-    background: #fc6f28 !important;
-    color: #ffffff !important;
+/* Custom Round Selector - No Hover Effects */
+.custom-round-selector {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
 }
 
-.round-selector option:nth-child(odd) {
-    background: #f05000 !important;
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fc6f28;
+    color: #ffffff;
+    border: 2px solid #E75D38;
+    border-radius: 8px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 14px;
+    font-weight: 500;
 }
 
-.round-selector option:nth-child(even) {
-    background: #fc6f28 !important;
+.custom-select-trigger.active {
+    border-radius: 8px 8px 0 0;
+    border-bottom: none;
 }
 
-.round-selector option:hover {
-    background: #fc6f28 !important;
+.dropdown-arrow {
+    font-size: 12px;
 }
 
-.round-selector option:nth-child(odd):hover {
-    background: #f05000 !important;
+.custom-select-trigger.active .dropdown-arrow {
+    transform: rotate(180deg);
 }
 
-.round-selector option:nth-child(even):hover {
-    background: #fc6f28 !important;
+.custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 2px solid #E75D38;
+    border-top: none;
+    border-radius: 0 0 8px 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-body.dark-mode .round-selector option {
-    background: #40a0ff !important;
-    color: #ffffff !important;
+.custom-select-options.show {
+    display: block;
 }
 
-body.dark-mode .round-selector option:nth-child(odd) {
-    background: #0066cc !important;
+.custom-select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-body.dark-mode .round-selector option:nth-child(even) {
-    background: #40a0ff !important;
+.custom-select-option:last-child {
+    border-bottom: none;
 }
 
-body.dark-mode .round-selector option:hover {
-    background: #40a0ff !important;
+.custom-select-option:nth-child(odd) {
+    background: #f05000;
+    color: #ffffff;
 }
 
-body.dark-mode .round-selector option:nth-child(odd):hover {
-    background: #0066cc !important;
+.custom-select-option:nth-child(even) {
+    background: #fc6f28;
+    color: #ffffff;
 }
 
-body.dark-mode .round-selector option:nth-child(even):hover {
-    background: #40a0ff !important;
+/* Dark mode styles */
+body.dark-mode .custom-select-trigger {
+    background: #40a0ff;
+    border-color: #00bfff;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-options {
+    background: #25262B;
+    border-color: #00bfff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .custom-select-option {
+    border-bottom-color: #404040;
+}
+
+body.dark-mode .custom-select-option:nth-child(odd) {
+    background: #0066cc;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-option:nth-child(even) {
+    background: #40a0ff;
+    color: #ffffff;
 }
 
 body.dark-mode .game-box {
