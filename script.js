@@ -2573,10 +2573,7 @@ userStatsBtn.addEventListener('click', () => {
     updateStatsDisplay();
 });
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
-hiraganaBtn.addEventListener('click', () => {
-    console.log('Hiragana button clicked - starting English brute force game');
-    startGame();
-});
+hiraganaBtn.addEventListener('click', startGame);
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => {
     // Clear custom mode variables when going back to start
@@ -2693,7 +2690,10 @@ backToWordEntryBtn.addEventListener('click', () => {
 });
 
   japaneseHiraganaBtn.addEventListener('click', () => {
-    if (window.japaneseCustomModeEnabled) {
+    if (window.selectedMode === 'custom') {
+      console.log('Navigating to Japanese custom mode word selection');
+      showPage('japanese-custom-mode');
+    } else if (window.japaneseCustomModeEnabled) {
       console.log('Starting Japanese custom mode with Hiragana');
       startJapaneseCustomGame();
     } else {
