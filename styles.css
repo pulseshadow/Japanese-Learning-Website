@@ -899,55 +899,159 @@ body.dark-mode .round-selector {
 }
 
 
-/* Round selector dropdown options */
-.round-selector option {
-    background: #fc6f28 !important;
-    color: #ffffff !important;
+/* Custom Round Selector Dropdown */
+.custom-round-selector {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 300px;
 }
 
-.round-selector option:nth-child(odd) {
-    background: #f05000 !important;
+.custom-select-trigger {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fc6f28;
+    color: #ffffff;
+    border: 1px solid #f05000;
+    border-radius: 0;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
-.round-selector option:nth-child(even) {
-    background: #fc6f28 !important;
+.custom-select-trigger:hover {
+    background: #f05000;
+    border-color: #e04a00;
 }
 
-.round-selector option:hover {
-    background: #fc6f28 !important;
+.custom-select-trigger.active {
+    background: #f05000;
+    border-color: #e04a00;
 }
 
-.round-selector option:nth-child(odd):hover {
-    background: #f05000 !important;
+.custom-select-text {
+    flex: 1;
+    text-align: left;
 }
 
-.round-selector option:nth-child(even):hover {
-    background: #fc6f28 !important;
+.custom-select-arrow {
+    font-size: 0.8rem;
+    transition: transform 0.2s ease;
+    margin-left: 8px;
 }
 
-body.dark-mode .round-selector option {
-    background: #40a0ff !important;
-    color: #ffffff !important;
+.custom-select-trigger.active .custom-select-arrow {
+    transform: rotate(180deg);
 }
 
-body.dark-mode .round-selector option:nth-child(odd) {
-    background: #0066cc !important;
+.custom-select-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    border: 1px solid #f05000;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-body.dark-mode .round-selector option:nth-child(even) {
-    background: #40a0ff !important;
+.custom-select-options.show {
+    display: block;
 }
 
-body.dark-mode .round-selector option:hover {
-    background: #40a0ff !important;
+.custom-select-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
 }
 
-body.dark-mode .round-selector option:nth-child(odd):hover {
-    background: #0066cc !important;
+.custom-select-option:last-child {
+    border-bottom: none;
 }
 
-body.dark-mode .round-selector option:nth-child(even):hover {
-    background: #40a0ff !important;
+.custom-select-option:nth-child(odd) {
+    background: #f05000;
+    color: #ffffff;
+}
+
+.custom-select-option:nth-child(even) {
+    background: #fc6f28;
+    color: #ffffff;
+}
+
+.custom-select-option:hover {
+    background: #e04a00 !important;
+    color: #ffffff;
+}
+
+.custom-select-option:nth-child(odd):hover {
+    background: #d43d00 !important;
+}
+
+.custom-select-option:nth-child(even):hover {
+    background: #e04a00 !important;
+}
+
+/* Dark mode styles */
+body.dark-mode .custom-select-trigger {
+    background: #40a0ff;
+    border-color: #0066cc;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-trigger:hover {
+    background: #0066cc;
+    border-color: #0052a3;
+}
+
+body.dark-mode .custom-select-trigger.active {
+    background: #0066cc;
+    border-color: #0052a3;
+}
+
+body.dark-mode .custom-select-options {
+    background: #25262B;
+    border-color: #0066cc;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-mode .custom-select-option {
+    border-bottom-color: #404040;
+}
+
+body.dark-mode .custom-select-option:nth-child(odd) {
+    background: #0066cc;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-option:nth-child(even) {
+    background: #40a0ff;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-option:hover {
+    background: #0052a3 !important;
+    color: #ffffff;
+}
+
+body.dark-mode .custom-select-option:nth-child(odd):hover {
+    background: #004d99 !important;
+}
+
+body.dark-mode .custom-select-option:nth-child(even):hover {
+    background: #0052a3 !important;
 }
 
 body.dark-mode .game-box {
