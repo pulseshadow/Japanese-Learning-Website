@@ -2573,7 +2573,10 @@ userStatsBtn.addEventListener('click', () => {
     updateStatsDisplay();
 });
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
-hiraganaBtn.addEventListener('click', startGame);
+hiraganaBtn.addEventListener('click', () => {
+    console.log('Hiragana button clicked - starting English brute force game');
+    startGame();
+});
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => {
     // Clear custom mode variables when going back to start
