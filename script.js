@@ -6540,7 +6540,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load cookie consent preferences and set initial script states
     loadCookieConsent();
     
-    // No cookie consent popup - ads are always enabled
+    // Temporarily show cookie consent popup regardless of visit count
+    setTimeout(() => {
+        showCookieConsent();
+    }, 1000);
 });
 
 // Toggle section visibility
