@@ -2712,9 +2712,7 @@ body.dark-mode .select-all-container label {
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
     min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none;
 }
 
 body.dark-mode #bottom-ad {
@@ -2722,40 +2720,7 @@ body.dark-mode #bottom-ad {
     border-top-color: #444;
 }
 
-/* Add bottom padding to body to prevent content from being hidden behind the ad */
-body {
-    padding-bottom: 120px;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-bottom: 30px;
-    }
-    
-    #bottom-ad {
-        min-height: 30px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        padding-bottom: 25px;
-    }
-    
-    #bottom-ad {
-        min-height: 25px;
-    }
-}
-
-@media (max-width: 360px) {
-    body {
-        padding-bottom: 20px;
-    }
-    
-    #bottom-ad {
-        min-height: 20px;
-    }
-}
+/* Bottom ad is hidden, no padding needed */
 
 .language-warning {
     color: #E75D38;

@@ -3378,22 +3378,6 @@ function populateRoundSelector() {
     updateAllText();
 }
 
-// Show fallback ad content if AdSense doesn't load
-setTimeout(() => {
-    const bottomAd = document.getElementById('bottom-ad');
-    const adSenseElement = bottomAd.querySelector('.adsbygoogle');
-    const fallbackElement = bottomAd.querySelector('.ad-fallback');
-    
-    if (bottomAd && fallbackElement) {
-        // Check if the ad element has any content or if it's still empty
-        const hasAdContent = adSenseElement && adSenseElement.children.length > 0;
-        
-        if (!hasAdContent) {
-            fallbackElement.style.display = 'block';
-        }
-    }
-}, 3000); // Wait 3 seconds for ad to load
-
 // Auto-submit on input change with letter-by-letter checking
 answerInput.addEventListener('input', (e) => {
     const userAnswer = e.target.value.trim().toLowerCase();
