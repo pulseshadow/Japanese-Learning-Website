@@ -2700,27 +2700,6 @@ body.dark-mode .select-all-container label {
     cursor: pointer;
 }
 
-/* Bottom ad container styling */
-#bottom-ad {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin: 0;
-    border-radius: 0;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-    min-height: 120px;
-    display: none;
-}
-
-body.dark-mode #bottom-ad {
-    background: #2a2a2a;
-    border-top-color: #444;
-}
-
-/* Bottom ad is hidden, no padding needed */
 
 .language-warning {
     color: #E75D38;

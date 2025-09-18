@@ -10467,8 +10467,8 @@ function updateStatsDisplay() {
 // Ad container management functions
 function showAdContainers() {
     console.log('=== SHOWING AD CONTAINERS ===');
-    const adContainers = document.querySelectorAll('.ad-container');
-    console.log(`Found ${adContainers.length} ad containers`);
+    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
+    console.log(`Found ${adContainers.length} ad containers (excluding bottom-ad)`);
     
     adContainers.forEach((container, index) => {
         // Aggressively show the container
@@ -10538,11 +10538,11 @@ function showAdContainers() {
 }
 
 function hideAdContainers() {
-    const adContainers = document.querySelectorAll('.ad-container');
+    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
     adContainers.forEach(container => {
         container.classList.add('hidden');
     });
-    console.log('Ad containers hidden');
+    console.log('Ad containers hidden (excluding bottom-ad)');
 }
 
 function initializeAdSense() {
@@ -10601,9 +10601,9 @@ function loadAdSenseAds() {
     console.log('AdSense available:', typeof adsbygoogle !== 'undefined');
     console.log('window.adsbygoogle:', window.adsbygoogle);
     
-    // Find all ad containers
-    const adContainers = document.querySelectorAll('.ad-container');
-    console.log(`Found ${adContainers.length} ad containers`);
+    // Find all ad containers (excluding bottom-ad)
+    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
+    console.log(`Found ${adContainers.length} ad containers (excluding bottom-ad)`);
     
     adContainers.forEach((container, index) => {
         console.log(`\n--- Ad Container ${index + 1} ---`);
