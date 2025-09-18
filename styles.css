@@ -2726,16 +2726,6 @@ body {
 
 @media (max-width: 768px) {
     body {
-        padding-bottom: 40px;
-    }
-    
-    #bottom-ad {
-        min-height: 40px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
         padding-bottom: 30px;
     }
     
@@ -2744,13 +2734,23 @@ body {
     }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 480px) {
     body {
         padding-bottom: 25px;
     }
     
     #bottom-ad {
         min-height: 25px;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        padding-bottom: 20px;
+    }
+    
+    #bottom-ad {
+        min-height: 20px;
     }
 }
 
