@@ -2406,7 +2406,11 @@ const autoPlayToggle = document.getElementById('auto-play-toggle');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
-const roundSelector = document.getElementById('round-selector');
+// Custom round selector elements
+const customRoundSelector = document.getElementById('custom-round-selector');
+const roundSelectorTrigger = document.getElementById('round-selector-trigger');
+const roundSelectorText = document.getElementById('round-selector-text');
+const roundSelectorOptions = document.getElementById('round-selector-options');
 
 // Settings and language DOM elements
 const settingsBtn = document.getElementById('settings-btn');
@@ -2936,7 +2940,48 @@ backToStartFromStatsBtn.addEventListener('click', () => {
     // Use enhanced page navigation with exit detection
     showPageWithExitDetection('start');
 });
-roundSelector.addEventListener('change', (e) => changeRound(parseInt(e.target.value)));
+// Custom round selector functionality
+let isDropdownOpen = false;
+
+// Toggle dropdown
+roundSelectorTrigger.addEventListener('click', () => {
+    isDropdownOpen = !isDropdownOpen;
+    if (isDropdownOpen) {
+        roundSelectorOptions.classList.add('show');
+        roundSelectorTrigger.classList.add('active');
+    } else {
+        roundSelectorOptions.classList.remove('show');
+        roundSelectorTrigger.classList.remove('active');
+    }
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', (e) => {
+    if (!customRoundSelector.contains(e.target) && isDropdownOpen) {
+        isDropdownOpen = false;
+        roundSelectorOptions.classList.remove('show');
+        roundSelectorTrigger.classList.remove('active');
+    }
+});
+
+// Handle option selection
+roundSelectorOptions.addEventListener('click', (e) => {
+    if (e.target.classList.contains('custom-select-option')) {
+        const value = parseInt(e.target.getAttribute('data-value'));
+        const text = e.target.textContent;
+        
+        // Update display
+        roundSelectorText.textContent = text;
+        
+        // Close dropdown
+        isDropdownOpen = false;
+        roundSelectorOptions.classList.remove('show');
+        roundSelectorTrigger.classList.remove('active');
+        
+        // Change round
+        changeRound(value);
+    }
+});
 addRoundBtn.addEventListener('click', addCustomRound);
 removeRoundBtn.addEventListener('click', removeCustomRound);
 startCustomRunBtn.addEventListener('click', startCustomRun);
@@ -3164,9 +3209,20 @@ function clearCustomModeVariables() {
 }
 
 
+function updateRoundSelectorDisplay(roundNumber) {
+    // Find the option with the matching data-value
+    const options = roundSelectorOptions.querySelectorAll('.custom-select-option');
+    for (let option of options) {
+        if (parseInt(option.getAttribute('data-value')) === roundNumber) {
+            roundSelectorText.textContent = option.textContent;
+            break;
+        }
+    }
+}
+
 function populateRoundSelector() {
     // Clear existing options
-    roundSelector.innerHTML = '';
+    roundSelectorOptions.innerHTML = '';
     
     let maxRoundNumber = 0; // Track the highest round number available
     
@@ -3189,8 +3245,9 @@ function populateRoundSelector() {
             // Only introduction rounds
             maxRoundNumber = customWordPools.length;
             for (let i = 1; i <= customWordPools.length; i++) {
-                const option = document.createElement('option');
-                option.value = i;
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                option.setAttribute('data-value', i);
                 option.textContent = `Introduction Round ${i}`;
                 option.setAttribute('data-en', `Introduction Round ${i}`);
                 option.setAttribute('data-es', `Ronda de Introducción ${i}`);
@@ -3200,14 +3257,15 @@ function populateRoundSelector() {
                 option.setAttribute('data-id', `Ronde Pengenalan ${i}`);
                 option.setAttribute('data-ko', `소개 라운드 ${i}`);
                 option.setAttribute('data-vi', `Vòng Giới thiệu ${i}`);
-                roundSelector.appendChild(option);
+                roundSelectorOptions.appendChild(option);
             }
         } else {
             // Introduction and practice rounds
             maxRoundNumber = customWordPools.length * 2;
             for (let i = 1; i <= customWordPools.length * 2; i++) {
-                const option = document.createElement('option');
-                option.value = i;
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                option.setAttribute('data-value', i);
                 
                 if (i % 2 === 1) {
                     // Introduction round
@@ -3235,7 +3293,7 @@ function populateRoundSelector() {
                     option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
                 }
                 
-                roundSelector.appendChild(option);
+                roundSelectorOptions.appendChild(option);
             }
         }
     } else if (window.japaneseCustomWordPools && window.japaneseCustomModeEnabled) {
@@ -3247,8 +3305,9 @@ function populateRoundSelector() {
             // Only introduction rounds
             maxRoundNumber = japaneseCustomWordPools.length;
             for (let i = 1; i <= japaneseCustomWordPools.length; i++) {
-                const option = document.createElement('option');
-                option.value = i;
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                option.setAttribute('data-value', i);
                 option.textContent = `Introduction Round ${i}`;
                 option.setAttribute('data-en', `Introduction Round ${i}`);
                 option.setAttribute('data-es', `Ronda de Introducción ${i}`);
@@ -3258,14 +3317,15 @@ function populateRoundSelector() {
                 option.setAttribute('data-id', `Ronde Pengenalan ${i}`);
                 option.setAttribute('data-ko', `소개 라운드 ${i}`);
                 option.setAttribute('data-vi', `Vòng Giới thiệu ${i}`);
-                roundSelector.appendChild(option);
+                roundSelectorOptions.appendChild(option);
             }
         } else {
             // Introduction and practice rounds
             maxRoundNumber = japaneseCustomWordPools.length * 2;
             for (let i = 1; i <= japaneseCustomWordPools.length * 2; i++) {
-                const option = document.createElement('option');
-                option.value = i;
+                const option = document.createElement('div');
+                option.className = 'custom-select-option';
+                option.setAttribute('data-value', i);
                 
                 if (i % 2 === 1) {
                     // Introduction round
@@ -3293,7 +3353,7 @@ function populateRoundSelector() {
                     option.setAttribute('data-vi', `Vòng Luyện tập ${roundNumber}`);
                 }
                 
-                roundSelector.appendChild(option);
+                roundSelectorOptions.appendChild(option);
             }
         }
     } else if (window.mirroredMode) {
@@ -3372,7 +3432,7 @@ function populateRoundSelector() {
     window.maxRoundNumber = maxRoundNumber;
     
     // Set the round selector to match the current round
-    roundSelector.value = currentRound;
+    updateRoundSelectorDisplay(currentRound);
     
     // Update language for new options
     updateAllText();
@@ -4617,7 +4677,7 @@ function nextRound() {
 
 function nextCustomRound() {
     currentRound++;
-    roundSelector.value = currentRound;
+    updateRoundSelectorDisplay(currentRound);
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4657,7 +4717,7 @@ function nextCustomRound() {
 
 function nextStandardRound() {
     currentRound++;
-    roundSelector.value = currentRound;
+    updateRoundSelectorDisplay(currentRound);
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4712,7 +4772,7 @@ function refreshGameAd() {
 
 function nextMirroredRound() {
     currentRound++;
-    roundSelector.value = currentRound;
+    updateRoundSelectorDisplay(currentRound);
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
@@ -4749,7 +4809,7 @@ function nextJapaneseCustomRound() {
     console.log(`Moving to next Japanese custom round. Current round: ${currentRound}`);
     
     currentRound++;
-    roundSelector.value = currentRound;
+    updateRoundSelectorDisplay(currentRound);
     currentPhase = 'learning';
     currentQuestionIndex = 0;
     correctAnswers = {};
