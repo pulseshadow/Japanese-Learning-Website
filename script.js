@@ -2561,9 +2561,7 @@ const cookieThemeToggle = document.getElementById('cookie-theme-toggle');
 bruteForceBtn.addEventListener('click', () => {
     console.log('Brute Force Mode clicked');
     window.selectedMode = 'brute-force';
-    console.log('About to show word-entry-selection page');
     showPage('word-entry-selection');
-    console.log('showPage called for word-entry-selection');
 });
 customModeBtn.addEventListener('click', () => {
     console.log('Custom Mode clicked');
@@ -2575,7 +2573,10 @@ userStatsBtn.addEventListener('click', () => {
     updateStatsDisplay();
 });
 customHiraganaBtn.addEventListener('click', () => showPage('custom-mode'));
-hiraganaBtn.addEventListener('click', startGame);
+hiraganaBtn.addEventListener('click', () => {
+    console.log('Hiragana button clicked - starting English brute force game');
+    startGame();
+});
     katakanaBtn.addEventListener('click', () => alert(getTranslatedMessage('katakana-coming-soon')));
 backToStartBtn.addEventListener('click', () => {
     // Clear custom mode variables when going back to start
@@ -2692,10 +2693,7 @@ backToWordEntryBtn.addEventListener('click', () => {
 });
 
   japaneseHiraganaBtn.addEventListener('click', () => {
-    if (window.selectedMode === 'custom') {
-      console.log('Navigating to Japanese custom mode word selection');
-      showPage('japanese-custom-mode');
-    } else if (window.japaneseCustomModeEnabled) {
+    if (window.japaneseCustomModeEnabled) {
       console.log('Starting Japanese custom mode with Hiragana');
       startJapaneseCustomGame();
     } else {
@@ -3029,9 +3027,6 @@ function showPage(pageName) {
     currentPage = pageName;
     window.currentPage = pageName; // Also set on window for debug panel
     
-    // Ensure body is visible
-    ensureBodyVisible();
-    
     // Detect game exit before processing page change
     detectGameExit();
     
@@ -3092,9 +3087,6 @@ function showPage(pageName) {
         wordEntrySelectionPage.style.display = 'block';
         wordEntrySelectionPage.classList.add('active');
         console.log('Showing word entry selection page, selected mode:', window.selectedMode);
-        console.log('Body loaded class:', document.body.classList.contains('loaded'));
-        console.log('Word entry page display:', wordEntrySelectionPage.style.display);
-        console.log('Word entry page active class:', wordEntrySelectionPage.classList.contains('active'));
     } else if (pageName === 'japanese-script') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -6515,14 +6507,6 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', showBody);
 } else {
     showBody();
-}
-
-// Also ensure body is shown when navigating to pages
-function ensureBodyVisible() {
-    if (!document.body.classList.contains('loaded')) {
-        console.log('Body not loaded, adding loaded class');
-        document.body.classList.add('loaded');
-    }
 }
 
 function showBody() {
