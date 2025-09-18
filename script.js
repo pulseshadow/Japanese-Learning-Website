@@ -6540,9 +6540,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load cookie consent preferences and set initial script states
     loadCookieConsent();
     
-    // Temporarily show cookie consent popup regardless of visit count
+    // Show cookie consent popup for first-time users
     setTimeout(() => {
-        showCookieConsent();
+        if (isFirstTimeUser()) {
+            showCookieConsent();
+        }
     }, 1000);
 });
 
@@ -9949,6 +9951,17 @@ function validateAndFixData() {
             return false;
         }
     }
+}
+
+// First-time user detection
+function isFirstTimeUser() {
+    const hasVisited = localStorage.getItem('hasVisited');
+    if (!hasVisited) {
+        // Mark as visited for future visits
+        localStorage.setItem('hasVisited', 'true');
+        return true;
+    }
+    return false;
 }
 
 // Cookie Consent Functions
