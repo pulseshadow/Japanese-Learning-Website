@@ -874,131 +874,16 @@ body.dark-mode .round-selector-help {
     color: #ffffff;
     cursor: pointer;
     transition: all 0.2s ease;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 16px;
-    padding-right: 32px;
-}
-
-.round-selector:hover {
-    background: #d64a2a;
-    border-color: #c03d1f;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
 }
 
 body.dark-mode .round-selector {
     background: #40a0ff;
     border-color: #0080ff;
     color: #ffffff;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 16px;
-    padding-right: 32px;
-}
-
-body.dark-mode .round-selector:hover {
-    background: #40a0ff;
-    border-color: #0080ff;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
-}
-
-.round-selector:focus {
-    background: #d64a2a;
-    border-color: #c03d1f;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
-    outline: none;
-}
-
-body.dark-mode .round-selector:focus {
-    background: #40a0ff;
-    border-color: #0080ff;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
-    outline: none;
-}
-
-.round-selector:active {
-    background: #d64a2a;
-    border-color: #c03d1f;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
-}
-
-body.dark-mode .round-selector:active {
-    background: #40a0ff;
-    border-color: #0080ff;
-    color: #ffffff;
-    transform: none;
-    box-shadow: none;
 }
 
 
-/* Round selector dropdown options */
-.round-selector option {
-    background: #fc6f28 !important;
-    color: #ffffff !important;
-}
-
-.round-selector option:nth-child(odd) {
-    background: #f05000 !important;
-}
-
-.round-selector option:nth-child(even) {
-    background: #fc6f28 !important;
-}
-
-.round-selector option:hover {
-    background: #fc6f28 !important;
-}
-
-.round-selector option:nth-child(odd):hover {
-    background: #f05000 !important;
-}
-
-.round-selector option:nth-child(even):hover {
-    background: #fc6f28 !important;
-}
-
-body.dark-mode .round-selector option {
-    background: #40a0ff !important;
-    color: #ffffff !important;
-}
-
-body.dark-mode .round-selector option:nth-child(odd) {
-    background: #0066cc !important;
-}
-
-body.dark-mode .round-selector option:nth-child(even) {
-    background: #40a0ff !important;
-}
-
-body.dark-mode .round-selector option:hover {
-    background: #40a0ff !important;
-}
-
-body.dark-mode .round-selector option:nth-child(odd):hover {
-    background: #0066cc !important;
-}
-
-body.dark-mode .round-selector option:nth-child(even):hover {
-    background: #40a0ff !important;
-}
+/* Round selector dropdown options - Native styling only */
 
 body.dark-mode .game-box {
     background: #25262B;
