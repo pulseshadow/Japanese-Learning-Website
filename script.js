@@ -15,6 +15,7 @@ let eliminationWords = []; // Words for elimination phase (no repetition)
 let currentLanguage = 'en';
 let isDarkMode = false;
 let autoPlaySound = true; // Default to true (enabled)
+let showJapaneseKeyboard = true; // Default to true (enabled)
 
 // Multi-language word pools with translations for all supported languages
 const wordPools = {
@@ -2403,6 +2404,7 @@ const roundProgress = document.getElementById('round-progress');
 const japaneseWord = document.getElementById('japanese-word');
 const soundBtn = document.getElementById('sound-btn');
 const autoPlayToggle = document.getElementById('auto-play-toggle');
+const japaneseKeyboardToggle = document.getElementById('japanese-keyboard-toggle');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
@@ -3162,7 +3164,6 @@ function clearCustomModeVariables() {
     window.japaneseCustomModeNoPracticeRounds = false;
     console.log('Custom mode variables cleared');
 }
-
 
 function populateRoundSelector() {
     // Clear existing options
@@ -6428,7 +6429,7 @@ function insertHiraganaCharacter(character) {
 
 function showHiraganaKeyboard() {
     const hiraganaKeyboard = document.getElementById('hiragana-keyboard');
-    if (hiraganaKeyboard) {
+    if (hiraganaKeyboard && showJapaneseKeyboard) {
         hiraganaKeyboard.classList.remove('hidden');
         console.log('Hiragana keyboard shown');
     }
@@ -6465,6 +6466,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize sound system
     setupSoundButton();
     setupAutoPlayToggle();
+    setupJapaneseKeyboardToggle();
     
         // Initialize hiragana keyboard
         setupHiraganaKeyboard();
@@ -6540,12 +6542,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load cookie consent preferences and set initial script states
     loadCookieConsent();
     
-    // Show cookie consent popup for first-time users
-    setTimeout(() => {
-        if (isFirstTimeUser()) {
-            showCookieConsent();
-        }
-    }, 1000);
+    // No cookie consent popup - ads are always enabled
 });
 
 // Toggle section visibility
@@ -7487,6 +7484,29 @@ function setupAutoPlayToggle() {
             autoPlaySound = autoPlayToggle.checked;
             console.log('Auto-play toggle changed to:', autoPlaySound);
             saveSettings();
+        });
+    }
+}
+
+function setupJapaneseKeyboardToggle() {
+    if (japaneseKeyboardToggle) {
+        // Set initial state based on current showJapaneseKeyboard value
+        japaneseKeyboardToggle.checked = showJapaneseKeyboard;
+        console.log('Japanese keyboard toggle initialized to:', showJapaneseKeyboard);
+        
+        japaneseKeyboardToggle.addEventListener('change', () => {
+            showJapaneseKeyboard = japaneseKeyboardToggle.checked;
+            console.log('Japanese keyboard toggle changed to:', showJapaneseKeyboard);
+            saveSettings();
+            
+            // Update keyboard visibility immediately if in a game mode that uses it
+            if (window.mirroredMode || window.japaneseCustomModeEnabled) {
+                if (showJapaneseKeyboard) {
+                    showHiraganaKeyboard();
+                } else {
+                    hideHiraganaKeyboard();
+                }
+            }
         });
     }
 }
@@ -9398,14 +9418,15 @@ function saveSettings() {
     const settings = {
         language: currentLanguage,
         darkMode: isDarkMode,
-        autoPlaySound: autoPlaySound
+        autoPlaySound: autoPlaySound,
+        showJapaneseKeyboard: showJapaneseKeyboard
     };
     console.log('Saving settings:', settings);
     saveToLocalStorage(STORAGE_KEYS.SETTINGS, settings);
 }
 
 function loadSettings() {
-    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: true });
+    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: true, showJapaneseKeyboard: true });
     console.log('Loading settings:', settings);
     
     // Validate and apply language setting
@@ -9432,6 +9453,15 @@ function loadSettings() {
     } else {
         autoPlaySound = true;
         console.warn('Invalid auto-play sound setting, defaulting to enabled');
+    }
+    
+    // Validate and apply Japanese keyboard setting
+    if (settings && typeof settings.showJapaneseKeyboard === 'boolean') {
+        showJapaneseKeyboard = settings.showJapaneseKeyboard;
+        console.log('Loaded showJapaneseKeyboard setting:', showJapaneseKeyboard);
+    } else {
+        showJapaneseKeyboard = true;
+        console.warn('Invalid Japanese keyboard setting, defaulting to enabled');
     }
     
     // Apply settings
@@ -9953,17 +9983,6 @@ function validateAndFixData() {
     }
 }
 
-// First-time user detection
-function isFirstTimeUser() {
-    const hasVisited = localStorage.getItem('hasVisited');
-    if (!hasVisited) {
-        // Mark as visited for future visits
-        localStorage.setItem('hasVisited', 'true');
-        return true;
-    }
-    return false;
-}
-
 // Cookie Consent Functions
 function showCookieConsent() {
     // Sync theme toggle with current theme state
@@ -10480,8 +10499,8 @@ function updateStatsDisplay() {
 // Ad container management functions
 function showAdContainers() {
     console.log('=== SHOWING AD CONTAINERS ===');
-    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
-    console.log(`Found ${adContainers.length} ad containers (excluding bottom-ad)`);
+    const adContainers = document.querySelectorAll('.ad-container');
+    console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
         // Aggressively show the container
@@ -10551,11 +10570,11 @@ function showAdContainers() {
 }
 
 function hideAdContainers() {
-    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
+    const adContainers = document.querySelectorAll('.ad-container');
     adContainers.forEach(container => {
         container.classList.add('hidden');
     });
-    console.log('Ad containers hidden (excluding bottom-ad)');
+    console.log('Ad containers hidden');
 }
 
 function initializeAdSense() {
@@ -10614,9 +10633,9 @@ function loadAdSenseAds() {
     console.log('AdSense available:', typeof adsbygoogle !== 'undefined');
     console.log('window.adsbygoogle:', window.adsbygoogle);
     
-    // Find all ad containers (excluding bottom-ad)
-    const adContainers = document.querySelectorAll('.ad-container:not(#bottom-ad)');
-    console.log(`Found ${adContainers.length} ad containers (excluding bottom-ad)`);
+    // Find all ad containers
+    const adContainers = document.querySelectorAll('.ad-container');
+    console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
         console.log(`\n--- Ad Container ${index + 1} ---`);

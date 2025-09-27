@@ -874,16 +874,64 @@ body.dark-mode .round-selector-help {
     color: #ffffff;
     cursor: pointer;
     transition: all 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
 }
 
 body.dark-mode .round-selector {
     background: #40a0ff;
     border-color: #0080ff;
     color: #ffffff;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 16px;
+    padding-right: 32px;
 }
 
+.round-selector:hover {
+    border-color: #E75D38;
+}
 
-/* Round selector dropdown options - Native styling only */
+body.dark-mode .round-selector:hover {
+    border-color: #00bfff;
+}
+
+/* Round selector dropdown options */
+.round-selector option {
+    background: #fc6f28;
+    color: #ffffff;
+}
+
+.round-selector option:nth-child(odd) {
+    background: #f05000;
+}
+
+.round-selector option:nth-child(even) {
+    background: #fc6f28;
+}
+
+body.dark-mode .round-selector option {
+    background: #40a0ff;
+    color: #ffffff;
+}
+
+body.dark-mode .round-selector option:nth-child(odd) {
+    background: #0066cc;
+}
+
+body.dark-mode .round-selector option:nth-child(even) {
+    background: #40a0ff;
+}
 
 body.dark-mode .game-box {
     background: #25262B;
@@ -2635,6 +2683,59 @@ body.dark-mode .select-all-container label {
     cursor: pointer;
 }
 
+/* Bottom ad container styling */
+#bottom-ad {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    margin: 0;
+    border-radius: 0;
+    background: #f8f9fa;
+    border-top: 1px solid #e9ecef;
+    min-height: 120px;
+}
+
+body.dark-mode #bottom-ad {
+    background: #2a2a2a;
+    border-top-color: #444;
+}
+
+/* Add bottom padding to body to prevent content from being hidden behind the ad */
+body {
+    padding-bottom: 120px;
+}
+
+@media (max-width: 768px) {
+    body {
+        padding-bottom: 60px;
+    }
+    
+    #bottom-ad {
+        min-height: 60px;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding-bottom: 50px;
+    }
+    
+    #bottom-ad {
+        min-height: 50px;
+    }
+}
+
+@media (max-width: 360px) {
+    body {
+        padding-bottom: 45px;
+    }
+    
+    #bottom-ad {
+        min-height: 45px;
+    }
+}
 
 .language-warning {
     color: #E75D38;
