@@ -2405,6 +2405,7 @@ const japaneseWord = document.getElementById('japanese-word');
 const soundBtn = document.getElementById('sound-btn');
 const autoPlayToggle = document.getElementById('auto-play-toggle');
 const japaneseKeyboardToggle = document.getElementById('japanese-keyboard-toggle');
+const keyboardDisabledText = document.getElementById('keyboard-disabled-text');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
@@ -2767,6 +2768,7 @@ function startMirroredGame() {
     
     // Show hiragana keyboard for mirrored mode
     showHiraganaKeyboard();
+    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeMirroredRound();
@@ -6052,6 +6054,7 @@ function startJapaneseCustomRun() {
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
+    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeJapaneseCustomRound();
@@ -6095,6 +6098,7 @@ function startJapaneseCustomGame() {
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
+    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeJapaneseCustomRound();
@@ -6876,6 +6880,9 @@ function updateAllText() {
     
     // Update start page language text
     updateStartPageLanguageText();
+    
+    // Update keyboard disabled text visibility
+    updateKeyboardDisabledText();
 }
 
 function updateCustomWordInputPlaceholders() {
@@ -7506,8 +7513,20 @@ function setupJapaneseKeyboardToggle() {
                 } else {
                     hideHiraganaKeyboard();
                 }
+                updateKeyboardDisabledText();
             }
         });
+    }
+}
+
+function updateKeyboardDisabledText() {
+    if (keyboardDisabledText) {
+        // Only show the text if we're in a Japanese game mode and keyboard is disabled
+        if ((window.mirroredMode || window.japaneseCustomModeEnabled) && !showJapaneseKeyboard) {
+            keyboardDisabledText.classList.remove('hidden');
+        } else {
+            keyboardDisabledText.classList.add('hidden');
+        }
     }
 }
 

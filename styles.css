@@ -3546,6 +3546,20 @@ body.dark-mode .number-key {
     cursor: default !important;
 }
 
+/* Keyboard disabled text styling */
+.keyboard-disabled-text {
+    font-size: 0.85em;
+    color: #888;
+    text-align: center;
+    margin-bottom: 8px;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+body.dark-mode .keyboard-disabled-text {
+    color: #aaa;
+}
+
 .number-key:hover {
     background: #f0f0f0 !important;
     border-color: #b0b0b0 !important;
