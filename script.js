@@ -2577,12 +2577,6 @@ hiraganaBtn.addEventListener('click', startGame);
 backToStartBtn.addEventListener('click', () => {
     // Clear custom mode variables when going back to start
     clearCustomModeVariables();
-    
-    // Hide keyboard disabled text when returning to start
-    if (keyboardDisabledText) {
-        keyboardDisabledText.classList.add('hidden');
-    }
-    
     // Use enhanced page navigation with exit detection
     showPageWithExitDetection('start');
 });
@@ -3558,11 +3552,6 @@ function startGame() {
     
     // Hide hiragana keyboard for normal mode
     hideHiraganaKeyboard();
-    
-    // Hide keyboard disabled text for English mode
-    if (keyboardDisabledText) {
-        keyboardDisabledText.classList.add('hidden');
-    }
     
     // Populate round selector with preset rounds
     populateRoundSelector();
@@ -6486,6 +6475,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize hiragana keyboard
         setupHiraganaKeyboard();
         
+        // Update keyboard disabled text after settings are loaded
+        updateKeyboardDisabledText();
+        
         
         // Unfreeze airlock on page reload
         console.log('=== PAGE RELOAD DETECTED - UNFREEZING AIRLOCK ===');
@@ -7509,6 +7501,9 @@ function setupJapaneseKeyboardToggle() {
         japaneseKeyboardToggle.checked = showJapaneseKeyboard;
         console.log('Japanese keyboard toggle initialized to:', showJapaneseKeyboard);
         
+        // Update the disabled text visibility
+        updateKeyboardDisabledText();
+        
         japaneseKeyboardToggle.addEventListener('change', () => {
             showJapaneseKeyboard = japaneseKeyboardToggle.checked;
             console.log('Japanese keyboard toggle changed to:', showJapaneseKeyboard);
@@ -7533,7 +7528,7 @@ function updateKeyboardDisabledText() {
         const isJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
         const isKeyboardDisabled = !showJapaneseKeyboard;
         
-        console.log('updateKeyboardDisabledText - isJapaneseMode:', isJapaneseMode, 'isKeyboardDisabled:', isKeyboardDisabled);
+        console.log('updateKeyboardDisabledText - isJapaneseMode:', isJapaneseMode, 'isKeyboardDisabled:', isKeyboardDisabled, 'showJapaneseKeyboard:', showJapaneseKeyboard);
         
         if (isJapaneseMode && isKeyboardDisabled) {
             keyboardDisabledText.classList.remove('hidden');
@@ -8980,11 +8975,6 @@ function startCustomRun() {
     
     // Hide hiragana keyboard for normal custom mode
     hideHiraganaKeyboard();
-    
-    // Hide keyboard disabled text for English custom mode
-    if (keyboardDisabledText) {
-        keyboardDisabledText.classList.add('hidden');
-    }
     
     // Don't clear the word entry flag when starting a custom game
     // This allows users to go back to word entry selection from script pages
