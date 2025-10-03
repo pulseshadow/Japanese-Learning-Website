@@ -2406,6 +2406,7 @@ const soundBtn = document.getElementById('sound-btn');
 const autoPlayToggle = document.getElementById('auto-play-toggle');
 const japaneseKeyboardToggle = document.getElementById('japanese-keyboard-toggle');
 const keyboardDisabledText = document.getElementById('keyboard-disabled-text');
+const adConsentStatus = document.getElementById('ad-consent-status');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
@@ -6886,6 +6887,9 @@ function updateAllText() {
     
     // Update start page language text
     updateStartPageLanguageText();
+    
+    // Update ad consent indicator
+    updateAdConsentIndicator();
 }
 
 function updateCustomWordInputPlaceholders() {
@@ -10037,6 +10041,7 @@ function initializeAds() {
     setTimeout(() => {
         console.log('🔍 Post-initialization verification:');
         verifyAdConsentCompliance();
+        updateAdConsentIndicator();
     }, 1000); // Wait 1 second for ads to load
 }
 
@@ -10199,9 +10204,84 @@ function testAdConsentSwitching() {
     };
 }
 
+// Visual Indicator Functions
+function updateAdConsentIndicator() {
+    if (!adConsentStatus) return;
+    
+    const statusDot = adConsentStatus.querySelector('.status-dot');
+    const statusText = adConsentStatus.querySelector('.status-text');
+    
+    if (!statusDot || !statusText) return;
+    
+    // Get current consent state
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    const hasConsent = consentData && consentData.advertising === true;
+    
+    // Check if ads are properly configured
+    const adElements = document.querySelectorAll('.adsbygoogle');
+    let isCompliant = true;
+    
+    if (adElements.length > 0) {
+        isCompliant = Array.from(adElements).every(ad => {
+            const npaAttribute = ad.getAttribute('data-npa');
+            return (hasConsent && !npaAttribute) || (!hasConsent && npaAttribute === '1');
+        });
+    }
+    
+    // Update visual indicator
+    if (!isCompliant) {
+        // Error state - not compliant
+        statusDot.className = 'status-dot error';
+        statusText.className = 'status-text error';
+        statusText.textContent = 'Error - Check Console';
+        statusText.setAttribute('data-en', 'Error - Check Console');
+        statusText.setAttribute('data-es', 'Error - Revisar Consola');
+        statusText.setAttribute('data-fr', 'Erreur - Vérifier la Console');
+        statusText.setAttribute('data-ja', 'エラー - コンソールを確認');
+        statusText.setAttribute('data-zh', '错误 - 检查控制台');
+        statusText.setAttribute('data-id', 'Error - Periksa Konsol');
+        statusText.setAttribute('data-ko', '오류 - 콘솔 확인');
+        statusText.setAttribute('data-vi', 'Lỗi - Kiểm tra Console');
+    } else if (hasConsent) {
+        // Personalized ads
+        statusDot.className = 'status-dot personalized';
+        statusText.className = 'status-text personalized';
+        statusText.textContent = 'Personalized Ads Active';
+        statusText.setAttribute('data-en', 'Personalized Ads Active');
+        statusText.setAttribute('data-es', 'Anuncios Personalizados Activos');
+        statusText.setAttribute('data-fr', 'Publicités Personnalisées Actives');
+        statusText.setAttribute('data-ja', 'パーソナライズ広告有効');
+        statusText.setAttribute('data-zh', '个性化广告已激活');
+        statusText.setAttribute('data-id', 'Iklan Dipersonalisasi Aktif');
+        statusText.setAttribute('data-ko', '개인화 광고 활성');
+        statusText.setAttribute('data-vi', 'Quảng cáo Cá nhân hóa Hoạt động');
+    } else {
+        // Non-personalized ads
+        statusDot.className = 'status-dot non-personalized';
+        statusText.className = 'status-text non-personalized';
+        statusText.textContent = 'Non-Personalized Ads Active';
+        statusText.setAttribute('data-en', 'Non-Personalized Ads Active');
+        statusText.setAttribute('data-es', 'Anuncios No Personalizados Activos');
+        statusText.setAttribute('data-fr', 'Publicités Non Personnalisées Actives');
+        statusText.setAttribute('data-ja', '非パーソナライズ広告有効');
+        statusText.setAttribute('data-zh', '非个性化广告已激活');
+        statusText.setAttribute('data-id', 'Iklan Non-Dipersonalisasi Aktif');
+        statusText.setAttribute('data-ko', '비개인화 광고 활성');
+        statusText.setAttribute('data-vi', 'Quảng cáo Không Cá nhân hóa Hoạt động');
+    }
+    
+    console.log('🎯 Ad consent indicator updated:', {
+        hasConsent: hasConsent,
+        isCompliant: isCompliant,
+        adCount: adElements.length,
+        status: hasConsent ? 'personalized' : 'non-personalized'
+    });
+}
+
 // Make testing functions available globally for console access
 window.verifyAdConsentCompliance = verifyAdConsentCompliance;
 window.testAdConsentSwitching = testAdConsentSwitching;
+window.updateAdConsentIndicator = updateAdConsentIndicator;
 
 /*
 🧪 AD CONSENT COMPLIANCE TESTING GUIDE
@@ -10287,6 +10367,7 @@ function rejectCookies() {
     setTimeout(() => {
         console.log('🔍 Post-rejection verification:');
         verifyAdConsentCompliance();
+        updateAdConsentIndicator();
     }, 1000);
     
     // Hide the popup
@@ -10320,6 +10401,7 @@ function acceptCookies() {
     setTimeout(() => {
         console.log('🔍 Post-acceptance verification:');
         verifyAdConsentCompliance();
+        updateAdConsentIndicator();
     }, 1000);
     
     // Hide the popup
@@ -10416,6 +10498,11 @@ function acceptCookiesFromSettings() {
     // Update status display
     updateCookieStatusDisplay();
     
+    // Update visual indicator
+    setTimeout(() => {
+        updateAdConsentIndicator();
+    }, 1000);
+    
     console.log('Cookies accepted from settings - Analytics enabled, Advertising enabled');
 }
 
@@ -10442,6 +10529,11 @@ function revokeCookiesFromSettings() {
     
     // Update status display
     updateCookieStatusDisplay();
+    
+    // Update visual indicator
+    setTimeout(() => {
+        updateAdConsentIndicator();
+    }, 1000);
     
     console.log('Cookies revoked from settings - Analytics disabled, Advertising disabled');
 }
