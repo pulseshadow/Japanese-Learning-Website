@@ -6476,8 +6476,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize hiragana keyboard
         setupHiraganaKeyboard();
         
-        // Update keyboard disabled text after settings are loaded
-        updateKeyboardDisabledText();
         
         // Initialize ads
         initializeAds();
@@ -7508,8 +7506,6 @@ function setupJapaneseKeyboardToggle() {
         japaneseKeyboardToggle.checked = showJapaneseKeyboard;
         console.log('Japanese keyboard toggle initialized to:', showJapaneseKeyboard);
         
-        // Update the disabled text visibility
-        updateKeyboardDisabledText();
         
         japaneseKeyboardToggle.addEventListener('change', () => {
             showJapaneseKeyboard = japaneseKeyboardToggle.checked;
@@ -7535,14 +7531,10 @@ function updateKeyboardDisabledText() {
         const isJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
         const isKeyboardDisabled = !showJapaneseKeyboard;
         
-        console.log('updateKeyboardDisabledText - isJapaneseMode:', isJapaneseMode, 'isKeyboardDisabled:', isKeyboardDisabled, 'showJapaneseKeyboard:', showJapaneseKeyboard);
-        
         if (isJapaneseMode && isKeyboardDisabled) {
             keyboardDisabledText.classList.remove('hidden');
-            console.log('Showing keyboard disabled text');
         } else {
             keyboardDisabledText.classList.add('hidden');
-            console.log('Hiding keyboard disabled text');
         }
     }
 }
@@ -10025,8 +10017,6 @@ function initializeAds() {
     const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
     const hasConsent = consentData && consentData.advertising === true;
     
-    console.log('🚀 Initializing ads with consent:', hasConsent);
-    
     // Always show ad containers
     showAdContainers();
     
@@ -10037,12 +10027,10 @@ function initializeAds() {
         enableNonPersonalizedAds();
     }
     
-    // Verify compliance after initialization
+    // Update visual indicator after initialization
     setTimeout(() => {
-        console.log('🔍 Post-initialization verification:');
-        verifyAdConsentCompliance();
         updateAdConsentIndicator();
-    }, 1000); // Wait 1 second for ads to load
+    }, 1000);
 }
 
 function showAdContainers() {
@@ -10055,7 +10043,6 @@ function showAdContainers() {
 }
 
 function enablePersonalizedAds() {
-    console.log('🔓 Enabling personalized ads');
     window.adsenseEnabled = true;
     window.adConsentMode = 'personalized';
     
@@ -10063,36 +10050,19 @@ function enablePersonalizedAds() {
     if (typeof window.adsbygoogle !== 'undefined') {
         // Re-push all ads with personalized settings
         const adElements = document.querySelectorAll('.adsbygoogle');
-        adElements.forEach((ad, index) => {
+        adElements.forEach(ad => {
             try {
                 // Remove non-personalized attribute if present
                 ad.removeAttribute('data-npa');
-                
-                // Add verification attributes for testing
-                ad.setAttribute('data-consent-mode', 'personalized');
-                ad.setAttribute('data-test-timestamp', Date.now());
-                
-                console.log(`📊 Ad ${index + 1}: Personalized mode enabled`);
                 (adsbygoogle = window.adsbygoogle || []).push({});
             } catch (e) {
-                console.log('Ad already loaded:', e);
+                // Ad already loaded
             }
         });
-        
-        // Log verification data
-        console.log('✅ Personalized ads verification:', {
-            totalAds: adElements.length,
-            consentMode: 'personalized',
-            npaAttribute: 'removed',
-            timestamp: new Date().toISOString()
-        });
-    } else {
-        console.warn('⚠️ AdSense not available for personalized ads');
     }
 }
 
 function enableNonPersonalizedAds() {
-    console.log('🔒 Enabling non-personalized ads');
     window.adsenseEnabled = true;
     window.adConsentMode = 'non-personalized';
     
@@ -10100,109 +10070,18 @@ function enableNonPersonalizedAds() {
     if (typeof window.adsbygoogle !== 'undefined') {
         // Re-push all ads with non-personalized settings
         const adElements = document.querySelectorAll('.adsbygoogle');
-        adElements.forEach((ad, index) => {
+        adElements.forEach(ad => {
             try {
                 // Add non-personalized data attribute
                 ad.setAttribute('data-npa', '1');
-                
-                // Add verification attributes for testing
-                ad.setAttribute('data-consent-mode', 'non-personalized');
-                ad.setAttribute('data-test-timestamp', Date.now());
-                
-                console.log(`📊 Ad ${index + 1}: Non-personalized mode enabled`);
                 (adsbygoogle = window.adsbygoogle || []).push({});
             } catch (e) {
-                console.log('Ad already loaded:', e);
+                // Ad already loaded
             }
         });
-        
-        // Log verification data
-        console.log('✅ Non-personalized ads verification:', {
-            totalAds: adElements.length,
-            consentMode: 'non-personalized',
-            npaAttribute: 'present',
-            timestamp: new Date().toISOString()
-        });
-    } else {
-        console.warn('⚠️ AdSense not available for non-personalized ads');
     }
 }
 
-// Ad Consent Testing and Verification Functions
-function verifyAdConsentCompliance() {
-    console.log('🔍 === AD CONSENT COMPLIANCE VERIFICATION ===');
-    
-    // Get current consent state
-    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
-    const hasConsent = consentData && consentData.advertising === true;
-    
-    console.log('📋 Current consent state:', {
-        hasConsent: hasConsent,
-        consentData: consentData,
-        adConsentMode: window.adConsentMode,
-        adsenseEnabled: window.adsenseEnabled
-    });
-    
-    // Check all ad elements
-    const adElements = document.querySelectorAll('.adsbygoogle');
-    console.log(`📊 Found ${adElements.length} ad elements`);
-    
-    adElements.forEach((ad, index) => {
-        const npaAttribute = ad.getAttribute('data-npa');
-        const consentMode = ad.getAttribute('data-consent-mode');
-        const testTimestamp = ad.getAttribute('data-test-timestamp');
-        
-        console.log(`Ad ${index + 1}:`, {
-            npaAttribute: npaAttribute,
-            consentMode: consentMode,
-            testTimestamp: testTimestamp ? new Date(parseInt(testTimestamp)).toISOString() : 'N/A',
-            expectedNpa: hasConsent ? 'null' : '1',
-            expectedConsentMode: hasConsent ? 'personalized' : 'non-personalized',
-            compliant: (hasConsent && !npaAttribute) || (!hasConsent && npaAttribute === '1')
-        });
-    });
-    
-    // Overall compliance check
-    const allCompliant = Array.from(adElements).every(ad => {
-        const npaAttribute = ad.getAttribute('data-npa');
-        return (hasConsent && !npaAttribute) || (!hasConsent && npaAttribute === '1');
-    });
-    
-    console.log('✅ Overall compliance:', allCompliant ? 'COMPLIANT' : 'NON-COMPLIANT');
-    
-    return {
-        compliant: allCompliant,
-        totalAds: adElements.length,
-        consentState: hasConsent,
-        adConsentMode: window.adConsentMode
-    };
-}
-
-function testAdConsentSwitching() {
-    console.log('🧪 === TESTING AD CONSENT SWITCHING ===');
-    
-    // Test switching to personalized
-    console.log('Testing switch to personalized ads...');
-    enablePersonalizedAds();
-    const personalizedResult = verifyAdConsentCompliance();
-    
-    // Test switching to non-personalized
-    console.log('Testing switch to non-personalized ads...');
-    enableNonPersonalizedAds();
-    const nonPersonalizedResult = verifyAdConsentCompliance();
-    
-    console.log('🧪 Test results:', {
-        personalizedCompliant: personalizedResult.compliant,
-        nonPersonalizedCompliant: nonPersonalizedResult.compliant,
-        allTestsPassed: personalizedResult.compliant && nonPersonalizedResult.compliant
-    });
-    
-    return {
-        personalizedCompliant: personalizedResult.compliant,
-        nonPersonalizedCompliant: nonPersonalizedResult.compliant,
-        allTestsPassed: personalizedResult.compliant && nonPersonalizedResult.compliant
-    };
-}
 
 // Visual Indicator Functions
 function updateAdConsentIndicator() {
@@ -10270,64 +10149,10 @@ function updateAdConsentIndicator() {
         statusText.setAttribute('data-vi', 'Quảng cáo Không Cá nhân hóa Hoạt động');
     }
     
-    console.log('🎯 Ad consent indicator updated:', {
-        hasConsent: hasConsent,
-        isCompliant: isCompliant,
-        adCount: adElements.length,
-        status: hasConsent ? 'personalized' : 'non-personalized'
-    });
 }
 
-// Make testing functions available globally for console access
-window.verifyAdConsentCompliance = verifyAdConsentCompliance;
-window.testAdConsentSwitching = testAdConsentSwitching;
+// Make indicator function available globally for console access
 window.updateAdConsentIndicator = updateAdConsentIndicator;
-
-/*
-🧪 AD CONSENT COMPLIANCE TESTING GUIDE
-=====================================
-
-To test if the ad consent system is working correctly:
-
-1. OPEN BROWSER CONSOLE (F12)
-2. Run these commands:
-
-   // Check current compliance status
-   verifyAdConsentCompliance()
-   
-   // Test switching between modes
-   testAdConsentSwitching()
-   
-   // Check specific ad elements
-   document.querySelectorAll('.adsbygoogle').forEach((ad, i) => {
-       console.log(`Ad ${i+1}:`, {
-           npa: ad.getAttribute('data-npa'),
-           consentMode: ad.getAttribute('data-consent-mode'),
-           timestamp: ad.getAttribute('data-test-timestamp')
-       });
-   });
-
-3. MANUAL TESTING STEPS:
-   a) Accept cookies → Check console for "personalized" mode
-   b) Reject cookies → Check console for "non-personalized" mode  
-   c) Reload page → Verify correct mode persists
-   d) Change consent in settings → Verify immediate switch
-
-4. VERIFICATION CRITERIA:
-   ✅ With consent: data-npa attribute should be NULL
-   ✅ Without consent: data-npa attribute should be "1"
-   ✅ All ads should have data-consent-mode attribute
-   ✅ Console should show "COMPLIANT" status
-
-5. LEGAL COMPLIANCE:
-   - Personalized ads: No data-npa attribute (Google's requirement)
-   - Non-personalized ads: data-npa="1" attribute (Google's requirement)
-   - All ads show regardless of consent (your requirement)
-   - Consent changes apply immediately (GDPR requirement)
-
-⚠️  IMPORTANT: This system must be tested thoroughly before production use.
-   Non-compliance with cookie consent laws can result in significant legal penalties.
-*/
 
 // Cookie Consent Functions
 function showCookieConsent() {
@@ -10363,10 +10188,8 @@ function rejectCookies() {
     // Reinitialize ads with new consent
     initializeAds();
     
-    // Verify compliance after consent change
+    // Update visual indicator after consent change
     setTimeout(() => {
-        console.log('🔍 Post-rejection verification:');
-        verifyAdConsentCompliance();
         updateAdConsentIndicator();
     }, 1000);
     
@@ -10397,10 +10220,8 @@ function acceptCookies() {
     // Reinitialize ads with new consent
     initializeAds();
     
-    // Verify compliance after consent change
+    // Update visual indicator after consent change
     setTimeout(() => {
-        console.log('🔍 Post-acceptance verification:');
-        verifyAdConsentCompliance();
         updateAdConsentIndicator();
     }, 1000);
     
