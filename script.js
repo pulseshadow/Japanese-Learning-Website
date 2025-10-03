@@ -6478,6 +6478,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update keyboard disabled text after settings are loaded
         updateKeyboardDisabledText();
         
+        // Initialize ads
+        initializeAds();
+        
         
         // Unfreeze airlock on page reload
         console.log('=== PAGE RELOAD DETECTED - UNFREEZING AIRLOCK ===');
@@ -10012,6 +10015,74 @@ function validateAndFixData() {
     }
 }
 
+// Ad Management Functions
+function initializeAds() {
+    // Always show ads, but configure based on cookie consent
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    const hasConsent = consentData && consentData.advertising === true;
+    
+    console.log('Initializing ads with consent:', hasConsent);
+    
+    // Always show ad containers
+    showAdContainers();
+    
+    // Configure ads based on consent
+    if (hasConsent) {
+        enablePersonalizedAds();
+    } else {
+        enableNonPersonalizedAds();
+    }
+}
+
+function showAdContainers() {
+    // Show all ad containers
+    const adContainers = document.querySelectorAll('.ad-container');
+    adContainers.forEach(container => {
+        container.style.display = 'block';
+    });
+    console.log('Ad containers shown');
+}
+
+function enablePersonalizedAds() {
+    console.log('Enabling personalized ads');
+    window.adsenseEnabled = true;
+    
+    // Load AdSense with personalized ads
+    if (typeof window.adsbygoogle !== 'undefined') {
+        // Re-push all ads with personalized settings
+        const adElements = document.querySelectorAll('.adsbygoogle');
+        adElements.forEach(ad => {
+            try {
+                // Remove non-personalized attribute if present
+                ad.removeAttribute('data-npa');
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.log('Ad already loaded:', e);
+            }
+        });
+    }
+}
+
+function enableNonPersonalizedAds() {
+    console.log('Enabling non-personalized ads');
+    window.adsenseEnabled = true;
+    
+    // Load AdSense with non-personalized ads
+    if (typeof window.adsbygoogle !== 'undefined') {
+        // Re-push all ads with non-personalized settings
+        const adElements = document.querySelectorAll('.adsbygoogle');
+        adElements.forEach(ad => {
+            try {
+                // Add non-personalized data attribute
+                ad.setAttribute('data-npa', '1');
+                (adsbygoogle = window.adsbygoogle || []).push({});
+            } catch (e) {
+                console.log('Ad already loaded:', e);
+            }
+        });
+    }
+}
+
 // Cookie Consent Functions
 function showCookieConsent() {
     // Sync theme toggle with current theme state
@@ -10029,15 +10100,6 @@ function rejectCookies() {
     // Disable adsense script
     adsenseScript.classList.add('disabled');
     
-    // Set global flag and disable AdSense
-    window.adsenseEnabled = false;
-    if (typeof window.disableAdSense === 'function') {
-        window.disableAdSense();
-    }
-    
-    // Hide ad containers
-    hideAdContainers();
-    
     // Disable analytics script
     analyticsScript.classList.add('disabled');
     if (typeof window.disableAnalytics === 'function') {
@@ -10052,6 +10114,9 @@ function rejectCookies() {
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
     
+    // Reinitialize ads with new consent
+    initializeAds();
+    
     // Hide the popup
     hideCookieConsent();
     
@@ -10061,13 +10126,6 @@ function rejectCookies() {
 function acceptCookies() {
     // Enable adsense script (user accepted all cookies)
     adsenseScript.classList.remove('disabled');
-    window.adsenseEnabled = true;
-    if (typeof window.enableAdSense === 'function') {
-        window.enableAdSense();
-    }
-    
-    // Show ad containers
-    showAdContainers();
     
     // Enable analytics script
     analyticsScript.classList.remove('disabled');
@@ -10082,6 +10140,9 @@ function acceptCookies() {
         timestamp: Date.now()
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Reinitialize ads with new consent
+    initializeAds();
     
     // Hide the popup
     hideCookieConsent();
@@ -10156,13 +10217,6 @@ function hidePolicyPage() {
 function acceptCookiesFromSettings() {
     // Enable adsense script
     adsenseScript.classList.remove('disabled');
-    window.adsenseEnabled = true;
-    if (typeof window.enableAdSense === 'function') {
-        window.enableAdSense();
-    }
-    
-    // Show ad containers
-    showAdContainers();
     
     // Enable analytics script
     analyticsScript.classList.remove('disabled');
@@ -10178,6 +10232,9 @@ function acceptCookiesFromSettings() {
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
     
+    // Reinitialize ads with new consent
+    initializeAds();
+    
     // Update status display
     updateCookieStatusDisplay();
     
@@ -10187,13 +10244,6 @@ function acceptCookiesFromSettings() {
 function revokeCookiesFromSettings() {
     // Disable adsense script
     adsenseScript.classList.add('disabled');
-    window.adsenseEnabled = false;
-    if (typeof window.disableAdSense === 'function') {
-        window.disableAdSense();
-    }
-    
-    // Hide ad containers
-    hideAdContainers();
     
     // Disable analytics script
     analyticsScript.classList.add('disabled');
@@ -10208,6 +10258,9 @@ function revokeCookiesFromSettings() {
         timestamp: Date.now()
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
+    
+    // Reinitialize ads with new consent
+    initializeAds();
     
     // Update status display
     updateCookieStatusDisplay();
@@ -10598,13 +10651,6 @@ function showAdContainers() {
     }, 500); // Check every 500ms
 }
 
-function hideAdContainers() {
-    const adContainers = document.querySelectorAll('.ad-container');
-    adContainers.forEach(container => {
-        container.classList.add('hidden');
-    });
-    console.log('Ad containers hidden');
-}
 
 function initializeAdSense() {
     console.log('=== INITIALIZING ADSENSE ===');
