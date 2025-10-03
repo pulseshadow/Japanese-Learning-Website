@@ -2769,7 +2769,6 @@ function startMirroredGame() {
     
     // Show hiragana keyboard for mirrored mode
     showHiraganaKeyboard();
-    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeMirroredRound();
@@ -2990,6 +2989,11 @@ function showPage(pageName) {
     // Detect game exit before processing page change
     detectGameExit();
     
+    // Hide keyboard disabled text when leaving game page
+    if (pageName !== 'game' && keyboardDisabledText) {
+        keyboardDisabledText.classList.add('hidden');
+    }
+    
     // Hide all pages
     startPage.style.display = 'none';
     scriptPage.style.display = 'none';
@@ -3041,6 +3045,9 @@ function showPage(pageName) {
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
+        
+        // Update keyboard disabled text when entering game
+        updateKeyboardDisabledText();
     } else if (pageName === 'word-entry-selection') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -6055,7 +6062,6 @@ function startJapaneseCustomRun() {
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
-    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeJapaneseCustomRound();
@@ -6099,7 +6105,6 @@ function startJapaneseCustomGame() {
     
     // Show hiragana keyboard for Japanese custom mode
     showHiraganaKeyboard();
-    updateKeyboardDisabledText();
     
     // Initialize the first round
     initializeJapaneseCustomRound();
@@ -7526,16 +7531,17 @@ function setupJapaneseKeyboardToggle() {
 }
 
 function updateKeyboardDisabledText() {
-    if (keyboardDisabledText) {
-        // Only show the text if we're in a Japanese game mode and keyboard is disabled
-        const isJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
-        const isKeyboardDisabled = !showJapaneseKeyboard;
-        
-        if (isJapaneseMode && isKeyboardDisabled) {
-            keyboardDisabledText.classList.remove('hidden');
-        } else {
-            keyboardDisabledText.classList.add('hidden');
-        }
+    if (!keyboardDisabledText) return;
+    
+    // Always hide by default
+    keyboardDisabledText.classList.add('hidden');
+    
+    // Only show if we're actually in a Japanese game mode AND keyboard is disabled
+    const isInJapaneseGame = currentPage === 'game' && (window.mirroredMode || window.japaneseCustomModeEnabled);
+    const isKeyboardDisabled = !showJapaneseKeyboard;
+    
+    if (isInJapaneseGame && isKeyboardDisabled) {
+        keyboardDisabledText.classList.remove('hidden');
     }
 }
 
