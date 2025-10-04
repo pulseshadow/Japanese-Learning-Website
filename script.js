@@ -7533,14 +7533,18 @@ function setupJapaneseKeyboardToggle() {
 function updateKeyboardDisabledText() {
     if (!keyboardDisabledText) return;
     
-    // Always hide by default
+    // Always hide first
     keyboardDisabledText.classList.add('hidden');
     
-    // Only show if we're actually in a Japanese game mode AND keyboard is disabled
-    const isInJapaneseGame = currentPage === 'game' && (window.mirroredMode || window.japaneseCustomModeEnabled);
-    const isKeyboardDisabled = !showJapaneseKeyboard;
+    // Only show if ALL conditions are met:
+    // 1. We're on the game page
+    // 2. We're in a Japanese mode (mirrored or custom)
+    // 3. The keyboard is disabled
+    const onGamePage = currentPage === 'game';
+    const inJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
+    const keyboardDisabled = !showJapaneseKeyboard;
     
-    if (isInJapaneseGame && isKeyboardDisabled) {
+    if (onGamePage && inJapaneseMode && keyboardDisabled) {
         keyboardDisabledText.classList.remove('hidden');
     }
 }
