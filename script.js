@@ -2405,8 +2405,8 @@ const japaneseWord = document.getElementById('japanese-word');
 const soundBtn = document.getElementById('sound-btn');
 const autoPlayToggle = document.getElementById('auto-play-toggle');
 const japaneseKeyboardToggle = document.getElementById('japanese-keyboard-toggle');
-const keyboardDisabledText = document.getElementById('keyboard-disabled-text');
 const adConsentStatus = document.getElementById('ad-consent-status');
+const keyboardDisabledNotice = document.getElementById('keyboard-disabled-notice');
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
@@ -2989,10 +2989,6 @@ function showPage(pageName) {
     // Detect game exit before processing page change
     detectGameExit();
     
-    // Hide keyboard disabled text when leaving game page
-    if (pageName !== 'game' && keyboardDisabledText) {
-        keyboardDisabledText.classList.add('hidden');
-    }
     
     // Hide all pages
     startPage.style.display = 'none';
@@ -3046,8 +3042,8 @@ function showPage(pageName) {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
         
-        // Update keyboard disabled text when entering game
-        updateKeyboardDisabledText();
+        // Update keyboard disabled notice when entering game
+        updateKeyboardDisabledNotice();
     } else if (pageName === 'word-entry-selection') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -6893,6 +6889,9 @@ function updateAllText() {
     
     // Update ad consent indicator
     updateAdConsentIndicator();
+    
+    // Update keyboard disabled notice
+    updateKeyboardDisabledNotice();
 }
 
 function updateCustomWordInputPlaceholders() {
@@ -7524,34 +7523,36 @@ function setupJapaneseKeyboardToggle() {
                 } else {
                     hideHiraganaKeyboard();
                 }
-                updateKeyboardDisabledText();
+                updateKeyboardDisabledNotice();
             }
         });
     }
 }
 
-function updateKeyboardDisabledText() {
-    if (!keyboardDisabledText) return;
+
+
+
+
+
+// Japanese Keyboard Disabled Notice
+function updateKeyboardDisabledNotice() {
+    if (!keyboardDisabledNotice) return;
     
-    // Always hide first
-    keyboardDisabledText.classList.add('hidden');
+    // Check all three conditions:
+    // 1. User is on game page
+    // 2. User is in Japanese mode (mirrored or custom)
+    // 3. Japanese keyboard is disabled
+    const isOnGamePage = currentPage === 'game';
+    const isInJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
+    const isKeyboardDisabled = !showJapaneseKeyboard;
     
-    // Only show if ALL conditions are met:
-    // 1. We're on the game page
-    // 2. We're in a Japanese mode (mirrored or custom)
-    // 3. The keyboard is disabled
-    const onGamePage = currentPage === 'game';
-    const inJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
-    const keyboardDisabled = !showJapaneseKeyboard;
-    
-    if (onGamePage && inJapaneseMode && keyboardDisabled) {
-        keyboardDisabledText.classList.remove('hidden');
+    // Only show if ALL three conditions are true
+    if (isOnGamePage && isInJapaneseMode && isKeyboardDisabled) {
+        keyboardDisabledNotice.style.display = 'block';
+    } else {
+        keyboardDisabledNotice.style.display = 'none';
     }
 }
-
-
-
-
 
 // Deep copy function for exact data replication
 function deepCopyCustomModeData(data) {

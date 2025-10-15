@@ -3546,19 +3546,6 @@ body.dark-mode .number-key {
     cursor: default !important;
 }
 
-/* Keyboard disabled text styling */
-.keyboard-disabled-text {
-    font-size: 0.85em;
-    color: #888;
-    text-align: center;
-    margin-bottom: 8px;
-    font-style: italic;
-    opacity: 0.7;
-}
-
-body.dark-mode .keyboard-disabled-text {
-    color: #aaa;
-}
 
 /* Ad Consent Status Indicator */
 .ad-consent-indicator {
@@ -3652,4 +3639,18 @@ body.dark-mode .number-key:hover {
     opacity: 0 !important;
     transform: none !important;
     box-shadow: none !important;
+}
+
+/* Japanese Keyboard Disabled Notice */
+.keyboard-disabled-notice {
+    font-size: 0.85em;
+    color: #888;
+    text-align: center;
+    margin-bottom: 8px;
+    font-style: italic;
+    opacity: 0.7;
+}
+
+body.dark-mode .keyboard-disabled-notice {
+    color: #aaa;
 }
