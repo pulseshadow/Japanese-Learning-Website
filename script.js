@@ -7549,10 +7549,8 @@ function updateKeyboardDisabledNotice() {
     // Only show if ALL three conditions are true
     if (isOnGamePage && isInJapaneseMode && isKeyboardDisabled) {
         keyboardDisabledNotice.style.display = 'block';
-        keyboardDisabledNotice.style.marginBottom = '4px';
     } else {
         keyboardDisabledNotice.style.display = 'none';
-        keyboardDisabledNotice.style.marginBottom = '0px';
     }
 }
 
