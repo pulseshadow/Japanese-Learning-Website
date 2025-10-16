@@ -3646,9 +3646,11 @@ body.dark-mode .number-key:hover {
     font-size: 0.85em;
     color: #888;
     text-align: center;
-    margin-bottom: 2px;
+    margin: 0;
+    padding: 0;
     font-style: italic;
     opacity: 0.7;
+    line-height: 1.2;
 }
 
 body.dark-mode .keyboard-disabled-notice {
