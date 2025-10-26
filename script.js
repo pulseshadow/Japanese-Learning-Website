@@ -2410,6 +2410,7 @@ const keyboardDisabledNotice = document.getElementById('keyboard-disabled-notice
 const answerInput = document.getElementById('answer-input');
 const correctAnswerDisplay = document.getElementById('correct-answer-display');
 const nextRoundBtn = document.getElementById('next-round-btn');
+const backToStartGameBtn = document.getElementById('back-to-start-btn');
 const roundSelector = document.getElementById('round-selector');
 
 // Settings and language DOM elements
@@ -3439,6 +3440,13 @@ answerInput.addEventListener('keypress', (e) => {
 
 
 nextRoundBtn.addEventListener('click', nextRound);
+
+backToStartGameBtn.addEventListener('click', () => {
+    // Clear custom mode variables when going back to start
+    clearCustomModeVariables();
+    // Use enhanced page navigation with exit detection
+    showPageWithExitDetection('start');
+});
 
 
 
