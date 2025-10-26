@@ -837,9 +837,8 @@ body.dark-mode .settings-btn:hover {
 
 .header-top-row .back-btn {
     position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    left: -5px;
+    top: -5px;
     z-index: 10;
     margin-top: 0;
     background: #d64a2a;
