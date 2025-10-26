@@ -10236,8 +10236,9 @@ function rejectCookies() {
     
     // Save consent preference
     const consentData = {
-        analytics: false, // User rejected analytics
-        advertising: false,
+        given: true,
+        adsEnabled: false,
+        analyticsEnabled: false,
         timestamp: Date.now()
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
@@ -10268,8 +10269,9 @@ function acceptCookies() {
     
     // Save consent preference
     const consentData = {
-        analytics: true,
-        advertising: true, // User accepted all cookies
+        given: true,
+        adsEnabled: true,
+        analyticsEnabled: true,
         timestamp: Date.now()
     };
     saveToLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, consentData);
@@ -10290,6 +10292,35 @@ function acceptCookies() {
 
 function loadCookieConsent() {
     console.log('=== Loading Cookie Consent ===');
+    
+    // Check if consent has been given before
+    const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
+    
+    if (consentData && consentData.given) {
+        console.log('Cookie consent already given, not showing popup');
+        // Apply the saved consent settings
+        if (consentData.adsEnabled) {
+            adsenseScript.classList.remove('disabled');
+            window.adsenseEnabled = true;
+            showAdContainers();
+        } else {
+            adsenseScript.classList.add('disabled');
+            window.adsenseEnabled = false;
+        }
+        
+        if (consentData.analyticsEnabled) {
+            analyticsScript.classList.remove('disabled');
+            window.analyticsEnabled = true;
+        } else {
+            analyticsScript.classList.add('disabled');
+            window.analyticsEnabled = false;
+        }
+        
+        return true; // Consent already given, don't show popup
+    }
+    
+    // No consent given yet - show popup
+    console.log('No consent given, showing cookie consent popup');
     
     // ALWAYS ENABLE ADS BY DEFAULT - Simplified approach
     console.log('Enabling ads by default...');
@@ -10332,10 +10363,10 @@ function loadCookieConsent() {
     
     console.log('Cookie consent loaded - ADS ENABLED, Analytics disabled');
     
-    // TEMPORARILY: Always show cookie consent popup for testing
+    // Show the cookie consent popup
     showCookieConsent();
     
-    return false; // Return false to show cookie popup
+    return false; // Return false to indicate popup should be shown
 }
 
 // Policy page navigation functions
