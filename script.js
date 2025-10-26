@@ -10331,7 +10331,11 @@ function loadCookieConsent() {
     window.analyticsEnabled = false;
     
     console.log('Cookie consent loaded - ADS ENABLED, Analytics disabled');
-    return true; // Always return true to prevent cookie popup
+    
+    // TEMPORARILY: Always show cookie consent popup for testing
+    showCookieConsent();
+    
+    return false; // Return false to show cookie popup
 }
 
 // Policy page navigation functions
