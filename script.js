@@ -13,9 +13,9 @@ let eliminationWords = []; // Words for elimination phase (no repetition)
 
 // Settings and language variables
 let currentLanguage = 'en';
-let isDarkMode = false;
+let isDarkMode = true;
 let autoPlaySound = true; // Default to true (enabled)
-let showJapaneseKeyboard = true; // Default to true (enabled)
+let showJapaneseKeyboard = false; // Default to false (disabled)
 
 // Multi-language word pools with translations for all supported languages
 const wordPools = {
@@ -7538,24 +7538,10 @@ function setupJapaneseKeyboardToggle() {
 function updateKeyboardDisabledNotice() {
     if (!keyboardDisabledNotice) return;
     
-    // Check all three conditions:
-    // 1. User is on game page
-    // 2. User is in Japanese mode (mirrored or custom)
-    // 3. Japanese keyboard is disabled
-    const isOnGamePage = currentPage === 'game';
-    const isInJapaneseMode = window.mirroredMode || window.japaneseCustomModeEnabled;
-    const isKeyboardDisabled = !showJapaneseKeyboard;
-    
-    // Only show if ALL three conditions are true
-    if (isOnGamePage && isInJapaneseMode && isKeyboardDisabled) {
-        keyboardDisabledNotice.style.display = 'block';
-        keyboardDisabledNotice.style.margin = '0';
-        keyboardDisabledNotice.style.padding = '0';
-    } else {
-        keyboardDisabledNotice.style.display = 'none';
-        keyboardDisabledNotice.style.margin = '0';
-        keyboardDisabledNotice.style.padding = '0';
-    }
+    // Always hide the keyboard disabled notice
+    keyboardDisabledNotice.style.display = 'none';
+    keyboardDisabledNotice.style.margin = '0';
+    keyboardDisabledNotice.style.padding = '0';
 }
 
 // Deep copy function for exact data replication
@@ -9469,7 +9455,7 @@ function saveSettings() {
 }
 
 function loadSettings() {
-    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: false, autoPlaySound: true, showJapaneseKeyboard: true });
+    const settings = loadFromLocalStorage(STORAGE_KEYS.SETTINGS, { language: 'en', darkMode: true, autoPlaySound: true, showJapaneseKeyboard: false });
     console.log('Loading settings:', settings);
     
     // Validate and apply language setting
@@ -9485,8 +9471,8 @@ function loadSettings() {
     if (settings && typeof settings.darkMode === 'boolean') {
         isDarkMode = settings.darkMode;
     } else {
-        isDarkMode = false;
-        console.warn('Invalid dark mode setting, defaulting to light mode');
+        isDarkMode = true;
+        console.warn('Invalid dark mode setting, defaulting to dark mode');
     }
     
     // Validate and apply auto-play sound setting
@@ -9503,8 +9489,8 @@ function loadSettings() {
         showJapaneseKeyboard = settings.showJapaneseKeyboard;
         console.log('Loaded showJapaneseKeyboard setting:', showJapaneseKeyboard);
     } else {
-        showJapaneseKeyboard = true;
-        console.warn('Invalid Japanese keyboard setting, defaulting to enabled');
+        showJapaneseKeyboard = false;
+        console.warn('Invalid Japanese keyboard setting, defaulting to disabled');
     }
     
     // Apply settings
@@ -10470,7 +10456,7 @@ function testLocalStorage() {
     saveSettings();
     
     currentLanguage = 'en';
-    isDarkMode = false;
+    isDarkMode = true;
     loadSettings();
     
     console.log('Language restored:', currentLanguage === 'es' ? '✅' : '❌', currentLanguage);
