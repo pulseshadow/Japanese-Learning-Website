@@ -2696,6 +2696,11 @@ backToWordEntryBtn.addEventListener('click', () => {
       showPage('japanese-custom-mode');
     } else if (window.japaneseCustomModeEnabled) {
       console.log('Starting Japanese custom mode with Hiragana');
+      // Validate that we have words selected before starting
+      if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
+        alert(getTranslatedMessage('must-select-words'));
+        return;
+      }
       startJapaneseCustomGame();
     } else {
       console.log('Starting mirrored brute force mode with Hiragana');
@@ -3509,6 +3514,26 @@ function getTranslatedMessage(messageKey) {
             'id': 'Silakan pilih setidaknya satu kata untuk setidaknya satu ronde.',
             'ko': '최소한 한 라운드에서 최소한 한 단어를 선택해 주세요.',
             'vi': 'Vui lòng chọn ít nhất một từ cho ít nhất một vòng.'
+        },
+        'must-select-words': {
+            'en': 'You must select at least one word to start.',
+            'es': 'Debes seleccionar al menos una palabra para comenzar.',
+            'fr': 'Vous devez sélectionner au moins un mot pour commencer.',
+            'ja': '開始するには少なくとも1つの単語を選択する必要があります。',
+            'zh': '您必须选择至少一个单词才能开始。',
+            'id': 'Anda harus memilih setidaknya satu kata untuk memulai.',
+            'ko': '시작하려면 최소한 한 단어를 선택해야 합니다.',
+            'vi': 'Bạn phải chọn ít nhất một từ để bắt đầu.'
+        },
+        'all-rounds-must-have-words': {
+            'en': 'All rounds must have at least one word to start. If you\'d like to delete a round, click the "Remove Round" button.',
+            'es': 'Todas las rondas deben tener al menos una palabra para comenzar. Si deseas eliminar una ronda, haz clic en el botón "Eliminar Ronda".',
+            'fr': 'Tous les tours doivent avoir au moins un mot pour commencer. Si vous souhaitez supprimer un tour, cliquez sur le bouton "Supprimer le Tour".',
+            'ja': '開始するには、すべてのラウンドに少なくとも1つの単語が必要です。ラウンドを削除したい場合は、「ラウンドを削除」ボタンをクリックしてください。',
+            'zh': '所有轮次都必须至少有一个单词才能开始。如果您想删除轮次，请点击"删除轮次"按钮。',
+            'id': 'Semua ronde harus memiliki setidaknya satu kata untuk memulai. Jika Anda ingin menghapus ronde, klik tombol "Hapus Ronde".',
+            'ko': '시작하려면 모든 라운드에 최소한 한 단어가 있어야 합니다. 라운드를 삭제하고 싶다면 "라운드 제거" 버튼을 클릭하세요.',
+            'vi': 'Tất cả các vòng phải có ít nhất một từ để bắt đầu. Nếu bạn muốn xóa một vòng, hãy nhấp vào nút "Xóa Vòng".'
         }
     };
     
@@ -6030,7 +6055,20 @@ function startJapaneseCustomRun() {
     
     // Check if we have any rounds with words
     if (!window.japaneseCustomWordPools || window.japaneseCustomWordPools.length === 0) {
-        console.warn('No Japanese custom rounds with words found');
+        alert(getTranslatedMessage('must-select-words'));
+        return;
+    }
+    
+    // Check if any rounds are empty
+    const emptyRounds = [];
+    window.japaneseCustomWordPools.forEach((roundWords, index) => {
+        if (!roundWords || roundWords.length === 0) {
+            emptyRounds.push(index + 1);
+        }
+    });
+    
+    if (emptyRounds.length > 0) {
+        alert(getTranslatedMessage('all-rounds-must-have-words'));
         return;
     }
     
@@ -8951,6 +8989,7 @@ function toggleWordSection(gridIndex, roundIndex) {
 function startCustomRun() {
     const rounds = document.querySelectorAll('.custom-round');
     const customWordPools = [];
+    const emptyRounds = [];
     
     rounds.forEach((round, index) => {
         const selectedWords = [];
@@ -8965,11 +9004,20 @@ function startCustomRun() {
         
         if (selectedWords.length > 0) {
             customWordPools.push(selectedWords);
+        } else {
+            emptyRounds.push(index + 1);
         }
     });
     
+    // Check if no words are selected at all
     if (customWordPools.length === 0) {
-        alert(getTranslatedMessage('select-words'));
+        alert(getTranslatedMessage('must-select-words'));
+        return;
+    }
+    
+    // Check if any rounds are empty
+    if (emptyRounds.length > 0) {
+        alert(getTranslatedMessage('all-rounds-must-have-words'));
         return;
     }
     
