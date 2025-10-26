@@ -2165,6 +2165,10 @@ body.dark-mode .stat-value {
     backdrop-filter: blur(5px);
 }
 
+.cookie-overlay {
+    display: none;
+}
+
 .cookie-overlay.hidden {
     display: none;
 }
