@@ -597,6 +597,8 @@ body.dark-mode .text-box-content {
     font-size: 1.2rem;
     cursor: pointer;
     padding: 5px;
+    width: 30px;
+    text-align: center;
 }
 
 body.dark-mode .collapse-btn {
@@ -609,10 +611,6 @@ body.dark-mode .collapse-btn {
 
 body.dark-mode .collapse-btn:hover {
     color: #ffffff;
-}
-
-.collapse-btn.rotated {
-    transform: rotate(180deg);
 }
 
 .title {
@@ -1096,7 +1094,7 @@ body.dark-mode .custom-round-content {
 }
 
 .custom-round-header .collapse-btn.rotated {
-    transform: rotate(180deg);
+    transform: none !important;
 }
 
 /* Prevent rotation for word section collapse buttons */

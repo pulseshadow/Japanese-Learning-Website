@@ -6615,7 +6615,7 @@ function toggleSection(sectionId) {
         // Closing the section - show right arrow
         section.classList.add('collapsed');
         button.textContent = '▶';
-        button.classList.add('rotated');
+        button.classList.remove('rotated');
     }
 }
 
