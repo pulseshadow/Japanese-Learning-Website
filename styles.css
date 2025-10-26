@@ -597,7 +597,6 @@ body.dark-mode .text-box-content {
     font-size: 1.2rem;
     cursor: pointer;
     padding: 5px;
-    transition: transform 0.2s ease;
 }
 
 body.dark-mode .collapse-btn {
@@ -841,7 +840,8 @@ body.dark-mode .settings-btn:hover {
 .header-top-row .back-btn {
     position: absolute;
     left: 0;
-    top: 0;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 10;
     margin-top: 0;
     background: #d64a2a;
