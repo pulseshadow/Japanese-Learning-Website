@@ -565,6 +565,7 @@ body.dark-mode .text-box {
     justify-content: space-between;
     align-items: center;
     border-bottom: none;
+    min-height: 50px;
 }
 
 body.dark-mode .text-box-header {
@@ -598,7 +599,9 @@ body.dark-mode .text-box-content {
     cursor: pointer;
     padding: 5px;
     width: 30px;
+    height: 30px;
     text-align: center;
+    flex-shrink: 0;
 }
 
 body.dark-mode .collapse-btn {
@@ -843,7 +846,7 @@ body.dark-mode .settings-btn:hover {
     margin-top: 0;
     background: #d64a2a;
     border-color: #c03d1f;
-    padding: 8px 16px;
+    padding: 12px 16px;
     min-width: 120px;
 }
 
