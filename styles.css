@@ -1938,7 +1938,7 @@ body.dark-mode #answer-input.error {
 
 .game-footer {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 10px;
     color: #333333;
 }
 
@@ -1947,7 +1947,7 @@ body.dark-mode .game-footer {
 }
 
 .progress-section {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     color: #333333;
 }
 
@@ -2005,7 +2005,7 @@ body.dark-mode .button-section {
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 body.dark-mode .next-round-btn {
