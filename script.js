@@ -6607,12 +6607,14 @@ function toggleSection(sectionId) {
     const button = event.target;
     
     if (section.classList.contains('collapsed')) {
+        // Opening the section - show down arrow
         section.classList.remove('collapsed');
         button.textContent = '▼';
         button.classList.remove('rotated');
     } else {
+        // Closing the section - show right arrow
         section.classList.add('collapsed');
-        button.textContent = '▲';
+        button.textContent = '▶';
         button.classList.add('rotated');
     }
 }
