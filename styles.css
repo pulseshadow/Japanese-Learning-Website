@@ -2675,6 +2675,13 @@ body.dark-mode .ad-container {
     z-index: 100;
 }
 
+/* Hide all ad containers on start page - JavaScript will handle this, but this is a backup */
+#start-page .ad-container {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
 /* Responsive ad sizing for inline ads */
 @media (max-width: 768px) {
     .ad-container {
