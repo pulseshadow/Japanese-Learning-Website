@@ -1010,9 +1010,17 @@
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         
+        // Function to enable analytics (called when user consents)
+        window.enableAnalytics = function() {
+            if (typeof gtag !== 'undefined') {
+                gtag('js', new Date());
+                gtag('config', 'G-2CFV890C7W');
+                console.log('Google Analytics initialized');
+            }
+        };
+        
         // Don't execute analytics until user consents
-        // gtag('js', new Date());
-        // gtag('config', 'G-2CFV890C7W');
+        // Analytics will be initialized when enableAnalytics() is called
         
         console.log('Google Analytics script loaded (waiting for consent)');
         window.analyticsEnabled = false; // Default to disabled

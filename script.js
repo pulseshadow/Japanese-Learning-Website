@@ -10298,31 +10298,36 @@ function loadCookieConsent() {
     // Check if consent has been given before
     const consentData = loadFromLocalStorage(STORAGE_KEYS.COOKIE_CONSENT, null);
     
-    if (consentData && consentData.given) {
-        console.log('Cookie consent already given, not showing popup');
-        // Apply the saved consent settings
-        if (consentData.adsEnabled) {
-            adsenseScript.classList.remove('disabled');
-            window.adsenseEnabled = true;
-            showAdContainers();
-        } else {
-            adsenseScript.classList.add('disabled');
-            window.adsenseEnabled = false;
-        }
-        
-        if (consentData.analyticsEnabled) {
-            analyticsScript.classList.remove('disabled');
-            window.analyticsEnabled = true;
-        } else {
-            analyticsScript.classList.add('disabled');
-            window.analyticsEnabled = false;
-        }
-        
-        return true; // Consent already given, don't show popup
-    }
+    // TEMPORARILY: Always show popup for testing
+    // if (consentData && consentData.given) {
+    //     console.log('Cookie consent already given, not showing popup');
+    //     // Apply the saved consent settings
+    //     if (consentData.adsEnabled) {
+    //         adsenseScript.classList.remove('disabled');
+    //         window.adsenseEnabled = true;
+    //         showAdContainers();
+    //     } else {
+    //         adsenseScript.classList.add('disabled');
+    //         window.adsenseEnabled = false;
+    //     }
+    //     
+    //     if (consentData.analyticsEnabled) {
+    //         analyticsScript.classList.remove('disabled');
+    //         window.analyticsEnabled = true;
+    //         // Initialize analytics if consent was previously given
+    //         if (typeof window.enableAnalytics === 'function') {
+    //             window.enableAnalytics();
+    //         }
+    //     } else {
+    //         analyticsScript.classList.add('disabled');
+    //         window.analyticsEnabled = false;
+    //     }
+    //     
+    //     return true; // Consent already given, don't show popup
+    // }
     
-    // No consent given yet - show popup
-    console.log('No consent given, showing cookie consent popup');
+    // No consent given yet - show popup (TEMPORARILY: Always show for testing)
+    console.log('Showing cookie consent popup (temporarily always shown for testing)');
     
     // ALWAYS ENABLE ADS BY DEFAULT - Simplified approach
     console.log('Enabling ads by default...');
