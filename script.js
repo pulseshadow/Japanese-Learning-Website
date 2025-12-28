@@ -10109,15 +10109,18 @@ function showAdContainers() {
             container.style.margin = '0';
             container.style.padding = '0';
         } else {
-            // Show side ads, top ads, and bottom ads
-            container.style.display = '';
-            container.style.visibility = '';
-            container.style.opacity = '';
-            container.style.height = '';
-            container.style.width = '';
-            container.style.overflow = '';
-            container.style.position = '';
-            container.style.left = '';
+            // Show side ads, top ads, and bottom ads - remove inline styles to let CSS handle it
+            container.style.removeProperty('display');
+            container.style.removeProperty('visibility');
+            container.style.removeProperty('opacity');
+            container.style.removeProperty('height');
+            container.style.removeProperty('width');
+            container.style.removeProperty('overflow');
+            container.style.removeProperty('position');
+            container.style.removeProperty('left');
+            container.style.removeProperty('margin');
+            container.style.removeProperty('padding');
+            container.classList.remove('hidden');
         }
     });
     
@@ -10133,15 +10136,15 @@ function showAdContainers() {
             ad.style.position = 'absolute';
             ad.style.left = '-9999px';
         } else {
-            // Show ad elements outside start page
-            ad.style.display = '';
-            ad.style.visibility = '';
-            ad.style.opacity = '';
-            ad.style.height = '';
-            ad.style.width = '';
-            ad.style.overflow = '';
-            ad.style.position = '';
-            ad.style.left = '';
+            // Show ad elements outside start page - remove inline styles
+            ad.style.removeProperty('display');
+            ad.style.removeProperty('visibility');
+            ad.style.removeProperty('opacity');
+            ad.style.removeProperty('height');
+            ad.style.removeProperty('width');
+            ad.style.removeProperty('overflow');
+            ad.style.removeProperty('position');
+            ad.style.removeProperty('left');
         }
     });
     
@@ -10860,47 +10863,67 @@ function showAdContainers() {
             ad.style.left = '-9999px';
             console.log(`🚫 Ad element ${index + 1} hidden (start page)`);
         } else {
-            // Show ad elements outside start page
-            ad.style.display = '';
-            ad.style.visibility = '';
-            ad.style.opacity = '';
-            ad.style.height = '';
-            ad.style.width = '';
-            ad.style.overflow = '';
-            ad.style.position = '';
-            ad.style.left = '';
+            // Show ad elements outside start page - remove inline styles
+            ad.style.removeProperty('display');
+            ad.style.removeProperty('visibility');
+            ad.style.removeProperty('opacity');
+            ad.style.removeProperty('height');
+            ad.style.removeProperty('width');
+            ad.style.removeProperty('overflow');
+            ad.style.removeProperty('position');
+            ad.style.removeProperty('left');
             console.log(`✅ Ad element ${index + 1} shown`);
         }
     });
     
-    // Force AdSense to load immediately
+    // Force AdSense to load immediately for visible ads only
     console.log('=== FORCING ADSENSE TO LOAD ===');
-    if (typeof adsbygoogle !== 'undefined') {
-        console.log('AdSense available, pushing ads immediately...');
-        try {
-            adsbygoogle.push({});
-            console.log('✅ AdSense ads pushed successfully');
-        } catch (error) {
-            console.error('❌ Error pushing AdSense ads:', error);
-        }
-    } else {
-        console.warn('⚠️ AdSense not available, loading script...');
-        // Load AdSense script immediately
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
-        script.crossOrigin = 'anonymous';
-        script.onload = function() {
-            console.log('✅ AdSense script loaded, pushing ads...');
-            if (typeof adsbygoogle !== 'undefined') {
-                adsbygoogle.push({});
-                console.log('✅ AdSense ads pushed after script load');
+    setTimeout(() => {
+        if (typeof adsbygoogle !== 'undefined') {
+            console.log('AdSense available, pushing ads immediately...');
+            try {
+                // Push ads for all visible ad containers
+                const visibleAds = document.querySelectorAll('.ad-container:not([style*="display: none"]):not([style*="display:none"]) .adsbygoogle, .ad-container:not([style*="display: none"]):not([style*="display:none"]) ins.adsbygoogle');
+                visibleAds.forEach(ad => {
+                    try {
+                        (adsbygoogle = window.adsbygoogle || []).push({});
+                    } catch (e) {
+                        console.warn('Ad already loaded or error:', e);
+                    }
+                });
+                console.log(`✅ AdSense ads pushed for ${visibleAds.length} visible ad elements`);
+            } catch (error) {
+                console.error('❌ Error pushing AdSense ads:', error);
             }
-        };
-        document.head.appendChild(script);
-    }
+        } else {
+            console.warn('⚠️ AdSense not available, loading script...');
+            // Load AdSense script immediately
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+            script.crossOrigin = 'anonymous';
+            script.onload = function() {
+                console.log('✅ AdSense script loaded, pushing ads...');
+                if (typeof adsbygoogle !== 'undefined') {
+                    setTimeout(() => {
+                        const visibleAds = document.querySelectorAll('.ad-container:not([style*="display: none"]):not([style*="display:none"]) .adsbygoogle, .ad-container:not([style*="display: none"]):not([style*="display:none"]) ins.adsbygoogle');
+                        visibleAds.forEach(ad => {
+                            try {
+                                (adsbygoogle = window.adsbygoogle || []).push({});
+                            } catch (e) {
+                                console.warn('Ad already loaded or error:', e);
+                            }
+                        });
+                        console.log(`✅ AdSense ads pushed after script load for ${visibleAds.length} visible ad elements`);
+                    }, 100);
+                }
+            };
+            document.head.appendChild(script);
+        }
+    }, 500);
     
     // Set up monitoring to keep inline ads on start page hidden, but show side/top/bottom ads
+    // Use a longer interval to avoid interfering with ad loading
     setInterval(() => {
         const adContainers = document.querySelectorAll('.ad-container');
         const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
@@ -10917,20 +10940,20 @@ function showAdContainers() {
                 container.style.overflow = 'hidden';
                 container.style.margin = '0';
                 container.style.padding = '0';
-            } else {
-                // Ensure side/top/bottom ads remain visible
-                container.classList.remove('hidden');
-                if (container.id === 'bottom-ad') {
-                    container.style.display = 'block';
-                    container.style.visibility = 'visible';
-                    container.style.opacity = '1';
-                } else {
-                    // Let CSS handle side ads
-                    container.style.display = '';
-                    container.style.visibility = '';
-                    container.style.opacity = '';
-                }
-            }
+        } else {
+            // Ensure side/top/bottom ads remain visible - remove inline styles to let CSS handle it
+            container.classList.remove('hidden');
+            container.style.removeProperty('display');
+            container.style.removeProperty('visibility');
+            container.style.removeProperty('opacity');
+            container.style.removeProperty('height');
+            container.style.removeProperty('width');
+            container.style.removeProperty('overflow');
+            container.style.removeProperty('position');
+            container.style.removeProperty('left');
+            container.style.removeProperty('margin');
+            container.style.removeProperty('padding');
+        }
         });
         
         adElements.forEach((ad, index) => {
@@ -10945,13 +10968,18 @@ function showAdContainers() {
                 ad.style.position = 'absolute';
                 ad.style.left = '-9999px';
             } else {
-                // Show ad elements outside start page
-                ad.style.display = '';
-                ad.style.visibility = '';
-                ad.style.opacity = '';
+                // Show ad elements outside start page - remove inline styles
+                ad.style.removeProperty('display');
+                ad.style.removeProperty('visibility');
+                ad.style.removeProperty('opacity');
+                ad.style.removeProperty('height');
+                ad.style.removeProperty('width');
+                ad.style.removeProperty('overflow');
+                ad.style.removeProperty('position');
+                ad.style.removeProperty('left');
             }
         });
-    }, 500); // Check every 500ms
+    }, 2000); // Check every 2 seconds to avoid interfering with ad loading
 }
 
 
