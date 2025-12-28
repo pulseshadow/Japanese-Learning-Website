@@ -10093,62 +10093,36 @@ function initializeAds() {
 }
 
 function showAdContainers() {
-    // Show side, top, and bottom ads, but hide inline ads on start page
+    // Show only top/bottom/side ads, hide all middle/inline ads
     const adContainers = document.querySelectorAll('.ad-container');
-    const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
     
     adContainers.forEach(container => {
-        // Hide ads that are within the start page (inline ads)
-        if (startPage && startPage.contains(container)) {
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-            container.style.height = '0';
-            container.style.width = '0';
-            container.style.overflow = 'hidden';
-            container.style.margin = '0';
-            container.style.padding = '0';
-        } else {
-            // Show side ads, top ads, and bottom ads - remove inline styles to let CSS handle it
-            container.style.removeProperty('display');
-            container.style.removeProperty('visibility');
-            container.style.removeProperty('opacity');
-            container.style.removeProperty('height');
-            container.style.removeProperty('width');
-            container.style.removeProperty('overflow');
-            container.style.removeProperty('position');
-            container.style.removeProperty('left');
-            container.style.removeProperty('margin');
-            container.style.removeProperty('padding');
-            container.classList.remove('hidden');
+        const containerId = container.id;
+        const computedStyle = window.getComputedStyle(container);
+        const position = computedStyle.position;
+        
+        // Keep bottom ad
+        if (containerId === 'bottom-ad') {
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            return;
         }
-    });
-    
-    adElements.forEach(ad => {
-        // Hide ad elements within start page
-        if (startPage && startPage.contains(ad)) {
-            ad.style.display = 'none';
-            ad.style.visibility = 'hidden';
-            ad.style.opacity = '0';
-            ad.style.height = '0';
-            ad.style.width = '0';
-            ad.style.overflow = 'hidden';
-            ad.style.position = 'absolute';
-            ad.style.left = '-9999px';
-        } else {
-            // Show ad elements outside start page - remove inline styles
-            ad.style.removeProperty('display');
-            ad.style.removeProperty('visibility');
-            ad.style.removeProperty('opacity');
-            ad.style.removeProperty('height');
-            ad.style.removeProperty('width');
-            ad.style.removeProperty('overflow');
-            ad.style.removeProperty('position');
-            ad.style.removeProperty('left');
+        
+        // Keep ads with fixed or absolute positioning (top/side ads)
+        if (position === 'fixed' || position === 'absolute') {
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            return;
         }
+        
+        // Hide all middle/inline ads (static positioning)
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.opacity = '0';
     });
-    
-    console.log(`Ad containers managed: ${adContainers.length} total, inline ads on start page hidden`);
+    console.log('Ad containers shown (middle/inline ads hidden)');
 }
 
 function enablePersonalizedAds() {
@@ -10815,171 +10789,104 @@ function updateStatsDisplay() {
 
 // Ad container management functions
 function showAdContainers() {
-    console.log('=== MANAGING AD CONTAINERS ===');
+    console.log('=== SHOWING AD CONTAINERS ===');
     const adContainers = document.querySelectorAll('.ad-container');
-    const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
-    console.log(`Found ${adContainers.length} ad containers and ${adElements.length} ad elements`);
+    console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
-        // Hide ads that are within the start page (inline ads)
-        if (startPage && startPage.contains(container)) {
-            container.classList.add('hidden');
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-            container.style.height = '0';
-            container.style.width = '0';
-            container.style.overflow = 'hidden';
-            container.style.margin = '0';
-            container.style.padding = '0';
-            console.log(`🚫 Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden (start page inline)`);
-        } else {
-            // Show side ads, top ads, and bottom ads
+        const containerId = container.id;
+        const computedStyle = window.getComputedStyle(container);
+        const position = computedStyle.position;
+        
+        // Keep bottom ad
+        if (containerId === 'bottom-ad') {
             container.classList.remove('hidden');
-            container.style.display = '';
-            container.style.visibility = '';
-            container.style.opacity = '';
-            container.style.height = '';
-            container.style.width = '';
-            container.style.overflow = '';
-            container.style.margin = '';
-            container.style.padding = '';
-            container.style.position = '';
-            container.style.left = '';
-            console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown (side/top/bottom)`);
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            container.style.zIndex = '100';
+            console.log(`✅ Ad container ${index + 1} (ID: ${containerId || 'no-id'}) shown (bottom ad)`);
+            return;
         }
+        
+        // Keep ads with fixed or absolute positioning (top/side ads)
+        if (position === 'fixed' || position === 'absolute') {
+            container.classList.remove('hidden');
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            container.style.zIndex = '100';
+            console.log(`✅ Ad container ${index + 1} (ID: ${containerId || 'no-id'}) shown (top/side ad)`);
+            return;
+        }
+        
+        // Hide all middle/inline ads (static positioning)
+        container.classList.add('hidden');
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.opacity = '0';
+        console.log(`🚫 Ad container ${index + 1} (ID: ${containerId || 'no-id'}) hidden (middle/inline ad)`);
     });
     
-    adElements.forEach((ad, index) => {
-        // Hide ad elements within start page
-        if (startPage && startPage.contains(ad)) {
-            ad.style.display = 'none';
-            ad.style.visibility = 'hidden';
-            ad.style.opacity = '0';
-            ad.style.height = '0';
-            ad.style.width = '0';
-            ad.style.overflow = 'hidden';
-            ad.style.position = 'absolute';
-            ad.style.left = '-9999px';
-            console.log(`🚫 Ad element ${index + 1} hidden (start page)`);
-        } else {
-            // Show ad elements outside start page - remove inline styles
-            ad.style.removeProperty('display');
-            ad.style.removeProperty('visibility');
-            ad.style.removeProperty('opacity');
-            ad.style.removeProperty('height');
-            ad.style.removeProperty('width');
-            ad.style.removeProperty('overflow');
-            ad.style.removeProperty('position');
-            ad.style.removeProperty('left');
-            console.log(`✅ Ad element ${index + 1} shown`);
-        }
-    });
-    
-    // Force AdSense to load immediately for visible ads only
+    // Force AdSense to load immediately
     console.log('=== FORCING ADSENSE TO LOAD ===');
-    setTimeout(() => {
-        if (typeof adsbygoogle !== 'undefined') {
-            console.log('AdSense available, pushing ads immediately...');
-            try {
-                // Push ads for all visible ad containers
-                const visibleAds = document.querySelectorAll('.ad-container:not([style*="display: none"]):not([style*="display:none"]) .adsbygoogle, .ad-container:not([style*="display: none"]):not([style*="display:none"]) ins.adsbygoogle');
-                visibleAds.forEach(ad => {
-                    try {
-                        (adsbygoogle = window.adsbygoogle || []).push({});
-                    } catch (e) {
-                        console.warn('Ad already loaded or error:', e);
-                    }
-                });
-                console.log(`✅ AdSense ads pushed for ${visibleAds.length} visible ad elements`);
-            } catch (error) {
-                console.error('❌ Error pushing AdSense ads:', error);
-            }
-        } else {
-            console.warn('⚠️ AdSense not available, loading script...');
-            // Load AdSense script immediately
-            const script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
-            script.crossOrigin = 'anonymous';
-            script.onload = function() {
-                console.log('✅ AdSense script loaded, pushing ads...');
-                if (typeof adsbygoogle !== 'undefined') {
-                    setTimeout(() => {
-                        const visibleAds = document.querySelectorAll('.ad-container:not([style*="display: none"]):not([style*="display:none"]) .adsbygoogle, .ad-container:not([style*="display: none"]):not([style*="display:none"]) ins.adsbygoogle');
-                        visibleAds.forEach(ad => {
-                            try {
-                                (adsbygoogle = window.adsbygoogle || []).push({});
-                            } catch (e) {
-                                console.warn('Ad already loaded or error:', e);
-                            }
-                        });
-                        console.log(`✅ AdSense ads pushed after script load for ${visibleAds.length} visible ad elements`);
-                    }, 100);
-                }
-            };
-            document.head.appendChild(script);
+    if (typeof adsbygoogle !== 'undefined') {
+        console.log('AdSense available, pushing ads immediately...');
+        try {
+            adsbygoogle.push({});
+            console.log('✅ AdSense ads pushed successfully');
+        } catch (error) {
+            console.error('❌ Error pushing AdSense ads:', error);
         }
-    }, 500);
+    } else {
+        console.warn('⚠️ AdSense not available, loading script...');
+        // Load AdSense script immediately
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9490674375260891';
+        script.crossOrigin = 'anonymous';
+        script.onload = function() {
+            console.log('✅ AdSense script loaded, pushing ads...');
+            if (typeof adsbygoogle !== 'undefined') {
+                adsbygoogle.push({});
+                console.log('✅ AdSense ads pushed after script load');
+            }
+        };
+        document.head.appendChild(script);
+    }
     
-    // Set up monitoring to keep inline ads on start page hidden, but show side/top/bottom ads
-    // Use a longer interval to avoid interfering with ad loading
+    // Set up aggressive monitoring (but skip middle/inline ads)
     setInterval(() => {
         const adContainers = document.querySelectorAll('.ad-container');
-        const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
-        
         adContainers.forEach((container, index) => {
-            // Hide ads within start page (inline ads)
-            if (startPage && startPage.contains(container)) {
-                container.classList.add('hidden');
-                container.style.display = 'none';
-                container.style.visibility = 'hidden';
-                container.style.opacity = '0';
-                container.style.height = '0';
-                container.style.width = '0';
-                container.style.overflow = 'hidden';
-                container.style.margin = '0';
-                container.style.padding = '0';
-        } else {
-            // Ensure side/top/bottom ads remain visible - remove inline styles to let CSS handle it
-            container.classList.remove('hidden');
-            container.style.removeProperty('display');
-            container.style.removeProperty('visibility');
-            container.style.removeProperty('opacity');
-            container.style.removeProperty('height');
-            container.style.removeProperty('width');
-            container.style.removeProperty('overflow');
-            container.style.removeProperty('position');
-            container.style.removeProperty('left');
-            container.style.removeProperty('margin');
-            container.style.removeProperty('padding');
-        }
-        });
-        
-        adElements.forEach((ad, index) => {
-            // Hide ad elements within start page
-            if (startPage && startPage.contains(ad)) {
-                ad.style.display = 'none';
-                ad.style.visibility = 'hidden';
-                ad.style.opacity = '0';
-                ad.style.height = '0';
-                ad.style.width = '0';
-                ad.style.overflow = 'hidden';
-                ad.style.position = 'absolute';
-                ad.style.left = '-9999px';
-            } else {
-                // Show ad elements outside start page - remove inline styles
-                ad.style.removeProperty('display');
-                ad.style.removeProperty('visibility');
-                ad.style.removeProperty('opacity');
-                ad.style.removeProperty('height');
-                ad.style.removeProperty('width');
-                ad.style.removeProperty('overflow');
-                ad.style.removeProperty('position');
-                ad.style.removeProperty('left');
+            const containerId = container.id;
+            const computedStyle = window.getComputedStyle(container);
+            const position = computedStyle.position;
+            
+            // Skip monitoring for middle/inline ads (they should stay hidden)
+            if (containerId !== 'bottom-ad' && position !== 'fixed' && position !== 'absolute') {
+                return;
+            }
+            
+            const isHidden = container.classList.contains('hidden');
+            const display = window.getComputedStyle(container).display;
+            const visibility = window.getComputedStyle(container).visibility;
+            const opacity = window.getComputedStyle(container).opacity;
+            
+            if (isHidden || display === 'none' || visibility === 'hidden' || opacity === '0') {
+                console.warn(`⚠️ Ad container ${index + 1} (${containerId || 'no-id'}) became hidden!`);
+                
+                // Aggressively restore
+                container.classList.remove('hidden');
+                container.style.display = 'block';
+                container.style.visibility = 'visible';
+                container.style.opacity = '1';
+                container.style.zIndex = '100';
+                
+                console.log(`✅ Aggressively restored ad container ${index + 1}`);
             }
         });
-    }, 2000); // Check every 2 seconds to avoid interfering with ad loading
+    }, 500); // Check every 500ms
 }
 
 

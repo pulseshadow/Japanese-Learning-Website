@@ -2683,10 +2683,15 @@ body.dark-mode .ad-container {
     }
 }
 
-/* Hide inline ads on start page only (keep side, top, and bottom ads visible) */
-#start-page .ad-container,
-#start-page .adsbygoogle,
-#start-page ins.adsbygoogle {
+/* Hide all middle/inline ads on all pages (keep only top/bottom banners and side ads) */
+/* Hide specific middle ad IDs */
+#brute-force-ad,
+#brute-force-english-ad,
+#brute-force-japanese-ad,
+#game-english-hiragana-ad,
+#custom-script-selection-ad,
+#custom-mode-ad,
+#japanese-custom-mode-ad {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -2739,9 +2744,6 @@ body.dark-mode .select-all-container label {
     background: #f8f9fa;
     border-top: 1px solid #e9ecef;
     min-height: 120px;
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
 }
 
 body.dark-mode #bottom-ad {
