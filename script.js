@@ -3037,12 +3037,6 @@ function showPage(pageName) {
         // Hide hiragana keyboard when returning to start
         hideHiraganaKeyboard();
         
-        // Hide all ad containers on start page
-        const allAdContainers = document.querySelectorAll('.ad-container');
-        allAdContainers.forEach(container => {
-            container.style.display = 'none';
-        });
-        
         startPage.style.display = 'block';
         startPage.classList.add('active');
     } else if (pageName === 'script') {
@@ -6562,11 +6556,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Force reload ads after a longer delay to ensure everything is loaded
     setTimeout(() => {
         console.log('=== FORCE RELOADING ALL ADS ===');
-        // Skip if on start page
-        if (currentPage === 'start') {
-            console.log('Start page detected - skipping ad reload');
-            return;
-        }
         showAdContainers();
         if (typeof adsbygoogle !== 'undefined') {
             adsbygoogle.push({});
@@ -6582,7 +6571,7 @@ document.addEventListener('DOMContentLoaded', () => {
             script.onload = () => {
                 console.log('✅ Manual AdSense script injection successful');
                 
-                if (typeof adsbygoogle !== 'undefined' && currentPage !== 'start') {
+                if (typeof adsbygoogle !== 'undefined') {
                     adsbygoogle.push({});
                     console.log('✅ Ads pushed after manual injection');
                 }
@@ -10104,27 +10093,10 @@ function initializeAds() {
 }
 
 function showAdContainers() {
-    // Only show ad containers on the currently active page (not on start page)
-    if (currentPage === 'start') {
-        // Hide all ad containers on start page
-        const adContainers = document.querySelectorAll('.ad-container');
-        adContainers.forEach(container => {
-            container.style.display = 'none';
-        });
-        return;
-    }
-    
-    // Show ad containers only on the currently active page
+    // Show all ad containers
     const adContainers = document.querySelectorAll('.ad-container');
     adContainers.forEach(container => {
-        // Check if the container is within the currently active page
-        const activePage = document.querySelector('.page.active');
-        if (activePage && activePage.contains(container)) {
-            container.style.display = 'block';
-        } else {
-            // Hide containers that are not on the active page
-            container.style.display = 'none';
-        }
+        container.style.display = 'block';
     });
     console.log('Ad containers shown');
 }
@@ -10360,11 +10332,7 @@ function loadCookieConsent() {
     // Show ad containers immediately
     showAdContainers();
     
-    // Force AdSense to load immediately (but not on start page)
-    if (currentPage === 'start') {
-        console.log('Start page detected - skipping AdSense loading');
-        return;
-    }
+    // Force AdSense to load immediately
     console.log('Forcing AdSense to load...');
     if (typeof adsbygoogle !== 'undefined') {
         console.log('AdSense is available, pushing ads immediately...');
@@ -10383,7 +10351,7 @@ function loadCookieConsent() {
         script.crossOrigin = 'anonymous';
         script.onload = function() {
             console.log('AdSense script loaded, pushing ads...');
-            if (typeof adsbygoogle !== 'undefined' && currentPage !== 'start') {
+            if (typeof adsbygoogle !== 'undefined') {
                 adsbygoogle.push({});
                 console.log('AdSense ads pushed after script load');
             }
@@ -10798,57 +10766,25 @@ function updateStatsDisplay() {
 // Ad container management functions
 function showAdContainers() {
     console.log('=== SHOWING AD CONTAINERS ===');
-    
-    // Never show ads on start page
-    if (currentPage === 'start') {
-        console.log('Start page detected - hiding all ad containers');
-        const adContainers = document.querySelectorAll('.ad-container');
-        adContainers.forEach((container, index) => {
-            container.classList.add('hidden');
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-            console.log(`❌ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden on start page`);
-        });
-        return;
-    }
-    
     const adContainers = document.querySelectorAll('.ad-container');
     console.log(`Found ${adContainers.length} ad containers`);
     
-    // Get the currently active page
-    const activePage = document.querySelector('.page.active');
-    
     adContainers.forEach((container, index) => {
-        // Only show containers that are within the active page
-        if (activePage && activePage.contains(container)) {
-            // Aggressively show the container
-            container.classList.remove('hidden');
-            container.style.display = 'block';
-            container.style.visibility = 'visible';
-            container.style.opacity = '1';
-            container.style.zIndex = '100';
-            
-            console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown aggressively`);
-            console.log(`- Classes: ${container.className}`);
-            console.log(`- Display: ${container.style.display}`);
-            console.log(`- Visibility: ${container.style.visibility}`);
-            console.log(`- Opacity: ${container.style.opacity}`);
-        } else {
-            // Hide containers that are not on the active page
-            container.classList.add('hidden');
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-            console.log(`❌ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden (not on active page)`);
-        }
+        // Aggressively show the container
+        container.classList.remove('hidden');
+        container.style.display = 'block';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        container.style.zIndex = '100';
+        
+        console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown aggressively`);
+        console.log(`- Classes: ${container.className}`);
+        console.log(`- Display: ${container.style.display}`);
+        console.log(`- Visibility: ${container.style.visibility}`);
+        console.log(`- Opacity: ${container.style.opacity}`);
     });
     
-    // Force AdSense to load immediately (but not on start page)
-    if (currentPage === 'start') {
-        console.log('Start page detected - skipping AdSense loading');
-        return;
-    }
+    // Force AdSense to load immediately
     console.log('=== FORCING ADSENSE TO LOAD ===');
     if (typeof adsbygoogle !== 'undefined') {
         console.log('AdSense available, pushing ads immediately...');
@@ -10867,7 +10803,7 @@ function showAdContainers() {
         script.crossOrigin = 'anonymous';
         script.onload = function() {
             console.log('✅ AdSense script loaded, pushing ads...');
-            if (typeof adsbygoogle !== 'undefined' && currentPage !== 'start') {
+            if (typeof adsbygoogle !== 'undefined') {
                 adsbygoogle.push({});
                 console.log('✅ AdSense ads pushed after script load');
             }
@@ -10953,33 +10889,15 @@ function initializeAdSense() {
 function loadAdSenseAds() {
     console.log('=== LOADING ADSENSE ADS ===');
     
-    // Never load ads on start page
-    if (currentPage === 'start') {
-        console.log('Start page detected - skipping ad loading');
-        return;
-    }
-    
     // Check if AdSense is available
     console.log('AdSense available:', typeof adsbygoogle !== 'undefined');
     console.log('window.adsbygoogle:', window.adsbygoogle);
     
-    // Get the currently active page
-    const activePage = document.querySelector('.page.active');
-    if (!activePage) {
-        console.log('No active page found - skipping ad loading');
-        return;
-    }
-    
-    // Find all ad containers, but only process ones on the active page
+    // Find all ad containers
     const adContainers = document.querySelectorAll('.ad-container');
     console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
-        // Only load ads that are on the currently active page
-        if (!activePage.contains(container)) {
-            console.log(`Skipping ad container ${index + 1} (not on active page)`);
-            return;
-        }
         console.log(`\n--- Ad Container ${index + 1} ---`);
         console.log('Container ID:', container.id || 'no-id');
         console.log('Container HTML:', container.innerHTML.substring(0, 200) + '...');
