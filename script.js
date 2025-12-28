@@ -10093,12 +10093,20 @@ function initializeAds() {
 }
 
 function showAdContainers() {
-    // Show all ad containers
+    // Show all ad containers except those on start page
     const adContainers = document.querySelectorAll('.ad-container');
+    
     adContainers.forEach(container => {
-        container.style.display = 'block';
+        // Hide ads that are within the start page
+        if (startPage && startPage.contains(container)) {
+            container.style.display = 'none';
+            container.style.visibility = 'hidden';
+            container.style.opacity = '0';
+        } else {
+            container.style.display = 'block';
+        }
     });
-    console.log('Ad containers shown');
+    console.log('Ad containers shown (start page ads hidden)');
 }
 
 function enablePersonalizedAds() {
@@ -10770,18 +10778,27 @@ function showAdContainers() {
     console.log(`Found ${adContainers.length} ad containers`);
     
     adContainers.forEach((container, index) => {
-        // Aggressively show the container
-        container.classList.remove('hidden');
-        container.style.display = 'block';
-        container.style.visibility = 'visible';
-        container.style.opacity = '1';
-        container.style.zIndex = '100';
-        
-        console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown aggressively`);
-        console.log(`- Classes: ${container.className}`);
-        console.log(`- Display: ${container.style.display}`);
-        console.log(`- Visibility: ${container.style.visibility}`);
-        console.log(`- Opacity: ${container.style.opacity}`);
+        // Hide ads that are within the start page
+        if (startPage && startPage.contains(container)) {
+            container.classList.add('hidden');
+            container.style.display = 'none';
+            container.style.visibility = 'hidden';
+            container.style.opacity = '0';
+            console.log(`🚫 Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden (start page)`);
+        } else {
+            // Aggressively show the container
+            container.classList.remove('hidden');
+            container.style.display = 'block';
+            container.style.visibility = 'visible';
+            container.style.opacity = '1';
+            container.style.zIndex = '100';
+            
+            console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown aggressively`);
+            console.log(`- Classes: ${container.className}`);
+            console.log(`- Display: ${container.style.display}`);
+            console.log(`- Visibility: ${container.style.visibility}`);
+            console.log(`- Opacity: ${container.style.opacity}`);
+        }
     });
     
     // Force AdSense to load immediately
@@ -10811,10 +10828,15 @@ function showAdContainers() {
         document.head.appendChild(script);
     }
     
-    // Set up aggressive monitoring
+    // Set up aggressive monitoring (but skip start page ads)
     setInterval(() => {
         const adContainers = document.querySelectorAll('.ad-container');
         adContainers.forEach((container, index) => {
+            // Skip monitoring for ads within start page
+            if (startPage && startPage.contains(container)) {
+                return;
+            }
+            
             const isHidden = container.classList.contains('hidden');
             const display = window.getComputedStyle(container).display;
             const visibility = window.getComputedStyle(container).visibility;
