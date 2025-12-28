@@ -3039,17 +3039,39 @@ function showPage(pageName) {
         
         startPage.style.display = 'block';
         startPage.classList.add('active');
+        
+        // Hide ALL ads when on start page (including bottom ad)
+        setTimeout(() => {
+            const allAdContainers = document.querySelectorAll('.ad-container');
+            allAdContainers.forEach(container => {
+                container.style.display = 'none';
+                container.style.visibility = 'hidden';
+                container.style.opacity = '0';
+                container.style.height = '0';
+                container.style.width = '0';
+                container.style.overflow = 'hidden';
+                container.style.margin = '0';
+                container.style.padding = '0';
+            });
+            console.log(`Hidden ${allAdContainers.length} ad containers on start page`);
+        }, 100);
     } else if (pageName === 'script') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
         scriptPage.style.display = 'block';
         scriptPage.classList.add('active');
+        
+        // Show ads on other pages (except bottom ad which is always visible)
+        showAdContainers();
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
         
         // Update keyboard disabled notice when entering game
         updateKeyboardDisabledNotice();
+        
+        // Show ads on game page
+        showAdContainers();
     } else if (pageName === 'word-entry-selection') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -10828,10 +10850,25 @@ function showAdContainers() {
         document.head.appendChild(script);
     }
     
-    // Set up aggressive monitoring (but skip start page ads)
+    // Set up aggressive monitoring (but hide ads on start page)
     setInterval(() => {
         const adContainers = document.querySelectorAll('.ad-container');
+        const isStartPageActive = startPage && startPage.classList.contains('active') && startPage.style.display !== 'none';
+        
         adContainers.forEach((container, index) => {
+            // If on start page, hide all ads
+            if (isStartPageActive) {
+                container.style.display = 'none';
+                container.style.visibility = 'hidden';
+                container.style.opacity = '0';
+                container.style.height = '0';
+                container.style.width = '0';
+                container.style.overflow = 'hidden';
+                container.style.margin = '0';
+                container.style.padding = '0';
+                return;
+            }
+            
             // Skip monitoring for ads within start page
             if (startPage && startPage.contains(container)) {
                 return;

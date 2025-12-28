@@ -2683,8 +2683,22 @@ body.dark-mode .ad-container {
     }
 }
 
-/* Hide inline ads on start page (keep only top/bottom banners and side ads) */
-#start-page .ad-container {
+/* Hide ALL ads when start page is active */
+body:has(#start-page.active) .ad-container,
+#start-page.active ~ .ad-container,
+.ad-container:not(#bottom-ad) {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Hide bottom ad on start page too */
+body:has(#start-page.active) #bottom-ad {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
