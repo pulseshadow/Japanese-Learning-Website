@@ -2660,9 +2660,14 @@ body.dark-mode .language-names {
     border: 1px solid #e9ecef;
     border-radius: 8px;
     padding: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 body.dark-mode .ad-container {
@@ -2683,10 +2688,10 @@ body.dark-mode .ad-container {
     }
 }
 
-/* Hide ALL ads when start page is active */
-body:has(#start-page.active) .ad-container,
-#start-page.active ~ .ad-container,
-.ad-container:not(#bottom-ad) {
+/* Hide ALL ads on ALL pages */
+.ad-container,
+.adsbygoogle,
+ins.adsbygoogle {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
@@ -2695,18 +2700,8 @@ body:has(#start-page.active) .ad-container,
     overflow: hidden !important;
     margin: 0 !important;
     padding: 0 !important;
-}
-
-/* Hide bottom ad on start page too */
-body:has(#start-page.active) #bottom-ad {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
 /* Select All styling */
@@ -2739,18 +2734,19 @@ body.dark-mode .select-all-container label {
     cursor: pointer;
 }
 
-/* Bottom ad container styling */
+/* Bottom ad container styling - HIDDEN */
 #bottom-ad {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    margin: 0;
-    border-radius: 0;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
-    min-height: 120px;
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    min-height: 0 !important;
 }
 
 body.dark-mode #bottom-ad {
@@ -2758,39 +2754,9 @@ body.dark-mode #bottom-ad {
     border-top-color: #444;
 }
 
-/* Add bottom padding to body to prevent content from being hidden behind the ad */
+/* Bottom padding removed since all ads are hidden */
 body {
-    padding-bottom: 120px;
-}
-
-@media (max-width: 768px) {
-    body {
-        padding-bottom: 60px;
-    }
-    
-    #bottom-ad {
-        min-height: 60px;
-    }
-}
-
-@media (max-width: 480px) {
-    body {
-        padding-bottom: 50px;
-    }
-    
-    #bottom-ad {
-        min-height: 50px;
-    }
-}
-
-@media (max-width: 360px) {
-    body {
-        padding-bottom: 45px;
-    }
-    
-    #bottom-ad {
-        min-height: 45px;
-    }
+    padding-bottom: 0;
 }
 
 .language-warning {

@@ -3039,39 +3039,17 @@ function showPage(pageName) {
         
         startPage.style.display = 'block';
         startPage.classList.add('active');
-        
-        // Hide ALL ads when on start page (including bottom ad)
-        setTimeout(() => {
-            const allAdContainers = document.querySelectorAll('.ad-container');
-            allAdContainers.forEach(container => {
-                container.style.display = 'none';
-                container.style.visibility = 'hidden';
-                container.style.opacity = '0';
-                container.style.height = '0';
-                container.style.width = '0';
-                container.style.overflow = 'hidden';
-                container.style.margin = '0';
-                container.style.padding = '0';
-            });
-            console.log(`Hidden ${allAdContainers.length} ad containers on start page`);
-        }, 100);
     } else if (pageName === 'script') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
         scriptPage.style.display = 'block';
         scriptPage.classList.add('active');
-        
-        // Show ads on other pages (except bottom ad which is always visible)
-        showAdContainers();
     } else if (pageName === 'game') {
         gamePage.style.display = 'block';
         gamePage.classList.add('active');
         
         // Update keyboard disabled notice when entering game
         updateKeyboardDisabledNotice();
-        
-        // Show ads on game page
-        showAdContainers();
     } else if (pageName === 'word-entry-selection') {
         // Hide hiragana keyboard when not in game
         hideHiraganaKeyboard();
@@ -10115,20 +10093,35 @@ function initializeAds() {
 }
 
 function showAdContainers() {
-    // Show all ad containers except those on start page
+    // Hide ALL ad containers on ALL pages
     const adContainers = document.querySelectorAll('.ad-container');
+    const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
     
     adContainers.forEach(container => {
-        // Hide ads that are within the start page
-        if (startPage && startPage.contains(container)) {
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-        } else {
-            container.style.display = 'block';
-        }
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.opacity = '0';
+        container.style.height = '0';
+        container.style.width = '0';
+        container.style.overflow = 'hidden';
+        container.style.margin = '0';
+        container.style.padding = '0';
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
     });
-    console.log('Ad containers shown (start page ads hidden)');
+    
+    adElements.forEach(ad => {
+        ad.style.display = 'none';
+        ad.style.visibility = 'hidden';
+        ad.style.opacity = '0';
+        ad.style.height = '0';
+        ad.style.width = '0';
+        ad.style.overflow = 'hidden';
+        ad.style.position = 'absolute';
+        ad.style.left = '-9999px';
+    });
+    
+    console.log(`Hidden ${adContainers.length} ad containers and ${adElements.length} ad elements`);
 }
 
 function enablePersonalizedAds() {
@@ -10795,32 +10788,37 @@ function updateStatsDisplay() {
 
 // Ad container management functions
 function showAdContainers() {
-    console.log('=== SHOWING AD CONTAINERS ===');
+    console.log('=== HIDING ALL AD CONTAINERS ===');
     const adContainers = document.querySelectorAll('.ad-container');
-    console.log(`Found ${adContainers.length} ad containers`);
+    const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
+    console.log(`Found ${adContainers.length} ad containers and ${adElements.length} ad elements`);
     
     adContainers.forEach((container, index) => {
-        // Hide ads that are within the start page
-        if (startPage && startPage.contains(container)) {
-            container.classList.add('hidden');
-            container.style.display = 'none';
-            container.style.visibility = 'hidden';
-            container.style.opacity = '0';
-            console.log(`🚫 Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden (start page)`);
-        } else {
-            // Aggressively show the container
-            container.classList.remove('hidden');
-            container.style.display = 'block';
-            container.style.visibility = 'visible';
-            container.style.opacity = '1';
-            container.style.zIndex = '100';
-            
-            console.log(`✅ Ad container ${index + 1} (ID: ${container.id || 'no-id'}) shown aggressively`);
-            console.log(`- Classes: ${container.className}`);
-            console.log(`- Display: ${container.style.display}`);
-            console.log(`- Visibility: ${container.style.visibility}`);
-            console.log(`- Opacity: ${container.style.opacity}`);
-        }
+        // Hide ALL ads on ALL pages
+        container.classList.add('hidden');
+        container.style.display = 'none';
+        container.style.visibility = 'hidden';
+        container.style.opacity = '0';
+        container.style.height = '0';
+        container.style.width = '0';
+        container.style.overflow = 'hidden';
+        container.style.margin = '0';
+        container.style.padding = '0';
+        container.style.position = 'absolute';
+        container.style.left = '-9999px';
+        console.log(`🚫 Ad container ${index + 1} (ID: ${container.id || 'no-id'}) hidden`);
+    });
+    
+    adElements.forEach((ad, index) => {
+        ad.style.display = 'none';
+        ad.style.visibility = 'hidden';
+        ad.style.opacity = '0';
+        ad.style.height = '0';
+        ad.style.width = '0';
+        ad.style.overflow = 'hidden';
+        ad.style.position = 'absolute';
+        ad.style.left = '-9999px';
+        console.log(`🚫 Ad element ${index + 1} hidden`);
     });
     
     // Force AdSense to load immediately
@@ -10850,49 +10848,38 @@ function showAdContainers() {
         document.head.appendChild(script);
     }
     
-    // Set up aggressive monitoring (but hide ads on start page)
+    // Set up aggressive monitoring to keep ALL ads hidden
     setInterval(() => {
         const adContainers = document.querySelectorAll('.ad-container');
-        const isStartPageActive = startPage && startPage.classList.contains('active') && startPage.style.display !== 'none';
+        const adElements = document.querySelectorAll('.adsbygoogle, ins.adsbygoogle');
         
+        // Keep all ad containers hidden
         adContainers.forEach((container, index) => {
-            // If on start page, hide all ads
-            if (isStartPageActive) {
-                container.style.display = 'none';
-                container.style.visibility = 'hidden';
-                container.style.opacity = '0';
-                container.style.height = '0';
-                container.style.width = '0';
-                container.style.overflow = 'hidden';
-                container.style.margin = '0';
-                container.style.padding = '0';
-                return;
-            }
-            
-            // Skip monitoring for ads within start page
-            if (startPage && startPage.contains(container)) {
-                return;
-            }
-            
-            const isHidden = container.classList.contains('hidden');
-            const display = window.getComputedStyle(container).display;
-            const visibility = window.getComputedStyle(container).visibility;
-            const opacity = window.getComputedStyle(container).opacity;
-            
-            if (isHidden || display === 'none' || visibility === 'hidden' || opacity === '0') {
-                console.warn(`⚠️ Ad container ${index + 1} (${container.id || 'no-id'}) became hidden!`);
-                
-                // Aggressively restore
-                container.classList.remove('hidden');
-                container.style.display = 'block';
-                container.style.visibility = 'visible';
-                container.style.opacity = '1';
-                container.style.zIndex = '100';
-                
-                console.log(`✅ Aggressively restored ad container ${index + 1}`);
-            }
+            container.classList.add('hidden');
+            container.style.display = 'none';
+            container.style.visibility = 'hidden';
+            container.style.opacity = '0';
+            container.style.height = '0';
+            container.style.width = '0';
+            container.style.overflow = 'hidden';
+            container.style.margin = '0';
+            container.style.padding = '0';
+            container.style.position = 'absolute';
+            container.style.left = '-9999px';
         });
-    }, 500); // Check every 500ms
+        
+        // Keep all ad elements hidden
+        adElements.forEach((ad, index) => {
+            ad.style.display = 'none';
+            ad.style.visibility = 'hidden';
+            ad.style.opacity = '0';
+            ad.style.height = '0';
+            ad.style.width = '0';
+            ad.style.overflow = 'hidden';
+            ad.style.position = 'absolute';
+            ad.style.left = '-9999px';
+        });
+    }, 100); // Check every 100ms to aggressively keep ads hidden
 }
 
 
