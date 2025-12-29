@@ -2684,14 +2684,8 @@ body.dark-mode .ad-container {
 }
 
 /* Hide all middle/inline ads on all pages (keep only top/bottom banners and side ads) */
-/* Hide specific middle ad IDs */
-#brute-force-ad,
-#brute-force-english-ad,
-#brute-force-japanese-ad,
-#game-english-hiragana-ad,
-#custom-script-selection-ad,
-#custom-mode-ad,
-#japanese-custom-mode-ad {
+/* Hide ads that are siblings of .text-box elements (ads between text sections) */
+.page > .ad-container:not(#bottom-ad) {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;

@@ -10117,10 +10117,19 @@ function showAdContainers() {
             return;
         }
         
-        // Hide all middle/inline ads (static positioning)
-        container.style.display = 'none';
-        container.style.visibility = 'hidden';
-        container.style.opacity = '0';
+        // Hide ads that are direct children of .page (middle/inline ads between text sections)
+        const parent = container.parentElement;
+        if (parent && parent.classList.contains('page')) {
+            container.style.display = 'none';
+            container.style.visibility = 'hidden';
+            container.style.opacity = '0';
+            return;
+        }
+        
+        // For other ads, show them (might be side ads in different structure)
+        container.style.display = 'block';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
     });
     console.log('Ad containers shown (middle/inline ads hidden)');
 }
@@ -10797,6 +10806,7 @@ function showAdContainers() {
         const containerId = container.id;
         const computedStyle = window.getComputedStyle(container);
         const position = computedStyle.position;
+        const parent = container.parentElement;
         
         // Keep bottom ad
         if (containerId === 'bottom-ad') {
@@ -10820,12 +10830,23 @@ function showAdContainers() {
             return;
         }
         
-        // Hide all middle/inline ads (static positioning)
-        container.classList.add('hidden');
-        container.style.display = 'none';
-        container.style.visibility = 'hidden';
-        container.style.opacity = '0';
-        console.log(`🚫 Ad container ${index + 1} (ID: ${containerId || 'no-id'}) hidden (middle/inline ad)`);
+        // Hide ads that are direct children of .page (middle/inline ads between text sections)
+        if (parent && parent.classList.contains('page')) {
+            container.classList.add('hidden');
+            container.style.display = 'none';
+            container.style.visibility = 'hidden';
+            container.style.opacity = '0';
+            console.log(`🚫 Ad container ${index + 1} (ID: ${containerId || 'no-id'}) hidden (middle/inline ad in .page)`);
+            return;
+        }
+        
+        // For other ads, show them (might be side ads in different structure)
+        container.classList.remove('hidden');
+        container.style.display = 'block';
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
+        container.style.zIndex = '100';
+        console.log(`✅ Ad container ${index + 1} (ID: ${containerId || 'no-id'}) shown (other ad)`);
     });
     
     // Force AdSense to load immediately
@@ -10862,10 +10883,14 @@ function showAdContainers() {
             const containerId = container.id;
             const computedStyle = window.getComputedStyle(container);
             const position = computedStyle.position;
+            const parent = container.parentElement;
             
             // Skip monitoring for middle/inline ads (they should stay hidden)
+            // These are ads that are direct children of .page and not bottom/top/side ads
             if (containerId !== 'bottom-ad' && position !== 'fixed' && position !== 'absolute') {
-                return;
+                if (parent && parent.classList.contains('page')) {
+                    return; // Skip middle/inline ads
+                }
             }
             
             const isHidden = container.classList.contains('hidden');
