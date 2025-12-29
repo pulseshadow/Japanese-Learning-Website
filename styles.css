@@ -2758,6 +2758,8 @@ body {
     #bottom-ad {
         min-height: 60px;
     }
+    
+    /* Mobile start page ad handling is done via JavaScript */
 }
 
 @media (max-width: 480px) {

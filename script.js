@@ -10095,12 +10095,48 @@ function initializeAds() {
 function showAdContainers() {
     // Show only top/bottom/side ads, hide all middle/inline ads
     const adContainers = document.querySelectorAll('.ad-container');
+    const isMobile = window.innerWidth <= 768;
+    const startPage = document.getElementById('start-page');
+    const isStartPageActive = startPage && startPage.classList.contains('active');
     
     adContainers.forEach(container => {
         const containerId = container.id;
         const computedStyle = window.getComputedStyle(container);
         const position = computedStyle.position;
+        const top = computedStyle.top;
+        const parent = container.parentElement;
         
+        // Mobile-specific: Hide all start page ads except top banner
+        if (isMobile && isStartPageActive) {
+            // Hide bottom ad on start page for mobile
+            if (containerId === 'bottom-ad') {
+                container.style.display = 'none';
+                container.style.visibility = 'hidden';
+                container.style.opacity = '0';
+                return;
+            }
+            
+            // Hide ads within start page on mobile
+            if (startPage && startPage.contains(container)) {
+                // Keep only top banner ads (position: fixed with top: 0 or small top value)
+                const topValue = parseInt(top) || 0;
+                if (position === 'fixed' && topValue <= 50) {
+                    // This is a top banner ad, keep it visible
+                    container.style.display = 'block';
+                    container.style.visibility = 'visible';
+                    container.style.opacity = '1';
+                    return;
+                } else {
+                    // Hide all other ads on start page
+                    container.style.display = 'none';
+                    container.style.visibility = 'hidden';
+                    container.style.opacity = '0';
+                    return;
+                }
+            }
+        }
+        
+        // Desktop or non-start-page logic
         // Keep bottom ad
         if (containerId === 'bottom-ad') {
             container.style.display = 'block';
@@ -10118,7 +10154,6 @@ function showAdContainers() {
         }
         
         // Hide ads that are direct children of .page (middle/inline ads between text sections)
-        const parent = container.parentElement;
         if (parent && parent.classList.contains('page')) {
             container.style.display = 'none';
             container.style.visibility = 'hidden';
@@ -10802,12 +10837,55 @@ function showAdContainers() {
     const adContainers = document.querySelectorAll('.ad-container');
     console.log(`Found ${adContainers.length} ad containers`);
     
+    const isMobile = window.innerWidth <= 768;
+    const startPage = document.getElementById('start-page');
+    const isStartPageActive = startPage && startPage.classList.contains('active');
+    
     adContainers.forEach((container, index) => {
         const containerId = container.id;
         const computedStyle = window.getComputedStyle(container);
         const position = computedStyle.position;
+        const top = computedStyle.top;
         const parent = container.parentElement;
         
+        // Mobile-specific: Hide all start page ads except top banner
+        if (isMobile && isStartPageActive) {
+            // Hide bottom ad on start page for mobile
+            if (containerId === 'bottom-ad') {
+                container.classList.add('hidden');
+                container.style.display = 'none';
+                container.style.visibility = 'hidden';
+                container.style.opacity = '0';
+                console.log(`🚫 Ad container ${index + 1} (ID: ${containerId || 'no-id'}) hidden (bottom ad on mobile start page)`);
+                return;
+            }
+            
+            // Hide ads within start page on mobile
+            if (startPage && startPage.contains(container)) {
+                // Keep only top banner ads (position: fixed with top: 0 or small top value)
+                const topValue = parseInt(top) || 0;
+                if (position === 'fixed' && topValue <= 50) {
+                    // This is a top banner ad, keep it visible
+                    container.classList.remove('hidden');
+                    container.style.display = 'block';
+                    container.style.visibility = 'visible';
+                    container.style.opacity = '1';
+                    container.style.zIndex = '100';
+                    console.log(`✅ Ad container ${index + 1} (ID: ${containerId || 'no-id'}) shown (top banner ad on mobile)`);
+                    return;
+                } else {
+                    // Hide all other ads on start page
+                    container.classList.add('hidden');
+                    container.style.display = 'none';
+                    container.style.visibility = 'hidden';
+                    container.style.opacity = '0';
+                    console.log(`🚫 Ad container ${index + 1} (ID: ${containerId || 'no-id'}) hidden (start page ad on mobile)`);
+                    return;
+                }
+            }
+        }
+        
+        // Desktop or non-start-page logic
         // Keep bottom ad
         if (containerId === 'bottom-ad') {
             container.classList.remove('hidden');
